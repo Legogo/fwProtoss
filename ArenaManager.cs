@@ -46,7 +46,15 @@ abstract public class ArenaManager : EngineObject {
       restart();
     }
 
-    time += Time.deltaTime;
+    //speed up debug
+    float mul = 1f;
+
+    if (Input.GetKey(KeyCode.P))
+    {
+      mul = 100f;
+    }
+
+    time += Time.deltaTime * mul;
   }
 
   protected void setScore(int newScore, Text txt)

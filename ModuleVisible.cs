@@ -17,12 +17,11 @@ public class ModuleVisible : ArenaObject {
     _render = GetComponent<Renderer>();
     if (_render == null) _render = GetComponentInChildren<Renderer>();
 
-    _sprRender = (SpriteRenderer)_render;
+    _sprRender = GetComponent<SpriteRenderer>();
+    if (_sprRender == null) _sprRender = GetComponentInChildren<SpriteRenderer>();
     
     if (_render == null && _sprRender == null) Debug.LogError("no render ?", gameObject);
-
-    //Debug.Log(name+" , "+_render+" , "+_sprRender);
-
+    
     if(!isSprite())
     {
       mat = _render.material;
