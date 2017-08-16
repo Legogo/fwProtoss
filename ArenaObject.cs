@@ -23,7 +23,11 @@ public class ArenaObject : EngineObject {
 
   public void spawn(Vector3? position)
   {
-    if (position == null) return;
+    if (position == null)
+    {
+      Debug.LogWarning("Object "+name+" has no given position for spawn", gameObject);
+      return;
+    }
 
     Vector3 pos = (Vector3)position;
 

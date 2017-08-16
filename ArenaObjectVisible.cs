@@ -16,7 +16,7 @@ public class ArenaObjectVisible : ArenaObject {
 
     transform.localScale = Vector3.one * scaleSize;
 
-    Debug.Log(name + " (" + GetType() + ") scale " + transform.localScale, gameObject);
+    //Debug.Log(name + " (" + GetType() + ") scale " + transform.localScale, gameObject);
 
     _modVisible = transform.GetComponent<ModuleVisible>();
 
@@ -33,6 +33,7 @@ public class ArenaObjectVisible : ArenaObject {
     base.spawnProcess(position);
 
     _modVisible.show();
+
     if(_modLabelCounter != null) _modLabelCounter.show();
   }
 

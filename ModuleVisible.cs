@@ -17,13 +17,11 @@ public class ModuleVisible : ArenaObject {
     _render = GetComponent<Renderer>();
     if (_render == null) _render = GetComponentInChildren<Renderer>();
 
-    if(_render == null)
-    {
-      _sprRender = GetComponent<SpriteRenderer>();
-    }
-
+    _sprRender = (SpriteRenderer)_render;
+    
     if (_render == null && _sprRender == null) Debug.LogError("no render ?", gameObject);
-    //Debug.Log(_render);
+
+    //Debug.Log(name+" , "+_render+" , "+_sprRender);
 
     if(!isSprite())
     {
@@ -47,6 +45,8 @@ public class ModuleVisible : ArenaObject {
 
   public void setColor(Color col)
   {
+    //Debug.Log(name + " " + col + " " + isSprite());
+
     if (isSprite())
     {
       _sprRender.color = col;
