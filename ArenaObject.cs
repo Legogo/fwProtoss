@@ -95,6 +95,5 @@ public class ArenaObject : EngineObject {
 
   public bool isActive() { return _active; }
 
-  public float getSize() { return transform.localScale.x; }
 
 }

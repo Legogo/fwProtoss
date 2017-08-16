@@ -16,6 +16,8 @@ public class ArenaObjectVisible : ArenaObject {
 
     transform.localScale = Vector3.one * scaleSize;
 
+    Debug.Log(name + " (" + GetType() + ") scale " + transform.localScale, gameObject);
+
     _modVisible = transform.GetComponent<ModuleVisible>();
 
     //enfant !
@@ -45,4 +47,7 @@ public class ArenaObjectVisible : ArenaObject {
   {
     if (_modLabelCounter != null) _modLabelCounter.show();
   }
+
+  // on peut pas utiliser transform.localScale a cause de la valeur qui varie quand on change de parent
+  public float getSize() { return scaleSize * 0.5f; }
 }
