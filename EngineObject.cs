@@ -7,6 +7,8 @@ public class EngineObject : MonoBehaviour {
   static List<EngineObject> eos = new List<EngineObject>();
   //static int loadingFrameCount = 10;
 
+  public bool freeze = false;
+
   void Awake()
   {
     build();
@@ -53,6 +55,8 @@ public class EngineObject : MonoBehaviour {
 
   void Update()
   {
+    if (freeze) return;
+
     if (!EngineManager.isLive()) return;
 
     update();

@@ -12,7 +12,7 @@ public class Timer : ArenaObject {
   protected float timer = 0f;
   
   public Action timeout;
-
+  
   protected override void build()
   {
     base.build();

@@ -74,7 +74,7 @@ public class ArenaObject : EngineObject {
   virtual protected void updateArena(float timeStamp)
   {
 
-    if (isCollidingWithAvatar())
+    if (isCollectable() && isCollidingWithAvatar())
     {
       collect();
     }
@@ -84,6 +84,11 @@ public class ArenaObject : EngineObject {
   virtual public bool isCollidingWithAvatar()
   {
     return false;
+  }
+
+  virtual public bool isCollectable()
+  {
+    return isActive();
   }
 
   protected void setActive(bool flag) { _active = flag; }
