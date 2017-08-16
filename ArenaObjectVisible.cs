@@ -26,9 +26,9 @@ public class ArenaObjectVisible : ArenaObject {
 
   }
 
-  public override void spawn(Vector3 position)
+  protected override void spawnProcess(Vector3 position)
   {
-    base.spawn(position);
+    base.spawnProcess(position);
 
     _modVisible.show();
     if(_modLabelCounter != null) _modLabelCounter.show();

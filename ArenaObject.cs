@@ -21,11 +21,22 @@ public class ArenaObject : EngineObject {
   {
   }
 
-  virtual public void spawn(Vector3 position)
+  public void spawn(Vector3? position)
   {
+    if (position == null) return;
+
+    Vector3 pos = (Vector3)position;
+
     setActive(true);
 
-    transform.position = position;
+    transform.position = pos;
+
+    spawnProcess(pos);
+  }
+
+  virtual protected void spawnProcess(Vector3 position)
+  {
+
   }
 
   virtual protected void collect()
@@ -46,14 +57,21 @@ public class ArenaObject : EngineObject {
 
     //Debug.Log(name + " active ? " + isActive());
 
-    if (ArenaSnakeManager.manager.freezeArena) return;
-
     if (!isActive()) return;
 
-    updateArena();
+    ArenaManager mng = ArenaManager.get();
+    if(mng != null)
+    {
+      if (mng.freezeArena) return;
+
+      updateArena(mng.getElapsedTime());
+    }
+    
+
+    
   }
 
-  virtual protected void updateArena()
+  virtual protected void updateArena(float timeStamp)
   {
 
     if (isCollidingWithAvatar())

@@ -39,9 +39,9 @@ public class ModuleVisible : ArenaObject {
     return _sprRender != null;
   }
 
-  public override void spawn(Vector3 position)
+  protected override void spawnProcess(Vector3 position)
   {
-    base.spawn(position);
+    base.spawnProcess(position);
     show();
   }
 

@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ArenaManager : EngineObject {
-
-  public Text txt_score;
-  public int score;
+abstract public class ArenaManager : EngineObject {
 
   public bool freezeArena = false;
 
+  public float time = 0f;
+
+  public Text txt_score;
+  
   protected override void setup()
   {
     base.setup();
-    addScore(-99999);
+    setScore(0, txt_score);
   }
 
   virtual public void restart()
@@ -22,13 +23,18 @@ public class ArenaManager : EngineObject {
     
     freezeArena = false;
 
-    addScore(-9999);
+    setScore(0, txt_score);
 
     ArenaObject[] aobjs = GameObject.FindObjectsOfType<ArenaObject>();
     for (int i = 0; i < aobjs.Length; i++)
     {
       aobjs[i].restart();
     }
+  }
+
+  virtual public void event_score(int step)
+  {
+    addScore(step, txt_score);
   }
   
   protected override void update()
@@ -39,14 +45,30 @@ public class ArenaManager : EngineObject {
     {
       restart();
     }
-    
+
+    time += Time.deltaTime;
   }
 
-  protected void addScore(int step)
+  protected void setScore(int newScore, Text txt)
   {
-    score += step;
-    if (score < 0) score = 0;
-    txt_score.text = "" + score;
+    if (newScore < 0) newScore = 0;
+    txt.text = "" + newScore;
   }
 
+  protected void addScore(int step, Text txt)
+  {
+    setScore(int.Parse(txt.text) + step, txt);
+  }
+
+  public float getElapsedTime()
+  {
+    return time;
+  }
+
+  static protected ArenaManager _manager;
+  static public ArenaManager get()
+  {
+    if (_manager == null) _manager = GameObject.FindObjectOfType<ArenaManager>();
+    return _manager;
+  }
 }

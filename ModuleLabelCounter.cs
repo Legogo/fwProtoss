@@ -34,13 +34,24 @@ public class ModuleLabelCounter : ModuleLabel {
 
   public void assignRandomValueByLimits()
   {
-    setCount(Random.Range((int)countRandomRange.x, (int)countRandomRange.y));
+    int val = Random.Range((int)countRandomRange.x, (int)countRandomRange.y+1);
+
+    //Debug.Log(countRandomRange + " , " + val);
+
+    setCount(val);
   }
 
-  public bool isAtMax()
+  public bool isAtMax(float overrideMax = -1f)
   {
-    if (countClampLimit.sqrMagnitude == 0f) return false;
-    return count >= countClampLimit.y;
+    float max = countClampLimit.y;
+
+    if (overrideMax != -1f) max = overrideMax;
+    else
+    {
+      if (countClampLimit.sqrMagnitude == 0f) return false;
+    }
+    
+    return count >= max;
   }
   public bool isEmpty()
   {
