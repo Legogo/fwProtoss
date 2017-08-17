@@ -24,7 +24,7 @@ public class ArenaObjectVisible : ArenaObject {
     _modLabel = transform.GetComponentInChildren<ModuleLabel>();
     _modLabelCounter = (ModuleLabelCounter)_modLabel;
 
-    if (_modVisible == null) Debug.LogError("no mod visible", gameObject);
+    if (_modVisible == null) Debug.LogError("no mod visible for "+name, gameObject);
 
   }
 

@@ -167,4 +167,10 @@ public class GameSpace : MonoBehaviour {
         (A1 * C2 - A2 * C1) / delta
     );
   }
+
+
+  static public GameSpace get()
+  {
+    return GameObject.FindObjectOfType<GameSpace>();
+  }
 }

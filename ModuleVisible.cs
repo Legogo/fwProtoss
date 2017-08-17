@@ -20,14 +20,9 @@ public class ModuleVisible : ArenaObject {
     _sprRender = GetComponent<SpriteRenderer>();
     if (_sprRender == null) _sprRender = GetComponentInChildren<SpriteRenderer>();
 
-    if (_render == null && _sprRender == null)
+    if (_render != null || _sprRender != null)
     {
-      //Debug.LogError("no render ?", gameObject);
-      //...
-    }
-    else
-    {
-
+      
       if (!isSprite())
       {
         mat = _render.material;
@@ -43,6 +38,7 @@ public class ModuleVisible : ArenaObject {
   {
     return _sprRender != null;
   }
+  public Sprite getSprite() { return _sprRender.sprite; }
 
   protected override void spawnProcess(Vector3 position)
   {

@@ -6,7 +6,14 @@ using UnityEngine.UI;
 abstract public class ArenaManager : EngineObject {
   
   public float time = 0f;
-  
+
+  protected override void build()
+  {
+    base.build();
+
+    EngineManager.get().onLoadingDone += restart;
+  }
+
   virtual public void restart()
   {
     Debug.Log("<b>RESTART</b> at "+Time.time);
@@ -18,6 +25,7 @@ abstract public class ArenaManager : EngineObject {
     {
       aobjs[i].restart();
     }
+    
   }
 
   protected override void update()

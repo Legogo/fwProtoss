@@ -11,7 +11,38 @@ using UnityEngine;
 public class ArenaObject : EngineObject {
 
   bool _active = true;
-  
+
+  protected InputObject _input;
+
+  protected override void build()
+  {
+    base.build();
+    _input = GetComponent<InputObject>();
+
+    if(_input != null)
+    {
+
+      _input.cbTouchOver += onTouch;
+      _input.cbReleaseOver += onRelease;
+
+    }
+
+  }
+
+  virtual protected void onTouch(InputTouchFinger finger, RaycastHit2D hit)
+  {
+
+
+
+  }
+
+  virtual protected void onRelease(InputTouchFinger finger, RaycastHit2D hit)
+  {
+
+
+
+  }
+
   virtual public void launch()
   {
     setActive(true);
