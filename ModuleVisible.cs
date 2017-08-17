@@ -50,6 +50,13 @@ public class ModuleVisible : ArenaObject {
     show();
   }
 
+  public void setSprite(Sprite newSprite)
+  {
+    if (_sprRender == null) return;
+
+    _sprRender.sprite = newSprite;
+  }
+
   public void setColor(Color col)
   {
     //Debug.Log(name + " " + col + " " + isSprite());
