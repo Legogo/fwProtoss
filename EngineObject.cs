@@ -7,7 +7,7 @@ public class EngineObject : MonoBehaviour {
   static List<EngineObject> eos = new List<EngineObject>();
   //static int loadingFrameCount = 10;
 
-  public bool freeze = false;
+  protected bool freeze = false;
 
   void Awake()
   {
@@ -66,4 +66,7 @@ public class EngineObject : MonoBehaviour {
   {
 
   }
+
+  public bool isFreezed() { return freeze; }
+  public void setFreeze(bool flag) { freeze = flag; }
 }

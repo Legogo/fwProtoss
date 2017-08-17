@@ -4,27 +4,15 @@ using UnityEngine;
 using UnityEngine.UI;
 
 abstract public class ArenaManager : EngineObject {
-
-  public bool freezeArena = false;
-
-  public float time = 0f;
-
-  public Text txt_score;
   
-  protected override void setup()
-  {
-    base.setup();
-    setScore(0, txt_score);
-  }
-
+  public float time = 0f;
+  
   virtual public void restart()
   {
     Debug.Log("<b>RESTART</b> at "+Time.time);
+
+    freeze = false;
     
-    freezeArena = false;
-
-    setScore(0, txt_score);
-
     ArenaObject[] aobjs = GameObject.FindObjectsOfType<ArenaObject>();
     for (int i = 0; i < aobjs.Length; i++)
     {
@@ -32,11 +20,6 @@ abstract public class ArenaManager : EngineObject {
     }
   }
 
-  virtual public void event_score(int step)
-  {
-    addScore(step, txt_score);
-  }
-  
   protected override void update()
   {
     base.update();
@@ -55,17 +38,6 @@ abstract public class ArenaManager : EngineObject {
     }
 
     time += Time.deltaTime * mul;
-  }
-
-  protected void setScore(int newScore, Text txt)
-  {
-    if (newScore < 0) newScore = 0;
-    txt.text = "" + newScore;
-  }
-
-  protected void addScore(int step, Text txt)
-  {
-    setScore(int.Parse(txt.text) + step, txt);
   }
 
   public float getElapsedTime()

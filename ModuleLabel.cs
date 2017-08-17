@@ -1,17 +1,24 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ModuleLabel : ModuleVisible {
 
   TextMesh txt;
   Renderer txtRender;
+  Text ui_txt;
 
   protected override void build()
   {
 
     txt = transform.GetComponent<TextMesh>();
-    txtRender = txt.GetComponent<MeshRenderer>();
+    if(txt != null)
+    {
+      txtRender = txt.GetComponent<MeshRenderer>();
+    }
+    
+    ui_txt = GetComponent<Text>();
     
     base.build();
     
@@ -25,24 +32,32 @@ public class ModuleLabel : ModuleVisible {
 
   public void updateLabel(string content)
   {
-    txt.text = content;
+    if (ui_txt != null)
+    {
+      ui_txt.text = content;
+    }
+    else
+    {
+      txt.text = content;
+    }
   }
 
   protected void toggleLabel(bool flag)
   {
-    txtRender.enabled = flag;
+    if (ui_txt != null) ui_txt.enabled = flag;
+    else if(txtRender != null) txtRender.enabled = flag;
   }
   protected bool isLabelVisible() { return txtRender.enabled; }
   
   public override void show()
   {
     base.show();
-    txtRender.enabled = true;
+    toggleLabel(true);
   }
   public override void hide()
   {
     base.hide();
-    txtRender.enabled = false;
+    toggleLabel(false);
   }
 
 }

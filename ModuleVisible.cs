@@ -19,13 +19,21 @@ public class ModuleVisible : ArenaObject {
 
     _sprRender = GetComponent<SpriteRenderer>();
     if (_sprRender == null) _sprRender = GetComponentInChildren<SpriteRenderer>();
-    
-    if (_render == null && _sprRender == null) Debug.LogError("no render ?", gameObject);
-    
-    if(!isSprite())
+
+    if (_render == null && _sprRender == null)
     {
-      mat = _render.material;
-      _render.material = mat;
+      //Debug.LogError("no render ?", gameObject);
+      //...
+    }
+    else
+    {
+
+      if (!isSprite())
+      {
+        mat = _render.material;
+        _render.material = mat;
+      }
+
     }
 
     hide();
@@ -85,7 +93,11 @@ public class ModuleVisible : ArenaObject {
       return;
     }
 
-    _render.enabled = flag;
+    if(_render != null)
+    {
+      _render.enabled = flag;
+    }
+    
     for (int i = 0; i < others.Length; i++)
     {
       others[i].enabled = flag;

@@ -66,7 +66,7 @@ public class ArenaObject : EngineObject {
     ArenaManager mng = ArenaManager.get();
     if(mng != null)
     {
-      if (mng.freezeArena) return;
+      if (mng.isFreezed()) return;
 
       updateArena(mng.getElapsedTime());
     }
