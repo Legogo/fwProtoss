@@ -8,17 +8,13 @@ using System;
 /// </summary>
 
 public class EngineManager : MonoBehaviour {
-
-  static public EngineManager manager;
-
+  
   public bool state_live = false;
 
   public Action onLoadingDone;
 
   void Awake()
   {
-    manager = this;
-
     state_live = false;
   }
 
@@ -30,8 +26,11 @@ public class EngineManager : MonoBehaviour {
 
   static public bool isLive()
   {
-    if (manager == null) return false;
+    if (_manager == null) return false;
 
-    return manager.state_live;
+    return _manager.state_live;
   }
+
+  static protected EngineManager _manager;
+  static public EngineManager get() { if (_manager == null) _manager = GameObject.FindObjectOfType<EngineManager>(); return _manager; }
 }

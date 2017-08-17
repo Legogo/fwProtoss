@@ -37,7 +37,7 @@ public class EngineObject : MonoBehaviour {
       if (!EngineManager.isLive() && eos.Count <= 0)
       {
         Debug.Log(name + " called <b>end of loading</b>", gameObject);
-        EngineManager.manager.game_loading_done();
+        EngineManager.get().game_loading_done();
       }
     }
 
