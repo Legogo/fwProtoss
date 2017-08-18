@@ -53,6 +53,28 @@ public class ModuleVisible : ArenaObject {
     _sprRender.sprite = newSprite;
   }
 
+  public void setAlpha(float newAlpha)
+  {
+    Color col = getColor();
+    col.a = newAlpha;
+    setColor(col);
+  }
+
+  public float getAlpha()
+  {
+    return getColor().a;
+  }
+
+  public Color getColor()
+  {
+    if (isSprite())
+    {
+      return _sprRender.color;
+    }
+
+    return mat.GetColor("_EmissionColor");
+  }
+
   public void setColor(Color col)
   {
     //Debug.Log(name + " " + col + " " + isSprite());
