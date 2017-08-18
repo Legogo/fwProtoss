@@ -79,7 +79,7 @@ public class Timer : ArenaObject {
     //DEBUG
     if (Input.GetKeyUp(KeyCode.T))
     {
-      Debug.LogWarning("skip timer, debug");
+      //Debug.LogWarning("skip timer, debug");
       timer = param.value - 0.1f;
     }
 
