@@ -12,11 +12,15 @@ public class ArenaObject : EngineObject {
 
   bool _active = true;
 
+  private ArenaManager _arena;
   protected InputObject _input;
 
   protected override void build()
   {
     base.build();
+
+    _arena = ArenaManager.get();
+
     _input = GetComponent<InputObject>();
 
     if(_input != null)
@@ -93,17 +97,29 @@ public class ArenaObject : EngineObject {
     //Debug.Log(name + " active ? " + isActive());
 
     if (!isActive()) return;
-
-    ArenaManager mng = ArenaManager.get();
-    if(mng != null)
+    
+    if(_arena != null)
     {
-      if (mng.isFreezed()) return;
+      if (_arena.isFreezed()) return;
+      
+      if(_arena.isLive()) updateArena(_arena.getElapsedTime());
+      else if(_arena.isEnd()) updateArenaEnd();
+      else updateArenaMenu();
 
-      updateArena(mng.getElapsedTime());
     }
     
 
     
+  }
+
+  virtual protected void updateArenaMenu()
+  {
+
+  }
+
+  virtual protected void updateArenaEnd()
+  {
+
   }
 
   virtual protected void updateArena(float timeStamp)

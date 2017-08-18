@@ -7,6 +7,9 @@ abstract public class ArenaManager : EngineObject {
   
   public float time = 0f;
 
+  public enum ArenaState { MENU, LIVE, END }
+  protected ArenaState _state;
+
   protected override void build()
   {
     base.build();
@@ -25,7 +28,8 @@ abstract public class ArenaManager : EngineObject {
     {
       aobjs[i].restart();
     }
-    
+
+    _state = ArenaState.LIVE;
   }
 
   protected override void update()
@@ -48,10 +52,26 @@ abstract public class ArenaManager : EngineObject {
     time += Time.deltaTime * mul;
   }
 
+  public void event_end()
+  {
+    _state = ArenaState.END;
+    StartCoroutine(processEnd());
+  }
+  
+  virtual protected IEnumerator processEnd()
+  {
+    yield return null;
+  }
+
   public float getElapsedTime()
   {
     return time;
   }
+
+  public ArenaState getState() { return _state; }
+  public bool isAtState(ArenaState st) { return _state == st; }
+  public bool isLive() { return isAtState(ArenaState.LIVE); }
+  public bool isEnd() { return isAtState(ArenaState.END); }
 
   static protected ArenaManager _manager;
   static public ArenaManager get()

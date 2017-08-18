@@ -9,7 +9,11 @@ public class Timer : ArenaObject {
 
   public TimerParams[] timeParams;
 
-  protected float timer = 0f;
+  public bool liveOnStartup = true;
+  public bool restartOnTimeout = true;
+  public bool liveOnEnd = false;
+
+  protected float timer = -1f;
   
   public Action timeout;
   
@@ -20,37 +24,91 @@ public class Timer : ArenaObject {
     if (timeParams.Length <= 0) Debug.LogError("no time setup for " + name, gameObject);
   }
 
-  public void reset()
+  public override void restart()
+  {
+    base.restart();
+
+    if (liveOnStartup)
+    {
+      play();
+    }
+  }
+
+  public void play()
   {
     timer = 0f;
   }
 
+  public void stop()
+  {
+    timer = -1f;
+  }
+
+  public bool isRunning()
+  {
+    return timer >= 0f;
+  }
+
+
   protected override void updateArena(float timeStamp)
   {
     base.updateArena(timeStamp);
+    updateTimer();
+  }
+  protected override void updateArenaEnd()
+  {
+    base.updateArenaEnd();
+
+    if (!liveOnEnd) return;
+
+    //Debug.Log("timer "+timerName+" updateEnd | ? "+timer+" / "+getTarget(), gameObject);
+
+    updateTimer();
+  }
+
+  protected void updateTimer() {
+
+    if (!isRunning()) return;
 
     //Debug.Log(name + " " + timer);
 
-    TimerParams param = getParam(timeStamp);
-
+    //fetch param
+    TimerParams param = getCurrentParam();
     if (param == null) return;
 
+    //DEBUG
     if (Input.GetKeyUp(KeyCode.T))
     {
       Debug.LogWarning("skip timer, debug");
       timer = param.value - 0.1f;
     }
 
+    //Debug.Log(timer + " / " + param.value);
+
     if (timer < param.value)
     {
       timer += Time.deltaTime;
       if(timer > param.value)
       {
-        timer = 0f;
-        if(timeout != null) timeout();
+        //loop timer ?
+        if (restartOnTimeout) timer = 0f;
+        else timer = -1f;
+
+        if (timeout != null)
+        {
+          //Debug.Log(timerName + " timeout !", gameObject);
+          timeout();
+        }
       }
     }
 
+  }
+
+  protected float getTarget() { return getCurrentParam().value; }
+
+  protected TimerParams getCurrentParam()
+  {
+    return getParam(ArenaManager.get().getElapsedTime());
   }
 
   protected TimerParams getParam(float timeStamp)
