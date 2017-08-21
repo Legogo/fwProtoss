@@ -54,10 +54,11 @@ public class ArenaObjectVisible : ArenaObject {
 
   private void OnDrawGizmosSelected()
   {
+    if (Application.isPlaying) return;
+
     transform.localScale = Vector3.one * scaleSize;
   }
-
-
+  
   public Vector2 getObjectPointNearestToTransform(Transform tr)
   {
     //choppe le point au bord du cercle dans la direction du block

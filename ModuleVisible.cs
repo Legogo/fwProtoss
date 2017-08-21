@@ -20,7 +20,7 @@ public class ModuleVisible : ArenaObject {
     _sprRender = GetComponent<SpriteRenderer>();
     if (_sprRender == null) _sprRender = GetComponentInChildren<SpriteRenderer>();
 
-    Debug.Log(name + " -> " + _sprRender + " | " + _render);
+    //Debug.Log(name + " -> " + _sprRender + " | " + _render);
 
     if (_render != null || _sprRender != null)
     {
