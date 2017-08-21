@@ -54,6 +54,11 @@ public class ArenaObject : EngineObject {
 
   virtual public void restart()
   {
+
+  }
+  virtual public void event_end()
+  {
+
   }
 
   public void spawn(Vector3? position)

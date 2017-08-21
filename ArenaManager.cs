@@ -55,6 +55,13 @@ abstract public class ArenaManager : EngineObject {
   public void event_end()
   {
     _state = ArenaState.END;
+
+    ArenaObject[] aobjs = GameObject.FindObjectsOfType<ArenaObject>();
+    for (int i = 0; i < aobjs.Length; i++)
+    {
+      aobjs[i].event_end();
+    }
+
     StartCoroutine(processEnd());
   }
   

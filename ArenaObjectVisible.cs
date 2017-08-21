@@ -52,6 +52,12 @@ public class ArenaObjectVisible : ArenaObject {
   // on peut pas utiliser transform.localScale a cause de la valeur qui varie quand on change de parent
   public float getSize() { return scaleSize * 0.5f; }
 
+  private void OnDrawGizmosSelected()
+  {
+    transform.localScale = Vector3.one * scaleSize;
+  }
+
+
   public Vector2 getObjectPointNearestToTransform(Transform tr)
   {
     //choppe le point au bord du cercle dans la direction du block
