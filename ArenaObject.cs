@@ -12,7 +12,7 @@ public class ArenaObject : EngineObject {
 
   bool _active = true;
 
-  private ArenaManager _arena;
+  protected ArenaManager _arena;
   protected InputObject _input;
 
   protected override void build()

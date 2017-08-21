@@ -6,7 +6,7 @@ using UnityEngine.UI;
 abstract public class ArenaManager : EngineObject {
   
   public float time = 0f;
-
+  
   public enum ArenaState { MENU, LIVE, END }
   protected ArenaState _state;
 
