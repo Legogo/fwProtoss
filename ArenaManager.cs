@@ -56,6 +56,7 @@ abstract public class ArenaManager : EngineObject {
   {
     _state = ArenaState.END;
 
+    //send info to all arena objects
     ArenaObject[] aobjs = GameObject.FindObjectsOfType<ArenaObject>();
     for (int i = 0; i < aobjs.Length; i++)
     {

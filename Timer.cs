@@ -82,7 +82,7 @@ public class Timer : ArenaObject {
 #if UNITY_EDITOR
       Debug.LogWarning("skip timer, debug");
 #endif
-      timer = param.value - 0.1f;
+      setAtEnd();
     }
 
     //Debug.Log(timer + " / " + param.value);
@@ -104,6 +104,12 @@ public class Timer : ArenaObject {
       }
     }
 
+  }
+
+  public void setAtEnd()
+  {
+    TimerParams param = getCurrentParam();
+    timer = param.value - 0.1f;
   }
 
   protected float getTarget() { return getCurrentParam().value; }
