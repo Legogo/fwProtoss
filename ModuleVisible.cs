@@ -8,6 +8,8 @@ public class ModuleVisible : ArenaObject {
   Renderer _render;
   Material mat;
 
+  protected Color original;
+
   public Renderer[] others;
 
   protected override void build()
@@ -33,6 +35,10 @@ public class ModuleVisible : ArenaObject {
 
     }
 
+    original = getColor();
+    original.a = getAlpha();
+
+    //Debug.Log("ORIGIN : " + original, gameObject);
     hide();
   }
 
@@ -67,14 +73,25 @@ public class ModuleVisible : ArenaObject {
     return getColor().a;
   }
 
+  public void setOriginColor() {
+    //Debug.Log(original, gameObject);
+    setColor(original);
+    //setAlpha(1f);
+  }
+
   public Color getColor()
   {
     if (isSprite())
     {
       return _sprRender.color;
     }
+    
+    if(mat != null && mat.HasProperty("_EmissionColor"))
+    {
+      return mat.GetColor("_EmissionColor");
+    }
 
-    return mat.GetColor("_EmissionColor");
+    return Color.white;
   }
 
   public void setColor(Color col)
