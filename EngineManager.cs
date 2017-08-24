@@ -9,7 +9,7 @@ using System;
 
 public class EngineManager : MonoBehaviour {
   
-  public bool state_live = false;
+  static protected bool state_live = false;
 
   public Action onLoadingDone;
 
@@ -26,9 +26,7 @@ public class EngineManager : MonoBehaviour {
 
   static public bool isLive()
   {
-    if (_manager == null) return false;
-
-    return _manager.state_live;
+    return state_live;
   }
 
   static protected EngineManager _manager;

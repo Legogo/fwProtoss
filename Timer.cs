@@ -7,6 +7,7 @@ public class Timer : ArenaObject {
 
   public string timerName = "";
 
+  TimerParams param;
   public TimerParams[] timeParams;
 
   public bool liveOnStartup = true;
@@ -37,6 +38,8 @@ public class Timer : ArenaObject {
   public void play()
   {
     timer = 0f;
+
+    param = getCurrentParam();
   }
 
   public void stop()
@@ -53,8 +56,20 @@ public class Timer : ArenaObject {
   protected override void updateArena(float timeStamp)
   {
     base.updateArena(timeStamp);
+    
+    //next param time !
+    if(timeParams.Length > 1)
+    {
+      if (timeStamp > param.timeMark)
+      {
+        Debug.Log(name + " next param " + timeStamp + " > " + param.timeMark);
+        param = getCurrentParam();
+      }
+    }
+
     updateTimer();
   }
+
   protected override void updateArenaEnd()
   {
     base.updateArenaEnd();
@@ -69,11 +84,7 @@ public class Timer : ArenaObject {
   protected void updateTimer() {
 
     if (!isRunning()) return;
-
-    //Debug.Log(name + " " + timer);
-
-    //fetch param
-    TimerParams param = getCurrentParam();
+    
     if (param == null) return;
 
     //DEBUG
@@ -108,11 +119,10 @@ public class Timer : ArenaObject {
 
   public void setAtEnd()
   {
-    TimerParams param = getCurrentParam();
     timer = param.value - 0.1f;
   }
 
-  protected float getTarget() { return getCurrentParam().value; }
+  protected float getTarget() { return param.value; }
 
   protected TimerParams getCurrentParam()
   {
