@@ -55,9 +55,9 @@ public class Timer : ArenaObject {
   }
 
 
-  protected override void updateArena(float timeStamp)
+  protected override void updateArenaLive(float timeStamp)
   {
-    base.updateArena(timeStamp);
+    base.updateArenaLive(timeStamp);
     
     //next param time !
     if(timeParams.Length > 1)

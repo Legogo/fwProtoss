@@ -10,6 +10,8 @@ abstract public class ArenaManager : EngineObject {
   public enum ArenaState { MENU, LIVE, END }
   protected ArenaState _state;
 
+  public List<ArenaObject> arenaObjects = new List<ArenaObject>();
+
   protected override void build()
   {
     base.build();
@@ -22,34 +24,36 @@ abstract public class ArenaManager : EngineObject {
     Debug.Log("<b>RESTART</b> at "+Time.time);
 
     freeze = false;
-    
-    ArenaObject[] aobjs = GameObject.FindObjectsOfType<ArenaObject>();
-    for (int i = 0; i < aobjs.Length; i++)
+
+    for (int i = 0; i < arenaObjects.Count; i++)
     {
-      aobjs[i].restart();
+      arenaObjects[i].restart();
     }
 
     _state = ArenaState.LIVE;
   }
 
-  protected override void update()
+  public override void update()
   {
     base.update();
     
     if (Input.GetKeyUp(KeyCode.Space))
     {
       restart();
+      return;
     }
 
-    //speed up debug
+    //speed up debug arena timer
     float mul = 1f;
-
-    if (Input.GetKey(KeyCode.P))
-    {
-      mul = 100f;
-    }
-
+    if (Input.GetKey(KeyCode.P)) mul = 100f;
     time += Time.deltaTime * mul;
+    
+    if (!EngineManager.isLive()) return;
+
+    for (int i = 0; i < arenaObjects.Count; i++)
+    {
+      arenaObjects[i].updateArena();
+    }
   }
 
   public void event_end()

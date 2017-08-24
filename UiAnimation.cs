@@ -35,7 +35,7 @@ public class UiAnimation : EngineObject
     setFreeze(true);
   }
 
-  protected override void update()
+  public override void update()
   {
     base.update();
 

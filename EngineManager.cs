@@ -13,6 +13,8 @@ public class EngineManager : MonoBehaviour {
 
   public Action onLoadingDone;
 
+  public List<EngineObject> objects = new List<EngineObject>();
+
   void Awake()
   {
     state_live = false;
@@ -24,11 +26,24 @@ public class EngineManager : MonoBehaviour {
     if (onLoadingDone != null) onLoadingDone();
   }
 
+  private void Update()
+  {
+    if (!isLive()) return;
+
+    for (int i = 0; i < objects.Count; i++)
+    {
+      objects[i].update();
+    }
+  }
+
   static public bool isLive()
   {
     return state_live;
   }
 
   static protected EngineManager _manager;
-  static public EngineManager get() { if (_manager == null) _manager = GameObject.FindObjectOfType<EngineManager>(); return _manager; }
+  static public EngineManager get() {
+    if (_manager == null) _manager = GameObject.FindObjectOfType<EngineManager>();
+    return _manager;
+  }
 }

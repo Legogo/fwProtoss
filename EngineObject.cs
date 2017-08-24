@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class EngineObject : MonoBehaviour {
 
+  //loading list
   static List<EngineObject> eos = new List<EngineObject>();
+
   //static int loadingFrameCount = 10;
 
   protected bool freeze = false;
@@ -53,20 +55,18 @@ public class EngineObject : MonoBehaviour {
 
   }
 
-  void Update()
+  private void Update()
   {
     if (freeze) return;
-
-    if (!EngineManager.isLive()) return;
-
     update();
   }
 
-  virtual protected void update()
+  //must be called by a manager
+  virtual public void update()
   {
-
+    //...
   }
-
+  
   public bool isFreezed() { return freeze; }
   public void setFreeze(bool flag) { freeze = flag; }
 }

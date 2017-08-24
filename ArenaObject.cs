@@ -20,6 +20,7 @@ public class ArenaObject : EngineObject {
     base.build();
 
     _arena = ArenaManager.get();
+    _arena.arenaObjects.Add(this);
 
     _input = GetComponent<InputObject>();
 
@@ -31,6 +32,11 @@ public class ArenaObject : EngineObject {
 
     }
 
+  }
+
+  private void OnDestroy()
+  {
+    _arena.arenaObjects.Remove(this);
   }
 
   virtual protected void onTouch(InputTouchFinger finger, RaycastHit2D hit)
@@ -95,26 +101,14 @@ public class ArenaObject : EngineObject {
     //Debug.Log(Time.time+" , "+name + " killed", gameObject);
   }
 
-  protected override void update()
+  /* called by arena manager */
+  virtual public void updateArena()
   {
-    base.update();
+    if (!_active) return;
 
-    //Debug.Log(name + " active ? " + isActive());
-
-    if (!isActive()) return;
-    
-    if(_arena != null)
-    {
-      if (_arena.isFreezed()) return;
-      
-      if(_arena.isLive()) updateArena(_arena.getElapsedTime());
-      else if(_arena.isEnd()) updateArenaEnd();
-      else updateArenaMenu();
-
-    }
-    
-
-    
+    if (_arena.isLive()) updateArenaLive(_arena.getElapsedTime());
+    else if (_arena.isEnd()) updateArenaEnd();
+    else updateArenaMenu();
   }
 
   virtual protected void updateArenaMenu()
@@ -127,7 +121,7 @@ public class ArenaObject : EngineObject {
 
   }
 
-  virtual protected void updateArena(float timeStamp)
+  virtual protected void updateArenaLive(float timeStamp)
   {
 
     if (isCollectable() && isCollidingWithAvatar())

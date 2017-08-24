@@ -24,7 +24,7 @@ public class ModuleLabelCounter : ModuleLabel {
     updateTextWithCount();
   }
   
-  protected override void update()
+  public override void update()
   {
     base.update();
 
