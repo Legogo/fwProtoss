@@ -17,6 +17,8 @@ public class EngineManager : MonoBehaviour {
 
   void Awake()
   {
+    Application.targetFrameRate = 60;
+
     state_live = false;
   }
 
