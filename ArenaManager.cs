@@ -23,7 +23,7 @@ abstract public class ArenaManager : EngineObject {
   {
     Debug.Log("<b>RESTART</b> at "+Time.time);
 
-    freeze = false;
+    _freeze = false;
 
     for (int i = 0; i < arenaObjects.Count; i++)
     {
@@ -36,7 +36,9 @@ abstract public class ArenaManager : EngineObject {
   public override void update()
   {
     base.update();
-    
+
+    if (!EngineManager.isLive()) return;
+
     if (Input.GetKeyUp(KeyCode.Space))
     {
       restart();
@@ -48,8 +50,7 @@ abstract public class ArenaManager : EngineObject {
     if (Input.GetKey(KeyCode.P)) mul = 100f;
     time += Time.deltaTime * mul;
     
-    if (!EngineManager.isLive()) return;
-
+    //update all aobs
     for (int i = 0; i < arenaObjects.Count; i++)
     {
       arenaObjects[i].updateArena();

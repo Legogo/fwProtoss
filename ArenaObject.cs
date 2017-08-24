@@ -105,6 +105,7 @@ public class ArenaObject : EngineObject {
   virtual public void updateArena()
   {
     if (!_active) return;
+    if (_freeze) return;
 
     if (_arena.isLive()) updateArenaLive(_arena.getElapsedTime());
     else if (_arena.isEnd()) updateArenaEnd();

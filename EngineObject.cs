@@ -9,7 +9,7 @@ public class EngineObject : MonoBehaviour {
 
   //static int loadingFrameCount = 10;
 
-  protected bool freeze = false;
+  protected bool _freeze = false;
 
   void Awake()
   {
@@ -57,7 +57,7 @@ public class EngineObject : MonoBehaviour {
 
   private void Update()
   {
-    if (freeze) return;
+    if (_freeze) return;
     update();
   }
 
@@ -67,6 +67,6 @@ public class EngineObject : MonoBehaviour {
     //...
   }
   
-  public bool isFreezed() { return freeze; }
-  public void setFreeze(bool flag) { freeze = flag; }
+  public bool isFreezed() { return _freeze; }
+  public void setFreeze(bool flag) { _freeze = flag; }
 }
