@@ -27,7 +27,12 @@ public class ModuleLabel : ModuleVisible {
   public override void restart()
   {
     base.restart();
-    hide();
+
+    if (!dontHideOnStartup)
+    {
+      hide();
+    }
+    
   }
 
   public void updateLabel(string content)

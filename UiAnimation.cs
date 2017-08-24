@@ -2,10 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class UiAnimation : EngineObject
 {
   protected RectTransform _owner;
+  public float animationLength = 1f;
+  protected float animTimer = 0f;
+
+  public AnimationCurve curve;
+  public Action onAnimationDone;
 
   protected override void build()
   {
@@ -18,6 +24,10 @@ public class UiAnimation : EngineObject
   {
     reset();
     setFreeze(false);
+
+    animTimer = 0f;
+
+    //Debug.Log(name + " play !");
   }
 
   virtual public void reset()
@@ -31,11 +41,28 @@ public class UiAnimation : EngineObject
 
     if (isFreezed()) return;
 
+    if(animTimer < animationLength)
+    {
+      animTimer += Time.deltaTime;
+      if(animTimer >= animationLength)
+      {
+        animTimer = animationLength;
+        if (onAnimationDone != null) onAnimationDone();
+      }
+    }
+    
+
     updateUiAnimation();
+  }
+
+  protected float getProgress()
+  {
+    //return Mathf.Lerp(0f, animationLength, animTimer);
+    return curve.Evaluate(animTimer / animationLength);
   }
 
   virtual protected void updateUiAnimation()
   {
-
+    //Debug.Log(name + " "+GetType()+" update ...");
   }
 }

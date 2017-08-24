@@ -6,28 +6,30 @@ using UnityEngine.UI;
 public class UiSlide : UiAnimation {
   
   Vector3 originalPosition;
-
+  
   public RectTransform target;
-  public float speed = 3f;
 
   protected override void build()
   {
     base.build();
 
-    originalPosition = _owner.transform.position;
+    originalPosition = _owner.localPosition;
   }
   
   override public void reset()
   {
     base.reset();
     
-    _owner.transform.position = originalPosition;
+    _owner.localPosition = originalPosition;
   }
 
   protected override void updateUiAnimation()
   {
     base.updateUiAnimation();
-    
-    transform.localPosition = Vector3.MoveTowards(transform.localPosition, target.transform.position, Time.deltaTime * speed);
+
+    //Debug.Log(getProgress());
+    _owner.localPosition = Vector3.Lerp(originalPosition, target.localPosition, getProgress());
+
+    //transform.localPosition = Vector3.MoveTowards(transform.localPosition, target.transform.position, Time.deltaTime * speed);
   }
 }

@@ -10,14 +10,13 @@ public class UiTextScale : UiAnimation {
   int originalFontSize = 10;
 
   public int fontSizeTarget = 10;
-
-  public float speed = 3f;
-
+  
   protected override void build()
   {
     base.build();
 
     txt = GetComponent<Text>();
+
     originalFontSize = txt.fontSize;
   }
 
@@ -32,6 +31,6 @@ public class UiTextScale : UiAnimation {
   {
     base.updateUiAnimation();
 
-    txt.fontSize = Mathf.FloorToInt(Mathf.MoveTowards(txt.fontSize, fontSizeTarget, Time.deltaTime * speed));
+    txt.fontSize = Mathf.FloorToInt(Mathf.Lerp(originalFontSize, fontSizeTarget, getProgress()));
   }
 }

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class ModuleVisible : ArenaObject {
 
+  public bool dontHideOnStartup = false;
+
   SpriteRenderer _sprRender;
   Renderer _render;
   Material mat;
@@ -39,6 +41,8 @@ public class ModuleVisible : ArenaObject {
     original.a = getAlpha();
 
     //Debug.Log("ORIGIN : " + original, gameObject);
+    if (dontHideOnStartup) return;
+
     hide();
   }
 

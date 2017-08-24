@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ModuleLabelCounter : ModuleLabel {
-  
+
   public float count = 0f;
   protected float count_target = 0f;
 
@@ -14,7 +14,7 @@ public class ModuleLabelCounter : ModuleLabel {
   protected float score_target_time = 0.01f;
   protected float score_target_timer = 0f;
   protected int score_target = 0;
-
+  
   public override void restart()
   {
     base.restart();
