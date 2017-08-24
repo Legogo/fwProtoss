@@ -121,15 +121,11 @@ public class Timer : ArenaObject {
       return;
     }
 
+    //Debug.Log("<b>"+timerName + "</b> solving timeout !", gameObject);
+
     //loop timer ?
     if (restartOnTimeout) timer = 0f;
     else timer = -1f;
-
-    if (timeout != null)
-    {
-      //Debug.Log(timerName + " timeout !", gameObject);
-      timeout();
-    }
     
     if (timeout != null) timeout();
   }
