@@ -34,6 +34,7 @@ public class EngineManager : MonoBehaviour {
 
     for (int i = 0; i < objects.Count; i++)
     {
+      if (objects[i].isFreezed()) continue;
       objects[i].update();
     }
   }

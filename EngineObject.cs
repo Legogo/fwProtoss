@@ -7,6 +7,8 @@ public class EngineObject : MonoBehaviour {
   //loading list
   static List<EngineObject> eos = new List<EngineObject>();
 
+  protected EngineManager _eManager;
+
   //static int loadingFrameCount = 10;
 
   protected bool _freeze = false;
@@ -14,11 +16,12 @@ public class EngineObject : MonoBehaviour {
   void Awake()
   {
     build();
-    
+
     if (!EngineManager.isLive())
     {
       eos.Add(this);
     }
+
   }
 
   IEnumerator Start()
@@ -47,7 +50,16 @@ public class EngineObject : MonoBehaviour {
 
   virtual protected void build()
   {
+    _eManager = EngineManager.get();
+    EngineManager.get().objects.Add(this);
+  }
 
+  private void OnDestroy()
+  {
+    if(_eManager != null)
+    {
+      if(_eManager.objects.IndexOf(this) > 0) _eManager.objects.Remove(this);
+    }
   }
 
   virtual protected void setup()
@@ -55,11 +67,13 @@ public class EngineObject : MonoBehaviour {
 
   }
 
+  /*
   private void Update()
   {
     if (_freeze) return;
     update();
   }
+  */
 
   //must be called by a manager
   virtual public void update()
