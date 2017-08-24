@@ -40,6 +40,8 @@ public class Timer : ArenaObject {
     timer = 0f;
 
     param = getCurrentParam();
+
+    if (param == null) Debug.LogWarning("no param for " + timerName+" ("+name+")", gameObject);
   }
 
   public void stop()
@@ -119,6 +121,13 @@ public class Timer : ArenaObject {
 
   public void setAtEnd()
   {
+    //jamais démarré ...
+    if (param == null)
+    {
+      //Debug.LogWarning("no param ? " + timerName, gameObject);
+      return;
+    }
+
     timer = param.value - 0.1f;
   }
 
