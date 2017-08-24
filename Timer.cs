@@ -90,13 +90,14 @@ public class Timer : ArenaObject {
     if (param == null) return;
 
     //DEBUG
+#if UNITY_EDITOR
     if (Input.GetKeyUp(KeyCode.T))
     {
-#if UNITY_EDITOR
       Debug.LogWarning("skip timer, debug");
-#endif
-      setAtEnd();
+      solveTimeout();
+      return;
     }
+#endif
 
     //Debug.Log(timer + " / " + param.value);
 
@@ -105,21 +106,13 @@ public class Timer : ArenaObject {
       timer += Time.deltaTime;
       if(timer > param.value)
       {
-        //loop timer ?
-        if (restartOnTimeout) timer = 0f;
-        else timer = -1f;
-
-        if (timeout != null)
-        {
-          //Debug.Log(timerName + " timeout !", gameObject);
-          timeout();
-        }
+        solveTimeout();
       }
     }
 
   }
 
-  public void setAtEnd()
+  public void solveTimeout()
   {
     //jamais démarré ...
     if (param == null)
@@ -128,7 +121,17 @@ public class Timer : ArenaObject {
       return;
     }
 
-    timer = param.value - 0.1f;
+    //loop timer ?
+    if (restartOnTimeout) timer = 0f;
+    else timer = -1f;
+
+    if (timeout != null)
+    {
+      //Debug.Log(timerName + " timeout !", gameObject);
+      timeout();
+    }
+    
+    if (timeout != null) timeout();
   }
 
   protected float getTarget() { return param.value; }
