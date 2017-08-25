@@ -7,9 +7,8 @@ public class Timer : ArenaObject {
 
   public string timerName = "";
 
-  TimerParams param;
-  public TimerParams[] timeParams;
-
+  public SODataTimer balancing;
+  
   public bool liveOnStartup = true;
   public bool restartOnTimeout = true;
   public bool liveOnEnd = false;
@@ -22,7 +21,8 @@ public class Timer : ArenaObject {
   {
     base.build();
 
-    if (timeParams.Length <= 0) Debug.LogError("no time setup for " + name, gameObject);
+    if (balancing == null) Debug.LogError("no balancing");
+    if (balancing.timerParams.Length <= 0) Debug.LogError("no time setup for " + name, gameObject);
   }
 
   public override void restart()
@@ -39,9 +39,8 @@ public class Timer : ArenaObject {
   {
     timer = 0f;
 
-    param = getCurrentParam();
-
-    if (param == null) Debug.LogWarning("no param for " + timerName+" ("+name+")", gameObject);
+    //update interal param
+    balancing.getCurrentParam();
   }
 
   public void stop()
@@ -60,12 +59,13 @@ public class Timer : ArenaObject {
     base.updateArenaLive(timeStamp);
     
     //next param time !
-    if(timeParams.Length > 1)
+    if(balancing != null && balancing.timerParams.Length > 1)
     {
+      TimerParams param = balancing.getCurrentParam();
+
       if (timeStamp > param.timeMark)
       {
         Debug.Log(name + " next param " + timeStamp + " > " + param.timeMark);
-        param = getCurrentParam();
       }
     }
 
@@ -86,7 +86,9 @@ public class Timer : ArenaObject {
   protected void updateTimer() {
 
     if (!isRunning()) return;
-    
+
+    TimerParams param = balancing.getCurrentParam();
+
     if (param == null) return;
 
     //DEBUG
@@ -114,6 +116,8 @@ public class Timer : ArenaObject {
 
   public void solveTimeout()
   {
+    TimerParams param = balancing.getCurrentParam();
+    
     //jamais démarré ...
     if (param == null)
     {
@@ -130,31 +134,4 @@ public class Timer : ArenaObject {
     if (timeout != null) timeout();
   }
 
-  protected float getTarget() { return param.value; }
-
-  protected TimerParams getCurrentParam()
-  {
-    return getParam(ArenaManager.get().getElapsedTime());
-  }
-
-  protected TimerParams getParam(float timeStamp)
-  {
-    if (timeParams.Length <= 0) return null;
-
-    for (int i = timeParams.Length - 1; i >= 0; i--)
-    {
-      if (timeStamp > timeParams[i].timeMark) return timeParams[i];
-    }
-
-    return timeParams[timeParams.Length-1];
-  }
-  
-}
-
-
-[Serializable]
-public class TimerParams
-{
-  public float timeMark;
-  public float value;
 }
