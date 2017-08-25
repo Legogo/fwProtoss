@@ -21,8 +21,8 @@ public class Timer : ArenaObject {
   {
     base.build();
 
-    if (balancing == null) Debug.LogError("no balancing");
-    if (balancing.timerParams.Length <= 0) Debug.LogError("no time setup for " + name, gameObject);
+    if (balancing == null) Debug.LogError("no balancing on "+name, gameObject);
+    if (balancing.timedParams.Length <= 0) Debug.LogError("no time setup for " + name, gameObject);
   }
 
   public override void restart()
@@ -40,7 +40,9 @@ public class Timer : ArenaObject {
     timer = 0f;
 
     //update interal param
-    balancing.getCurrentParam();
+    balancing.fetchTimeParam();
+
+    if (balancing.getCurrentParam() == null) Debug.LogError("no current param ? ", gameObject);
   }
 
   public void stop()
@@ -59,7 +61,7 @@ public class Timer : ArenaObject {
     base.updateArenaLive(timeStamp);
     
     //next param time !
-    if(balancing != null && balancing.timerParams.Length > 1)
+    if(balancing != null && balancing.timedParams.Length > 1)
     {
       TimerParams param = balancing.getCurrentParam();
 
