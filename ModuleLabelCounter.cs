@@ -31,13 +31,18 @@ public class ModuleLabelCounter : ModuleLabel {
     if (progressiveScoring) updateCountTarget();
   }
 
+  protected int solveScoreGap()
+  {
+    return Mathf.FloorToInt(count_target - count);
+  }
+
   protected float solveProgressiveTime()
   {
     int limit = 50;
-    int gap = Mathf.Min(limit, Mathf.FloorToInt(count_target - count));
+    int gap = Mathf.Min(limit, solveScoreGap());
 
     //plus le gap est grand, plus ça va vite
-    float result = Mathf.Lerp(0.02f, 0.0001f, Mathf.InverseLerp(0, limit, gap));
+    float result = Mathf.Lerp(0.05f, 0.0f, Mathf.InverseLerp(0, limit, gap));
 
     //Debug.Log(count + " / " + count_target + " = " + gap + " = " + result);
 
@@ -50,6 +55,16 @@ public class ModuleLabelCounter : ModuleLabel {
 
     if (count >= count_target) return;
 
+    if(count < count_target)
+    {
+      float step = Mathf.Lerp(1, 10, Mathf.InverseLerp(0, 20, solveScoreGap()));
+
+      count += Mathf.FloorToInt(step);
+
+      updateTextWithCount(true);
+    }
+    /*
+    //le temps d'attente avant de ++ le score
     float timeTarget = solveProgressiveTime();
 
     if (score_target_timer < timeTarget)
@@ -70,7 +85,7 @@ public class ModuleLabelCounter : ModuleLabel {
         }
       }
     }
-
+    */
   }
 
   protected void updateTextWithCount(bool forceCount = false)
