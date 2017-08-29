@@ -20,8 +20,26 @@ public class Version : MonoBehaviour {
 
   public Text txt;
 
-  private void OnDrawGizmosSelected()
+  [ContextMenu("Increase Version")]
+  protected void increase_minor()
   {
+    minor++;
+    fix = 0;
+    build++;
+
+    applyVersion();
+  }
+
+  [ContextMenu("Increase Fix")]
+  protected void increase_fix()
+  {
+    fix++;
+    build++;
+
+    applyVersion();
+  }
+
+  protected void applyVersion() {
 
     if (txt == null) txt = GetComponent<Text>();
     //https://mogutan.wordpress.com/2015/03/06/confusing-unity-mobile-player-settings-for-versions/
@@ -30,11 +48,16 @@ public class Version : MonoBehaviour {
     PlayerSettings.Android.bundleVersionCode = build;
     PlayerSettings.iOS.buildNumber = PlayerSettings.bundleVersion;
 
-    if(txt != null)
+    if (txt != null)
     {
       txt.text = "" + PlayerSettings.bundleVersion;
     }
-    
+
+  }
+
+  private void OnDrawGizmosSelected()
+  {
+    applyVersion();
   }
 
 #endif
