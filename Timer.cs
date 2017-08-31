@@ -116,6 +116,12 @@ public class Timer : ArenaObject {
 
   }
 
+  public float getProgress()
+  {
+    TimerParams param = balancing.getCurrentParam();
+    return timer / param.value;
+  }
+
   public void solveTimeout()
   {
     TimerParams param = balancing.getCurrentParam();
