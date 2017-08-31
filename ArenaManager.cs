@@ -16,7 +16,7 @@ abstract public class ArenaManager : EngineObject {
   {
     base.build();
 
-    EngineManager.get().onLoadingDone += restart;
+    //EngineManager.get().onLoadingDone += restart;
   }
 
   virtual public void restart()
