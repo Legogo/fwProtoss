@@ -56,7 +56,11 @@ public class ArenaObjectVisible : ArenaObject {
   {
     if (Application.isPlaying) return;
 
-    transform.localScale = Vector3.one * scaleSize;
+    transform.localScale = Vector3.one;
+
+    //symbol !
+    Transform tr = transform.GetChild(0);
+    tr.localScale = Vector3.one * scaleSize;
   }
   
   public Vector2 getObjectPointNearestToTransform(Transform tr)
