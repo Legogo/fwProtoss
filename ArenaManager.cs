@@ -10,6 +10,8 @@ abstract public class ArenaManager : EngineObject {
   public enum ArenaState { MENU, LIVE, END }
   protected ArenaState _state;
 
+  protected Coroutine coProcessEnd;
+
   public List<ArenaObject> arenaObjects = new List<ArenaObject>();
 
   protected override void build()
@@ -57,6 +59,14 @@ abstract public class ArenaManager : EngineObject {
     }
   }
 
+  virtual public void kill()
+  {
+    if(coProcessEnd != null)
+    {
+      StopCoroutine(coProcessEnd);
+    }
+  }
+
   public void event_end()
   {
     _state = ArenaState.END;
@@ -68,7 +78,7 @@ abstract public class ArenaManager : EngineObject {
       aobjs[i].event_end();
     }
 
-    StartCoroutine(processEnd());
+    coProcessEnd = StartCoroutine(processEnd());
   }
   
   virtual protected IEnumerator processEnd()
