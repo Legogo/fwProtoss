@@ -91,6 +91,7 @@ public class ArenaObject : EngineObject {
 
   virtual protected void collect()
   {
+
     kill();
   }
 
