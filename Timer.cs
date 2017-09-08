@@ -33,6 +33,7 @@ public class Timer : ArenaObject {
     {
       play();
     }
+
   }
 
   public void play()
@@ -43,6 +44,14 @@ public class Timer : ArenaObject {
     balancing.fetchTimeParam();
 
     if (balancing.getCurrentParam() == null) Debug.LogError("no current param ? ", gameObject);
+
+    TimerParams param = balancing.getCurrentParam();
+
+    if (balancing.timeoutAtStart)
+    {
+      //Debug.Log("timeout at start " + name);
+      timer = param.value - 0.0001f;
+    }
   }
 
   public void stop()
