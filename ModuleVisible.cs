@@ -120,6 +120,8 @@ public class ModuleVisible : ArenaObject {
     base.kill();
     hide();
   }
+  
+  public Transform getSymbol() { return transform.GetChild(0); }
 
   virtual public Renderer getRender() { return _render; }
 
