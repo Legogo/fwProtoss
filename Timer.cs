@@ -29,23 +29,26 @@ public class Timer : ArenaObject {
     startTimer();
   }
   
-  public void startTimer()
+  virtual public void startTimer()
   {
-
     if (balancing == null) Debug.LogError("no balancing on " + name, gameObject);
     
-    //update interal param
-    balancing.fetchTimeParam();
-
-    if (balancing.getCurrentParam() == null) Debug.LogError("no current param ? ", gameObject);
-
+    if(balancing != null)
+    {
+      //update interal param
+      balancing.fetchTimeParam();
+    }
+    
     timer = 0f;
   }
 
   public void setupForTimeout()
   {
     TimerParams param = balancing.getCurrentParam();
-    timer = param.value - 0.0001f;
+    if(param != null)
+    {
+      timer = param.value - 0.0001f;
+    }
   }
 
   public void stop()
@@ -92,10 +95,6 @@ public class Timer : ArenaObject {
 
     if (!isRunning()) return;
 
-    TimerParams param = balancing.getCurrentParam();
-
-    if (param == null) return;
-
     //DEBUG
 #if UNITY_EDITOR
     if (Input.GetKeyUp(KeyCode.T))
@@ -108,6 +107,16 @@ public class Timer : ArenaObject {
 
     //Debug.Log(name+" | "+timer + " / " + param.value);
 
+    TimerParams param = balancing.getCurrentParam();
+    
+    //chrono
+    if (param == null)
+    {
+      timer += Time.deltaTime;
+      return;
+    }
+
+    //timer
     if (timer < param.value)
     {
       timer += Time.deltaTime;
@@ -119,6 +128,30 @@ public class Timer : ArenaObject {
 
   }
 
+  public float getTime()
+  {
+    return timer;
+  }
+
+  public float getTimeRemaining()
+  {
+    //Debug.Log(getTargetStep() + " * " + getProgress());
+    //float max = getTargetStep();
+    return getTargetStep() - timer;
+  }
+
+  public float getTargetStep()
+  {
+    TimerParams param = balancing.getCurrentParam();
+
+    if(param != null)
+    {
+      return param.value;
+    }
+
+    return 0f;
+  }
+
   public float getProgress()
   {
     TimerParams param = balancing.getCurrentParam();
@@ -127,8 +160,17 @@ public class Timer : ArenaObject {
 
   public void solveTimeout()
   {
+    //if (balancing == null) Debug.LogError(name + " no balancing ? ", gameObject);
+
+    //si le timer a jamais été call et qu'on arrive a la fin d'un round
+    if (balancing == null) return;
+
     TimerParams param = balancing.getCurrentParam();
     
+    if (param == null) return;
+
+    //Debug.Log(name + " timeout !", gameObject);
+
     //jamais démarré ...
     if (param == null)
     {

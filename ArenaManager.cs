@@ -5,8 +5,10 @@ using UnityEngine.UI;
 
 abstract public class ArenaManager : EngineObject {
   
-  public float time = 0f;
-  
+  public float time = 0f; // elasped time
+
+  protected float liveFreezeTimer = 0f;
+
   public enum ArenaState { MENU, LIVE, END }
   protected ArenaState _state;
 
@@ -33,6 +35,8 @@ abstract public class ArenaManager : EngineObject {
     }
 
     _state = ArenaState.LIVE;
+
+    liveFreezeTimer = 1f;
   }
 
   public override void update()
@@ -57,6 +61,12 @@ abstract public class ArenaManager : EngineObject {
     {
       arenaObjects[i].updateArena();
     }
+
+    if (liveFreezeTimer > 0f)
+    {
+      liveFreezeTimer -= Time.deltaTime;
+    }
+
   }
 
   virtual public void kill()
@@ -93,7 +103,7 @@ abstract public class ArenaManager : EngineObject {
 
   public ArenaState getState() { return _state; }
   public bool isAtState(ArenaState st) { return _state == st; }
-  public bool isLive() { return isAtState(ArenaState.LIVE); }
+  public bool isLive() { return liveFreezeTimer < 0f && isAtState(ArenaState.LIVE); }
   public bool isEnd() { return isAtState(ArenaState.END); }
 
   static protected ArenaManager _manager;
