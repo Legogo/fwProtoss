@@ -75,6 +75,10 @@ abstract public class ArenaManager : EngineObject {
     {
       StopCoroutine(coProcessEnd);
     }
+
+    //for (int i = 0; i < arenaObjects.Count; i++) arenaObjects[i].kill();
+
+    UiAnimation.killAll();
   }
 
   public void event_end()

@@ -32,6 +32,7 @@ public class UiAnimation : EngineObject
 
   virtual public void reset()
   {
+    animTimer = 0f;
     setFreeze(true);
   }
 
@@ -54,7 +55,7 @@ public class UiAnimation : EngineObject
 
     updateUiAnimation();
   }
-
+  
   protected float getProgress()
   {
     //return Mathf.Lerp(0f, animationLength, animTimer);
@@ -64,5 +65,14 @@ public class UiAnimation : EngineObject
   virtual protected void updateUiAnimation()
   {
     //Debug.Log(name + " "+GetType()+" update ...");
+  }
+
+  static public void killAll()
+  {
+    UiAnimation[] anims = GameObject.FindObjectsOfType<UiAnimation>();
+    for (int i = 0; i < anims.Length; i++)
+    {
+      anims[i].reset();
+    }
   }
 }

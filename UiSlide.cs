@@ -21,6 +21,8 @@ public class UiSlide : UiAnimation {
     base.reset();
     
     _owner.localPosition = originalPosition;
+
+    //Debug.Log(name + " reset to "+_owner.localPosition, gameObject);
   }
 
   protected override void updateUiAnimation()
@@ -29,7 +31,8 @@ public class UiSlide : UiAnimation {
 
     //Debug.Log(getProgress());
     _owner.localPosition = Vector3.Lerp(originalPosition, target.localPosition, getProgress());
-
+    
+    //Debug.Log(name + " moved to " + _owner.localPosition, gameObject);
     //transform.localPosition = Vector3.MoveTowards(transform.localPosition, target.transform.position, Time.deltaTime * speed);
   }
 }

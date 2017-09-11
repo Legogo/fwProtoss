@@ -51,6 +51,7 @@ public class TouchCounter {
     else if(touchTimer < 0f)
     {
       count = 0;
+      //Debug.Log("reset");
     }
 
   }
