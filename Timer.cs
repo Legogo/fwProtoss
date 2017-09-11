@@ -31,7 +31,7 @@ public class Timer : ArenaObject {
   
   virtual public void startTimer()
   {
-    if (balancing == null) Debug.LogError("no balancing on " + name, gameObject);
+    if (balancing == null) Debug.LogError("no balancing for " + name, gameObject);
     
     if(balancing != null)
     {
