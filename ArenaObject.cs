@@ -8,7 +8,7 @@ using UnityEngine;
 /// update
 /// </summary>
 
-public class ArenaObject : EngineObject {
+abstract public class ArenaObject : EngineObject {
 
   bool _active = true;
 
@@ -61,7 +61,15 @@ public class ArenaObject : EngineObject {
   virtual public void restart()
   {
 
+    setupBalance(ChallengeManager.get().current);
+
   }
+
+  virtual protected void setupBalance(SOGameBalance balance)
+  {
+
+  }
+
   virtual public void event_end()
   {
 

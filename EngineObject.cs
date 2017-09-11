@@ -62,10 +62,7 @@ public class EngineObject : MonoBehaviour {
     }
   }
 
-  virtual protected void setup()
-  {
-
-  }
+  virtual protected void setup(){}
 
   /*
   private void Update()

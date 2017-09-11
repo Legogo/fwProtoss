@@ -7,7 +7,10 @@ public class ModuleLabelCounter : ModuleLabel {
   public float count = 0f;
   protected float count_target = 0f;
 
+  //permet de clamp la valeur quand elle est modifiée
   public Vector2 countClampLimit = Vector2.zero;
+
+  //permet de demander une valeur aléatoire
   public Vector2 countRandomRange = Vector2.zero;
 
   public bool progressiveScoring = false;
@@ -104,6 +107,10 @@ public class ModuleLabelCounter : ModuleLabel {
     setCount(getCount() + step);
   }
   
+  public void setMin()
+  {
+    setCount(countRandomRange.x);
+  }
   virtual public void setCount(float newCount)
   {
     

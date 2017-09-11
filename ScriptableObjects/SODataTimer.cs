@@ -6,7 +6,6 @@ using System;
 [CreateAssetMenu(menuName = "data/DataTimer", order = 100)]
 public class SODataTimer : ScriptableObject
 {
-  public bool timeoutAtStart;
   protected TimerParams param;
   public TimerParams[] timedParams;
   

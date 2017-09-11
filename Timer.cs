@@ -7,51 +7,45 @@ public class Timer : ArenaObject {
 
   public string timerName = "";
 
-  public SODataTimer balancing;
+  protected SODataTimer balancing;
   
   public bool liveOnStartup = true;
   public bool restartOnTimeout = true;
   public bool liveOnEnd = false;
+  public bool timeoutOnPlay = false;
 
   protected float timer = -1f;
   
   public Action timeout;
   
-  protected override void build()
+  public void setupBalancing(SODataTimer bal)
   {
-    base.build();
-
-    if (balancing == null) Debug.LogError("no balancing on "+name, gameObject);
-    if (balancing.timedParams.Length <= 0) Debug.LogError("no time setup for " + name, gameObject);
+    balancing = bal;
   }
 
-  public override void restart()
+  public void setupAndStart(SODataTimer balancing)
   {
-    base.restart();
-
-    if (liveOnStartup)
-    {
-      play();
-    }
-
+    setupBalancing(balancing);
+    startTimer();
   }
-
-  public void play()
+  
+  public void startTimer()
   {
-    timer = 0f;
 
+    if (balancing == null) Debug.LogError("no balancing on " + name, gameObject);
+    
     //update interal param
     balancing.fetchTimeParam();
 
     if (balancing.getCurrentParam() == null) Debug.LogError("no current param ? ", gameObject);
 
-    TimerParams param = balancing.getCurrentParam();
+    timer = 0f;
+  }
 
-    if (balancing.timeoutAtStart)
-    {
-      //Debug.Log("timeout at start " + name);
-      timer = param.value - 0.0001f;
-    }
+  public void setupForTimeout()
+  {
+    TimerParams param = balancing.getCurrentParam();
+    timer = param.value - 0.0001f;
   }
 
   public void stop()
@@ -112,7 +106,7 @@ public class Timer : ArenaObject {
     }
 #endif
 
-    //Debug.Log(timer + " / " + param.value);
+    //Debug.Log(name+" | "+timer + " / " + param.value);
 
     if (timer < param.value)
     {
