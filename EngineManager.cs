@@ -15,10 +15,15 @@ public class EngineManager : MonoBehaviour {
 
   public List<EngineObject> objects = new List<EngineObject>();
 
+  public int targetFramerate = -1;
+
   void Awake()
   {
-    Application.targetFrameRate = 60;
-
+    if(targetFramerate > 0)
+    {
+      Application.targetFrameRate = targetFramerate;
+    }
+    
     state_live = false;
   }
 

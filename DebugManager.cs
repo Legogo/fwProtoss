@@ -6,17 +6,18 @@ public class DebugManager : MonoBehaviour {
 
   public bool show = false;
   
+#if UNITY_EDITOR
+
   GUIStyle skin;
-  Rect guiRec = new Rect(15f,15f,0f,0f);
-  
-  void Update() {
+  Rect guiRec = new Rect(15f, 15f, 0f, 0f);
+
+  void Update()
+  {
     if (Input.GetKeyUp(KeyCode.RightShift))
     {
       show = !show;
     }
   }
-
-#if UNITY_EDITOR
 
   void OnGUI() {
     
