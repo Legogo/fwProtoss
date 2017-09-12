@@ -43,6 +43,12 @@ abstract public class ArenaManager : EngineObject {
   {
     base.update();
 
+    //update all aobs
+    for (int i = 0; i < arenaObjects.Count; i++)
+    {
+      arenaObjects[i].updateArena();
+    }
+    
     if (!EngineManager.isLive()) return;
 
     if (Input.GetKeyUp(KeyCode.Space))
@@ -56,12 +62,6 @@ abstract public class ArenaManager : EngineObject {
     if (Input.GetKey(KeyCode.P)) mul = 100f;
     time += Time.deltaTime * mul;
     
-    //update all aobs
-    for (int i = 0; i < arenaObjects.Count; i++)
-    {
-      arenaObjects[i].updateArena();
-    }
-
     if (liveFreezeTimer > 0f)
     {
       liveFreezeTimer -= Time.deltaTime;

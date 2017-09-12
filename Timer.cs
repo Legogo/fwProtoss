@@ -48,10 +48,14 @@ public class Timer : ArenaObject {
 
   public void setupForTimeout()
   {
+    if (balancing == null) return;
+
     TimerParams param = balancing.getCurrentParam();
     if(param != null)
     {
       timer = param.value - 0.0001f;
+
+      //Debug.Log("force timeout on " + timerName + " : " + timer);
     }
   }
 
@@ -88,9 +92,9 @@ public class Timer : ArenaObject {
   {
     base.updateArenaEnd();
 
-    if (!liveOnEnd) return;
+    //Debug.Log("timer " + timerName + " updateEnd | ? " + timer + " / " + getProgress(), gameObject);
 
-    //Debug.Log("timer "+timerName+" updateEnd | ? "+timer+" / "+getTarget(), gameObject);
+    if (!liveOnEnd) return;
 
     updateTimer();
   }
@@ -100,17 +104,7 @@ public class Timer : ArenaObject {
     //Debug.Log(timerName + " update "+isRunning());
 
     if (!isRunning()) return;
-
-    //DEBUG
-#if UNITY_EDITOR
-    if (Input.GetKeyUp(KeyCode.T))
-    {
-      Debug.LogWarning("skip timer, debug");
-      solveTimeout();
-      return;
-    }
-#endif
-
+    
     //Debug.Log(name+" | "+timer + " / " + param.value);
 
     TimerParams param = null;
@@ -138,6 +132,7 @@ public class Timer : ArenaObject {
 
   }
 
+  public bool hasBalancing() { return balancing != null; }
   public bool isChrono() { return balancing == null; }
 
   public float getTime()
@@ -170,6 +165,8 @@ public class Timer : ArenaObject {
 
   public float getProgress()
   {
+    if (balancing == null) return 0f;
+
     TimerParams param = balancing.getCurrentParam();
     return timer / param.value;
   }
@@ -201,6 +198,19 @@ public class Timer : ArenaObject {
     else timer = -1f;
     
     if (timeout != null) timeout();
+  }
+
+  public string toString()
+  {
+    string ct = "";
+
+    ct += "\n(mul timer) " + name + " | " + timerName;
+    ct += "\n  liveOnEnd ? " + liveOnEnd + " , liveOnStartup ? " + liveOnStartup;
+    ct += "\n  active ? " + isActive() + " , freeze ? " + isFreezed() + " , progress ? " + getProgress();
+    if (hasBalancing()) ct += "\n  " + getTime() + " / " + getTargetStep();
+    else ct += "\n  no balancing";
+
+    return ct;
   }
 
 }

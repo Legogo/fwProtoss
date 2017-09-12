@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class DebugManager : MonoBehaviour {
 
-  #if UNITY_EDITOR
-
   public bool show = false;
   
   GUIStyle skin;
@@ -17,6 +15,8 @@ public class DebugManager : MonoBehaviour {
       show = !show;
     }
   }
+
+#if UNITY_EDITOR
 
   void OnGUI() {
     
@@ -36,10 +36,11 @@ public class DebugManager : MonoBehaviour {
     GUI.Label(guiRec, str, skin);
   }
 
+#endif
+
   virtual protected string getContent()
   {
     return "";
   }
 
-  #endif
 }

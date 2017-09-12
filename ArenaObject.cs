@@ -120,8 +120,14 @@ abstract public class ArenaObject : EngineObject {
     if (!_active) return;
     if (_freeze) return;
 
-    if (_arena.isLive()) updateArenaLive(_arena.getElapsedTime());
-    else if (_arena.isEnd()) updateArenaEnd();
+    if (_arena.isLive())
+    {
+      updateArenaLive(_arena.getElapsedTime());
+    }
+    else if (_arena.isEnd())
+    {
+      updateArenaEnd();
+    }
     else updateArenaMenu();
   }
 

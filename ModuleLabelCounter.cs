@@ -17,7 +17,11 @@ public class ModuleLabelCounter : ModuleLabel {
   protected float score_target_time = 0.01f;
   protected float score_target_timer = 0f;
   protected int score_target = 0;
-  
+
+  [Header("layout")]
+  public bool scoreBolded = false;
+  public string prefix = "";
+
   public override void restart()
   {
     base.restart();
@@ -93,13 +97,16 @@ public class ModuleLabelCounter : ModuleLabel {
 
   protected void updateTextWithCount(bool forceCount = false)
   {
-    if (forceCount)
-    {
-      updateLabel(count.ToString());
-      return;
-    }
+    string ct = "";
 
-    updateLabel(getCount().ToString());
+    if(prefix.Length > 0) ct = prefix +" ";
+
+    string score = (forceCount) ? count.ToString() : getCount().ToString();
+
+    if (scoreBolded) ct += "<b>" + score + "</b>";
+    else ct += score;
+
+    updateLabel(ct);
   }
 
   public void addToCount(float step)

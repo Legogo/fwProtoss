@@ -19,9 +19,10 @@ public class ModuleLabel : ModuleVisible {
     }
     
     ui_txt = GetComponent<Text>();
+
+    if(name.StartsWith("s_") && ui_txt == null) Debug.LogError("no txt for " + name + " ?", gameObject);
     
     base.build();
-    
   }
 
   public override void restart()
@@ -63,6 +64,12 @@ public class ModuleLabel : ModuleVisible {
   {
     base.hide();
     toggleLabel(false);
+  }
+
+  public override bool isVisible()
+  {
+    if (ui_txt != null) return ui_txt.enabled;
+    return txtRender.enabled;
   }
 
 }

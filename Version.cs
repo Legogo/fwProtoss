@@ -12,11 +12,13 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Version : MonoBehaviour {
-#if UNITY_EDITOR
+
   public int major = 0;
   public int minor = 0;
   public int fix = 0;
   public int build = 1;
+
+#if UNITY_EDITOR
 
   public Text txt;
 
@@ -53,12 +55,9 @@ public class Version : MonoBehaviour {
       txt.text = "" + PlayerSettings.bundleVersion;
     }
 
+    Debug.Log("<b>DIRTY</b>");
+    EditorSceneManager.MarkSceneDirty(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
   }
-
-  private void OnDrawGizmosSelected()
-  {
-    applyVersion();
-  }
-
+  
 #endif
 }

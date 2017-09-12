@@ -125,7 +125,8 @@ public class ModuleVisible : ArenaObject {
 
   virtual public Renderer getRender() { return _render; }
 
-  public bool isVisible() { return _render.enabled; }
+  virtual public bool isVisible() { return _render.enabled; }
+
   virtual public void show()
   {
     setVisibility(true);
