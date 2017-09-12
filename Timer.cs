@@ -23,7 +23,7 @@ public class Timer : ArenaObject {
     balancing = bal;
   }
 
-  public void setupAndStart(SODataTimer balancing)
+  public void setupAndStart(SODataTimer balancing = null)
   {
     setupBalancing(balancing);
     startTimer();
@@ -31,7 +31,7 @@ public class Timer : ArenaObject {
   
   virtual public void startTimer()
   {
-    if (balancing == null) Debug.LogError("no balancing for " + name, gameObject);
+    //if (balancing == null) Debug.LogError("no balancing for " + name, gameObject);
 
     //unfreeze, activate
     launch();
@@ -113,7 +113,8 @@ public class Timer : ArenaObject {
 
     //Debug.Log(name+" | "+timer + " / " + param.value);
 
-    TimerParams param = balancing.getCurrentParam();
+    TimerParams param = null;
+    if (balancing != null) param = balancing.getCurrentParam();
     
     //chrono
     if (param == null)
@@ -137,6 +138,8 @@ public class Timer : ArenaObject {
 
   }
 
+  public bool isChrono() { return balancing == null; }
+
   public float getTime()
   {
     return timer;
@@ -146,11 +149,15 @@ public class Timer : ArenaObject {
   {
     //Debug.Log(getTargetStep() + " * " + getProgress());
     //float max = getTargetStep();
+    if (isChrono()) return timer;
+
     return getTargetStep() - timer;
   }
 
   public float getTargetStep()
   {
+    if (balancing == null) return 0f;
+
     TimerParams param = balancing.getCurrentParam();
 
     if(param != null)
