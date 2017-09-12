@@ -53,9 +53,13 @@ abstract public class ArenaObject : EngineObject {
 
   }
 
+  /* contextuel */
   virtual public void launch()
   {
+
+    setFreeze(false);
     setActive(true);
+
   }
 
   virtual public void restart()

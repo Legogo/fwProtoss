@@ -32,13 +32,17 @@ public class Timer : ArenaObject {
   virtual public void startTimer()
   {
     if (balancing == null) Debug.LogError("no balancing for " + name, gameObject);
-    
+
+    //unfreeze, activate
+    launch();
+
     if(balancing != null)
     {
       //update interal param
       balancing.fetchTimeParam();
     }
-    
+
+    //Debug.Log("timer is at 0");
     timer = 0f;
   }
 
@@ -93,6 +97,8 @@ public class Timer : ArenaObject {
 
   protected void updateTimer() {
 
+    //Debug.Log(timerName + " update "+isRunning());
+
     if (!isRunning()) return;
 
     //DEBUG
@@ -120,7 +126,10 @@ public class Timer : ArenaObject {
     if (timer < param.value)
     {
       timer += Time.deltaTime;
-      if(timer > param.value)
+
+      //Debug.Log(timerName+" | "+timer +" / "+param.value);
+
+      if (timer > param.value)
       {
         solveTimeout();
       }
