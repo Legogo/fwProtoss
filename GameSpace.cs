@@ -23,6 +23,7 @@ public class GameSpace : MonoBehaviour {
   }
 
   void updateSize() {
+    if (Camera.main == null) return;
 
     if (matchScreen)
     {

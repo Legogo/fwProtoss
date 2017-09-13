@@ -6,10 +6,6 @@ using System;
 
 public class EngineLoader : MonoBehaviour
 {
-/*
-  protected enum eLoadingStates { BUILD = 0, LOADING = 1, IDLE = 2 };
-  protected eLoadingStates _state = eLoadingStates.BUILD;
-
   protected List<AsyncOperation> _asyncs;
 
   protected bool SHOW_DEBUG = false;
@@ -37,34 +33,24 @@ public class EngineLoader : MonoBehaviour
   protected void call_loading_system()
   {
     if (SHOW_DEBUG) Debug.Log("start of <color=green>system loading</color> ...");
-
-    if (isSceneLevel())
-    {
-      new GameObject("(debug)").AddComponent<DebugManager>();
-      //new GameObject("(game)").AddComponent<GameState>();
-    }
-
+    
     //cam
     StartCoroutine(process_loadScene("resource-engine"));
-    StartCoroutine(process_loadScene("resource-sounds"));
-
-    StartCoroutine(process_loadScene("resource-avatar"));
-
-    if (isSceneLevel())
-    {
-      //player
-      StartCoroutine(process_loadScene("resource-level"));
-    }
-
-    StartCoroutine(waitForAsyncs(setup));
+    StartCoroutine(process_loadScene("resource-sound"));
+    
+    StartCoroutine(waitForAsyncs(doneLoading));
   }
 
-  IEnumerator waitForAsyncs(Action onDone)
+  IEnumerator waitForAsyncs(Action onDone = null)
   {
     //Debug.Log(_asyncs.Count + " asyncs loading");
 
     while (_asyncs.Count > 0) yield return null;
-    onDone();
+    if(onDone != null) onDone();
+  }
+
+  void doneLoading() {
+    GameObject.DestroyImmediate(gameObject);
   }
 
   IEnumerator process_loadScene(string sceneLoad)
@@ -84,24 +70,7 @@ public class EngineLoader : MonoBehaviour
 
     if (SHOW_DEBUG) Debug.Log("  package '<b>" + sceneLoad + "</b>' | done loading (" + _asyncs.Count + " left)");
   }
-
-
-  //un setup global quand les resources sont dispos (sans level)
-  void setup()
-  {
-
-    EngineObject[] items = GameObject.FindObjectsOfType<EngineObject>();
-    for (int i = 0; i < items.Length; i++)
-    {
-      items[i].loading_systemDone();
-    }
-
-    if (SHOW_DEBUG) Debug.Log("... <b>system setup</b> loading done");
-
-    GameState game = GameObject.FindObjectOfType<GameState>();
-    if (game != null) game.restartLevel();
-  }
-
+  
   protected string getLevelName() { return SceneManager.GetActiveScene().name; }
   protected bool isSceneOfName(string nm) { return getLevelName().Contains(nm); }
   protected bool isSceneLevel()
@@ -110,9 +79,4 @@ public class EngineLoader : MonoBehaviour
   }
 
   static public EngineLoader _instance;
-  static public bool isDoneLoading()
-  {
-    return _instance._state >= eLoadingStates.IDLE;
-  }
-  */
 }

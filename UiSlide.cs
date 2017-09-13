@@ -9,9 +9,9 @@ public class UiSlide : UiAnimation {
   
   public RectTransform target;
   
-  protected override void setup()
+  protected override void build_late()
   {
-    base.setup();
+    base.build_late();
 
     originalPosition = _owner.localPosition;
     Debug.Log(name + " original ? " + originalPosition);

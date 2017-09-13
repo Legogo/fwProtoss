@@ -5,79 +5,54 @@ using UnityEngine;
 public class EngineObject : MonoBehaviour {
 
   //loading list
-  static List<EngineObject> eos = new List<EngineObject>();
+  static public List<EngineObject> eos = new List<EngineObject>();
 
   protected EngineManager _eManager;
 
   //static int loadingFrameCount = 10;
-
+  
   protected bool _freeze = false;
 
   void Awake()
   {
+    eos.Add(this);
+
     build();
-
-    if (!EngineManager.isLive())
-    {
-      eos.Add(this);
-    }
-
   }
 
   IEnumerator Start()
   {
-    //tt le monde a fait son build
+    yield return null;
+
     setup();
 
-    //already loaded
-    if (eos.IndexOf(this) > -1)
-    {
-      
-      yield return new WaitForSeconds(1f);
+    yield return null;
 
-      eos.Remove(this);
-
-      //Debug.Log(eos.Count);
-
-      if (!EngineManager.isLive() && eos.Count <= 0)
-      {
-        Debug.Log(name + " called <b>end of loading</b>", gameObject);
-        EngineManager.get().game_loading_done();
-      }
-    }
-
+    EngineManager.checkForStartup();
   }
 
   virtual protected void build()
   {
-    _eManager = EngineManager.get();
-    EngineManager.get().objects.Add(this);
+    
   }
-
-  private void OnDestroy()
-  {
-    if(_eManager != null)
-    {
-      if(_eManager.objects.IndexOf(this) > 0) _eManager.objects.Remove(this);
-    }
+  
+  //quand les scène sont add
+  virtual protected void setup() {
+    
   }
-
-  virtual protected void setup(){}
-
-  /*
-  private void Update()
-  {
-    if (_freeze) return;
-    update();
-  }
-  */
-
+  
   //must be called by a manager
   virtual public void update()
   {
     //...
   }
-  
+
+  private void OnDestroy()
+  {
+      if(eos.IndexOf(this) > -1) eos.Remove(this);
+  }
+
   public bool isFreezed() { return _freeze; }
   public void setFreeze(bool flag) { _freeze = flag; }
+
 }

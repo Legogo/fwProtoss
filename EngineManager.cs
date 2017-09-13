@@ -10,10 +10,9 @@ using System;
 public class EngineManager : MonoBehaviour {
   
   static protected bool state_live = false;
+  static protected int loadedCount = 0;
 
   public Action onLoadingDone;
-
-  public List<EngineObject> objects = new List<EngineObject>();
 
   public int targetFramerate = -1;
 
@@ -37,6 +36,7 @@ public class EngineManager : MonoBehaviour {
   {
     if (!isLive()) return;
 
+    List<EngineObject> objects = EngineObject.eos;
     for (int i = 0; i < objects.Count; i++)
     {
       if (objects[i].isFreezed()) continue;
@@ -47,6 +47,19 @@ public class EngineManager : MonoBehaviour {
   static public bool isLive()
   {
     return state_live;
+  }
+
+  // au premier launch il faut attendre que tt le monde setup avant de balancer le done()
+  static public void checkForStartup() {
+    
+    if (isLive()) return;
+
+    loadedCount++;
+
+    if (loadedCount == EngineObject.eos.Count) {
+      get().game_loading_done();
+    }
+
   }
 
   static protected EngineManager _manager;
