@@ -26,6 +26,14 @@ public class EngineManager : MonoBehaviour {
     state_live = false;
   }
 
+  public void engine_scenes_loaded()
+  {
+    for (int i = 0; i < EngineObject.eos.Count; i++)
+    {
+      EngineObject.eos[i].onEngineSceneLoaded();
+    }
+  }
+
   public void game_loading_done()
   {
     state_live = true;
@@ -36,6 +44,8 @@ public class EngineManager : MonoBehaviour {
   {
     if (!isLive()) return;
 
+    //update everything
+
     List<EngineObject> objects = EngineObject.eos;
     for (int i = 0; i < objects.Count; i++)
     {
@@ -44,16 +54,16 @@ public class EngineManager : MonoBehaviour {
     }
   }
 
-  static public bool isLive()
-  {
-    return state_live;
-  }
+
+  static public bool isLoading(){return !state_live;}
+  static public bool isLive(){return state_live;}
 
   // au premier launch il faut attendre que tt le monde setup avant de balancer le done()
   static public void checkForStartup() {
     
     if (isLive()) return;
 
+    //everybody setup ?
     loadedCount++;
 
     if (loadedCount == EngineObject.eos.Count) {

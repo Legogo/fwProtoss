@@ -13,24 +13,26 @@ public class EngineObject : MonoBehaviour {
   
   protected bool _freeze = false;
 
+  //constructor
   void Awake()
   {
     eos.Add(this);
-
     build();
   }
 
-  IEnumerator Start()
+  private void Start()
   {
-    yield return null;
-
-    setup();
-
-    yield return null;
-
-    EngineManager.checkForStartup();
+    //call setup if loading is done
+    if (!EngineManager.isLoading()) setup();
   }
 
+  //called by loader
+  public void onEngineSceneLoaded()
+  {
+    setup();
+    EngineManager.checkForStartup();
+  }
+  
   virtual protected void build()
   {
     
@@ -38,9 +40,14 @@ public class EngineObject : MonoBehaviour {
   
   //quand les scène sont add
   virtual protected void setup() {
-    
+    fetchData();
   }
   
+  virtual protected void fetchData()
+  {
+
+  }
+
   //must be called by a manager
   virtual public void update()
   {
@@ -49,7 +56,12 @@ public class EngineObject : MonoBehaviour {
 
   private void OnDestroy()
   {
-      if(eos.IndexOf(this) > -1) eos.Remove(this);
+    destroy();
+  }
+
+  virtual protected void destroy()
+  {
+    if (eos.IndexOf(this) > -1) eos.Remove(this);
   }
 
   public bool isFreezed() { return _freeze; }

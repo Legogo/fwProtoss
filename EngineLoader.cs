@@ -4,6 +4,14 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System;
 
+/// <summary>
+/// BUILD
+/// (loading)
+/// SETUP
+/// (check)
+/// LIVE
+/// </summary>
+
 public class EngineLoader : MonoBehaviour
 {
   protected List<AsyncOperation> _asyncs;
@@ -20,7 +28,6 @@ public class EngineLoader : MonoBehaviour
 
   void Awake()
   {
-    _instance = this;
     _asyncs = new List<AsyncOperation>();
   }
 
@@ -33,11 +40,28 @@ public class EngineLoader : MonoBehaviour
   protected void call_loading_system()
   {
     if (SHOW_DEBUG) Debug.Log("start of <color=green>system loading</color> ...");
+
     
-    //cam
-    StartCoroutine(process_loadScene("resource-engine"));
-    StartCoroutine(process_loadScene("resource-sound"));
-    
+
+    List<string> all = new List<string>();
+
+    string prefix = "resource-";
+    all.Add(prefix+"engine");
+    all.Add(prefix+"sound");
+
+    //additionnal scenes
+    string[] names = EngineLoaderFeeder.get().feed();
+    all.AddRange(names);
+
+    //merge
+    names = all.ToArray();
+
+    //start async
+    for (int i = 0; i < names.Length; i++)
+    {
+      if (!isSceneOfName(names[i])) StartCoroutine(process_loadScene(names[i]));
+    }
+
     StartCoroutine(waitForAsyncs(doneLoading));
   }
 
@@ -50,7 +74,11 @@ public class EngineLoader : MonoBehaviour
   }
 
   void doneLoading() {
+
+    EngineManager.get().engine_scenes_loaded();
+
     GameObject.DestroyImmediate(gameObject);
+
   }
 
   IEnumerator process_loadScene(string sceneLoad)
@@ -71,12 +99,22 @@ public class EngineLoader : MonoBehaviour
     if (SHOW_DEBUG) Debug.Log("  package '<b>" + sceneLoad + "</b>' | done loading (" + _asyncs.Count + " left)");
   }
   
-  protected string getLevelName() { return SceneManager.GetActiveScene().name; }
-  protected bool isSceneOfName(string nm) { return getLevelName().Contains(nm); }
+  protected string getLevelName() {
+    return SceneManager.GetActiveScene().name;
+  }
+
+  protected bool isSceneOfName(string nm) {
+    return getLevelName().Contains(nm);
+  }
+
+  protected bool isResourceScene()
+  {
+    return isSceneOfName("resource-");
+  }
+
   protected bool isSceneLevel()
   {
     return isSceneOfName("level-");
   }
-
-  static public EngineLoader _instance;
+  
 }

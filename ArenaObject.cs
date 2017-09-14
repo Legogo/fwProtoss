@@ -15,16 +15,21 @@ abstract public class ArenaObject : EngineObject {
   protected ArenaManager _arena;
   protected InputObject _input;
 
-  protected override void build()
+  protected override void fetchData()
   {
-    base.build();
+    base.fetchData();
 
     _arena = ArenaManager.get();
-    _arena.arenaObjects.Add(this);
-
     _input = GetComponent<InputObject>();
+  }
 
-    if(_input != null)
+  protected override void setup()
+  {
+    base.setup();
+
+    _arena.arenaObjects.Add(this);
+    
+    if (_input != null)
     {
 
       _input.cbTouchOver += onTouch;
@@ -34,16 +39,15 @@ abstract public class ArenaObject : EngineObject {
 
   }
 
-  private void OnDestroy()
+  protected override void destroy()
   {
+    base.destroy();
     _arena.arenaObjects.Remove(this);
   }
-
+  
   virtual protected void onTouch(InputTouchFinger finger, RaycastHit2D hit)
   {
-
-
-
+    
   }
 
   virtual protected void onRelease(InputTouchFinger finger, RaycastHit2D hit)
