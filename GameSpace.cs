@@ -19,10 +19,10 @@ public class GameSpace : MonoBehaviour {
   private void Awake()
   {
     gameSpace = this;
-    updateSize();
   }
-
-  void updateSize() {
+  
+  [ContextMenu("resize")]
+  public void updateSize() {
     if (Camera.main == null) return;
 
     if (matchScreen)
@@ -103,8 +103,8 @@ public class GameSpace : MonoBehaviour {
     {
       updateSize();
     }
-    
 
+    Gizmos.color = Color.yellow;
     Gizmos.DrawLine(botLeft, topRight);
     
     if(borders != null && borders.Length > 0)
@@ -172,6 +172,8 @@ public class GameSpace : MonoBehaviour {
 
   static public GameSpace get()
   {
-    return GameObject.FindObjectOfType<GameSpace>();
+    GameSpace gs = GameObject.FindObjectOfType<GameSpace>();
+    gs.updateSize();
+    return gs;
   }
 }

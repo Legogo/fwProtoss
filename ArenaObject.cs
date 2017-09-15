@@ -42,6 +42,7 @@ abstract public class ArenaObject : EngineObject {
   protected override void destroy()
   {
     base.destroy();
+    if (_arena == null) return;
     _arena.arenaObjects.Remove(this);
   }
   
