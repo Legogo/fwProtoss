@@ -51,9 +51,16 @@ abstract public class ArenaManager : EngineObject {
     
     if (!EngineManager.isLive()) return;
 
-    if (Input.GetKeyUp(KeyCode.Space))
+    if (Input.GetKeyUp(KeyCode.Backspace))
     {
       restart();
+      return;
+    }
+
+    if (Input.GetKeyUp(KeyCode.Escape))
+    {
+      Debug.LogWarning("DEBUG | stopped session");
+      event_end();
       return;
     }
 
