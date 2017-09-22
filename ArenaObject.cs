@@ -23,9 +23,11 @@ abstract public class ArenaObject : EngineObject {
     _input = GetComponent<InputObject>();
   }
 
-  protected override void setup()
+  public override void onEngineSceneLoaded()
   {
-    base.setup();
+    base.onEngineSceneLoaded();
+
+    //Debug.Log("<b>"+name + "."+GetType()+"</b> -> setup");
 
     _arena.arenaObjects.Add(this);
     
@@ -70,7 +72,9 @@ abstract public class ArenaObject : EngineObject {
   virtual public void restart()
   {
 
-    setupBalance(ChallengeManager.get().current);
+    SOGameBalance balance = ChallengeManager.get().current;
+    if (balance == null) Debug.LogWarning(name+" , no balance returned by manager ?", gameObject);
+    setupBalance(balance);
 
   }
 

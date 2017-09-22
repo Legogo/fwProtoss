@@ -28,6 +28,8 @@ public class EngineManager : MonoBehaviour {
 
   public void engine_scenes_loaded()
   {
+    Debug.Log("calling all callbacks for end of loading");
+
     for (int i = 0; i < EngineObject.eos.Count; i++)
     {
       EngineObject.eos[i].onEngineSceneLoaded();
@@ -45,11 +47,15 @@ public class EngineManager : MonoBehaviour {
     if (!isLive()) return;
 
     //update everything
-
+    
     List<EngineObject> objects = EngineObject.eos;
+
+    //Debug.Log("UBER update (" + objects.Count+")");
     for (int i = 0; i < objects.Count; i++)
     {
       if (objects[i].isFreezed()) continue;
+
+      //Debug.Log("#"+i+"  "+objects[i].name+" "+objects[i].GetType());
       objects[i].update();
     }
   }

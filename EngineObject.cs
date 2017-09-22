@@ -19,28 +19,17 @@ public class EngineObject : MonoBehaviour {
     eos.Add(this);
     build();
   }
-
-  private void Start()
-  {
-    //call setup if loading is done
-    if (!EngineManager.isLoading()) setup();
-  }
-
+  
   //called by loader
-  public void onEngineSceneLoaded()
+  virtual public void onEngineSceneLoaded()
   {
-    setup();
+    fetchData();
     EngineManager.checkForStartup();
   }
   
   virtual protected void build()
   {
     
-  }
-  
-  //quand les scène sont add
-  virtual protected void setup() {
-    fetchData();
   }
   
   virtual protected void fetchData()

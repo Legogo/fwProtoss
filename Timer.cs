@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 public class Timer : ArenaObject {
 
   public string timerName = "";
@@ -21,10 +25,13 @@ public class Timer : ArenaObject {
   public void setupBalancing(SODataTimer bal)
   {
     balancing = bal;
+    if(balancing == null) Debug.LogWarning(timerName + " setupBalancing(null)", gameObject);
   }
 
   public void setupAndStart(SODataTimer balancing = null)
   {
+    if (balancing == null) Debug.Log("balancing is null ?");
+
     setupBalancing(balancing);
     startTimer();
   }
@@ -32,7 +39,15 @@ public class Timer : ArenaObject {
   virtual public void startTimer()
   {
     //if (balancing == null) Debug.LogError("no balancing for " + name, gameObject);
-
+    if (balancing != null)
+    {
+      Debug.Log("timer " + timerName + " starting as timeout. Timeout in " + balancing.getCurrentParam().value, gameObject);
+    }
+    else
+    {
+      Debug.Log("timer " + timerName + " starting as a chrono (no timeout)", gameObject);
+    }
+    
     //unfreeze, activate
     launch();
 
@@ -105,8 +120,8 @@ public class Timer : ArenaObject {
 
     if (!isRunning()) return;
     
-    //Debug.Log(name+" | "+timer + " / " + param.value);
-
+    //if(balancing != null && balancing.getCurrentParam() != null) Debug.Log(name + " | " + timer + " / " + balancing.getCurrentParam().value);
+    
     TimerParams param = null;
     if (balancing != null) param = balancing.getCurrentParam();
     
@@ -122,7 +137,7 @@ public class Timer : ArenaObject {
     {
       timer += Time.deltaTime;
 
-      //Debug.Log(timerName+" | "+timer +" / "+param.value);
+      //Debug.Log(transform.name+" | "+ timerName+" | "+timer +" / "+param.value+" (+"+Time.deltaTime+")");
 
       if (timer > param.value)
       {
@@ -199,6 +214,15 @@ public class Timer : ArenaObject {
     
     if (timeout != null) timeout();
   }
+
+#if UNITY_EDITOR
+  private void OnDrawGizmos()
+  {
+
+    Handles.Label(transform.position + Vector3.right, ""+getTime());
+
+  }
+#endif
 
   public string toString()
   {

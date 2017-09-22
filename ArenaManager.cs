@@ -28,7 +28,7 @@ abstract public class ArenaManager : EngineObject {
     Debug.Log("<b>RESTART</b> at "+Time.time);
 
     _freeze = false;
-
+    
     for (int i = 0; i < arenaObjects.Count; i++)
     {
       arenaObjects[i].restart();
@@ -44,8 +44,10 @@ abstract public class ArenaManager : EngineObject {
     base.update();
 
     //update all aobs
+    //Debug.Log("ARENA update (" + arenaObjects.Count + ")");
     for (int i = 0; i < arenaObjects.Count; i++)
     {
+      //Debug.Log("#"+i+" | "+arenaObjects[i].name+" "+arenaObjects[i].GetType());
       arenaObjects[i].updateArena();
     }
     

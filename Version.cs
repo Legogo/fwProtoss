@@ -59,7 +59,7 @@ public class Version : MonoBehaviour {
       txt.text = "" + PlayerSettings.bundleVersion;
     }
 
-    Debug.Log("<b>DIRTY</b>");
+    Debug.Log("<b>DIRTY</b> "+PlayerSettings.bundleVersion);
     EditorSceneManager.MarkSceneDirty(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
   }
   

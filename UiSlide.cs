@@ -8,15 +8,15 @@ public class UiSlide : UiAnimation {
   Vector3 originalPosition;
   
   public RectTransform target;
-  
-  protected override void setup()
+
+  protected override void build()
   {
-    base.setup();
+    base.build();
 
     originalPosition = _owner.localPosition;
     Debug.Log(name + " original ? " + originalPosition);
   }
-
+  
   override public void reset()
   {
     base.reset();

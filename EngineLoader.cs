@@ -70,6 +70,10 @@ public class EngineLoader : MonoBehaviour
     //Debug.Log(_asyncs.Count + " asyncs loading");
 
     while (_asyncs.Count > 0) yield return null;
+
+    //NEED a frame for all Start to process
+    yield return null;
+
     if(onDone != null) onDone();
   }
 
