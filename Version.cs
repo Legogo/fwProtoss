@@ -21,24 +21,28 @@ public class Version : MonoBehaviour {
 #if UNITY_EDITOR
 
   public Text txt;
-
-  [ContextMenu("Increase Version")]
-  protected void increase_minor()
+  
+  [MenuItem("Version/Increase Version")]
+  static protected void increase_minor()
   {
-    minor++;
-    fix = 0;
-    build++;
+    Version v = GameObject.FindObjectOfType<Version>();
 
-    applyVersion();
+    v.minor++;
+    v.fix = 0;
+    v.build++;
+
+    v.applyVersion();
   }
 
-  [ContextMenu("Increase Fix")]
-  protected void increase_fix()
+  [MenuItem("Version/Increase Fix")]
+  static protected void increase_fix()
   {
-    fix++;
-    build++;
+    Version v = GameObject.FindObjectOfType<Version>();
 
-    applyVersion();
+    v.fix++;
+    v.build++;
+
+    v.applyVersion();
   }
 
   protected void applyVersion() {
