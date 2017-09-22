@@ -32,15 +32,23 @@ public class ArenaObjectVisible : ArenaObject {
   {
     base.spawnProcess(position);
 
+    show();  
+  }
+
+  protected void show()
+  {
     _modVisible.show();
 
-    if(_modLabelCounter != null) _modLabelCounter.show();
+    if (_modLabelCounter != null) _modLabelCounter.show();
   }
 
   public override void kill()
   {
     base.kill();
+
+    //_modVisible.setAlpha(1f);
     _modVisible.hide();
+
     if(_modLabel != null) _modLabel.hide();
   }
 

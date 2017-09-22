@@ -25,7 +25,7 @@ abstract public class ArenaManager : EngineObject {
 
   virtual public void restart()
   {
-    Debug.Log("<b>RESTART</b> at "+Time.time);
+    //Debug.Log("<b>RESTART</b> at "+Time.time);
 
     _freeze = false;
     

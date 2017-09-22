@@ -70,29 +70,6 @@ public class ModuleLabelCounter : ModuleLabel {
 
       updateTextWithCount(true);
     }
-    /*
-    //le temps d'attente avant de ++ le score
-    float timeTarget = solveProgressiveTime();
-
-    if (score_target_timer < timeTarget)
-    {
-      score_target_timer += Time.deltaTime;
-
-      if (score_target_timer >= timeTarget)
-      {
-        score_target_timer = 0f;
-
-        //Debug.Log(count + " / " + count_target);
-
-        //animation du score
-        if (count < count_target)
-        {
-          count++;
-          updateTextWithCount(true);
-        }
-      }
-    }
-    */
   }
 
   protected void updateTextWithCount(bool forceCount = false)

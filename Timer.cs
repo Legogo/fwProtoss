@@ -25,12 +25,12 @@ public class Timer : ArenaObject {
   public void setupBalancing(SODataTimer bal)
   {
     balancing = bal;
-    if(balancing == null) Debug.LogWarning(timerName + " setupBalancing(null)", gameObject);
+    //if(balancing == null) Debug.LogWarning(timerName + " setupBalancing(null)", gameObject);
   }
 
   public void setupAndStart(SODataTimer balancing = null)
   {
-    if (balancing == null) Debug.Log("balancing is null ?");
+    //if (balancing == null) Debug.Log("balancing is null ?");
 
     setupBalancing(balancing);
     startTimer();
@@ -38,16 +38,12 @@ public class Timer : ArenaObject {
   
   virtual public void startTimer()
   {
-    //if (balancing == null) Debug.LogError("no balancing for " + name, gameObject);
-    if (balancing != null)
-    {
-      Debug.Log("timer " + timerName + " starting as timeout. Timeout in " + balancing.getCurrentParam().value, gameObject);
-    }
-    else
-    {
-      Debug.Log("timer " + timerName + " starting as a chrono (no timeout)", gameObject);
-    }
-    
+
+#if UNITY_EDITOR
+    //if (balancing != null) Debug.Log("timer " + timerName + " starting as timeout. Timeout in " + balancing.getCurrentParam().value, gameObject);
+    //else Debug.Log("timer " + timerName + " starting as a chrono (no balancing / timeout)", gameObject);
+#endif
+
     //unfreeze, activate
     launch();
 
@@ -81,6 +77,7 @@ public class Timer : ArenaObject {
 
   public bool isRunning()
   {
+    if (isFreezed()) return false;
     return timer >= 0f;
   }
 
@@ -88,7 +85,7 @@ public class Timer : ArenaObject {
   protected override void updateArenaLive(float timeStamp)
   {
     base.updateArenaLive(timeStamp);
-    
+
     //next param time !
     if(balancing != null && balancing.timedParams.Length > 1)
     {

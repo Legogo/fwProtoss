@@ -28,7 +28,7 @@ public class EngineManager : MonoBehaviour {
 
   public void engine_scenes_loaded()
   {
-    Debug.Log("calling all callbacks for end of loading");
+    //Debug.Log("calling all callbacks for end of loading");
 
     for (int i = 0; i < EngineObject.eos.Count; i++)
     {

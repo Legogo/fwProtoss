@@ -4,13 +4,12 @@ using UnityEngine;
 
 public class ModuleVisible : ArenaObject {
 
+  public bool hideOnSpawn = false;
   public bool dontHideOnStartup = false;
 
   SpriteRenderer _sprRender;
   Renderer _render;
   Material mat;
-
-  protected Color original;
 
   public Renderer[] others;
 
@@ -36,10 +35,7 @@ public class ModuleVisible : ArenaObject {
       }
 
     }
-
-    original = getColor();
-    original.a = getAlpha();
-
+    
     //Debug.Log("ORIGIN : " + original, gameObject);
     if (dontHideOnStartup) return;
 
@@ -55,7 +51,8 @@ public class ModuleVisible : ArenaObject {
   protected override void spawnProcess(Vector3 position)
   {
     base.spawnProcess(position);
-    show();
+
+    if (!hideOnSpawn) show();
   }
 
   public void setSprite(Sprite newSprite)
@@ -76,13 +73,7 @@ public class ModuleVisible : ArenaObject {
   {
     return getColor().a;
   }
-
-  public void setOriginColor() {
-    //Debug.Log(original, gameObject);
-    setColor(original);
-    //setAlpha(1f);
-  }
-
+  
   public Color getColor()
   {
     if (isSprite())
@@ -98,10 +89,16 @@ public class ModuleVisible : ArenaObject {
     return Color.white;
   }
 
-  public void setColor(Color col)
+  public void changeColor(Color col)
+  {
+    col.a = getAlpha();
+    setColor(col);
+  }
+
+  protected void setColor(Color col)
   {
     //Debug.Log(name + " " + col + " " + isSprite());
-
+    
     if (isSprite())
     {
       _sprRender.color = col;
@@ -109,6 +106,7 @@ public class ModuleVisible : ArenaObject {
     }
 
     mat.SetColor("_EmissionColor", col);
+
     for (int i = 0; i < others.Length; i++)
     {
       others[i].sharedMaterial.SetColor("_EmissionColor", col);
@@ -138,6 +136,8 @@ public class ModuleVisible : ArenaObject {
 
   protected void setVisibility(bool flag)
   {
+    //if(flag) Debug.Log(name + " set visible");
+
     if (isSprite())
     {
       _sprRender.enabled = flag;

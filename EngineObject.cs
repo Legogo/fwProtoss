@@ -18,6 +18,8 @@ public class EngineObject : MonoBehaviour {
   {
     eos.Add(this);
     build();
+
+    if (!EngineManager.isLoading()) onEngineSceneLoaded();
   }
   
   //called by loader
@@ -54,6 +56,9 @@ public class EngineObject : MonoBehaviour {
   }
 
   public bool isFreezed() { return _freeze; }
-  public void setFreeze(bool flag) { _freeze = flag; }
+  public void setFreeze(bool flag) {
+    //Debug.Log(name + " freeze ? " + flag);
+    _freeze = flag;
+  }
 
 }

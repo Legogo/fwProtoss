@@ -14,28 +14,26 @@ abstract public class ArenaObject : EngineObject {
 
   protected ArenaManager _arena;
   protected InputObject _input;
-
-  protected override void fetchData()
-  {
-    base.fetchData();
-
-    _arena = ArenaManager.get();
-    _input = GetComponent<InputObject>();
-  }
-
+  
   public override void onEngineSceneLoaded()
   {
     base.onEngineSceneLoaded();
 
     //Debug.Log("<b>"+name + "."+GetType()+"</b> -> setup");
+    _arena = ArenaManager.get();
 
-    _arena.arenaObjects.Add(this);
-    
-    if (_input != null)
+    if (_arena.arenaObjects.IndexOf(this) < 0) _arena.arenaObjects.Add(this);
+
+    if (_input == null)
     {
+      _input = GetComponent<InputObject>();
 
-      _input.cbTouchOver += onTouch;
-      _input.cbReleaseOver += onRelease;
+      if (_input != null)
+      {
+        _input.cbTouchOver += onTouch;
+        _input.cbReleaseOver += onRelease;
+      }
+
 
     }
 
@@ -73,7 +71,7 @@ abstract public class ArenaObject : EngineObject {
   {
 
     SOGameBalance balance = ChallengeManager.get().current;
-    if (balance == null) Debug.LogWarning(name+" , no balance returned by manager ?", gameObject);
+    if (balance == null) Debug.LogWarning(name + " , no balance returned by manager ?", gameObject);
     setupBalance(balance);
 
   }
@@ -90,6 +88,9 @@ abstract public class ArenaObject : EngineObject {
 
   public void spawn(Vector3? position)
   {
+    //make sure balancing is setup
+    restart();
+
     if (position == null)
     {
       Debug.LogWarning("Object "+name+" has no given position for spawn", gameObject);
@@ -97,10 +98,11 @@ abstract public class ArenaObject : EngineObject {
     }
 
     Vector3 pos = (Vector3)position;
+    transform.position = pos;
+
+    //Debug.Log(name + " spawn");
 
     setActive(true);
-
-    transform.position = pos;
 
     spawnProcess(pos);
   }
