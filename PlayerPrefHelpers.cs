@@ -24,15 +24,28 @@ public class StringPref
 
   public void addValue(string addVal)
   {
+    if (addVal.Length <= 0)
+    {
+      Debug.LogError("addValue should not be empty");
+      return;
+    }
+
     //already added
-    if (has(addVal)) return;
+    if (has(addVal))
+    {
+      Debug.LogWarning("value : "+addVal+" , already added to StringPref");
+      return;
+    }
 
     string data = get();
-
+    
     if (data.Length <= 0) data = addVal;
     else data += "," + addVal;
 
     PlayerPrefs.SetString(key, data);
+    PlayerPrefs.Save();
+
+    Debug.Log("SAVE | " + key + " = " + data);
   }
 
   public string get()

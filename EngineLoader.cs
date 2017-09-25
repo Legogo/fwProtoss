@@ -40,9 +40,7 @@ public class EngineLoader : MonoBehaviour
   protected void call_loading_system()
   {
     if (SHOW_DEBUG) Debug.Log("start of <color=green>system loading</color> ...");
-
     
-
     List<string> all = new List<string>();
 
     string prefix = "resource-";

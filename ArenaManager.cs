@@ -26,6 +26,7 @@ abstract public class ArenaManager : EngineObject {
   virtual public void restart()
   {
     //Debug.Log("<b>RESTART</b> at "+Time.time);
+    time = 0f;
 
     _freeze = false;
     
@@ -62,20 +63,30 @@ abstract public class ArenaManager : EngineObject {
     if (Input.GetKeyUp(KeyCode.Escape))
     {
       Debug.LogWarning("DEBUG | stopped session");
-      event_end();
+      debug_round_cancel();
       return;
     }
 
     //speed up debug arena timer
     float mul = 1f;
-    if (Input.GetKey(KeyCode.P)) mul = 100f;
-    time += Time.deltaTime * mul;
+
     
-    if (liveFreezeTimer > 0f)
+    if(_state == ArenaState.LIVE)
     {
-      liveFreezeTimer -= Time.deltaTime;
+      //debug, make ingame time go faster
+      if (Input.GetKey(KeyCode.P)) mul = 100f;
+      time += Time.deltaTime * mul;
+
+      if (liveFreezeTimer > 0f)
+      {
+        liveFreezeTimer -= Time.deltaTime;
+      }
     }
 
+  }
+
+  virtual public void debug_round_cancel() {
+    event_end();
   }
 
   virtual public void kill()
@@ -100,7 +111,7 @@ abstract public class ArenaManager : EngineObject {
     {
       aobjs[i].event_end();
     }
-
+    
     coProcessEnd = StartCoroutine(processEnd());
   }
   

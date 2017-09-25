@@ -121,18 +121,21 @@ public class Timer : ArenaObject {
     
     TimerParams param = null;
     if (balancing != null) param = balancing.getCurrentParam();
-    
+
+    float mul = 1f;
+    if (Input.GetKey(KeyCode.P)) mul = 10f;
+
     //chrono
     if (param == null)
     {
-      timer += Time.deltaTime;
+      timer += Time.deltaTime * mul;
       return;
     }
 
     //timer
     if (timer < param.value)
     {
-      timer += Time.deltaTime;
+      timer += Time.deltaTime * mul;
 
       //Debug.Log(transform.name+" | "+ timerName+" | "+timer +" / "+param.value+" (+"+Time.deltaTime+")");
 

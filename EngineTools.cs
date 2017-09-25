@@ -5,9 +5,39 @@ using System;
 
 public class EngineTools {
 
-  static public GameObject getCarrier(string name)
+  static public Transform extractChildOfName(string name, Transform context) {
+    Transform child = context.Find(name);
+    if (child != null) return child;
+
+    foreach(Transform tr in context) {
+      child = extractChildOfName(name, tr);
+    }
+
+    if (child == null) Debug.LogWarning("couldn't find child of name " + name + " in hierarchy of " + context.name);
+
+    return child;
+  }
+
+  static public Transform getCarrier(string name, Transform context = null)
   {
-    return GameObject.Find(name);
+    GameObject output;
+
+    if (context != null) {
+      return extractChildOfName(name, context);
+    }
+
+    output = GameObject.Find(name);
+    
+    if (output != null) {
+      return output.transform;
+    }
+
+    Debug.LogWarning("couldn't find carry of name " + name);
+    return null;
+  }
+
+  static public T getComponentInScene<T>(string carryName, Transform context) {
+    return getCarrier(carryName).GetComponent<T>();
   }
 
   static public T getComponentInScene<T>(string carryName)
@@ -31,7 +61,7 @@ public class ObjectFetch
 
   public T getComponent<T>(string carry)
   {
-    GameObject obj = EngineTools.getCarrier(carry);
+    Transform obj = EngineTools.getCarrier(carry);
     if (obj == null)
     {
       Debug.LogError("no object found with name : " + carry);
