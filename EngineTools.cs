@@ -18,15 +18,14 @@ public class EngineTools {
     return child;
   }
 
-  static public Transform getCarrier(string name, Transform context = null)
+  static public Transform getCarrierByContext(string name, Transform context = null)
   {
-    GameObject output;
+    return extractChildOfName(name, context);
+  }
 
-    if (context != null) {
-      return extractChildOfName(name, context);
-    }
-
-    output = GameObject.Find(name);
+  static public Transform getCarrier(string name)
+  {
+    GameObject output = GameObject.Find(name);
     
     if (output != null) {
       return output.transform;
@@ -36,8 +35,9 @@ public class EngineTools {
     return null;
   }
 
-  static public T getComponentInScene<T>(string carryName, Transform context) {
-    return getCarrier(carryName).GetComponent<T>();
+  static public T getComponentInSceneByContext<T>(string carryName, Transform context)
+  {
+    return getCarrierByContext(carryName, context).GetComponent<T>();
   }
 
   static public T getComponentInScene<T>(string carryName)
@@ -64,7 +64,7 @@ public class ObjectFetch
     Transform obj = EngineTools.getCarrier(carry);
     if (obj == null)
     {
-      Debug.LogError("no object found with name : " + carry);
+      Debug.LogWarning("no object found with name : " + carry);
       return default(T);
     }
 

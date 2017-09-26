@@ -23,6 +23,12 @@ public class EngineLoader : MonoBehaviour
   {
     Debug.Log("<color=gray>Engine entry point</color>");
 
+    //only load in game scene
+    if (!isSceneOfName("game"))
+    {
+      return;
+    }
+
     new GameObject("[loader]").AddComponent<EngineLoader>();
   }
 
@@ -47,8 +53,15 @@ public class EngineLoader : MonoBehaviour
     all.Add(prefix+"engine");
     all.Add(prefix+"sound");
 
+    string[] names = new string[0];
+
     //additionnal scenes
-    string[] names = EngineLoaderFeeder.get().feed();
+    EngineLoaderFeeder feeder = EngineLoaderFeeder.get();
+    if(feeder != null)
+    {
+      names = feeder.feed();
+    }
+    
     all.AddRange(names);
 
     //merge
@@ -101,20 +114,20 @@ public class EngineLoader : MonoBehaviour
     if (SHOW_DEBUG) Debug.Log("  package '<b>" + sceneLoad + "</b>' | done loading (" + _asyncs.Count + " left)");
   }
   
-  protected string getLevelName() {
+  static protected string getLevelName() {
     return SceneManager.GetActiveScene().name;
   }
 
-  protected bool isSceneOfName(string nm) {
+  static public bool isSceneOfName(string nm) {
     return getLevelName().Contains(nm);
   }
 
-  protected bool isResourceScene()
+  static protected bool isResourceScene()
   {
     return isSceneOfName("resource-");
   }
 
-  protected bool isSceneLevel()
+  static protected bool isSceneLevel()
   {
     return isSceneOfName("level-");
   }

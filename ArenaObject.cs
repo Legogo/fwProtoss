@@ -21,9 +21,11 @@ abstract public class ArenaObject : EngineObject {
 
     //Debug.Log("<b>"+name + "."+GetType()+"</b> -> setup");
     _arena = ArenaManager.get();
-
-    if (_arena.arenaObjects.IndexOf(this) < 0) _arena.arenaObjects.Add(this);
-
+    if(_arena != null)
+    {
+      if (_arena.arenaObjects.IndexOf(this) < 0) _arena.arenaObjects.Add(this);
+    }
+    
     if (_input == null)
     {
       _input = GetComponent<InputObject>();

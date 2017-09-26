@@ -58,11 +58,15 @@ public class StringPref
   {
     string data = get();
 
-    if (data.Length <= 0) return false;
+    Debug.Log(GetType()+"  now searching for " + compVal + " in " + data);
 
+    if (data.Length <= 0) return false;
+    
     if (data.IndexOf(',') > -1)
     {
       string[] split = data.Split(',');
+
+      
       for (int i = 0; i < split.Length; i++)
       {
         if (split[i] == compVal) return true;
@@ -72,6 +76,8 @@ public class StringPref
     {
       if (data == compVal) return true;
     }
+
+    Debug.Log(GetType() + "    not found " +compVal);
 
     return false;
   }

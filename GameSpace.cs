@@ -173,6 +173,7 @@ public class GameSpace : MonoBehaviour {
   static public GameSpace get()
   {
     GameSpace gs = GameObject.FindObjectOfType<GameSpace>();
+    if (gs == null) return null;
     gs.updateSize();
     return gs;
   }
