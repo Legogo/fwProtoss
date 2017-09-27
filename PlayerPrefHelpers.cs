@@ -45,7 +45,7 @@ public class StringPref
     PlayerPrefs.SetString(key, data);
     PlayerPrefs.Save();
 
-    Debug.Log("SAVE | " + key + " = " + data);
+    //Debug.Log("SAVE | " + key + " = " + data);
   }
 
   public string get()
@@ -58,7 +58,7 @@ public class StringPref
   {
     string data = get();
 
-    Debug.Log(GetType()+"  now searching for '" + compVal + "' in '" + data+"'");
+    //Debug.Log(GetType()+"  now searching for '" + compVal + "' in '" + data+"'");
 
     if (data.Length <= 0) return false;
     
@@ -77,7 +77,7 @@ public class StringPref
       if (data == compVal) return true;
     }
 
-    Debug.Log(GetType() + "    not found " +compVal);
+    //Debug.Log(GetType() + "    not found " +compVal);
 
     return false;
   }
