@@ -58,7 +58,7 @@ public class StringPref
   {
     string data = get();
 
-    Debug.Log(GetType()+"  now searching for " + compVal + " in " + data);
+    Debug.Log(GetType()+"  now searching for '" + compVal + "' in '" + data+"'");
 
     if (data.Length <= 0) return false;
     
