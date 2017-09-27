@@ -18,9 +18,10 @@ public class Timer : ArenaObject {
   public bool liveOnEnd = false;
   public bool timeoutOnPlay = false;
 
-  protected float timer = -1f;
-  
   public Action timeout;
+
+  [Header("read only")]
+  public float timer = -1f;
   
   public void setupBalancing(SODataTimer bal)
   {
