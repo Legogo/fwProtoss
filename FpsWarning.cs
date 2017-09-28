@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class FpsWarning : MonoBehaviour
+public class FpsWarning : DebugDisplayContent
 {
   int fps = 0;
 
@@ -10,27 +10,31 @@ public class FpsWarning : MonoBehaviour
 
   protected int avg_idx = 0;
   protected int[] avg;
-
-  GUIStyle style;
+  float average = 0f;
 
   public Color valid;
   public Color invalid;
 
-  private void Awake()
+  protected override void Awake()
   {
+    base.Awake();
     avg = new int[frameAvgCount];
-
-    if (style == null)
-    {
-      style = new GUIStyle();
-    }
   }
 
-  void OnGUI()
+  protected override void setupFont()
   {
+    base.setupFont();
+
+    style.normal.textColor = (average > warningLimit) ? valid : invalid;
+  }
+
+  protected override void process()
+  {
+    base.process();
+
     fps = Mathf.FloorToInt(1.0f / Time.deltaTime);
 
-    float average = fps;
+    average = fps;
 
     if (avg.Length > 0)
     {
@@ -46,11 +50,7 @@ public class FpsWarning : MonoBehaviour
       }
       average /= avg.Length;
     }
-
-    //style.normal.textColor = (fps < monitorValue) ? invalid : valid;
-    style.normal.textColor = (average > warningLimit) ? valid : invalid;
-    style.fontSize = 30;
-
-    GUI.Label(new Rect(10, 10, 400, 400), "FPS " + fps+" ("+ average + ")", style);
+    
+    ct = "FPS " + fps + " (" + average + ")";
   }
 }

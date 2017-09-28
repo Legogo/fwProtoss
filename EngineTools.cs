@@ -53,7 +53,7 @@ public class ObjectFetch
   public string carry = "";
   protected Component comp;
   
-  public T getComponent<T>() where T : Component
+  public T getComponentOnce<T>() where T : Component
   {
     if(comp == null) comp = getComponent<T>(carry);
     return (T)comp;

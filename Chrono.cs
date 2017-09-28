@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Chrono : Timer {
 
-  protected Canvas _parent;
+  protected Canvas _canvasOwner;
   public Text txt_min;
   public Text txt_sec;
 
@@ -15,14 +15,14 @@ public class Chrono : Timer {
   {
     base.build();
 
-    _parent = gameObject.GetComponentInParent<Canvas>();
+    _canvasOwner = gameObject.GetComponentInParent<Canvas>();
   }
   
   public override void startTimer()
   {
     base.startTimer();
 
-    _parent.enabled = true;
+    _canvasOwner.enabled = true;
     updateVisual();
   }
 
@@ -54,7 +54,10 @@ public class Chrono : Timer {
   public override void kill()
   {
     base.kill();
-    
-    _parent.enabled = false;
+    clean();
+  }
+  public void clean()
+  {
+    _canvasOwner.enabled = false;
   }
 }
