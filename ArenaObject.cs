@@ -45,21 +45,10 @@ abstract public class ArenaObject : EngineObject {
 
   virtual public void restart()
   {
-
-    SOGameBalance balance = ChallengeManager.get().current;
-    if (balance == null) Debug.LogWarning(name + " , no balance returned by manager ?", gameObject);
-    setupBalance(balance);
-
   }
-
-  virtual protected void setupBalance(SOGameBalance balance)
-  {
-
-  }
-
+  
   virtual public void event_end()
   {
-
   }
 
   public void spawn(Vector3? position)

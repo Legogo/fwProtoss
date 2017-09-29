@@ -11,7 +11,7 @@ public class Timer : ArenaObject {
 
   public string timerName = "";
 
-  protected SODataTimer balancing;
+  protected DataTimer balancing;
   
   public bool liveOnStartup = true;
   public bool restartOnTimeout = true;
@@ -23,13 +23,13 @@ public class Timer : ArenaObject {
   [Header("read only")]
   public float timer = -1f;
   
-  public void setupBalancing(SODataTimer bal)
+  public void setupBalancing(DataTimer bal)
   {
     balancing = bal;
     //if(balancing == null) Debug.LogWarning(timerName + " setupBalancing(null)", gameObject);
   }
 
-  public void setupAndStart(SODataTimer balancing = null)
+  public void setupAndStart(DataTimer balancing = null)
   {
     //if (balancing == null) Debug.Log("balancing is null ?");
 
