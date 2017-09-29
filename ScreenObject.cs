@@ -32,6 +32,11 @@ public class ScreenObject : EngineObject
     _canvas = transform.GetComponentsInChildren<Canvas>();
   }
 
+  virtual public void reset()
+  {
+
+  }
+
   protected void toggleVisible(bool flag)
   {
     if(!Application.isPlaying) fetchData();

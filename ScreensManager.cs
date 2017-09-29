@@ -36,9 +36,10 @@ public class ScreensManager : EngineObject {
   {
 
     //###
-
-    //some stuff to reinit at each start
-    ScreenChallenges.resetSelection();
+    for (int i = 0; i < screens.Length; i++)
+    {
+      screens[i].reset();
+    }
 
     //start game
     ScreenObject.call_home();
