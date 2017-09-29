@@ -13,7 +13,6 @@ abstract public class ArenaObject : EngineObject {
   bool _active = true;
 
   protected ArenaManager _arena;
-  protected InputObject _input;
   
   public override void onEngineSceneLoaded()
   {
@@ -26,19 +25,6 @@ abstract public class ArenaObject : EngineObject {
       if (_arena.arenaObjects.IndexOf(this) < 0) _arena.arenaObjects.Add(this);
     }
     
-    if (_input == null)
-    {
-      _input = GetComponent<InputObject>();
-
-      if (_input != null)
-      {
-        _input.cbTouchOver += onTouch;
-        _input.cbReleaseOver += onRelease;
-      }
-
-
-    }
-
   }
 
   protected override void destroy()
@@ -48,18 +34,6 @@ abstract public class ArenaObject : EngineObject {
     _arena.arenaObjects.Remove(this);
   }
   
-  virtual protected void onTouch(InputTouchFinger finger, RaycastHit2D hit)
-  {
-    
-  }
-
-  virtual protected void onRelease(InputTouchFinger finger, RaycastHit2D hit)
-  {
-
-
-
-  }
-
   /* contextuel */
   virtual public void launch()
   {
