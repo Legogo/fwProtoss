@@ -79,14 +79,9 @@ public class ScreenObject : EngineObject
     call_home();
   }
 
-  static public void call_home() {
-    //stop behaviors
-    ArenaSnakeManager asm = (ArenaSnakeManager)ArenaSnakeManager.get();
-    if(asm != null)
-    {
-      asm.kill();
-    }
-
+  static public void call_home()
+  {
+    
     ScreensManager sm = ScreensManager.get();
     if(sm != null)
     {
