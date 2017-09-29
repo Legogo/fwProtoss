@@ -90,9 +90,4 @@ public class ScreenObject : EngineObject
     
   }
 
-  public void act_ingame_retry()
-  {
-    ArenaSnakeManager.get().restart();
-  }
-
 }
