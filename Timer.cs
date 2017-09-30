@@ -81,8 +81,7 @@ public class Timer : ArenaObject {
     if (isFreezed()) return false;
     return timer >= 0f;
   }
-
-
+  
   protected override void updateArenaLive(float timeStamp)
   {
     base.updateArenaLive(timeStamp);

@@ -16,7 +16,7 @@ public class DataTimer : ScriptableObject
 
   public void fetchTimeParam()
   {
-    fetchTimeParam(ArenaManager.get().getElapsedTime());
+    fetchTimeParam(GameTime.elapsedTime);
   }
 
   public void fetchTimeParam(float elapsed)

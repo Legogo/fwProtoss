@@ -12,6 +12,7 @@ public class EngineManager : MonoBehaviour {
   static protected bool state_live = false;
   static protected int loadedCount = 0;
 
+  //something need to subscribe to this to get end of loading callback
   public Action onLoadingDone;
 
   public int targetFramerate = -1;
@@ -53,14 +54,17 @@ public class EngineManager : MonoBehaviour {
     //Debug.Log("UBER update (" + objects.Count+")");
     for (int i = 0; i < objects.Count; i++)
     {
-      if (objects[i].isFreezed()) continue;
+      if (!objects[i].canUpdate()) continue;
+      objects[i].updateEngine();
+    }
 
-      //Debug.Log("#"+i+"  "+objects[i].name+" "+objects[i].GetType());
-      objects[i].update();
+    for (int i = 0; i < objects.Count; i++)
+    {
+      if (!objects[i].canUpdate()) continue;
+      objects[i].updateEngineLate();
     }
   }
-
-
+  
   static public bool isLoading(){return !state_live;}
   static public bool isLive(){return state_live;}
 
@@ -80,7 +84,11 @@ public class EngineManager : MonoBehaviour {
 
   static protected EngineManager _manager;
   static public EngineManager get() {
-    if (_manager == null) _manager = GameObject.FindObjectOfType<EngineManager>();
+    if (_manager == null)
+    {
+      _manager = GameObject.FindObjectOfType<EngineManager>();
+    }
+
     return _manager;
   }
 }

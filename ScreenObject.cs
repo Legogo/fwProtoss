@@ -29,7 +29,10 @@ public class ScreenObject : EngineObject
   override protected void fetchData()
   {
     base.fetchData();
+
     _canvas = transform.GetComponentsInChildren<Canvas>();
+
+    //Debug.Log(name + " --> " + _canvas);
   }
 
   virtual public void reset()
@@ -37,11 +40,22 @@ public class ScreenObject : EngineObject
 
   }
 
+  public void setCanvasVisibility(string nm, bool flag)
+  {
+    for (int i = 0; i < _canvas.Length; i++)
+    {
+      if (_canvas[i].name.Contains(nm)) _canvas[i].enabled = flag;
+    }
+  }
+
   protected void toggleVisible(bool flag)
   {
-    if(!Application.isPlaying) fetchData();
+    //si le scriptorder fait que le ScreenObject arrive après le Screenmanager ...
+    if(_canvas == null) fetchData();
 
     if (sticky) flag = true;
+
+    if (_canvas == null) Debug.LogError("no canvas ? for "+name, gameObject);
 
     for (int i = 0; i < _canvas.Length; i++)
     {
@@ -74,6 +88,12 @@ public class ScreenObject : EngineObject
     toggleVisible(false);
   }
 
+  public override bool canUpdate()
+  {
+    if (!isVisible()) return false;
+    return base.canUpdate();
+  }
+  
   public bool isVisible()
   {
     return _canvas[0].enabled;

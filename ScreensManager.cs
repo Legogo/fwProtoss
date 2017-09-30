@@ -14,7 +14,12 @@ public class ScreensManager : EngineObject {
 
     call("loading");
 
-    EngineManager.get().onLoadingDone += onLoaded;
+    EngineManager em = EngineManager.get();
+    if(em != null)
+    {
+      em.onLoadingDone += onLoaded;
+    }
+
   }
   
   override protected void fetchData()
@@ -34,31 +39,30 @@ public class ScreensManager : EngineObject {
 
   protected void onLoaded()
   {
-
     //###
     for (int i = 0; i < screens.Length; i++)
     {
       screens[i].reset();
     }
-
-    //start game
-    ScreenObject.call_home();
+    
   }
 
-  public void call(ScreenObject sc)
+  /* return only the first found */
+  public ScreenObject call(string nm)
   {
-    call(sc.name);
-  }
-
-  public void call(string nm)
-  {
+    //Debug.Log("ui calling " + nm);
+    ScreenObject target = null;
 
     for (int i = 0; i < screens.Length; i++)
     {
-      if (screens[i].name.Contains(nm)) screens[i].show();
+      if (screens[i].name.Contains(nm))
+      {
+        target = screens[i];
+        screens[i].show();
+      }
       else screens[i].hide();
     }
-
+    return target;
   }
 
   [ContextMenu("kill all")]

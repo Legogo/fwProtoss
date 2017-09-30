@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// abstract !
+/// </summary>
+
 abstract public class EngineLoaderFeeder : MonoBehaviour {
 
   protected List<string> scene_names;

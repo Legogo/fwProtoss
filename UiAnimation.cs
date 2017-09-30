@@ -36,9 +36,9 @@ public class UiAnimation : EngineObject
     setFreeze(true);
   }
 
-  public override void update()
+  public override void updateEngine()
   {
-    base.update();
+    base.updateEngine();
 
     if (isFreezed()) return;
 

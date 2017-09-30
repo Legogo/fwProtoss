@@ -40,9 +40,9 @@ abstract public class ArenaManager : EngineObject {
     liveFreezeTimer = 1f;
   }
 
-  public override void update()
+  public override void updateEngine()
   {
-    base.update();
+    base.updateEngine();
 
     //update all aobs
     //Debug.Log("ARENA update (" + arenaObjects.Count + ")");

@@ -13,7 +13,7 @@ public class EngineTools {
       child = extractChildOfName(name, tr);
     }
 
-    if (child == null) Debug.LogWarning("couldn't find child of name " + name + " in hierarchy of " + context.name);
+    //if (child == null) Debug.LogWarning("couldn't find child of name " + name + " in hierarchy of " + context.name);
 
     return child;
   }

@@ -40,9 +40,20 @@ public class EngineObject : MonoBehaviour {
   }
 
   //must be called by a manager
-  virtual public void update()
+  virtual public void updateEngine()
   {
     //...
+  }
+
+  virtual public void updateEngineLate()
+  {
+
+  }
+
+  virtual public bool canUpdate()
+  {
+    if (isFreezed()) return false;
+    return true;
   }
 
   private void OnDestroy()
@@ -57,7 +68,7 @@ public class EngineObject : MonoBehaviour {
 
   public bool isFreezed() { return _freeze; }
   public void setFreeze(bool flag) {
-    //Debug.Log(name + " freeze ? " + flag);
+    //Debug.Log("<b>" + name + "</b> , "+GetType()+" , setFreeze " + flag);
     _freeze = flag;
   }
 

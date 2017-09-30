@@ -31,9 +31,9 @@ public class ModuleLabelCounter : ModuleLabel {
     updateTextWithCount();
   }
   
-  public override void update()
+  public override void updateEngine()
   {
-    base.update();
+    base.updateEngine();
 
     if (progressiveScoring) updateCountTarget();
   }

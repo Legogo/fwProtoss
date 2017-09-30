@@ -26,6 +26,7 @@ public class EngineLoader : MonoBehaviour
     //only load in game scene
     if (!isSceneOfName("game"))
     {
+      //SceneManager.LoadScene("game");
       return;
     }
 
@@ -90,10 +91,10 @@ public class EngineLoader : MonoBehaviour
 
   void doneLoading() {
 
-    EngineManager.get().engine_scenes_loaded();
-
+    EngineManager em = EngineManager.get();
+    if (em != null) em.engine_scenes_loaded();
+    
     GameObject.DestroyImmediate(gameObject);
-
   }
 
   IEnumerator process_loadScene(string sceneLoad)
