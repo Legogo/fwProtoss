@@ -70,7 +70,8 @@ public class ScreenObject : EngineObject
   [ContextMenu("show")]
   virtual public void show()
   {
-    //ScreensManager.get().call("");
+    Debug.Log(name + " show");
+
     if(ScreensManager.get() != null) ScreensManager.get().killAll();
 
     toggleVisible(true);
