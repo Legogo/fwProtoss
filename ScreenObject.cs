@@ -14,17 +14,12 @@ public class ScreenObject : EngineObject
     fetchData();
 
     if (_canvas == null) Debug.LogError("no canvas ?");
-    
-    //if (_canvas == null) Debug.LogError("wat ?");
-  }
 
-  public override void onEngineSceneLoaded()
-  {
-    base.onEngineSceneLoaded();
-    
+    //if (_canvas == null) Debug.LogError("wat ?");
+
     hide();
   }
-
+  
   [ContextMenu("fetch")]
   override protected void fetchData()
   {
@@ -48,7 +43,7 @@ public class ScreenObject : EngineObject
     }
   }
 
-  protected void toggleVisible(bool flag)
+  public void toggleVisible(bool flag)
   {
     //si le scriptorder fait que le ScreenObject arrive après le Screenmanager ...
     if(_canvas == null) fetchData();
@@ -66,26 +61,24 @@ public class ScreenObject : EngineObject
 
     //Debug.Log(name+" , "+flag, gameObject);
   }
-
+  
   [ContextMenu("show")]
   virtual public void show()
   {
-    Debug.Log(name + " show");
+    //Debug.Log("<b>"+name + "</b> show()");
 
-    if(ScreensManager.get() != null) ScreensManager.get().killAll();
+    //if(ScreensManager.get() != null) ScreensManager.get().killAll();
 
     toggleVisible(true);
   }
 
-  public void showAll()
-  {
-    toggleVisible(true);
-  }
-  
   [ContextMenu("hide")]
   virtual public void hide()
   {
     if (sticky) return;
+
+    //Debug.Log("<b>" + name + "</b> hide()");
+
     toggleVisible(false);
   }
 

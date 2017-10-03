@@ -48,29 +48,46 @@ public class ScreensManager : EngineObject {
   }
 
   /* return only the first found */
-  public ScreenObject call(string nm)
+  public ScreenObject call(string nm, string filterName = "")
   {
-    //Debug.Log("ui calling " + nm);
+    Debug.Log("ui calling " + nm);
+
     ScreenObject target = null;
+
+    killAll(nm);
 
     for (int i = 0; i < screens.Length; i++)
     {
+      if(filterName.Length > 0)
+      {
+        if (screens[i].name.Contains(filterName)) continue;
+      }
+      
       if (screens[i].name.Contains(nm))
       {
         target = screens[i];
         screens[i].show();
       }
-      else screens[i].hide();
     }
+
     return target;
   }
 
   [ContextMenu("kill all")]
-  public void killAll()
+  public void killAll(string filterName = "")
   {
     fetchData();
 
-    call("none");
+    for (int i = 0; i < screens.Length; i++)
+    {
+      if (filterName.Length > 0)
+      {
+        if (screens[i].name.Contains(filterName)) continue;
+      }
+      
+      screens[i].hide();
+    }
+
   }
 
   [ContextMenu("show all")]
@@ -80,7 +97,7 @@ public class ScreensManager : EngineObject {
 
     for (int i = 0; i < screens.Length; i++)
     {
-      screens[i].showAll();
+      screens[i].toggleVisible(true);
     }
 
   }

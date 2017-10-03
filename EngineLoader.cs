@@ -21,7 +21,7 @@ public class EngineLoader : MonoBehaviour
   [RuntimeInitializeOnLoadMethod]
   static protected void init()
   {
-    Debug.Log("<color=gray>Engine entry point</color>");
+    Debug.Log("<color=gray><b>Engine</b> entry point</color>");
 
     //only load in game scene
     if (!isSceneOfName("game"))
