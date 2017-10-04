@@ -20,7 +20,9 @@ public class ModuleLabel : ModuleVisible {
     
     ui_txt = GetComponent<Text>();
 
-    if(name.StartsWith("s_") && ui_txt == null) Debug.LogError("no txt for " + name + " ?", gameObject);
+    if (txtRender != null) txtRender.sortingLayerName = "ingame_overlay";
+
+    if (name.StartsWith("s_") && ui_txt == null) Debug.LogError("no txt for " + name + " ?", gameObject);
     
     base.build();
   }

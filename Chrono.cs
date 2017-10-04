@@ -42,12 +42,30 @@ public class Chrono : Timer {
     int min = Mathf.FloorToInt(time / 60f);
     int sec = Mathf.FloorToInt(time - (min * 60f));
 
-    //Debug.Log(time);
-    if (addZeros && min < 10) txt_min.text = "0" + min;
-    else txt_min.text = "" + min;
+    if(txt_sec == null)
+    {
+      string output = "";
+      if (addZeros && min < 10) output = "0" + min;
+      else output = "" + min;
 
-    if (addZeros && sec < 10) txt_sec.text = "0" + sec;
-    else txt_sec.text = "" + sec;
+      output += ":";
+
+      if (addZeros && sec < 10) output += "0" + sec;
+      else output += "" + sec;
+
+      txt_min.text = output;
+    }
+    else
+    {
+
+      //Debug.Log(time);
+      if (addZeros && min < 10) txt_min.text = "0" + min;
+      else txt_min.text = "" + min;
+
+      if (addZeros && sec < 10) txt_sec.text = "0" + sec;
+      else txt_sec.text = "" + sec;
+
+    }
 
   }
 

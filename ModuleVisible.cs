@@ -65,7 +65,7 @@ public class ModuleVisible : ArenaObject {
 
     _sprRender.sprite = newSprite;
 
-    Debug.Log(name + " was setup with sprite " + newSprite);
+    //Debug.Log(name + " was setup with sprite " + newSprite);
   }
 
   public void setAlpha(float newAlpha)

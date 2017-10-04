@@ -69,6 +69,8 @@ public class ScreenObject : EngineObject
 
     //if(ScreensManager.get() != null) ScreensManager.get().killAll();
 
+    transform.position = Vector3.zero;
+
     toggleVisible(true);
   }
 
@@ -78,6 +80,8 @@ public class ScreenObject : EngineObject
     if (sticky) return;
 
     //Debug.Log("<b>" + name + "</b> hide()");
+
+    transform.position = Vector3.down * 3000f;
 
     toggleVisible(false);
   }
