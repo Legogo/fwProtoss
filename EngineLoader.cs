@@ -27,6 +27,7 @@ public class EngineLoader : MonoBehaviour
     if (!isSceneOfName("game"))
     {
       //SceneManager.LoadScene("game");
+      Debug.LogWarning("<color=red><b>NOT GAME SCENE ?!</b></color>");
       return;
     }
 
