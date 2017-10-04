@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class ModuleLabel : ModuleVisible {
 
   TextMesh txt;
   Renderer txtRender;
   Text ui_txt;
+  
+  public string sortingLayerName = "";
 
   protected override void build()
   {
@@ -19,8 +22,10 @@ public class ModuleLabel : ModuleVisible {
     }
     
     ui_txt = GetComponent<Text>();
-
-    if (txtRender != null) txtRender.sortingLayerName = "ingame_overlay";
+    
+    if(sortingLayerName.Length > 0) {
+      if (txtRender != null) txtRender.sortingLayerName = sortingLayerName;
+    }
 
     if (name.StartsWith("s_") && ui_txt == null) Debug.LogError("no txt for " + name + " ?", gameObject);
     
