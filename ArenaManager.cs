@@ -111,13 +111,21 @@ abstract public class ArenaManager : EngineObject {
     {
       aobjs[i].event_end();
     }
-    
+
+    if (coProcessEnd != null)
+    {
+      Debug.LogError("already losing ??");
+      return;
+    }
+
     coProcessEnd = StartCoroutine(processEnd());
   }
   
   virtual protected IEnumerator processEnd()
   {
     yield return null;
+
+    coProcessEnd = null;
   }
 
   public float getElapsedTime()

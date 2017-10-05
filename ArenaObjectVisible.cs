@@ -58,7 +58,7 @@ public class ArenaObjectVisible : ArenaObject {
   }
 
   // on peut pas utiliser transform.localScale a cause de la valeur qui varie quand on change de parent
-  public float getSize() { return scaleSize * 0.5f; }
+  public float getRadius() { return scaleSize * 0.5f; }
 
   private void OnDrawGizmosSelected()
   {
@@ -75,7 +75,7 @@ public class ArenaObjectVisible : ArenaObject {
   {
     //choppe le point au bord du cercle dans la direction du block
     Vector2 dir = tr.position - transform.position;
-    dir = dir.normalized * (getSize() * 0.6f);
+    dir = dir.normalized * (getRadius() * 0.6f);
     dir = (Vector2)transform.position + dir;
 
     Debug.DrawLine(dir, transform.position, Color.green);
