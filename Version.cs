@@ -22,13 +22,14 @@ public class Version : MonoBehaviour {
 
   public Text txt;
   
-  [MenuItem("Version/Increase Version")]
+  [MenuItem("Version/Increase Minor")]
   static protected void increase_minor()
   {
     Version v = GameObject.FindObjectOfType<Version>();
 
     v.minor++;
     v.fix = 0;
+
     v.build++;
 
     v.applyVersion();
