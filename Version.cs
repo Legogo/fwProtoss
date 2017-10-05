@@ -15,7 +15,7 @@ public class Version : MonoBehaviour {
 
   public int major = 0;
   public int minor = 0;
-  public int fix = 0;
+  public int version = 0;
   public int build = 1;
 
 #if UNITY_EDITOR
@@ -28,19 +28,19 @@ public class Version : MonoBehaviour {
     Version v = GameObject.FindObjectOfType<Version>();
 
     v.minor++;
-    v.fix = 0;
+    v.version = 0;
 
     v.build++;
 
     v.applyVersion();
   }
 
-  [MenuItem("Version/Increase Fix")]
+  [MenuItem("Version/Increase Version")]
   static protected void increase_fix()
   {
     Version v = GameObject.FindObjectOfType<Version>();
 
-    v.fix++;
+    v.version++;
     v.build++;
 
     v.applyVersion();
@@ -51,7 +51,7 @@ public class Version : MonoBehaviour {
     if (txt == null) txt = GetComponent<Text>();
     //https://mogutan.wordpress.com/2015/03/06/confusing-unity-mobile-player-settings-for-versions/
 
-    PlayerSettings.bundleVersion = major + "." + minor + "." + fix + "-" + build;
+    PlayerSettings.bundleVersion = major + "." + minor + "." + version + "-" + build;
     PlayerSettings.Android.bundleVersionCode = build;
     PlayerSettings.iOS.buildNumber = PlayerSettings.bundleVersion;
 
