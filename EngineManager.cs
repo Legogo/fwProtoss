@@ -48,9 +48,17 @@ public class EngineManager : MonoBehaviour {
   private void Update()
   {
     if (!isLive()) return;
+    
+    if(Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.OSXPlayer)
+    {
+      if(Input.GetKeyUp(KeyCode.Backspace))
+      {
+        Application.Quit();
+      }
+    }
 
     //update everything
-    
+
     List<EngineObject> objects = EngineObject.eos;
 
     //Debug.Log("UBER update (" + objects.Count+")");
