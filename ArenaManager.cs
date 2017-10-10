@@ -114,7 +114,7 @@ abstract public class ArenaManager : EngineObject {
 
     if (coProcessEnd != null)
     {
-      Debug.LogError("already losing ??");
+      Debug.LogError("already processing end ??");
       return;
     }
 
