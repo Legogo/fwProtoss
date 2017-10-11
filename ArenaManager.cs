@@ -117,7 +117,7 @@ abstract public class ArenaManager : EngineObject {
       Debug.LogError("already processing end ??");
       return;
     }
-
+    
     coProcessEnd = StartCoroutine(processEnd());
   }
   
