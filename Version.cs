@@ -21,6 +21,7 @@ public class Version : MonoBehaviour {
     applyVersion();
   }
 
+#if UNITY_EDITOR
   [MenuItem("Version/Increase Minor")]
   static protected void increase_minor()
   {
@@ -32,6 +33,7 @@ public class Version : MonoBehaviour {
     v.build++;
 
     v.applyVersion();
+    v.updatePlayerSettings();
   }
 
   [MenuItem("Version/Increase Version")]
@@ -43,7 +45,9 @@ public class Version : MonoBehaviour {
     v.build++;
 
     v.applyVersion();
+    v.updatePlayerSettings();
   }
+#endif
 
   protected string formatedVersion()
   {
@@ -54,28 +58,30 @@ public class Version : MonoBehaviour {
     return str;
   }
 
+  protected void updatePlayerSettings() {
+
+#if UNITY_EDITOR
+
+    //https://mogutan.wordpress.com/2015/03/06/confusing-unity-mobile-player-settings-for-versions/
+
+    if (!Application.isPlaying)
+    {
+      PlayerSettings.bundleVersion = formatedVersion();
+      PlayerSettings.Android.bundleVersionCode = build;
+      PlayerSettings.iOS.buildNumber = PlayerSettings.bundleVersion;
+
+      Debug.Log("<b>DIRTY</b> " + PlayerSettings.bundleVersion);
+      EditorSceneManager.MarkSceneDirty(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+    }
+#endif
+
+  }
+
   protected void applyVersion() {
 
     if (txt == null) txt = GetComponent<Text>();
-    //https://mogutan.wordpress.com/2015/03/06/confusing-unity-mobile-player-settings-for-versions/
-
-#if UNITY_EDITOR
-    PlayerSettings.bundleVersion = formatedVersion();
-    PlayerSettings.Android.bundleVersionCode = build;
-    PlayerSettings.iOS.buildNumber = PlayerSettings.bundleVersion;
-    
-    Debug.Log("<b>DIRTY</b> " + PlayerSettings.bundleVersion);
-    EditorSceneManager.MarkSceneDirty(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
-
-    if (txt != null) txt.text = PlayerSettings.bundleVersion.ToString();
-
-#else
-    
     if (txt != null) txt.text = formatedVersion();
-
-#endif
-
-
+    
   }
 
 
