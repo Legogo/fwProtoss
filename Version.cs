@@ -1,14 +1,10 @@
 ﻿
 #if UNITY_EDITOR
 using UnityEditor;
-using UnityEditor.Callbacks;
 using UnityEditor.SceneManagement;
 #endif
 
-using System;
 using UnityEngine;
-using System.Collections.Generic;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Version : MonoBehaviour {
@@ -17,9 +13,7 @@ public class Version : MonoBehaviour {
   public int minor = 0;
   public int version = 0;
   public int build = 1;
-
-#if UNITY_EDITOR
-
+  
   public Text txt;
 
   private void Awake()
