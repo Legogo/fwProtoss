@@ -53,6 +53,18 @@ public class StringPref
     return PlayerPrefs.GetString(key, "");
   }
 
+  public int count()
+  {
+    string ct = get();
+
+    if(ct.Length > 0 && ct.IndexOf(",") > -1)
+    {
+      return ct.Split(',').Length;
+    }
+
+    return 0;
+  }
+
   public bool has(int compVal) { return has(compVal.ToString()); }
   public bool has(string compVal)
   {
