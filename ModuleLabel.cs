@@ -65,11 +65,13 @@ public class ModuleLabel : ModuleVisible {
   public override void show()
   {
     base.show();
+    if (!isVisible()) return;
     toggleLabel(true);
   }
   public override void hide()
   {
     base.hide();
+    if (isVisible()) return;
     toggleLabel(false);
   }
 
