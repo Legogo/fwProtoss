@@ -6,7 +6,8 @@ public class SoundManager
 {
 
   static protected AudioSource[] sources;
-  static public AudioSource call(string name, float offset = 0f)
+  
+  static public AudioSource call(string name, float offset = 0f, bool fx = false)
   {
     if (sources == null) sources = GameObject.FindObjectsOfType<AudioSource>();
 
@@ -20,14 +21,23 @@ public class SoundManager
 
         //Debug.Log("asking for " + name + " " + src.isPlaying);
 
-        if (!sources[i].isPlaying)
+        if(fx)
+        {
+          sources[i].PlayOneShot(sources[i].clip);
+        }
+        else
         {
 
-          //Debug.Log("playing " + name);
+          if (!sources[i].isPlaying)
+          {
 
-          sources[i].PlayDelayed(offset);
+            //Debug.Log("playing " + name);
 
-          return sources[i];
+            sources[i].PlayDelayed(offset);
+
+            return sources[i];
+          }
+
         }
 
       }

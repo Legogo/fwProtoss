@@ -42,7 +42,9 @@ public class EngineTools {
 
   static public T getComponentInScene<T>(string carryName)
   {
-    return getCarrier(carryName).GetComponent<T>();
+    Transform obj = getCarrier(carryName);
+    if(obj != null) return obj.GetComponent<T>();
+    return default(T);
   }
 
 }
