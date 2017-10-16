@@ -62,6 +62,7 @@ public class EngineManager : MonoBehaviour {
     List<EngineObject> objects = EngineObject.eos;
 
     //Debug.Log("UBER update (" + objects.Count+")");
+
     for (int i = 0; i < objects.Count; i++)
     {
       if (!objects[i].canUpdate()) continue;
@@ -91,7 +92,12 @@ public class EngineManager : MonoBehaviour {
     }
 
   }
-
+  
+  public string toStringDebug()
+  {
+    return name + " live ? " + isLive();
+  }
+  
   static protected EngineManager _manager;
   static public EngineManager get() {
     if (_manager == null)

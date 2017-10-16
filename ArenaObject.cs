@@ -90,17 +90,22 @@ abstract public class ArenaObject : EngineObject {
     //Debug.Log(Time.time+" , "+name + " killed", gameObject);
   }
 
+  virtual public void updateMenu()
+  {
+
+  }
+
   /* called by arena manager */
   virtual public void updateArena()
   {
     if (!_active) return;
     if (_freeze) return;
 
-    if (_arena.isLive())
+    if (_arena.isArenaStateLive())
     {
       updateArenaLive(_arena.getElapsedTime());
     }
-    else if (_arena.isEnd())
+    else if (_arena.isArenaStateEnd())
     {
       updateArenaEnd();
     }
@@ -141,5 +146,9 @@ abstract public class ArenaObject : EngineObject {
 
   public bool isActive() { return _active; }
 
+  public override string toString()
+  {
+    return name+" freeze ? "+_freeze+" , active ? "+_active;
+  }
 
 }

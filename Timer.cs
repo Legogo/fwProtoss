@@ -86,6 +86,8 @@ public class Timer : ArenaObject {
   {
     base.updateArenaLive(timeStamp);
 
+    //Debug.Log(name);
+
     //next param time !
     if(balancing != null && balancing.timedParams.Length > 1)
     {
@@ -223,14 +225,15 @@ public class Timer : ArenaObject {
 
   }
 #endif
-
-  public string toString()
+  
+  override public string toString()
   {
     string ct = "";
 
     ct += "\n(mul timer) " + name + " | " + timerName;
     ct += "\n  liveOnEnd ? " + liveOnEnd + " , liveOnStartup ? " + liveOnStartup;
     ct += "\n  active ? " + isActive() + " , freeze ? " + isFreezed() + " , progress ? " + getProgress();
+    if(_arena != null) ct += "\n  arena live ? " + _arena.isArenaStateLive() + " , end ? " + _arena.isArenaStateEnd();
     if (hasBalancing()) ct += "\n  " + getTime() + " / " + getTargetStep();
     else ct += "\n  no balancing";
 

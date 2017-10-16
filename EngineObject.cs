@@ -1,9 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EngineObject : MonoBehaviour {
-
+abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
+{
   //loading list
   static public List<EngineObject> eos = new List<EngineObject>();
 
@@ -72,4 +73,13 @@ public class EngineObject : MonoBehaviour {
     _freeze = flag;
   }
 
+  virtual public string toString()
+  {
+    return name + " freeze ? " + isFreezed();
+  }
+
+  public string toStringDebug()
+  {
+    return toString();
+  }
 }

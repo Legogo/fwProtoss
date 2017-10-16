@@ -9,8 +9,8 @@ abstract public class ArenaManager : EngineObject {
 
   protected float liveFreezeTimer = 0f;
 
-  public enum ArenaState { MENU, LIVE, END }
-  protected ArenaState _state;
+  public enum ArenaState { IDLE, MENU, LIVE, END }
+  protected ArenaState _state = ArenaState.IDLE;
 
   protected Coroutine coProcessEnd;
 
@@ -22,10 +22,12 @@ abstract public class ArenaManager : EngineObject {
 
     //EngineManager.get().onLoadingDone += restart;
   }
-
-  virtual public void restart()
+  
+  /* game */
+  virtual public void restart_round()
   {
-    //Debug.Log("<b>RESTART</b> at "+Time.time);
+    Debug.Log("<b>RESTARTING</b> ARENA ROUND at "+Time.time);
+
     time = 0f;
 
     _freeze = false;
@@ -40,47 +42,90 @@ abstract public class ArenaManager : EngineObject {
     liveFreezeTimer = 1f;
   }
 
+  /* background */
+  virtual public void restart_menu()
+  {
+    Debug.Log("<b>RESTARTING</b> ARENA MENU at " + Time.time);
+
+    time = 0f;
+
+    _freeze = false;
+
+    _state = ArenaState.MENU;
+  }
+
   public override void updateEngine()
   {
     base.updateEngine();
+
+    //freeze timer at start NEED to update
+    update_time();
+
+    if (_state == ArenaState.MENU)
+    {
+      update_menu();
+    }
+    else if(_state == ArenaState.LIVE || _state == ArenaState.END)
+    {
+      update_round();
+      update_debug();
+    }
+    
+  }
+
+  protected void update_debug()
+  {
+
+#if UNITY_EDITOR
+    // ==== DEBUG KEYS
+
+    if (Input.GetKeyUp(KeyCode.Backspace))
+    {
+      restart_round();
+    }
+    else if (Input.GetKeyUp(KeyCode.Escape))
+    {
+      Debug.LogWarning("DEBUG | stopped session");
+      debug_round_cancel();
+    }
+
+#endif
+  }
+
+  protected void update_time()
+  {
+
+    //speed up debug arena timer
+    float mul = 1f;
+    
+    //debug, make ingame time go faster
+    if (Input.GetKey(KeyCode.P)) mul = 100f;
+    time += Time.deltaTime * mul;
+
+    if (liveFreezeTimer > 0f)
+    {
+      liveFreezeTimer -= Time.deltaTime;
+    }
+    
+  }
+
+  virtual protected void update_round()
+  {
 
     //update all aobs
     //Debug.Log("ARENA update (" + arenaObjects.Count + ")");
     for (int i = 0; i < arenaObjects.Count; i++)
     {
-      //Debug.Log("#"+i+" | "+arenaObjects[i].name+" "+arenaObjects[i].GetType());
       arenaObjects[i].updateArena();
     }
-    
-    if (!EngineManager.isLive()) return;
 
-    if (Input.GetKeyUp(KeyCode.Backspace))
+  }
+
+  virtual protected void update_menu()
+  {
+    for (int i = 0; i < arenaObjects.Count; i++)
     {
-      restart();
-      return;
-    }
-
-    if (Input.GetKeyUp(KeyCode.Escape))
-    {
-      Debug.LogWarning("DEBUG | stopped session");
-      debug_round_cancel();
-      return;
-    }
-
-    //speed up debug arena timer
-    float mul = 1f;
-
-    
-    if(_state == ArenaState.LIVE)
-    {
-      //debug, make ingame time go faster
-      if (Input.GetKey(KeyCode.P)) mul = 100f;
-      time += Time.deltaTime * mul;
-
-      if (liveFreezeTimer > 0f)
-      {
-        liveFreezeTimer -= Time.deltaTime;
-      }
+      arenaObjects[i].updateMenu();
     }
 
   }
@@ -133,10 +178,17 @@ abstract public class ArenaManager : EngineObject {
     return time;
   }
 
+  override public string toString()
+  {
+    string ct = name + " | live freeze timer ? " + liveFreezeTimer;
+    ct += "\n  freeze ? " + isFreezed() + " , state ? " + _state;
+    return ct;
+  }
+
   public ArenaState getState() { return _state; }
-  public bool isAtState(ArenaState st) { return _state == st; }
-  public bool isLive() { return liveFreezeTimer < 0f && isAtState(ArenaState.LIVE); }
-  public bool isEnd() { return isAtState(ArenaState.END); }
+  protected bool isAtState(ArenaState st) { return _state == st; }
+  public bool isArenaStateLive() { return liveFreezeTimer < 0f && isAtState(ArenaState.LIVE); }
+  public bool isArenaStateEnd() { return isAtState(ArenaState.END); }
 
   static protected ArenaManager _manager;
   static public ArenaManager get()
