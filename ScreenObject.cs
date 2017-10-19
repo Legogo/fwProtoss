@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ScreenObject : EngineObject
 {
@@ -113,4 +114,18 @@ public class ScreenObject : EngineObject
     
   }
 
+  public void act_global_gift() {
+    Debug.Log("GIFT !");
+    MoneyManager.get().adCollect(5);
+
+    getGlobalGiftButton().enabled = false;
+  }
+
+  static public Image getGlobalGiftButton()
+  {
+
+    Canvas cv = EngineTools.getComponentInScene<Canvas>("canvas_global");
+    return EngineTools.getComponentInSceneByContext<Image>("label_gift", cv.transform);
+
+  }
 }
