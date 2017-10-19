@@ -18,7 +18,19 @@ public class Version : MonoBehaviour {
 
   private void Awake()
   {
-    applyVersion();
+    applyVersionToText();
+
+    #if noVersion
+    txt.enabled = false;
+    #endif
+  }
+
+  protected void applyVersionToText()
+  {
+
+    if (txt == null) txt = GetComponent<Text>();
+    if (txt != null) txt.text = formatedVersion();
+
   }
 
 #if UNITY_EDITOR
@@ -32,7 +44,7 @@ public class Version : MonoBehaviour {
 
     v.build++;
 
-    v.applyVersion();
+    v.applyVersionToText();
     v.updatePlayerSettings();
   }
 
@@ -44,8 +56,15 @@ public class Version : MonoBehaviour {
     v.version++;
     v.build++;
 
-    v.applyVersion();
+    v.applyVersionToText();
     v.updatePlayerSettings();
+  }
+
+
+  [MenuItem("Version/Apply current to settings")]
+  static protected void apply_current()
+  {
+    get().updatePlayerSettings();
   }
 #endif
 
@@ -58,7 +77,7 @@ public class Version : MonoBehaviour {
     return str;
   }
 
-  protected void updatePlayerSettings() {
+  public void updatePlayerSettings() {
 
 #if UNITY_EDITOR
 
@@ -77,12 +96,7 @@ public class Version : MonoBehaviour {
 
   }
 
-  protected void applyVersion() {
-
-    if (txt == null) txt = GetComponent<Text>();
-    if (txt != null) txt.text = formatedVersion();
-    
-  }
+  static public Version get() { return GameObject.FindObjectOfType<Version>(); }
 
 
 
