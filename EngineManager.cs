@@ -29,7 +29,7 @@ public class EngineManager : MonoBehaviour {
 
   public void engine_scenes_loaded()
   {
-    Debug.Log("EngineManager, engine_scenes_loaded, calling all callbacks for end of loading");
+    //Debug.Log("EngineManager, engine_scenes_loaded, calling all callbacks for end of loading");
 
     for (int i = 0; i < EngineObject.eos.Count; i++)
     {
@@ -39,7 +39,7 @@ public class EngineManager : MonoBehaviour {
 
   public void game_loading_done()
   {
-    Debug.Log("EngineManager, game_loading_done");
+    //Debug.Log("EngineManager, game_loading_done");
 
     state_live = true;
     if (onLoadingDone != null) onLoadingDone();

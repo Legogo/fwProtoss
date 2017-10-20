@@ -26,7 +26,7 @@ abstract public class ArenaManager : EngineObject {
   /* game */
   virtual public void restart_round()
   {
-    Debug.Log("<b>RESTARTING</b> ARENA ROUND at "+Time.time);
+    //Debug.Log("<b>RESTARTING</b> ARENA ROUND at "+Time.time);
 
     time = 0f;
 
@@ -45,7 +45,7 @@ abstract public class ArenaManager : EngineObject {
   /* background */
   virtual public void restart_menu()
   {
-    Debug.Log("<b>RESTARTING</b> ARENA MENU at " + Time.time);
+    //Debug.Log("<b>RESTARTING</b> ARENA MENU at " + Time.time);
 
     time = 0f;
 
