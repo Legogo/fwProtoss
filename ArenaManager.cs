@@ -23,15 +23,20 @@ abstract public class ArenaManager : EngineObject {
     //EngineManager.get().onLoadingDone += restart;
   }
   
+  virtual protected void restart_common_setup()
+  {
+
+    time = 0f;
+    _freeze = false;
+
+  }
+
   /* game */
   virtual public void restart_round()
   {
     //Debug.Log("<b>RESTARTING</b> ARENA ROUND at "+Time.time);
+    restart_common_setup();
 
-    time = 0f;
-
-    _freeze = false;
-    
     for (int i = 0; i < arenaObjects.Count; i++)
     {
       arenaObjects[i].restart();
@@ -47,11 +52,9 @@ abstract public class ArenaManager : EngineObject {
   {
     //Debug.Log("<b>RESTARTING</b> ARENA MENU at " + Time.time);
 
-    time = 0f;
-
-    _freeze = false;
-
     _state = ArenaState.MENU;
+
+    restart_common_setup();
   }
 
   public override void updateEngine()
