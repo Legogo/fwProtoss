@@ -36,6 +36,15 @@ public class ScreenObject : EngineObject
 
   }
 
+  public Canvas getCanvas(string nm)
+  {
+    for (int i = 0; i < _canvas.Length; i++)
+    {
+      if (_canvas[i].name.Contains(nm)) return _canvas[i];
+    }
+    return null;
+  }
+
   public void setCanvasVisibility(string nm, bool flag)
   {
     for (int i = 0; i < _canvas.Length; i++)
@@ -95,7 +104,11 @@ public class ScreenObject : EngineObject
   
   public bool isVisible()
   {
-    return _canvas[0].enabled;
+    for (int i = 0; i < _canvas.Length; i++)
+    {
+      if (_canvas[i].enabled) return true;
+    }
+    return false;
   }
 
   public void act_call_home()

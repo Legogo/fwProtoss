@@ -56,18 +56,29 @@ public class EngineManager : MonoBehaviour {
         Application.Quit();
       }
     }
-
+    
     //update everything
 
     List<EngineObject> objects = EngineObject.eos;
 
     //Debug.Log("UBER update (" + objects.Count+")");
 
+    int count = 0;
+    //string notUpdatedNames = "";
+
     for (int i = 0; i < objects.Count; i++)
     {
-      if (!objects[i].canUpdate()) continue;
+      if (!objects[i].canUpdate())
+      {
+        //notUpdatedNames += objects[i].name + " ";
+        continue;
+      }
       objects[i].updateEngine();
+      count++;
     }
+
+    //Debug.Log("updated " + count + " objects");
+    //Debug.Log(notUpdatedNames);
 
     for (int i = 0; i < objects.Count; i++)
     {
