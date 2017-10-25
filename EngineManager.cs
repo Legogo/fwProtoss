@@ -47,15 +47,13 @@ public class EngineManager : MonoBehaviour {
 
   private void Update()
   {
-    if (!isLive()) return;
-    
-    if(Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.OSXPlayer)
+    //anytime
+    if (Input.GetKeyUp(KeyCode.Escape))
     {
-      if(Input.GetKeyUp(KeyCode.Backspace))
-      {
-        Application.Quit();
-      }
+      Application.Quit();
     }
+
+    if (!isLive()) return;
     
     //update everything
 
