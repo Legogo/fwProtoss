@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class DestroyOnStartup : MonoBehaviour {
-  void Awake() {
+  
+  IEnumerator Start() {
+    yield return new WaitForSeconds(0.5f);
+
     DestroyImmediate(gameObject);
   }
+
 }

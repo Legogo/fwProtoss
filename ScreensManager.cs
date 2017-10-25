@@ -5,7 +5,7 @@ using UnityEngine;
 public class ScreensManager : EngineObject {
   
   protected ScreenObject[] screens;
-
+  
   protected override void build()
   {
     base.build();
@@ -28,7 +28,7 @@ public class ScreensManager : EngineObject {
     screens = GameObject.FindObjectsOfType<ScreenObject>();
   }
 
-  protected ScreenObject getScreen(string nm)
+  public ScreenObject getScreen(string nm)
   {
     for (int i = 0; i < screens.Length; i++)
     {
