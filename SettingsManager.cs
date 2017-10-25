@@ -21,9 +21,20 @@ public class SettingsManager : EngineObject {
     Application.runInBackground = false;
 
 #if UNITY_ANDROID
-    //Screen.fullScreen = false;
+    Screen.fullScreen = false;
 #endif
     
+    Debug.Log(getSystemInfo());
+  }
+
+  public string getSystemInfo() {
+    string str = "<color=red>SYSTEM INFO</color>";
+
+    str += "\n[platform] " + Application.platform;
+    str += "\n[screen size] " + Screen.width + " x " + Screen.height;
+    str += "\n[screen pixel density dpi] " + Screen.dpi;
+
+    return str;
   }
 
   public override void onEngineSceneLoaded()
