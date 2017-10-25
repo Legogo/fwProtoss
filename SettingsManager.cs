@@ -19,7 +19,7 @@ public class SettingsManager : EngineObject {
     base.build();
 
     Application.runInBackground = false;
-
+    
 #if UNITY_ANDROID
     Screen.fullScreen = false;
 #endif

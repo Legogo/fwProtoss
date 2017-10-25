@@ -36,6 +36,20 @@ public class ScreenObject : EngineObject
 
   }
 
+  public override void updateEngine()
+  {
+    base.updateEngine();
+
+    if(Input.GetKeyUp(KeyCode.Escape))
+    {
+      action_back();
+    }
+  }
+
+  virtual protected void action_back() {
+    call_home();
+  }
+
   public Canvas getCanvas(string nm)
   {
     for (int i = 0; i < _canvas.Length; i++)

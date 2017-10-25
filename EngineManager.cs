@@ -47,12 +47,6 @@ public class EngineManager : MonoBehaviour {
 
   private void Update()
   {
-    //anytime
-    if (Input.GetKeyUp(KeyCode.Escape))
-    {
-      Application.Quit();
-    }
-
     if (!isLive()) return;
     
     //update everything
