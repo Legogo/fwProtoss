@@ -14,6 +14,18 @@ public class SettingsManager : EngineObject {
     return GameObject.FindObjectOfType<SettingsManager>();
   }
 
+  protected override void build()
+  {
+    base.build();
+
+    Application.runInBackground = false;
+
+#if UNITY_ANDROID
+    //Screen.fullScreen = false;
+#endif
+    
+  }
+
   public override void onEngineSceneLoaded()
   {
     base.onEngineSceneLoaded();
