@@ -3,16 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GameSpace : MonoBehaviour {
-
-  public Vector3 botLeft = Vector3.zero;
-  public Vector3 topRight = Vector3.zero;
+  
+  [Header("setup")]
 
   public float width = 3f;
   public float height = 3f;
 
-  public Transform[] borders;
+  public Vector2 offset = Vector2.zero;
+  public float topBorder;
+  public float bottomBorder;
 
   public bool matchScreen = false;
+
+  [Header("solved")]
+  public Rect offsetSpace = new Rect();
+  public Rect screenSpace = new Rect();
+
+  Vector2 screenBotLeft = Vector2.zero;
+  Vector2 screenTopRight = Vector2.zero;
+
+  [Header("tools")]
+  public Transform[] borders;
 
   static public GameSpace gameSpace;
 
@@ -24,21 +35,35 @@ public class GameSpace : MonoBehaviour {
   [ContextMenu("resize")]
   public void updateSize() {
     if (Camera.main == null) return;
-
+    
     if (matchScreen)
     {
-      botLeft = Camera.main.ScreenToWorldPoint(Vector2.zero);
-      topRight = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, Screen.height));
-      return;
+      screenBotLeft = Camera.main.ScreenToWorldPoint(Vector2.zero);
+      screenTopRight = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, Screen.height));
+    }
+    else {
+
+      screenBotLeft.x = width * -0.5f;
+      screenBotLeft.y = height * -0.5f;
+
+      screenTopRight.x = width * 0.5f;
+      screenTopRight.y = height * 0.5f;
     }
 
-    botLeft.x = width * -0.5f;
-    botLeft.y = height * -0.5f;
+    //screen final
+    screenSpace.xMin = screenBotLeft.x;
+    screenSpace.xMax = screenTopRight.x;
+    screenSpace.yMin = screenBotLeft.y;
+    screenSpace.yMax = screenTopRight.y;
+    
+    //offset final
+    offsetSpace.xMin = screenSpace.xMin + offset.x;
+    offsetSpace.xMax = screenSpace.xMax + offset.x;
+    offsetSpace.yMin = screenSpace.yMin + offset.y + bottomBorder;
+    offsetSpace.yMax = screenSpace.yMax + offset.y - topBorder;
 
-    topRight.x = width * 0.5f;
-    topRight.y = height * 0.5f;
   }
-
+  
   public Vector2 getRandomPositionBorder(float distance)
   {
     //Vector2 pos = Random.onUnitSphere * 10f;
@@ -49,17 +74,17 @@ public class GameSpace : MonoBehaviour {
     {
       //sides
 
-      pos.y = Random.Range(botLeft.y, topRight.y);
+      pos.y = Random.Range(screenBotLeft.y, screenTopRight.y);
 
       if (Random.value > 0.5f)
       {
         //left
-        pos.x = botLeft.x - distance;
+        pos.x = screenBotLeft.x - distance;
       }
       else
       {
         //right
-        pos.x = topRight.x + distance;
+        pos.x = screenTopRight.x + distance;
       }
     
 
@@ -68,17 +93,17 @@ public class GameSpace : MonoBehaviour {
     {
       //tops
 
-      pos.x = Random.Range(botLeft.x, topRight.x);
+      pos.x = Random.Range(screenBotLeft.x, screenTopRight.x);
       
       if (Random.value > 0.5f)
       {
         //top
-        pos.y = topRight.y + distance;
+        pos.y = screenTopRight.y + distance;
       }
       else
       {
         //bottom
-        pos.y = botLeft.y - distance;
+        pos.y = screenBotLeft.y - distance;
       }
       
     }
@@ -86,14 +111,14 @@ public class GameSpace : MonoBehaviour {
     return pos;
   }
 
-  public float getWidth() { return topRight.x - botLeft.x; }
-  public float getHeight() { return topRight.y - botLeft.y; }
+  public float getWidth() { return screenTopRight.x - screenBotLeft.x; }
+  public float getHeight() { return screenTopRight.y - screenBotLeft.y; }
 
   public Vector2 getRandomPosition(float borderGap)
   {
     Vector2 pos = Vector2.zero;
-    pos.x = Random.Range(botLeft.x + borderGap, topRight.x - borderGap);
-    pos.y = Random.Range(botLeft.y + borderGap, topRight.y - borderGap);
+    pos.x = Random.Range(screenBotLeft.x + borderGap, screenTopRight.x - borderGap);
+    pos.y = Random.Range(screenBotLeft.y + borderGap, screenTopRight.y - borderGap);
     return pos;
   }
   
@@ -105,9 +130,12 @@ public class GameSpace : MonoBehaviour {
     }
 
     Gizmos.color = Color.yellow;
-    Gizmos.DrawLine(botLeft, topRight);
-    
-    if(borders != null && borders.Length > 0)
+    Gizmos.DrawLine(new Vector2(screenSpace.xMin, screenSpace.yMin), new Vector2(screenSpace.xMax, screenSpace.yMax));
+
+    Gizmos.color = Color.cyan;
+    Gizmos.DrawLine(new Vector2(offsetSpace.xMin, offsetSpace.yMin), new Vector2(offsetSpace.xMax, offsetSpace.yMax));
+
+    if (borders != null && borders.Length > 0)
     {
       if(borders.Length >= 1)
       {

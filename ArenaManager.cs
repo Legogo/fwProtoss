@@ -71,30 +71,10 @@ abstract public class ArenaManager : EngineObject {
     else if(_state == ArenaState.LIVE || _state == ArenaState.END)
     {
       update_round();
-      update_debug();
     }
     
   }
-
-  protected void update_debug()
-  {
-
-#if UNITY_EDITOR
-    // ==== DEBUG KEYS
-
-    if (Input.GetKeyUp(KeyCode.Backspace))
-    {
-      restart_round();
-    }
-    else if (Input.GetKeyUp(KeyCode.Escape))
-    {
-      Debug.LogWarning("DEBUG | stopped session");
-      debug_round_cancel();
-    }
-
-#endif
-  }
-
+  
   protected void update_time()
   {
 

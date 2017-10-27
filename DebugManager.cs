@@ -13,7 +13,7 @@ public class DebugManager : MonoBehaviour {
 
   void Update()
   {
-    if (Input.GetKeyUp(KeyCode.RightShift))
+    if (Input.GetKeyUp(KeyCode.LeftShift))
     {
       show = !show;
     }
