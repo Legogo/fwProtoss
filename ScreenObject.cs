@@ -36,16 +36,20 @@ public class ScreenObject : EngineObject
 
   }
 
-  public override void updateEngine()
+  public override void updateEngineLate()
   {
-    base.updateEngine();
+    base.updateEngineLate();
 
-    if(Input.GetKeyUp(KeyCode.Escape))
-    {
-      action_back();
+    if(isVisible() && !sticky) {
+      if (Input.GetKeyUp(KeyCode.Escape))
+      {
+        Debug.Log(name + " pressed back button");
+        action_back();
+      }
     }
+    
   }
-
+  
   virtual protected void action_back() {
     call_home();
   }
