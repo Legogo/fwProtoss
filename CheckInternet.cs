@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Net;
 using System.IO;
+using System;
 
 public class CheckInternet
 {
 
   static public bool hasInternet = false;
 
-  public CheckInternet()
+  static public void checkInternet(Action<bool> onCheckDone)
   {
     string HtmlText = GetHtmlFromUri("http://google.com");
     if (HtmlText == "")
@@ -27,10 +28,11 @@ public class CheckInternet
       hasInternet = true;
     }
 
-    Debug.Log("INTERNET ? " + hasInternet);
+    //Debug.Log("INTERNET ? " + hasInternet);
+    if (onCheckDone != null) onCheckDone(hasInternet);
   }
 
-  public string GetHtmlFromUri(string resource)
+  static public string GetHtmlFromUri(string resource)
   {
     string html = string.Empty;
     HttpWebRequest req = (HttpWebRequest)WebRequest.Create(resource);

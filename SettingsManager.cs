@@ -59,6 +59,16 @@ public class SettingsManager : EngineObject {
 
     return str;
   }
+  
+  void OnApplicationPause(bool pauseStatus)
+  {
+    Debug.Log("SettingsManager::OnApplicationPause ("+ pauseStatus + ") -> asking for internet connection");
+    CheckInternet.checkInternet(onCheckInternetDone);
+  }
+
+  void onCheckInternetDone(bool state) {
+    Debug.Log("SettingsManager::OnApplicationPause -> application connected to internet ? " + state);
+  }
 
   public override void onEngineSceneLoaded()
   {
