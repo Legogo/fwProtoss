@@ -23,49 +23,16 @@ abstract public class ArenaManager : EngineObject {
     //EngineManager.get().onLoadingDone += restart;
   }
   
-  virtual protected void restart_common_setup()
-  {
-
+  virtual public void restart_normal() {
     time = 0f;
+    restart_setup();
+  }
+
+  virtual public void restart_setup() {
     _freeze = false;
-
-  }
-
-  /* game */
-  virtual public void restart_round()
-  {
-    //Debug.Log("<b>RESTARTING</b> ARENA ROUND at "+Time.time);
-    restart_common_setup();
-
-    for (int i = 0; i < arenaObjects.Count; i++)
-    {
-      arenaObjects[i].restart();
-    }
-
     _state = ArenaState.LIVE;
-
-    liveFreezeTimer = 1f;
   }
-
-  virtual protected void restart_continue() {
-
-    _state = ArenaState.LIVE;
-
-    liveFreezeTimer = 1f;
-    
-    ScreensManager.get().call("ingame");
-  }
-
-  /* background */
-  virtual public void restart_menu()
-  {
-    //Debug.Log("<b>RESTARTING</b> ARENA MENU at " + Time.time);
-
-    _state = ArenaState.MENU;
-
-    restart_common_setup();
-  }
-
+  
   public override void updateEngine()
   {
     base.updateEngine();

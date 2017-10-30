@@ -23,6 +23,8 @@ public class Chrono : Timer {
     base.startTimer();
 
     _canvasOwner.enabled = true;
+    Debug.Log("chrono start");
+
     updateVisual();
   }
 
@@ -78,4 +80,5 @@ public class Chrono : Timer {
   {
     _canvasOwner.enabled = false;
   }
+
 }

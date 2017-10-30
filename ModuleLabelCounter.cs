@@ -114,13 +114,8 @@ public class ModuleLabelCounter : ModuleLabel {
     }
 
     //Debug.Log(name+" | (progressive ? "+isUsingProgressiveTargetCount()+") "+count + " , " + count_target + " = " + getCount(), gameObject);
-
-    //ce sera l'update qui va afficher le score
-    if(!progressiveScoring)
-    {
-      updateTextWithCount();
-    }
     
+    updateTextWithCount();
   }
 
   public void assignRandomValueByLimits()

@@ -79,7 +79,10 @@ abstract public class ArenaObject : EngineObject {
 
   virtual protected void collect()
   {
+    explode();
+  }
 
+  virtual public void explode() {
     kill();
   }
 

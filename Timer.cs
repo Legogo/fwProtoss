@@ -56,6 +56,8 @@ public class Timer : ArenaObject {
 
     //Debug.Log("timer is at 0");
     timer = 0f;
+
+    //Debug.Log(name+" , "+timerName+" start()");
   }
 
   public void setupForTimeout()
