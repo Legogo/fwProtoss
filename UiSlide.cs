@@ -13,7 +13,7 @@ public class UiSlide : UiAnimation {
   {
     base.build();
 
-    originalPosition = _owner.localPosition;
+    originalPosition = owner.localPosition;
     Debug.Log(name + " original ? " + originalPosition);
   }
   
@@ -21,17 +21,17 @@ public class UiSlide : UiAnimation {
   {
     base.reset();
     
-    _owner.localPosition = originalPosition;
+    owner.localPosition = originalPosition;
 
     //Debug.Log(name + " reset to "+_owner.localPosition, gameObject);
   }
 
-  protected override void updateUiAnimation()
+  protected override void animUpdate()
   {
-    base.updateUiAnimation();
+    base.animUpdate();
 
     //Debug.Log(getProgress());
-    _owner.localPosition = Vector3.Lerp(originalPosition, target.localPosition, getProgress());
+    owner.localPosition = Vector3.Lerp(originalPosition, target.localPosition, getProgress());
     
     //Debug.Log(name + " moved to " + _owner.localPosition, gameObject);
     //transform.localPosition = Vector3.MoveTowards(transform.localPosition, target.transform.position, Time.deltaTime * speed);

@@ -4,9 +4,17 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 
-public class UiAnimation : EngineObject
+/// <summary>
+/// 2017-10-30
+/// Base class manage progress and call updateUiAnimation during animation progress
+/// getProgress() returns evaluated (curve) percentage of animation progress
+/// owner var is RectTransform of carry
+/// </summary>
+
+abstract public class UiAnimation : EngineObject
 {
-  protected RectTransform _owner;
+  protected RectTransform owner;
+
   public float animationLength = 1f;
   protected float animTimer = 0f;
 
@@ -16,7 +24,7 @@ public class UiAnimation : EngineObject
   protected override void build()
   {
     base.build();
-    _owner = GetComponent<RectTransform>();
+    owner = GetComponent<RectTransform>();
     setFreeze(true);
   }
 
@@ -27,6 +35,7 @@ public class UiAnimation : EngineObject
 
     animTimer = 0f;
 
+    animStart();
     //Debug.Log(name + " play !");
   }
 
@@ -48,12 +57,12 @@ public class UiAnimation : EngineObject
       if(animTimer >= animationLength)
       {
         animTimer = animationLength;
-        if (onAnimationDone != null) onAnimationDone();
+        animEnd();
       }
     }
     
 
-    updateUiAnimation();
+    animUpdate();
   }
   
   protected float getProgress()
@@ -62,9 +71,17 @@ public class UiAnimation : EngineObject
     return curve.Evaluate(animTimer / animationLength);
   }
 
-  virtual protected void updateUiAnimation()
+  virtual protected void animStart() {
+
+  }
+
+  virtual protected void animUpdate()
   {
     //Debug.Log(name + " "+GetType()+" update ...");
+  }
+
+  virtual protected void animEnd() {
+    if (onAnimationDone != null) onAnimationDone();
   }
 
   static public void killAll()

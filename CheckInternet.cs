@@ -13,6 +13,11 @@ public class CheckInternet
   static public void checkInternet(Action<bool> onCheckDone)
   {
     string HtmlText = GetHtmlFromUri("http://google.com");
+    
+    Debug.Log("GetHtmlFromUri(http://google.com), RAW HTML --->\n"+HtmlText);
+    
+    hasInternet = false;
+
     if (HtmlText == "")
     {
       //No connection

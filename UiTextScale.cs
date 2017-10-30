@@ -27,9 +27,9 @@ public class UiTextScale : UiAnimation {
     txt.fontSize = originalFontSize;
   }
 
-  protected override void updateUiAnimation()
+  protected override void animUpdate()
   {
-    base.updateUiAnimation();
+    base.animUpdate();
 
     txt.fontSize = Mathf.FloorToInt(Mathf.Lerp(originalFontSize, fontSizeTarget, getProgress()));
   }
