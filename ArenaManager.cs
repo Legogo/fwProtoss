@@ -47,6 +47,15 @@ abstract public class ArenaManager : EngineObject {
     liveFreezeTimer = 1f;
   }
 
+  virtual protected void restart_continue() {
+
+    _state = ArenaState.LIVE;
+
+    liveFreezeTimer = 1f;
+    
+    ScreensManager.get().call("ingame");
+  }
+
   /* background */
   virtual public void restart_menu()
   {
