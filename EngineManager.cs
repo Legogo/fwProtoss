@@ -105,11 +105,7 @@ public class EngineManager : MonoBehaviour {
   
   static protected EngineManager _manager;
   static public EngineManager get() {
-    if (_manager == null)
-    {
-      _manager = GameObject.FindObjectOfType<EngineManager>();
-    }
-
+    if (_manager == null) _manager = GameObject.FindObjectOfType<EngineManager>();
     return _manager;
   }
 }

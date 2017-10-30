@@ -60,18 +60,20 @@ public class ModuleLabel : ModuleVisible {
     if (ui_txt != null) ui_txt.enabled = flag;
     else if(txtRender != null) txtRender.enabled = flag;
   }
-  protected bool isLabelVisible() { return txtRender.enabled; }
-  
+
   public override void show()
   {
     base.show();
-    if (!isVisible()) return;
+    if (isVisible()) return;
     toggleLabel(true);
   }
   public override void hide()
   {
     base.hide();
-    if (isVisible()) return;
+
+    //Debug.Log(name + " hide " + isVisible());
+
+    if (!isVisible()) return;
     toggleLabel(false);
   }
 

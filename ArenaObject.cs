@@ -127,12 +127,8 @@ abstract public class ArenaObject : EngineObject {
 
   virtual protected void updateArenaLive(float timeStamp)
   {
-
-    if (isCollectable() && isCollidingWithAvatar())
-    {
-      collect();
-    }
-
+    if (!isCollectable()) return;
+    if (isCollidingWithAvatar()) collect();
   }
 
   virtual public bool isCollidingWithAvatar()
