@@ -3,10 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class DestroyOnStartup : MonoBehaviour {
-  
-  IEnumerator Start() {
-    yield return new WaitForSeconds(0.5f);
 
+  public float timerToWait = 0f;
+
+  IEnumerator Start() {
+    
+    if(timerToWait > 0f) {
+      yield return new WaitForSeconds(timerToWait);
+    }
+    
     DestroyImmediate(gameObject);
   }
 

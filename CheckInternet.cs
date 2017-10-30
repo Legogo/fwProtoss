@@ -6,6 +6,9 @@ using System.IO;
 
 public class CheckInternet
 {
+
+  static public bool hasInternet = false;
+
   public CheckInternet()
   {
     string HtmlText = GetHtmlFromUri("http://google.com");
@@ -60,7 +63,5 @@ public class CheckInternet
     return html;
   }
 
-  
-  static public bool hasInternet = false;
 }
  
