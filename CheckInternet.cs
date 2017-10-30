@@ -28,6 +28,10 @@ public class CheckInternet
       hasInternet = true;
     }
 
+    #if no_internet
+      hasInternet = false;
+    #endif
+
     //Debug.Log("INTERNET ? " + hasInternet);
     if (onCheckDone != null) onCheckDone(hasInternet);
   }

@@ -60,14 +60,20 @@ public class SettingsManager : EngineObject {
     return str;
   }
   
-  void OnApplicationPause(bool pauseStatus)
+  IEnumerator OnApplicationPause(bool pauseStatus)
   {
-    Debug.Log("SettingsManager::OnApplicationPause ("+ pauseStatus + ") -> asking for internet connection");
+    while (EngineManager.isLoading()) yield return null;
+
+    yield return null;
+
+    Debug.Log("SettingsManager::OnApplicationPause (pause app ? "+ pauseStatus + ") -> asking for internet connection");
     CheckInternet.checkInternet(onCheckInternetDone);
   }
 
   void onCheckInternetDone(bool state) {
-    Debug.Log("SettingsManager::OnApplicationPause -> application connected to internet ? " + state);
+    Debug.Log("SettingsManager::OnApplicationPause -> application connected to <b>internet ? " + state+"</b>");
+
+    SnakeGameManager.onAdsUpdateEvent();
   }
 
   public override void onEngineSceneLoaded()

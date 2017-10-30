@@ -9,11 +9,11 @@ public class GameSpace : MonoBehaviour {
   public float width = 3f;
   public float height = 3f;
 
+  public bool matchScreen = false;
+
   public Vector2 offset = Vector2.zero;
   public float topBorder;
   public float bottomBorder;
-
-  public bool matchScreen = false;
 
   [Header("solved")]
   public Rect offsetSpace = new Rect();
@@ -34,7 +34,10 @@ public class GameSpace : MonoBehaviour {
   
   [ContextMenu("resize")]
   public void updateSize() {
-    if (Camera.main == null) return;
+    if (Camera.main == null) {
+      Debug.LogWarning("no main camera");
+      return;
+    }
     
     if (matchScreen)
     {
