@@ -11,12 +11,15 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
   protected EngineManager _eManager;
 
   //static int loadingFrameCount = 10;
-  
+
+  protected Transform _tr;
   protected bool _freeze = false;
 
   //constructor
   void Awake()
   {
+    _tr = transform;
+
     eos.Add(this);
     build();
 
