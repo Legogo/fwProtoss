@@ -13,6 +13,7 @@ using System;
 
 abstract public class UiAnimation : EngineObject
 {
+  protected Canvas ownerCanvas;
   protected RectTransform owner;
 
   public float animationLength = 1f;
@@ -25,6 +26,10 @@ abstract public class UiAnimation : EngineObject
   {
     base.build();
     owner = GetComponent<RectTransform>();
+    
+    ownerCanvas = GetComponent<Canvas>();
+    if (ownerCanvas == null) ownerCanvas = GetComponentInParent<Canvas>();
+
     setFreeze(true);
   }
 
@@ -72,7 +77,7 @@ abstract public class UiAnimation : EngineObject
   }
 
   virtual protected void animStart() {
-
+    if (ownerCanvas != null) ownerCanvas.enabled = true;
   }
 
   virtual protected void animUpdate()
@@ -81,7 +86,13 @@ abstract public class UiAnimation : EngineObject
   }
 
   virtual protected void animEnd() {
+    //if (ownerCanvas != null) ownerCanvas.enabled = false;
+
     if (onAnimationDone != null) onAnimationDone();
+  }
+
+  virtual public void clean() {
+    if (ownerCanvas != null) ownerCanvas.enabled = false;
   }
 
   static public void killAll()

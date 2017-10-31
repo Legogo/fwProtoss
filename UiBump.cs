@@ -8,10 +8,16 @@ public class UiBump : UiAnimation {
   public float bumpStr = 1f;
   protected Vector2 scaleBase;
 
+  public override void onEngineSceneLoaded()
+  {
+    base.onEngineSceneLoaded();
+    scaleBase = owner.localScale;
+  }
+
   protected override void animStart()
   {
     base.animStart();
-    scaleBase = owner.localScale;
+    owner.localScale = scaleBase;
   }
 
   protected override void animUpdate()

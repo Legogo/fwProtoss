@@ -76,7 +76,8 @@ public class ModuleLabelCounter : ModuleLabel {
   {
     string ct = "";
 
-    if(prefix.Length > 0) ct = prefix +" ";
+    //if(prefix.Length > 0) ct = prefix +" ";
+    if (prefix.Length > 0) ct = prefix;
 
     string score = (forceCount) ? count.ToString() : getCount().ToString();
 
