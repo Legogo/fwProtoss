@@ -15,6 +15,8 @@ public class SoundManager
     {
       AudioSource src = sources[i];
 
+      if (src.clip == null) Debug.LogError("<color=red>AUDIOSOURCE HAS NO CLIP</color> need cleaning in resource sound scene");
+
       //on rejoue pas le même son si il est déjà en train de jouer
       if (src.clip.name.Contains(name))
       {
