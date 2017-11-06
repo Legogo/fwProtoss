@@ -11,7 +11,7 @@ using UnityEngine;
 abstract public class ArenaObject : EngineObject {
 
   bool _active = true;
-
+  
   protected ArenaManager _arena;
   
   public override void onEngineSceneLoaded()
@@ -53,9 +53,6 @@ abstract public class ArenaObject : EngineObject {
 
   public void spawn(Vector3? position)
   {
-    //make sure balancing is setup
-    restart();
-
     if (position == null)
     {
       Debug.LogWarning("Object "+name+" has no given position for spawn", gameObject);
