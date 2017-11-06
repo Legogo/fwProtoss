@@ -33,7 +33,7 @@ public class Timer : ArenaObject {
   {
     //if (balancing == null) Debug.Log("balancing is null ?");
 
-    Debug.Log(name + " | " + timerName + " | balancing setup : " + balancing);
+    //Debug.Log(name + " | " + timerName + " | balancing setup : " + balancing);
     setupBalancing(balancing);
 
     startTimer();
@@ -59,7 +59,7 @@ public class Timer : ArenaObject {
     //Debug.Log("timer is at 0");
     timer = 0f;
 
-    Debug.Log(name+" | "+timerName+ " | startTimer(), has balancing ? "+hasBalancing());
+    //Debug.Log(name+" | "+timerName+ " | startTimer(), has balancing ? "+hasBalancing());
   }
 
   public void setupForTimeout()
