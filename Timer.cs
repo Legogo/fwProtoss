@@ -33,10 +33,12 @@ public class Timer : ArenaObject {
   {
     //if (balancing == null) Debug.Log("balancing is null ?");
 
+    Debug.Log(name + " | " + timerName + " | balancing setup : " + balancing);
     setupBalancing(balancing);
+
     startTimer();
   }
-  
+
   virtual public void startTimer()
   {
 
@@ -57,7 +59,7 @@ public class Timer : ArenaObject {
     //Debug.Log("timer is at 0");
     timer = 0f;
 
-    //Debug.Log(name+" , "+timerName+" start()");
+    Debug.Log(name+" | "+timerName+ " | startTimer(), has balancing ? "+hasBalancing());
   }
 
   public void setupForTimeout()
@@ -232,12 +234,33 @@ public class Timer : ArenaObject {
   {
     string ct = "";
 
+    //general info
     ct += "\n(mul timer) " + name + " | " + timerName;
+
+    //chrono or timer ?
+    if (hasBalancing()) ct += "\nsetup as timer (balancing : "+balancing+")";
+    else ct += "\nsetup as chrono";
+
+    //live ?
+    if (!isRunning()) ct += "\nNOT RUNNING";
+    else ct += "\ntimer : " + timer;
+
+    //freeze stuff ?
     ct += "\n  liveOnEnd ? " + liveOnEnd + " , liveOnStartup ? " + liveOnStartup;
     ct += "\n  active ? " + isActive() + " , freeze ? " + isFreezed() + " , progress ? " + getProgress();
     if(_arena != null) ct += "\n  arena live ? " + _arena.isArenaStateLive() + " , end ? " + _arena.isArenaStateEnd();
-    if (hasBalancing()) ct += "\n  " + getTime() + " / " + getTargetStep();
-    else ct += "\n  no balancing";
+
+    //balancing stuff
+    if (hasBalancing())
+    {
+      ct += "\n  getTime() " + getTime() + " / getTargetStep() " + getTargetStep();
+
+      TimerParams param = balancing.getCurrentParam();
+      if (param == null) ct += "\nNO PARAM";
+      else ct += "\n" + timer + " / " + param.value;
+
+    }
+    else ct += "\n  no balancing (Chrono ?)";
 
     return ct;
   }

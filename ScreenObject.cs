@@ -75,11 +75,10 @@ public class ScreenObject : EngineObject
   {
     //si le scriptorder fait que le ScreenObject arrive après le Screenmanager ...
     if(_canvas == null) fetchData();
-
-    if (sticky) flag = true;
-
+    
     if (_canvas == null) Debug.LogError("no canvas ? for "+name, gameObject);
 
+    //show all canvas of screen
     for (int i = 0; i < _canvas.Length; i++)
     {
       //Debug.Log(name + "  " + _canvas[i].name);
@@ -102,13 +101,15 @@ public class ScreenObject : EngineObject
     toggleVisible(true);
   }
 
-  [ContextMenu("hide")]
   virtual public void hide()
   {
     if (sticky) return;
 
-    //Debug.Log("<b>" + name + "</b> hide()");
+    forceHide();
+  }
 
+  [ContextMenu("hide")]
+  public void forceHide() {
     transform.position = Vector3.down * 3000f;
 
     toggleVisible(false);
