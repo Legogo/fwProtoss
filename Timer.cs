@@ -22,13 +22,19 @@ public class Timer : ArenaObject {
 
   [Header("read only")]
   public float timer = -1f;
-  
+
+  TimerParam param;
+
   public void setupBalancing(DataTimer bal)
   {
     balancing = bal;
 
-    TimerParams param = balancing.getCurrentParam();
-    if (param.value == 0f) Debug.LogError("param.value must not be 0f (oh shi- related)", balancing);
+    param = balancing.fetchTimeParam();
+    if (param.value == 0f)
+    {
+      Debug.LogError("param.value must not be 0f (oh shi- related) on " + balancing.name, balancing);
+      Debug.LogError("timeMark : " + param.timeMark);
+    }
     //if(balancing == null) Debug.LogWarning(timerName + " setupBalancing(null)", gameObject);
   }
 
@@ -69,13 +75,8 @@ public class Timer : ArenaObject {
   {
     if (balancing == null) return;
 
-    TimerParams param = balancing.getCurrentParam();
-    if(param != null)
-    {
-      timer = param.value - 0.0001f;
-
-      //Debug.Log("force timeout on " + timerName + " : " + timer);
-    }
+    param = balancing.fetchTimeParam();
+    timer = param.value - 0.0001f;
   }
 
   public void stop()
@@ -96,9 +97,9 @@ public class Timer : ArenaObject {
     //Debug.Log(name);
 
     //next param time !
-    if(balancing != null && balancing.timedParams.Length > 1)
+    if(balancing != null && balancing.hasMultipleParams())
     {
-      TimerParams param = balancing.getCurrentParam();
+      TimerParam param = balancing.fetchTimeParam();
 
       if (timeStamp > param.timeMark)
       {
@@ -128,14 +129,13 @@ public class Timer : ArenaObject {
     
     //if(balancing != null && balancing.getCurrentParam() != null) Debug.Log(name + " | " + timer + " / " + balancing.getCurrentParam().value);
     
-    TimerParams param = null;
-    if (balancing != null) param = balancing.getCurrentParam();
+    if (balancing != null) param = balancing.fetchTimeParam();
 
     float mul = 1f;
     if (Input.GetKey(KeyCode.P)) mul = 10f;
 
     //chrono
-    if (param == null)
+    if (!balancing.hasParam())
     {
       timer += Time.deltaTime * mul;
       return;
@@ -177,21 +177,15 @@ public class Timer : ArenaObject {
   {
     if (balancing == null) return 0f;
 
-    TimerParams param = balancing.getCurrentParam();
-
-    if(param != null)
-    {
-      return param.value;
-    }
-
-    return 0f;
+    param = balancing.fetchTimeParam();
+    return param.value;
   }
 
   public float getProgress()
   {
     if (balancing == null) return 0f; //pas encore démarré
 
-    TimerParams param = balancing.getCurrentParam();
+    param = balancing.fetchTimeParam();
 
     if (param.value == 0f)
     {
@@ -210,19 +204,8 @@ public class Timer : ArenaObject {
     //si le timer a jamais été call et qu'on arrive a la fin d'un round
     if (balancing == null) return;
 
-    TimerParams param = balancing.getCurrentParam();
+    param = balancing.fetchTimeParam();
     
-    if (param == null) return;
-
-    //Debug.Log(name + " timeout !", gameObject);
-
-    //jamais démarré ...
-    if (param == null)
-    {
-      //Debug.LogWarning("no param ? " + timerName, gameObject);
-      return;
-    }
-
     //Debug.Log("<b>"+timerName + "</b> solving timeout !", gameObject);
 
     //loop timer ?
@@ -266,9 +249,12 @@ public class Timer : ArenaObject {
     {
       ct += "\n  getTime() " + getTime() + " / getTargetStep() " + getTargetStep();
 
-      TimerParams param = balancing.getCurrentParam();
-      if (param == null) ct += "\nNO PARAM";
-      else ct += "\n" + timer + " / " + param.value;
+      if (balancing == null) ct += "\nNO BALANCING";
+      else
+      {
+        param = balancing.fetchTimeParam();
+        ct += "\n" + timer + " / " + param.value;
+      }
 
     }
     else ct += "\n  no balancing (Chrono ?)";
