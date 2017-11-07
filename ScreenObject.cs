@@ -146,4 +146,8 @@ public class ScreenObject : EngineObject
     
   }
 
+  public override string toString()
+  {
+    return base.toString()+"\nisVisible ? "+isVisible();
+  }
 }

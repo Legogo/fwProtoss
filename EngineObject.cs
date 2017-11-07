@@ -78,7 +78,7 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
 
   virtual public string toString()
   {
-    return name + " freeze ? " + isFreezed();
+    return name + " freeze ? " + isFreezed()+" canUpdate("+canUpdate()+")";
   }
 
   public string toStringDebug()
