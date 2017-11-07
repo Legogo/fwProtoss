@@ -14,19 +14,16 @@ public class DataTimer : ScriptableObject
     return param.timeMark < ArenaManager.get().getElapsedTime();
   }
 
+  /* update current param based on arena timer */
   public void fetchTimeParam()
   {
-    fetchTimeParam(GameTime.elapsedTime);
+    param = getParam(ArenaManager.get().getElapsedTime());
+    if (param == null) Debug.LogWarning("fetched time param is null");
   }
-
-  public void fetchTimeParam(float elapsed)
-  {
-    param = getParam(elapsed);
-  }
-
+  
   public TimerParams getCurrentParam()
   {
-    if (param == null) fetchTimeParam(ArenaManager.get().getElapsedTime());
+    if (param == null) fetchTimeParam();
     return param;
   }
 

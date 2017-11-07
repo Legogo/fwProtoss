@@ -26,6 +26,9 @@ public class Timer : ArenaObject {
   public void setupBalancing(DataTimer bal)
   {
     balancing = bal;
+
+    TimerParams param = balancing.getCurrentParam();
+    if (param.value == 0f) Debug.LogError("param.value must not be 0f (oh shi- related)", balancing);
     //if(balancing == null) Debug.LogWarning(timerName + " setupBalancing(null)", gameObject);
   }
 
@@ -186,9 +189,17 @@ public class Timer : ArenaObject {
 
   public float getProgress()
   {
-    if (balancing == null) return 0f;
+    if (balancing == null) return 0f; //pas encore démarré
 
     TimerParams param = balancing.getCurrentParam();
+
+    if (param.value == 0f)
+    {
+      Debug.LogError("param of timer '"+timerName+"' value == 0f ? oh shi- coming", gameObject);
+      Debug.LogError("  balancing : " + balancing, balancing);
+      return -1f;
+    }
+
     return timer / param.value;
   }
 
