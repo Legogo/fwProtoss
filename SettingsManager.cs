@@ -10,6 +10,8 @@ public class SettingsManager : EngineObject {
 
   public DataSettings data_settings;
 
+  public const string ppref_mute_name = "mute";
+
   static public SettingsManager get() {
     return GameObject.FindObjectOfType<SettingsManager>();
   }
@@ -98,4 +100,15 @@ public class SettingsManager : EngineObject {
     PlayerSettings.defaultInterfaceOrientation = data_settings.orientation_default;
   }
 #endif
+
+  static public void setMuted(bool muted)
+  {
+    PlayerPrefs.SetFloat(ppref_mute_name, (muted) ? 1f : 0f);
+    PlayerPrefs.Save();
+  }
+
+  static public bool isMuted()
+  {
+    return PlayerPrefs.GetFloat(ppref_mute_name, 0f) == 1f;
+  }
 }
