@@ -19,14 +19,33 @@ public class SettingsManager : EngineObject {
   protected override void build()
   {
     base.build();
-
-    Application.runInBackground = false;
     
+    Application.runInBackground = false;
+
+    Debug.Log(getSystemInfo());
+
 #if UNITY_ANDROID
-    Screen.fullScreen = false;
+
+    string[] models = { "sony" };
+
+    Debug.Log("models : " + SystemInfo.deviceModel + " checking for fullscreen removal");
+
+    for (int i = 0; i < models.Length; i++)
+    {
+      //skip
+      if (!Screen.fullScreen) continue;
+
+      Debug.Log("models : " + SystemInfo.deviceModel + " VS "+models[i]);
+
+      if (SystemInfo.deviceModel.ToLower().Contains(models[i].ToLower()))
+      {
+        Debug.Log("models : " + SystemInfo.deviceModel + " is set for NOT fullscreen");
+        Screen.fullScreen = false;
+      }
+    }
+
 #endif
     
-    Debug.Log(getSystemInfo());
   }
 
   public string getSystemInfo() {
@@ -68,8 +87,8 @@ public class SettingsManager : EngineObject {
 
     yield return null;
 
-    Debug.Log("SettingsManager::OnApplicationPause (pause app ? "+ pauseStatus + ") -> asking for internet connection");
-    CheckInternet.checkInternet(onCheckInternetDone);
+    //Debug.Log("SettingsManager::OnApplicationPause (pause app ? "+ pauseStatus + ") -> asking for internet connection");
+    //CheckInternet.checkInternet(onCheckInternetDone);
   }
 
   void onCheckInternetDone(bool state) {
