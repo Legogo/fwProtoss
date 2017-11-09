@@ -89,6 +89,10 @@ public class SettingsManager : EngineObject {
 
     //Debug.Log("SettingsManager::OnApplicationPause (pause app ? "+ pauseStatus + ") -> asking for internet connection");
     //CheckInternet.checkInternet(onCheckInternetDone);
+
+#if sdk_ads
+    XMediateBridge.get().reopen();
+#endif
   }
 
   void onCheckInternetDone(bool state) {
