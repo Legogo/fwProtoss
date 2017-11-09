@@ -6,7 +6,7 @@ using UnityEngine.Audio;
 public class SoundCarry : MonoBehaviour
 {
   public DataSounds sounds;
-  public AudioMixer mixer;
+  public AudioMixerGroup mixer;
 
   private void Awake()
   {
@@ -15,7 +15,7 @@ public class SoundCarry : MonoBehaviour
       GameObject carry = new GameObject(sounds.clips[i].name);
       AudioSource src = carry.AddComponent<AudioSource>();
       src.clip = sounds.clips[i];
-      src.outputAudioMixerGroup = mixer.outputAudioMixerGroup;
+      src.outputAudioMixerGroup = mixer;
     }
   }
 }
