@@ -9,23 +9,22 @@ public class ScreensManager : EngineObject {
   protected override void build()
   {
     base.build();
-
     fetchData();
-
-    call("loading");
-
-    EngineManager em = EngineManager.get();
-    if(em != null)
-    {
-      em.onLoadingDone += onLoaded;
-    }
-
   }
   
   override protected void fetchData()
   {
     base.fetchData();
     screens = GameObject.FindObjectsOfType<ScreenObject>();
+  }
+
+  public override void onEngineSceneLoaded()
+  {
+    base.onEngineSceneLoaded();
+    fetchData(); // missing screens
+
+    Debug.Log("  ScreensManager found " + screens.Length + " screens");
+    //for (int i = 0; i < screens.Length; i++) Debug.Log("  -" + screens[i].name);
   }
 
   public ScreenObject getScreen(string nm)

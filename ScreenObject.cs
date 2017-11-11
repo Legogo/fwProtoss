@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class ScreenObject : EngineObject
 {
   public bool sticky = false;
+  
   protected Canvas[] _canvas;
 
   protected override void build()
@@ -82,7 +83,6 @@ public class ScreenObject : EngineObject
     for (int i = 0; i < _canvas.Length; i++)
     {
       //Debug.Log(name + "  " + _canvas[i].name);
-
       if (_canvas[i].enabled != flag) _canvas[i].enabled = flag;
     }
 
@@ -123,11 +123,16 @@ public class ScreenObject : EngineObject
   
   public bool isVisible()
   {
+    //at least one
+    /*
     for (int i = 0; i < _canvas.Length; i++)
     {
       if (_canvas[i].enabled) return true;
     }
     return false;
+    */
+
+    return transform.position.sqrMagnitude == 0f;
   }
 
   public void act_call_home()
@@ -148,6 +153,6 @@ public class ScreenObject : EngineObject
 
   public override string toString()
   {
-    return base.toString()+"\nisVisible ? "+isVisible();
+    return base.toString()+"\nisVisible ? "+isVisible()+"\ncanvas count ? "+_canvas.Length;
   }
 }

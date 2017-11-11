@@ -57,22 +57,36 @@ public class EngineManager : MonoBehaviour {
 
     //Debug.Log("UBER update (" + objects.Count+")");
 
-    int count = 0;
-    //string notUpdatedNames = "";
+    //string updateData = "";
+    //string updateDataFilter = "ui_";
+    //bool addToData = false;
 
+    bool canUpdate = false;
+    int count = 0;
+    
     for (int i = 0; i < objects.Count; i++)
     {
-      if (!objects[i].canUpdate())
-      {
-        //notUpdatedNames += objects[i].name + " ";
-        continue;
+      canUpdate = objects[i].canUpdate();
+
+      /*
+      addToData = true;
+      if (updateDataFilter.Length > 0 && !objects[i].name.Contains(updateDataFilter)) addToData = false;
+
+      if(addToData){
+        updateData += "\n" + objects[i].GetType() + " | " + objects[i].name;
+        if (canUpdate) updateData += "update ? <color=green>" + canUpdate + "</color>";
+        else updateData += "update ? <color=red>" + canUpdate + "</color>";
       }
+      */
+
+      if (!canUpdate) continue;
+      
       objects[i].updateEngine();
       count++;
     }
 
     //Debug.Log("updated " + count + " objects");
-    //Debug.Log(notUpdatedNames);
+    //Debug.Log(updateData);
 
     for (int i = 0; i < objects.Count; i++)
     {

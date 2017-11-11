@@ -21,6 +21,10 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
     _tr = transform;
 
     eos.Add(this);
+
+    //Debug.Log(name);
+    //if(name.Contains("ui_")) Debug.Log(name+" <b>added to eos</b>");
+
     build();
 
     if (!EngineManager.isLoading()) onEngineSceneLoaded();
