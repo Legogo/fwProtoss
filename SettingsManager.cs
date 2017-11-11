@@ -98,17 +98,19 @@ public class SettingsManager : EngineObject {
   void onCheckInternetDone(bool state) {
     Debug.Log("SettingsManager::OnApplicationPause -> application connected to <b>internet ? " + state+"</b>");
 
-    SnakeGameManager.onAdsUpdateEvent();
+    //SnakeGameManager.onAdsUpdateEvent();
   }
 
   public override void onEngineSceneLoaded()
   {
     base.onEngineSceneLoaded();
     
+    /*
     TouchController tc = GameObject.FindObjectOfType<TouchController>();
     if(tc != null) {
       tc.useJoyVisualisation = data_settings.use_joystick_visualisation;
     }
+    */
   }
 
 #if UNITY_EDITOR
