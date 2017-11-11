@@ -24,7 +24,7 @@ public class EngineManager : MonoBehaviour {
       Application.targetFrameRate = targetFramerate;
     }
 
-    new CheckInternet();
+    //new CheckInternet();
 
     state_live = false;
   }

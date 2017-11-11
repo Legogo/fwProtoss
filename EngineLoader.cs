@@ -23,14 +23,19 @@ public class EngineLoader : MonoBehaviour
   {
     #if UNITY_EDITOR
     Debug.Log("<color=gray><b>Engine</b> entry point</color>");
-    #endif
+#endif
 
     //only load in game scene
-    if (!isSceneOfName("game"))
+    string[] filter = { "screen", "resource", "level" };
+    for (int i = 0; i < filter.Length; i++)
     {
-      //SceneManager.LoadScene("game");
-      Debug.LogWarning("<color=red><b>NOT GAME SCENE ?!</b></color>");
-      return;
+      if (isSceneOfName(filter[i]))
+      {
+        //SceneManager.LoadScene("game");
+        Debug.LogWarning("<color=red><b>"+filter[i]+" SCENE ?!</b></color> can't load that");
+        return;
+      }
+
     }
 
     new GameObject("[loader]").AddComponent<EngineLoader>();

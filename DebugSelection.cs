@@ -76,8 +76,9 @@ public class DebugSelection : MonoBehaviour
   void guiLabel(GameObject obj) {
 
     GUIStyle style = new GUIStyle();
-    style.fontSize = Mathf.FloorToInt((Screen.width * 1f / Screen.height * 1f) * 50f);
-    
+    //style.fontSize = Mathf.FloorToInt((Screen.width * 1f / Screen.height * 1f) * 50f);
+    style.fontSize = 20;
+
     float lineHeight = style.fontSize * 1.5f;
     style.normal.textColor = Color.red;
 
