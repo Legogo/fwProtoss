@@ -114,13 +114,15 @@ public class CoroutineManager
   {
     info.state = CoroutineState.START;
     
+    #if UNITY_EDITOR
     if(info.caller != null) {
       Debug.Log("{{coroutine}} starting coroutine for caller : " + info.caller.name, info.caller);
     }
     else {
       Debug.Log("{{coroutine}} starting coroutine (no caller)");
     }
-    
+    #endif
+
     while (!info.stopped && info.function.MoveNext())
     {
       if (info.killed)

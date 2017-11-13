@@ -49,7 +49,7 @@ public class ScreensManager : EngineObject {
   /* return only the first found */
   public ScreenObject call(string nm, string filterName = "")
   {
-    //Debug.Log("ui calling " + nm);
+    Debug.Log("ui calling SCREEN : " + nm);
 
     ScreenObject target = null;
 
