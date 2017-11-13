@@ -52,6 +52,7 @@ public class ScreenObject : EngineObject
   }
   
   virtual protected void action_back() {
+
     call_home();
   }
 
@@ -137,12 +138,14 @@ public class ScreenObject : EngineObject
 
   public void act_call_home()
   {
+    SoundManager.call("BUTTON", 0f, true);
+
     call_home();
   }
 
   static public void call_home()
   {
-    
+
     ScreensManager sm = ScreensManager.get();
     if(sm != null)
     {
