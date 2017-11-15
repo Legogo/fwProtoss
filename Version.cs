@@ -53,6 +53,8 @@ public class Version : MonoBehaviour {
   {
     Version v = GameObject.FindObjectOfType<Version>();
 
+    v.updatePlayerSettings(true);
+
     v.version++;
     v.build++;
 
@@ -77,7 +79,7 @@ public class Version : MonoBehaviour {
     return str;
   }
 
-  public void updatePlayerSettings() {
+  public void updatePlayerSettings(bool mute = false) {
 
 #if UNITY_EDITOR
 
@@ -89,7 +91,7 @@ public class Version : MonoBehaviour {
       PlayerSettings.Android.bundleVersionCode = build;
       PlayerSettings.iOS.buildNumber = PlayerSettings.bundleVersion;
 
-      Debug.Log("<b>DIRTY</b> " + PlayerSettings.bundleVersion);
+      if(!mute) Debug.Log("<b>DIRTY</b> " + PlayerSettings.bundleVersion);
       EditorSceneManager.MarkSceneDirty(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
     }
 #endif
