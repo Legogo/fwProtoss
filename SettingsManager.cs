@@ -22,6 +22,13 @@ public class SettingsManager : EngineObject {
     
     Application.runInBackground = false;
 
+    if (!Application.isEditor)
+    {
+      Application.SetStackTraceLogType(LogType.Log, StackTraceLogType.None);
+      Application.SetStackTraceLogType(LogType.Warning, StackTraceLogType.None);
+      Application.SetStackTraceLogType(LogType.Error, StackTraceLogType.ScriptOnly);
+    }
+    
     Debug.Log(getSystemInfo());
 
 #if UNITY_ANDROID
