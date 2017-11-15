@@ -47,7 +47,7 @@ public class SettingsManager : EngineObject {
 #endif
     
   }
-
+  
   public string getSystemInfo() {
     string str = "<color=red>SYSTEM INFO</color>";
 
