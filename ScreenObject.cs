@@ -52,6 +52,7 @@ public class ScreenObject : EngineObject
   }
   
   virtual protected void action_back() {
+    ScreenSnake.play_menu_sound();
 
     call_home();
   }
@@ -138,8 +139,7 @@ public class ScreenObject : EngineObject
 
   public void act_call_home()
   {
-    SoundManager.call("BUTTON", 0f, true);
-
+    ScreenSnake.play_menu_sound();
     call_home();
   }
 
