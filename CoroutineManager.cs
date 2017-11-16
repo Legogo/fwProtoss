@@ -26,6 +26,8 @@ public class CoroutineInfo
   public IEnumerator function;
   public CoroutineState state;
 
+  public string context = ""; // for debug
+
   public Action onEnd;
 
   public bool paused = false; // loop tant qu'on enlève pas la pause
@@ -74,6 +76,7 @@ public class CoroutineInfo
     if(caller != null) ct += "  " + caller;
     ct += "  " + fctName+"()";
 
+    if (context.Length > 0) ct += " " + context;
     return ct;
   }
 }

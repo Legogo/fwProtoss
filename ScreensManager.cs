@@ -103,4 +103,5 @@ public class ScreensManager : EngineObject {
 
   static protected ScreensManager manager;
   static public ScreensManager get() { if(manager==null)manager=GameObject.FindObjectOfType<ScreensManager>();return manager; }
+  
 }

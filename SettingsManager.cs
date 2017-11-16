@@ -90,22 +90,28 @@ public class SettingsManager : EngineObject {
   
   IEnumerator OnApplicationPause(bool pauseStatus)
   {
+    Debug.Log("((reopen)) OnApplicationPause " + pauseStatus);
+
     while (EngineManager.isLoading()) yield return null;
 
     yield return null;
 
     //Debug.Log("SettingsManager::OnApplicationPause (pause app ? "+ pauseStatus + ") -> asking for internet connection");
-    //CheckInternet.checkInternet(onCheckInternetDone);
+
+    //CheckInternet.checkPing(onCheckInternetDone);
+
+    onCheckInternetDone(false);
+  }
+
+  void onCheckInternetDone(bool state) {
+    Debug.Log("SettingsManager::onCheckInternetDone ((ping)) -> connected to <b>internet ? " + state+"</b>");
+
+    //SnakeGameManager.onAdsUpdateEvent();
 
 #if sdk_ads
     XMediateBridge.get().reopen();
 #endif
-  }
 
-  void onCheckInternetDone(bool state) {
-    Debug.Log("SettingsManager::OnApplicationPause -> application connected to <b>internet ? " + state+"</b>");
-
-    //SnakeGameManager.onAdsUpdateEvent();
   }
 
   public override void onEngineSceneLoaded()

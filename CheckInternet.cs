@@ -9,6 +9,47 @@ public class CheckInternet
 {
 
   static public bool hasInternet = false;
+  static public string info = "";
+
+  static public void checkPing(Action<bool> onCheckDone)
+  {
+    CoroutineInfo info = CoroutineManager.launch(CheckConnection(onCheckDone));
+    info.context = "CheckInternet";
+  }
+
+  static public IEnumerator CheckConnection(Action<bool> onCheckDone)
+  {
+    const float timeout = 3f;
+    float startTime = Time.timeSinceLevelLoad;
+    Ping ping = new Ping("8.8.8.8"); // google dns
+
+    while (true)
+    {
+      info = "Checking network...";
+        
+      if (ping.isDone)
+      {
+        hasInternet = true;
+        info = "Network available.";
+
+        Debug.Log("((ping)) " + info);
+        if (onCheckDone != null) onCheckDone(true);
+        yield break;
+      }
+
+      if (Time.timeSinceLevelLoad - startTime > timeout)
+      {
+        info = "No network.";
+        hasInternet = false;
+
+        Debug.Log("((ping)) "+info);
+        if (onCheckDone != null) onCheckDone(false);
+        yield break;
+      }
+
+      yield return new WaitForEndOfFrame();
+    }
+  }
 
   static public void checkInternet(Action<bool> onCheckDone)
   {
