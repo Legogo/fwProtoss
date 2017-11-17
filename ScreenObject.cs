@@ -52,7 +52,7 @@ public class ScreenObject : EngineObject
   }
   
   virtual protected void action_back() {
-    ScreenSnake.play_menu_sound();
+    ScreenSnake.play_menu_sound("screen, back");
 
     call_home();
   }
@@ -139,7 +139,7 @@ public class ScreenObject : EngineObject
 
   public void act_call_home()
   {
-    ScreenSnake.play_menu_sound();
+    ScreenSnake.play_menu_sound("screen, call home");
     call_home();
   }
 

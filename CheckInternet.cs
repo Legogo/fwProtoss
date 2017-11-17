@@ -8,7 +8,8 @@ using System;
 public class CheckInternet
 {
 
-  static public bool hasInternet = false;
+  static protected bool _hasInternet = false;
+  static public bool hasInternet() { return _hasInternet; }
   static public string info = "";
 
   static public void checkPing(Action<bool> onCheckDone)
@@ -29,7 +30,7 @@ public class CheckInternet
         
       if (ping.isDone)
       {
-        hasInternet = true;
+        _hasInternet = true;
         info = "Network available.";
 
         Debug.Log("((ping)) " + info);
@@ -40,7 +41,7 @@ public class CheckInternet
       if (Time.timeSinceLevelLoad - startTime > timeout)
       {
         info = "No network.";
-        hasInternet = false;
+        _hasInternet = false;
 
         Debug.Log("((ping)) "+info);
         if (onCheckDone != null) onCheckDone(false);
@@ -57,7 +58,7 @@ public class CheckInternet
     
     Debug.Log("GetHtmlFromUri(http://google.com), RAW HTML --->\n"+HtmlText);
     
-    hasInternet = false;
+    _hasInternet = false;
 
     if (HtmlText == "")
     {
@@ -71,7 +72,7 @@ public class CheckInternet
     else
     {
       //success
-      hasInternet = true;
+      _hasInternet = true;
     }
 
     #if no_internet
@@ -79,7 +80,7 @@ public class CheckInternet
     #endif
 
     //Debug.Log("INTERNET ? " + hasInternet);
-    if (onCheckDone != null) onCheckDone(hasInternet);
+    if (onCheckDone != null) onCheckDone(_hasInternet);
   }
 
   static public string GetHtmlFromUri(string resource)
