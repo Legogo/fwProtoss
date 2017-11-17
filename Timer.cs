@@ -52,7 +52,7 @@ public class Timer : ArenaObject {
   {
 
 #if UNITY_EDITOR
-    //if (balancing != null) Debug.Log("timer " + timerName + " starting as timeout. Timeout in " + balancing.getCurrentParam().value, gameObject);
+    //if (balancing != null) Debug.Log("timer " + timerName + " starting as timeout. Timeout in " + balancing.fetchTimeParam().value, gameObject);
     //else Debug.Log("timer " + timerName + " starting as a chrono (no balancing / timeout)", gameObject);
 #endif
 
