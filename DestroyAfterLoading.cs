@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DestroyAfterLoading : EngineObject {
-  public override void onEngineSceneLoaded()
+public class DestroyAfterLoading : MonoBehaviour
+{
+  IEnumerator Start()
   {
-    base.onEngineSceneLoaded();
+    while (EngineManager.isLoading()) yield return null;
 
     GameObject.DestroyImmediate(gameObject);
   }
+  
 }

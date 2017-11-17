@@ -27,6 +27,11 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
 
     build();
 
+    if (name.Contains("timer_"))
+    {
+      Debug.Log("<b>" + name + "." + GetType() + "</b> awake :: EngineManager loading ? "+ EngineManager.isLoading());
+    }
+
     if (!EngineManager.isLoading()) onEngineSceneLoaded();
   }
   
@@ -66,11 +71,13 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
 
   private void OnDestroy()
   {
+    //Debug.Log(name + " OnDestroy ", gameObject);
     destroy();
   }
 
   virtual protected void destroy()
   {
+    //Debug.Log(name + " destroy() ", gameObject);
     if (eos.IndexOf(this) > -1) eos.Remove(this);
   }
 

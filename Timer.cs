@@ -76,7 +76,7 @@ public class Timer : ArenaObject {
     if (balancing == null) return;
 
     param = balancing.fetchTimeParam();
-    timer = param.value - 0.0001f;
+    timer = param.value - 0.2f;
   }
 
   public void stop()
@@ -94,7 +94,7 @@ public class Timer : ArenaObject {
   {
     base.updateArenaLive(timeStamp);
 
-    //Debug.Log(name);
+    //Debug.Log("<b>"+timerName+"</b> live");
 
     //next param time !
     if(balancing != null && balancing.hasMultipleParams())
@@ -103,7 +103,7 @@ public class Timer : ArenaObject {
 
       if (timeStamp > param.timeMark)
       {
-        Debug.Log(name + " next param " + timeStamp + " > " + param.timeMark);
+        Debug.Log("<b>"+timerName+ "</b> next param " + timeStamp + " > " + param.timeMark);
       }
     }
 
@@ -114,7 +114,7 @@ public class Timer : ArenaObject {
   {
     base.updateArenaEnd();
 
-    //Debug.Log("timer " + timerName + " updateEnd | ? " + timer + " / " + getProgress(), gameObject);
+    //Debug.Log("timer <b>" + timerName + "</b> updateEnd | ? " + timer + " / " + getProgress(), gameObject);
 
     if (!liveOnEnd) return;
 
@@ -123,8 +123,8 @@ public class Timer : ArenaObject {
 
   protected void updateTimer() {
 
-    //Debug.Log(timerName + " update "+isRunning());
-
+    //if (timerName.Contains("spawn")) Debug.Log("<b>" + timerName + "</b> update | isRunning ? " + isRunning(), gameObject);
+    
     if (!isRunning()) return;
     
     //if(balancing != null && balancing.getCurrentParam() != null) Debug.Log(name + " | " + timer + " / " + balancing.getCurrentParam().value);
@@ -226,7 +226,7 @@ public class Timer : ArenaObject {
   
   override public string toString()
   {
-    string ct = "";
+    string ct = base.toString();
 
     //general info
     ct += "\n(mul timer) " + name + " | " + timerName;
@@ -242,7 +242,11 @@ public class Timer : ArenaObject {
     //freeze stuff ?
     ct += "\n  liveOnEnd ? " + liveOnEnd + " , liveOnStartup ? " + liveOnStartup;
     ct += "\n  active ? " + isActive() + " , freeze ? " + isFreezed() + " , progress ? " + getProgress();
-    if(_arena != null) ct += "\n  arena live ? " + _arena.isArenaStateLive() + " , end ? " + _arena.isArenaStateEnd();
+
+    if (_arena != null) ct += "\n  arena live ? " + _arena.isArenaStateLive() + " , end ? " + _arena.isArenaStateEnd();
+    else ct += "\n  no arena ?";
+
+    ct += "\n  eos idx : "+EngineObject.eos.IndexOf(this);
 
     //balancing stuff
     if (hasBalancing())

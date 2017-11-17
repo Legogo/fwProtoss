@@ -14,19 +14,22 @@ abstract public class ArenaObject : EngineObject {
   
   protected ArenaManager _arena;
   
-  public override void onEngineSceneLoaded()
+  protected override void fetchData()
   {
-    base.onEngineSceneLoaded();
+    base.fetchData();
 
-    //Debug.Log("<b>"+name + "."+GetType()+"</b> -> setup");
+    //if(name.Contains("timer_")) Debug.Log("<b>" + name + "." + GetType() + "</b> fetchData");
+    
     _arena = ArenaManager.get();
-    if(_arena != null)
+
+    if (_arena != null)
     {
       if (_arena.arenaObjects.IndexOf(this) < 0) _arena.arenaObjects.Add(this);
     }
-    
-  }
+    else Debug.LogWarning(name + " no arena ?", gameObject);
 
+  }
+  
   protected override void destroy()
   {
     base.destroy();

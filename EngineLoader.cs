@@ -91,10 +91,12 @@ public class EngineLoader : MonoBehaviour
 
     while (_asyncs.Count > 0) yield return null;
 
-    //NEED a frame for all Start to process
+    //NEED multiples frames for all Start to process
+    yield return null;
+    yield return null;
     yield return null;
 
-    if(onDone != null) onDone();
+    if (onDone != null) onDone();
   }
 
   void doneLoading() {
