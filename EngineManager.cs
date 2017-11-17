@@ -47,8 +47,13 @@ public class EngineManager : MonoBehaviour {
     if (onLoadingDone != null) onLoadingDone();
   }
 
-  private void Update()
+  void Update()
   {
+    if (Input.GetKeyUp(KeyCode.Space)) // pause
+    {
+      callPause(state_live);
+    }
+
     if (!isLive()) return;
     
     //update everything
@@ -94,7 +99,13 @@ public class EngineManager : MonoBehaviour {
       objects[i].updateEngineLate();
     }
   }
-  
+
+  static public void callPause(bool pauseState)
+  {
+    Debug.Log("((system)) callPause(" + pauseState + ")");
+    state_live = !pauseState;
+  }
+
   static public bool isLoading(){return !state_live;}
   static public bool isLive(){return state_live;}
 

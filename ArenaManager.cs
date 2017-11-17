@@ -57,8 +57,7 @@ abstract public class ArenaManager : EngineObject {
     //speed up debug arena timer
     float mul = 1f;
     
-    //debug, make ingame time go faster
-    if (Input.GetKey(KeyCode.P)) mul = 100f;
+    if (Input.GetKey(KeyCode.S)) mul = 100f; //debug, make ingame time go faster
     time += Time.deltaTime * mul;
 
     if (liveFreezeTimer > 0f)

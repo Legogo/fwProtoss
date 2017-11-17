@@ -20,7 +20,7 @@ public class SettingsManager : EngineObject {
   {
     base.build();
     
-    Application.runInBackground = false;
+    //Application.runInBackground = false;
 
     if (!Application.isEditor)
     {
@@ -90,7 +90,9 @@ public class SettingsManager : EngineObject {
   
   IEnumerator OnApplicationPause(bool pauseStatus)
   {
-    Debug.Log("((reopen)) OnApplicationPause " + pauseStatus);
+    //Debug.Log("((reopen)) OnApplicationPause " + pauseStatus);
+
+    EngineManager.callPause(pauseStatus);
 
     while (EngineManager.isLoading()) yield return null;
 
@@ -98,9 +100,9 @@ public class SettingsManager : EngineObject {
 
     //Debug.Log("SettingsManager::OnApplicationPause (pause app ? "+ pauseStatus + ") -> asking for internet connection");
 
-    //CheckInternet.checkPing(onCheckInternetDone);
+    CheckInternet.checkPing(onCheckInternetDone);
 
-    onCheckInternetDone(false);
+    //onCheckInternetDone(false);
   }
 
   void onCheckInternetDone(bool state) {
