@@ -100,7 +100,8 @@ public class SettingsManager : EngineObject {
 
     //Debug.Log("SettingsManager::OnApplicationPause (pause app ? "+ pauseStatus + ") -> asking for internet connection");
 
-    CheckInternet.checkPing(onCheckInternetDone);
+    //CheckInternet.checkPing(onCheckInternetDone);
+    CheckInternet.checkInternet(onCheckInternetDone);
 
     //onCheckInternetDone(false);
   }
