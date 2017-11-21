@@ -62,6 +62,7 @@ public class ScreenObject : EngineObject
     {
       if (_canvas[i].name.Contains(nm)) return _canvas[i];
     }
+    Debug.LogWarning("no canvas that CONTAINS " + nm);
     return null;
   }
 

@@ -14,14 +14,9 @@ abstract public class ArenaManager : EngineObject {
 
   protected Coroutine coProcessEnd;
 
+  protected Canvas pauseCanvas;
+
   public List<ArenaObject> arenaObjects = new List<ArenaObject>();
-
-  protected override void build()
-  {
-    base.build();
-
-    //EngineManager.get().onLoadingDone += restart;
-  }
   
   virtual public void restart_normal() {
     time = 0f;
@@ -32,7 +27,15 @@ abstract public class ArenaManager : EngineObject {
     _freeze = false;
     _state = ArenaState.LIVE;
   }
-  
+
+  abstract protected void fetchPauseCanvasScreen();
+
+  protected override void fetchData()
+  {
+    base.fetchData();
+    fetchPauseCanvasScreen();
+  }
+
   public override void updateEngine()
   {
     base.updateEngine();
@@ -130,7 +133,7 @@ abstract public class ArenaManager : EngineObject {
 
     coProcessEnd = null;
   }
-
+  
   public float getElapsedTime()
   {
     return time;
@@ -145,7 +148,13 @@ abstract public class ArenaManager : EngineObject {
 
   public ArenaState getState() { return _state; }
   protected bool isAtState(ArenaState st) { return _state == st; }
-  public bool isArenaStateLive() { return liveFreezeTimer < 0f && isAtState(ArenaState.LIVE); }
+  public bool isArenaStateLive() {
+
+    //pause modale kill gameplay
+    if (pauseCanvas != null && pauseCanvas.enabled) return false;
+
+    return liveFreezeTimer < 0f && isAtState(ArenaState.LIVE);
+  }
   public bool isArenaStateEnd() { return isAtState(ArenaState.END); }
 
   static protected ArenaManager _manager;

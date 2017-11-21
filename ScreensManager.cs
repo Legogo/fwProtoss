@@ -33,6 +33,7 @@ public class ScreensManager : EngineObject {
     {
       if (screens[i].name.Contains(nm)) return screens[i];
     }
+    Debug.LogWarning("no screen that CONTAINS name " + nm);
     return null;
   }
 
