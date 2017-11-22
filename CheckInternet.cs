@@ -18,7 +18,7 @@ public class CheckInternet
 
   static public void checkPing(Action<bool> onCheckDone)
   {
-    Debug.Log("((ping)) checkPing");
+    Debug.Log("!!ping!! checkPing");
     CoroutineInfo info = CoroutineManager.launch(CheckConnection(onCheckDone));
     info.context = "CheckInternet";
   }
@@ -63,7 +63,7 @@ public class CheckInternet
   {
     _hasInternet = state;
 
-    Debug.Log("((ping)) ping ended | info ? "+info+" | internet ? "+ _hasInternet + " | started at " + startTime + " , elapsed : " + elapsed);
+    Debug.Log("!!ping!! ping ended | info ? "+info+" | internet ? "+ _hasInternet + " | started at " + startTime + " , elapsed : " + elapsed);
 
     if (endCallback != null) endCallback(state);
   }
@@ -94,7 +94,7 @@ public class CheckInternet
     }
 
 #if no_internet
-      Debug.Log("((ping)) scriptable symbol no_internet force no internet state");
+      Debug.Log("!!ping!! scriptable symbol no_internet force no internet state");
       hasInternet = false;
 #endif
 

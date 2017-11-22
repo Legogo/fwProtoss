@@ -14,7 +14,7 @@ public class ArenaObjectVisible : ArenaObject {
   {
     base.build();
 
-    transform.localScale = Vector3.one * scaleSize;
+    rescale(scaleSize);
 
     //Debug.Log(name + " (" + GetType() + ") scale " + transform.localScale, gameObject);
 
@@ -33,6 +33,12 @@ public class ArenaObjectVisible : ArenaObject {
     base.spawnProcess(position);
 
     show();  
+  }
+
+  public void rescale(float newScale) {
+    scaleSize = newScale;
+
+    transform.localScale = Vector3.one * scaleSize;
   }
 
   protected void show()

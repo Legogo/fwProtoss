@@ -140,7 +140,7 @@ public class EngineManager : MonoBehaviour {
 
   static public void callPause(bool pauseState)
   {
-    Debug.Log("((system)) callPause(" + pauseState + ")");
+    Debug.Log("!!system!! callPause(" + pauseState + ")");
     state_live = !pauseState;
 
     if(_manager != null)
