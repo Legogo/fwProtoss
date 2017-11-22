@@ -23,7 +23,7 @@ public class ScreensManager : EngineObject {
     base.onEngineSceneLoaded();
     fetchData(); // missing screens
 
-    Debug.Log("  ScreensManager found " + screens.Length + " screens");
+    //Debug.Log("  ScreensManager found " + screens.Length + " screens");
     //for (int i = 0; i < screens.Length; i++) Debug.Log("  -" + screens[i].name);
   }
 

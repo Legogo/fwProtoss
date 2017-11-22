@@ -70,7 +70,7 @@ public class Version : MonoBehaviour {
   }
 #endif
 
-  protected string formatedVersion()
+  public string formatedVersion()
   {
     string str = major + "." + minor + "." + version + "-" + build;
 #if sdk
