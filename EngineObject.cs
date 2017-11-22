@@ -14,6 +14,7 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
 
   protected Transform _tr;
   protected bool _freeze = false;
+  protected bool _loaded = false;
 
   //constructor
   void Awake()
@@ -39,6 +40,7 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
   virtual public void onEngineSceneLoaded()
   {
     fetchData();
+    _loaded = true;
     EngineManager.checkForStartup();
   }
   

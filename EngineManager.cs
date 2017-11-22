@@ -57,6 +57,7 @@ public class EngineManager : MonoBehaviour {
 
     state_loading = false;
     state_live = true;
+
     if (onLoadingDone != null) onLoadingDone();
   }
 
@@ -149,7 +150,7 @@ public class EngineManager : MonoBehaviour {
     
   }
 
-  static public bool isLoading(){return state_loading;}
+  static public bool isLoading(){ return state_loading; }
   static public bool isLive(){return state_live && !state_loading;}
 
   // au premier launch il faut attendre que tt le monde setup avant de balancer le done()
