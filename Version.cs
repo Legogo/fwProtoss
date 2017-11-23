@@ -20,7 +20,7 @@ public class Version : MonoBehaviour {
   {
     applyVersionToText();
 
-    #if noVersion
+    #if no_version
     txt.enabled = false;
     #endif
   }
