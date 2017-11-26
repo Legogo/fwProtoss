@@ -68,8 +68,9 @@ abstract public class ArenaObject : EngineObject {
     //Debug.Log(name + " spawn");
 
     setActive(true);
-
+    
     spawnProcess(pos);
+    return;
   }
 
   virtual protected void spawnProcess(Vector3 position)

@@ -59,7 +59,7 @@ public class SettingsManager : EngineObject {
     string str = "<color=red>SYSTEM INFO</color>";
 
 #if UNITY_IOS
-    str += "\n[iphone generation]iPhone.generation.ToString()";
+    str += "\n[iphone generation]"+iPhone.generation.ToString();
 #endif
 
 #if UNITY_ANDROID
@@ -88,34 +88,6 @@ public class SettingsManager : EngineObject {
     return str;
   }
   
-  IEnumerator OnApplicationPause(bool pauseStatus)
-  {
-    //Debug.Log("((reopen)) OnApplicationPause " + pauseStatus);
-
-    EngineManager.callPause(pauseStatus);
-
-    while (EngineManager.isLoading()) yield return null;
-
-    yield return null;
-
-    //Debug.Log("SettingsManager::OnApplicationPause (pause app ? "+ pauseStatus + ") -> asking for internet connection");
-
-    CheckInternet.checkPing(onCheckInternetDone);
-
-    //onCheckInternetDone(false);
-  }
-
-  void onCheckInternetDone(bool state) {
-    Debug.Log("SettingsManager::onCheckInternetDone ((ping)) -> connected to <b>internet ? " + state+"</b>");
-
-    //SnakeGameManager.onAdsUpdateEvent();
-
-#if sdk_ads
-    XMediateBridge.get().reopen();
-#endif
-
-  }
-
   public override void onEngineSceneLoaded()
   {
     base.onEngineSceneLoaded();

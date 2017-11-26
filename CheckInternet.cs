@@ -10,53 +10,71 @@ public class CheckInternet
 
   static protected bool _hasInternet = false;
   static public bool hasInternet() { return _hasInternet; }
+  
+  protected const float timeout = 1f;
   static public string info = "";
+  static protected float startTime = 0f;
+  static protected float elapsed = 0f;
 
   static public void checkPing(Action<bool> onCheckDone)
   {
+    Debug.Log("#ping# checkPing");
     CoroutineInfo info = CoroutineManager.launch(CheckConnection(onCheckDone));
     info.context = "CheckInternet";
   }
 
-  static public IEnumerator CheckConnection(Action<bool> onCheckDone)
+  static protected IEnumerator CheckConnection(Action<bool> onCheckDone)
   {
-    const float timeout = 3f;
-    float startTime = Time.timeSinceLevelLoad;
+    startTime = Time.timeSinceLevelLoad;
     Ping ping = new Ping("8.8.8.8"); // google dns
+
+    elapsed = 0f;
 
     while (true)
     {
       info = "Checking network...";
-        
+
+      elapsed = Time.timeSinceLevelLoad - startTime;
+
       if (ping.isDone)
       {
-        _hasInternet = true;
         info = "Network available.";
 
-        Debug.Log("((ping)) " + info);
-        if (onCheckDone != null) onCheckDone(true);
+        onPingEnded(onCheckDone, true);
+        
         yield break;
       }
 
-      if (Time.timeSinceLevelLoad - startTime > timeout)
+      if (elapsed > timeout)
       {
         info = "No network.";
-        _hasInternet = false;
 
-        Debug.Log("((ping)) "+info);
-        if (onCheckDone != null) onCheckDone(false);
+        onPingEnded(onCheckDone, false);
+        
         yield break;
       }
 
       yield return new WaitForEndOfFrame();
     }
+
   }
+
+  static protected void onPingEnded(Action<bool> endCallback, bool state)
+  {
+    _hasInternet = state;
+
+    Debug.Log("#ping# ping ended | info ? " + info+" | internet ? "+ _hasInternet + " | started at " + startTime + " , elapsed : " + elapsed);
+
+    if (endCallback != null) endCallback(state);
+  }
+
+
 
   static public void checkInternet(Action<bool> onCheckDone)
   {
     string HtmlText = GetHtmlFromUri("http://google.com");
     
-    Debug.Log("GetHtmlFromUri(http://google.com), RAW HTML --->\n"+HtmlText);
+    //Debug.Log("GetHtmlFromUri(http://google.com), RAW HTML --->\n"+HtmlText);
     
     _hasInternet = false;
 
@@ -75,18 +93,22 @@ public class CheckInternet
       _hasInternet = true;
     }
 
-    #if no_internet
+#if no_internet
+      Debug.Log("##ping## scriptable symbol no_internet force no internet state");
       hasInternet = false;
-    #endif
+#endif
 
-    //Debug.Log("INTERNET ? " + hasInternet);
-    if (onCheckDone != null) onCheckDone(_hasInternet);
+    onPingEnded(onCheckDone, _hasInternet);
   }
 
-  static public string GetHtmlFromUri(string resource)
+  static protected string GetHtmlFromUri(string resource)
   {
     string html = string.Empty;
     HttpWebRequest req = (HttpWebRequest)WebRequest.Create(resource);
+
+    req.Timeout = 1000;
+    //req.ReadWriteTimeout = 1000;
+
     try
     {
       using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse())

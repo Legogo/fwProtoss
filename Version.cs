@@ -20,7 +20,7 @@ public class Version : MonoBehaviour {
   {
     applyVersionToText();
 
-    #if noVersion
+    #if no_version
     txt.enabled = false;
     #endif
   }
@@ -70,7 +70,7 @@ public class Version : MonoBehaviour {
   }
 #endif
 
-  protected string formatedVersion()
+  public string formatedVersion()
   {
     string str = major + "." + minor + "." + version + "-" + build;
 #if sdk

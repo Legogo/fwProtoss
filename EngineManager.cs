@@ -15,11 +15,14 @@ public class EngineManager : MonoBehaviour {
 
   //something need to subscribe to this to get end of loading callback
   public Action onLoadingDone;
+  public Action<bool> onPause;
 
   public int targetFramerate = -1;
 
   void Awake()
   {
+    _manager = this;
+
     if(targetFramerate > 0)
     {
       Application.targetFrameRate = targetFramerate;
@@ -65,6 +68,8 @@ public class EngineManager : MonoBehaviour {
 
     state_loading = false;
     state_live = true;
+
+    //broadcast
     if (onLoadingDone != null) onLoadingDone();
   }
 
@@ -147,11 +152,17 @@ public class EngineManager : MonoBehaviour {
 
   static public void callPause(bool pauseState)
   {
-    Debug.Log("((system)) callPause(" + pauseState + ")");
+    Debug.Log("##system## callPause(" + pauseState + ")");
     state_live = !pauseState;
+
+    if(_manager != null)
+    {
+      if (_manager.onPause != null) _manager.onPause(!state_live);
+    }
+    
   }
 
-  static public bool isLoading(){return state_loading;}
+  static public bool isLoading(){ return state_loading; }
   static public bool isLive(){return state_live && !state_loading;}
   
   public string toStringDebug()

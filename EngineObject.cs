@@ -28,14 +28,9 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
     //if(name.Contains("ui_")) Debug.Log(name+" <b>added to eos</b>");
 
     build();
-
-    if (name.Contains("timer_"))
-    {
-      Debug.Log("<b>" + name + "." + GetType() + "</b> awake :: EngineManager loading ? "+ EngineManager.isLoading());
-    }
-
-    //Debug.Log(GetType() + " (on "+name+") awake() | count ? "+eos.Count);
-
+    
+    //if (name.Contains("timer_")) Debug.Log("<b>" + name + "." + GetType() + "</b> awake :: EngineManager loading ? "+ EngineManager.isLoading());
+    
     if (!EngineManager.isLoading()) onEngineSceneLoaded();
   }
   
