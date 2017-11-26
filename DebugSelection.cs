@@ -86,7 +86,8 @@ public class DebugSelection : MonoBehaviour
     GUI.Label(guiRec, "[DebugSelection]\n", style);
 
     string info = "";
-    
+
+    guiRec.x = 0;
     guiRec.y = lineHeight;
 
     IDebugSelection[] infos = obj.GetComponents<IDebugSelection>();
@@ -97,8 +98,16 @@ public class DebugSelection : MonoBehaviour
       //if (i > 0) guiRec.y += 30;
       GUI.Label(guiRec, info, style);
 
-      guiRec.y += info.Split('\n').Length * lineHeight;
-
+      if(i % 2 == 0)
+      {
+        guiRec.x = 500;
+      }
+      else
+      {
+        guiRec.y += 300;
+        guiRec.x = 0;
+      }
+      
       //Debug.Log(info);
       //Debug.Log(info.Split('\n').Length + " = " + guiRec.y);
 

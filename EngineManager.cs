@@ -31,21 +31,32 @@ public class EngineManager : MonoBehaviour {
     state_live = false;
   }
 
+  /* end of scenes loading */
   public void engine_scenes_loaded()
   {
     //Debug.Log("EngineManager, engine_scenes_loaded, calling all callbacks for end of loading");
+    StartCoroutine(processScenesLoaded());
+  }
 
-    int count = EngineObject.eos.Count;
+  IEnumerator processScenesLoaded() {
+    
+    int count = 0;
 
-    for (int i = 0; i < EngineObject.eos.Count; i++)
+    //Debug.Log("scenes loaded eos count prev ? "+EngineObject.eos.Count);
+
+    while(count < EngineObject.eos.Count)
     {
-      //Debug.Log(EngineObject.eos[i].name+" "+EngineObject.eos[i].GetType()+" calling scene loaded");
+      EngineObject.eos[count].onEngineSceneLoaded();
 
-      EngineObject.eos[i].onEngineSceneLoaded();
+      while (!EngineObject.eos[count].isReady()) yield return null;
+
+      count++;
+      yield return null;
     }
 
-    int diff = count - EngineObject.eos.Count;
-    if (diff != 0) Debug.LogError("EngineObject :: count diff "+diff+", count changed !");
+    //Debug.Log("scenes loaded eos count after ? " + EngineObject.eos.Count);
+
+    game_loading_done();
   }
 
   public void game_loading_done()
@@ -59,7 +70,7 @@ public class EngineManager : MonoBehaviour {
 
   void Update()
   {
-    if (Input.GetKeyUp(KeyCode.Space)) // pause
+    if (Input.GetKeyUp(KeyCode.P)) // pause
     {
       callPause(state_live);
     }
@@ -142,20 +153,6 @@ public class EngineManager : MonoBehaviour {
 
   static public bool isLoading(){return state_loading;}
   static public bool isLive(){return state_live && !state_loading;}
-
-  // au premier launch il faut attendre que tt le monde setup avant de balancer le done()
-  static public void checkForStartup() {
-    
-    if (isLive()) return;
-
-    //everybody setup ?
-    loadedCount++;
-
-    if (loadedCount == EngineObject.eos.Count) {
-      get().game_loading_done();
-    }
-
-  }
   
   public string toStringDebug()
   {

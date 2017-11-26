@@ -14,12 +14,14 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
 
   protected Transform _tr;
   protected bool _freeze = false;
+  protected bool _ready = false;
 
   //constructor
   void Awake()
   {
     _tr = transform;
 
+    _ready = false;
     eos.Add(this);
 
     //Debug.Log(name);
@@ -32,6 +34,8 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
       Debug.Log("<b>" + name + "." + GetType() + "</b> awake :: EngineManager loading ? "+ EngineManager.isLoading());
     }
 
+    //Debug.Log(GetType() + " (on "+name+") awake() | count ? "+eos.Count);
+
     if (!EngineManager.isLoading()) onEngineSceneLoaded();
   }
   
@@ -39,7 +43,7 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
   virtual public void onEngineSceneLoaded()
   {
     fetchData();
-    EngineManager.checkForStartup();
+    _ready = true;
   }
   
   virtual protected void build()
@@ -86,6 +90,7 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
     //Debug.Log("<b>" + name + "</b> , "+GetType()+" , setFreeze " + flag);
     _freeze = flag;
   }
+  public bool isReady() { return _ready; }
 
   virtual public string toString()
   {
