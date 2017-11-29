@@ -142,6 +142,11 @@ public class ScreenObject : EngineObject
     call_home();
   }
 
+  public override string toString()
+  {
+    return base.toString() + "\nisVisible ? " + isVisible() + "\ncanvas count ? " + _canvas.Length;
+  }
+
   static public void call_home()
   {
 
@@ -153,8 +158,8 @@ public class ScreenObject : EngineObject
     
   }
 
-  public override string toString()
-  {
-    return base.toString()+"\nisVisible ? "+isVisible()+"\ncanvas count ? "+_canvas.Length;
+  static public Canvas getCanvas(string screenName, string canvasName) {
+    ScreenObject screen = ScreensManager.get().getScreen(screenName);
+    return screen.getCanvas(canvasName);
   }
 }

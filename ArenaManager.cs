@@ -28,7 +28,12 @@ abstract public class ArenaManager : EngineObject {
     _state = ArenaState.LIVE;
   }
 
-  abstract protected void fetchPauseCanvasScreen();
+  /* how the arena can get the pause screen */
+  virtual protected void fetchPauseCanvasScreen()
+  {
+  ScreenObject.get
+    pauseCanvas = ToolsComponent.getComponentByCarryName<Canvas>("(pause)");
+  }
 
   protected override void fetchData()
   {
