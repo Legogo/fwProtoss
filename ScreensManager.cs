@@ -50,7 +50,7 @@ public class ScreensManager : EngineObject {
   /* return only the first found */
   public ScreenObject call(string nm, string filterName = "")
   {
-    Debug.Log("ScreensManager | calling screen : " + nm);
+    //Debug.Log("ScreensManager | calling screen : " + nm);
 
     ScreenObject target = null;
 

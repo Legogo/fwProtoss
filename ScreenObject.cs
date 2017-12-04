@@ -44,7 +44,7 @@ public class ScreenObject : EngineObject
     if(isVisible() && !sticky) {
       if (Input.GetKeyUp(KeyCode.Escape))
       {
-        Debug.Log(name + " pressed back button");
+        //Debug.Log(name + " pressed back button");
         action_back();
       }
     }

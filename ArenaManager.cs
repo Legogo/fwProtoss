@@ -31,8 +31,11 @@ abstract public class ArenaManager : EngineObject {
   /* how the arena can get the pause screen */
   virtual protected void fetchPauseCanvasScreen()
   {
-  ScreenObject.get
-    pauseCanvas = ToolsComponent.getComponentByCarryName<Canvas>("(pause)");
+    if(ScreensManager.get() != null)
+    {
+      ScreenObject obj = ScreensManager.get().getScreen("ingame");
+      if (obj != null) pauseCanvas = obj.getCanvas("pause");
+    }
   }
 
   protected override void fetchData()
