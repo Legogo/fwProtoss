@@ -12,8 +12,7 @@ public class SoundCarry : MonoBehaviour
   {
     for (int i = 0; i < sounds.clips.Length; i++)
     {
-      GameObject carry = new GameObject(sounds.clips[i].name);
-      AudioSource src = carry.AddComponent<AudioSource>();
+      AudioSource src = gameObject.AddComponent<AudioSource>();
       src.clip = sounds.clips[i];
       src.outputAudioMixerGroup = mixer;
     }

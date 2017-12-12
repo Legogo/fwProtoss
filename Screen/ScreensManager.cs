@@ -103,6 +103,13 @@ public class ScreensManager : EngineObject {
   }
 
   static protected ScreensManager manager;
-  static public ScreensManager get() { if(manager==null)manager=GameObject.FindObjectOfType<ScreensManager>();return manager; }
+  static public ScreensManager get() { 
+    if(manager == null)manager=GameObject.FindObjectOfType<ScreensManager>();
+    if(manager == null) {
+      GameObject obj = new GameObject("(screens)");
+      manager = obj.AddComponent<ScreensManager>();
+    }
+    return manager;
+  }
   
 }

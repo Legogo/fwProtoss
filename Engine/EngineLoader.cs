@@ -25,6 +25,12 @@ public class EngineLoader : MonoBehaviour
     Debug.Log("<color=gray><b>Engine</b> entry point</color>");
 #endif
 
+    //don't load engine on guide scenes
+    if(SceneManager.GetActiveScene().name.StartsWith("~")) {
+      Debug.LogWarning("<b>guide scene</b> not loading engine here");
+      return;
+    }
+
     //only load in game scene
     string[] filter = { "screen", "resource", "level" };
     for (int i = 0; i < filter.Length; i++)
