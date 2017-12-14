@@ -30,7 +30,7 @@ public class GameStartup : EngineObject {
     //fake wait
     yield return new WaitForSeconds(0.5f);
 
-    Debug.Log("starting game by opening screen " + openingScreen);
+    Debug.Log("starting game by opening screen <b>" + openingScreen+"</b>");
 
     ScreensManager.get().call(openingScreen);
   }

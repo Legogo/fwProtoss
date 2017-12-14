@@ -42,11 +42,37 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
     visibility = GetComponent<ModuleVisible>();
   }
 
-  protected void subscribeToInput()
+  protected void subscribeToInput(string carryName) {
+    GameObject carry = GameObject.Find(carryName);
+    if(carry != null) {
+      InputObject io = carry.GetComponent<InputObject>();
+      if(io != null) {
+        subscribeToInput(io);
+        return;
+      }
+    }
+
+    Debug.LogWarning("asking for inputobject carry " + carryName + " but couldn't find it");
+    subscribeToInput();
+  }
+  protected void subscribeToInput(InputObject io = null)
   {
-    input = GetComponent<InputObject>();
-    if (input == null) input = gameObject.AddComponent<InputObject>();
+    if(io != null) {
+      input = io;
+    }
+    else {
+      input = GetComponent<InputObject>();
+      if (input == null) input = gameObject.AddComponent<InputObject>();
+    }
+
+    //Debug.Log(input.name, input.gameObject);
+
     input.cbTouch += touchPress;
+    input.cbRelease += touchRelease;
+  }
+
+  virtual protected void touchRelease(InputTouchFinger finger) {
+
   }
 
   virtual protected void touchPress(InputTouchFinger finger)

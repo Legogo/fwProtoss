@@ -32,6 +32,10 @@ public class InputObject : MonoBehaviour {
     //if(_colliders.Length <= 0) Debug.LogWarning(name + " , colliders count = " + _colliders.Length);
   }
 
+  public void setupCollider(Collider2D[] newColliders) {
+    _colliders = newColliders;
+  }
+
   virtual protected void Start()
   {
     
@@ -40,7 +44,7 @@ public class InputObject : MonoBehaviour {
     if (_input == null)
     {
       _input = InputTouchBridge.get();
-      if (_input == null) Debug.LogError("<EngineObject> no [input] in scene ??");
+      if (_input == null) Debug.LogError("<EngineObject> no [input] in scene ??", gameObject);
 
       //subscribe to manager
       _input.onTouch += eventOnTouch;
@@ -164,6 +168,7 @@ public class InputObject : MonoBehaviour {
   }
   virtual protected void onRelease(InputTouchFinger finger) {
     //Debug.Log(name + " release scene"); 
+    if (cbRelease != null) cbRelease(finger);
   }
   virtual protected void onOverring(InputTouchFinger finger)
   {
