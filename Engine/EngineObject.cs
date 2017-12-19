@@ -31,8 +31,12 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
     //if(name.Contains("ui_")) Debug.Log(name+" <b>added to eos</b>");
 
     build();
+  }
+
+  void Start() {
     
-    //if (name.Contains("timer_")) Debug.Log("<b>" + name + "." + GetType() + "</b> awake :: EngineManager loading ? "+ EngineManager.isLoading());
+    //usually objects startup their dependencies in the onEngineSceneLoaded
+    //so if the object as other monobehavior generated at the same time (same Resource object) engine needs a frame to have all dependencies finish their build() process
     
     if (!EngineManager.isLoading()) onEngineSceneLoaded();
   }
