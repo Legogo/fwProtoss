@@ -94,7 +94,7 @@ public class ScreenObject : EngineObject
   [ContextMenu("show")]
   virtual public void show()
   {
-    //Debug.Log("<b>"+name + "</b> show()");
+    Debug.Log("~Screen~ show() <b>"+name + "</b>");
 
     //if(ScreensManager.get() != null) ScreensManager.get().killAll();
 

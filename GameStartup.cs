@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Use this script to start a specific screen on loading end
+/// It will call the screen "loading" for the loading process
+/// </summary>
+
 public class GameStartup : EngineObject {
 
   public string openingScreen = "home";
@@ -10,29 +15,20 @@ public class GameStartup : EngineObject {
   {
     base.fetchData();
 
+    //need to be after loading (because engine manager might be in a resource scene)
+    EngineManager em = EngineManager.get();
+    if (em == null) Debug.LogError("no engine manager ?");
+    else em.onLoadingDone += engineLoadingDone;
+
     //show loading
     ScreensManager.get().call("loading");
   }
-
-  public override void onEngineSceneLoaded()
+  
+  /* this is called after eveything is done reacting to loading end */
+  protected void engineLoadingDone()
   {
-    base.onEngineSceneLoaded();
-
-    StartCoroutine(processWaitStartup());
-    
-  }
-
-  IEnumerator processWaitStartup()
-  {
-    //on doit attendre au moins 1 frame pour que les autres onEngineSceneLoaded aient fini
-    yield return null;
-    
-    //fake wait
-    yield return new WaitForSeconds(0.5f);
-
-    Debug.Log("starting game by opening screen <b>" + openingScreen+"</b>");
-
+    Debug.Log("~Startup~ starting ...");
     ScreensManager.get().call(openingScreen);
   }
-
+  
 }
