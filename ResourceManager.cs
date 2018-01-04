@@ -5,7 +5,8 @@ using UnityEngine;
 public class ResourceManager {
   
   static protected List<GameObject> resources = new List<GameObject>();
-  
+
+  /* called by EngineManager::engine_scenes_loaded */
   static public void reload()
   {
     GameObject[] gos = GameObject.FindGameObjectsWithTag("resource");
