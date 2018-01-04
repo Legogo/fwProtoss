@@ -9,19 +9,19 @@ public class ScreensManager : EngineObject {
   protected override void build()
   {
     base.build();
-    fetchData();
+    fetchGlobal();
   }
   
-  override protected void fetchData()
+  override protected void fetchGlobal()
   {
-    base.fetchData();
+    base.fetchGlobal();
     screens = GameObject.FindObjectsOfType<ScreenObject>();
   }
 
   public override void onEngineSceneLoaded()
   {
     base.onEngineSceneLoaded();
-    fetchData(); // missing screens
+    fetchGlobal(); // missing screens
 
     //Debug.Log("  ScreensManager found " + screens.Length + " screens");
     //for (int i = 0; i < screens.Length; i++) Debug.Log("  -" + screens[i].name);
@@ -33,7 +33,7 @@ public class ScreensManager : EngineObject {
     {
       if (screens[i].name.Contains(nm)) return screens[i];
     }
-    Debug.LogWarning("no screen that CONTAINS name " + nm);
+    //Debug.LogWarning("~Screens~ getScreen("+nm+") no screen that CONTAINS this name");
     return null;
   }
 
@@ -76,7 +76,7 @@ public class ScreensManager : EngineObject {
   [ContextMenu("kill all")]
   public void killAll(string filterName = "")
   {
-    fetchData();
+    fetchGlobal();
 
     for (int i = 0; i < screens.Length; i++)
     {
@@ -93,7 +93,7 @@ public class ScreensManager : EngineObject {
   [ContextMenu("show all")]
   public void showAll()
   {
-    fetchData();
+    fetchGlobal();
 
     for (int i = 0; i < screens.Length; i++)
     {

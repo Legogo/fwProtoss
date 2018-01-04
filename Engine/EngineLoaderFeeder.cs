@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// abstract !
+/// USed to declare specific additionnal scene to load on startup
 /// </summary>
 
-abstract public class EngineLoaderFeeder : MonoBehaviour {
+public class EngineLoaderFeeder : MonoBehaviour {
 
-  protected List<string> scene_names;
+  public List<string> scene_names;
 
   virtual public string[] feed()
   {

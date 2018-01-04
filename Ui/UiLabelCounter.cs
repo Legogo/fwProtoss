@@ -18,9 +18,19 @@ public class UiLabelCounter : ArenaObject {
   protected float score_target_timer = 0f;
   protected int score_target = 0;
 
+  protected ModuleVisibleMesh textMesh;
+  protected ModuleVisibleUi textUi;
+
   [Header("layout")]
   public bool scoreBolded = false;
   public string prefix = "";
+
+  protected override void build()
+  {
+    base.build();
+    textMesh = visibility as ModuleVisibleMesh;
+    textUi = visibility as ModuleVisibleUi;
+  }
 
   public override void restart()
   {
@@ -84,7 +94,8 @@ public class UiLabelCounter : ArenaObject {
     if (scoreBolded) ct += "<b>" + score + "</b>";
     else ct += score;
 
-    visibility.updateLabel(ct);
+    if (textMesh != null) textMesh.updateLabelText(ct);
+    if (textUi != null) textUi.updateLabelText(ct);
   }
 
   public void addToCount(float step)

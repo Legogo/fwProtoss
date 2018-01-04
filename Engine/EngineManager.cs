@@ -17,15 +17,27 @@ public class EngineManager : MonoBehaviour {
   public Action onLoadingDone;
   public Action<bool> onPause;
 
-  public int targetFramerate = -1;
+  [Header("system")]
+  public int application_targetFramerate = -1;
+  public bool log_device_info = true;
 
+  [Header("sound")]
+  public DataSounds sounds;
+
+  [Header("logs")]
+  public bool mobile_logs_preset = false;
+  public StackTraceLogType normal = StackTraceLogType.ScriptOnly;
+  public StackTraceLogType warning = StackTraceLogType.ScriptOnly;
+  public StackTraceLogType error = StackTraceLogType.ScriptOnly;
+  
   void Awake()
   {
     _manager = this;
 
-    if(targetFramerate > 0)
+    if(application_targetFramerate > 0)
     {
-      Application.targetFrameRate = targetFramerate;
+      Debug.LogWarning("~EngineManager~ overriding target framerate to " + application_targetFramerate);
+      Application.targetFrameRate = application_targetFramerate;
     }
 
     //new CheckInternet();
@@ -37,6 +49,8 @@ public class EngineManager : MonoBehaviour {
   /* end of scenes loading */
   public void engine_scenes_loaded()
   {
+    ResourceManager.reload();
+
     //Debug.Log("EngineManager, engine_scenes_loaded, calling all callbacks for end of loading");
     StartCoroutine(processScenesLoaded());
   }

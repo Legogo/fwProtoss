@@ -16,7 +16,7 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
   protected bool _freeze = false;
   protected bool _ready = false;
 
-  protected ModuleVisible visibility;
+  [HideInInspector]public ModuleVisible visibility;
   protected InputObject input;
 
   //constructor
@@ -41,8 +41,19 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
     if (!EngineManager.isLoading()) onEngineSceneLoaded();
   }
 
-  virtual protected void build() { }
-  virtual protected void fetchData() {
+  virtual protected void build()
+  {
+    fetchLocal();
+  }
+
+  /* fetch something on the current object */
+  virtual protected void fetchLocal()
+  {
+
+  }
+
+  /* fetch something in dependencies that are now ready to be fetched */
+  virtual protected void fetchGlobal() {
     visibility = GetComponent<ModuleVisible>();
   }
 
@@ -87,7 +98,7 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
   //called by loader
   virtual public void onEngineSceneLoaded()
   {
-    fetchData();
+    fetchGlobal();
     _ready = true;
   }
   
@@ -116,6 +127,33 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
   public bool isFreezed() { return _freeze; }
   public void setFreeze(bool flag) {_freeze = flag;}
   public bool isReady() { return _ready; }
+
+  public void forceWithinBounds(Rect boundsClamp)
+  {
+    if (visibility == null) Debug.LogWarning("asking for bounds clamping but no visible module");
+
+    Rect localRec = visibility.getWorldBounds();
+    float gap = 0f;
+
+    //Debug.Log(localRec);
+    //Debug.Log(boundsClamp);
+
+    gap = boundsClamp.xMax - localRec.xMax;
+    if (gap < 0f) transform.position += Vector3.right * gap;
+
+    gap = boundsClamp.xMin - localRec.xMin;
+    //Debug.Log(boundsClamp.xMin + " - " + localRec.xMin + " = xmin " + gap);
+    if (gap > 0f) transform.position += Vector3.right * gap;
+
+    gap = boundsClamp.yMax - localRec.yMax;
+    //Debug.Log(boundsClamp.yMax+" - "+localRec.yMax+" = ymax " + gap);
+    if (gap < 0f) transform.position += Vector3.up * gap;
+
+    gap = boundsClamp.yMin - localRec.yMin;
+    //Debug.Log(boundsClamp.yMin + " - " + localRec.yMin + " = ymin " + gap);
+    if (gap > 0f) transform.position += Vector3.up * gap;
+    
+  }
 
   virtual public string toString()
   {

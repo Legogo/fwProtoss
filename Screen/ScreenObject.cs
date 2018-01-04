@@ -13,7 +13,7 @@ public class ScreenObject : EngineObject
   {
     base.build();
 
-    fetchData();
+    fetchGlobal();
 
     if (_canvas == null) Debug.LogError("no canvas ?");
 
@@ -23,9 +23,9 @@ public class ScreenObject : EngineObject
   }
   
   [ContextMenu("fetch")]
-  override protected void fetchData()
+  override protected void fetchGlobal()
   {
-    base.fetchData();
+    base.fetchGlobal();
 
     _canvas = transform.GetComponentsInChildren<Canvas>();
 
@@ -77,7 +77,7 @@ public class ScreenObject : EngineObject
   public void toggleVisible(bool flag)
   {
     //si le scriptorder fait que le ScreenObject arrive après le Screenmanager ...
-    if(_canvas == null) fetchData();
+    if(_canvas == null) fetchGlobal();
     
     if (_canvas == null) Debug.LogError("no canvas ? for "+name, gameObject);
 

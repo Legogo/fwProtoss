@@ -11,9 +11,9 @@ public class GameStartup : EngineObject {
 
   public string openingScreen = "home";
   
-  protected override void fetchData()
+  protected override void fetchGlobal()
   {
-    base.fetchData();
+    base.fetchGlobal();
 
     //need to be after loading (because engine manager might be in a resource scene)
     EngineManager em = EngineManager.get();
@@ -27,7 +27,7 @@ public class GameStartup : EngineObject {
   /* this is called after eveything is done reacting to loading end */
   protected void engineLoadingDone()
   {
-    Debug.Log("~Startup~ starting ...");
+    Debug.Log("~Startup~ starting ... opening screen : <b>"+openingScreen+"</b>");
     ScreensManager.get().call(openingScreen);
   }
   

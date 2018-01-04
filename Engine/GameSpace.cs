@@ -16,11 +16,11 @@ public class GameSpace : MonoBehaviour {
   public float bottomBorder;
 
   [Header("solved")]
-  public Rect offsetSpace = new Rect();
-  public Rect screenSpace = new Rect();
+  [HideInInspector]public Rect offsetSpace = new Rect();
+  [HideInInspector] public Rect screenSpace = new Rect();
 
-  Vector2 screenBotLeft = Vector2.zero;
-  Vector2 screenTopRight = Vector2.zero;
+  protected Vector2 screenBotLeft = Vector2.zero;
+  protected Vector2 screenTopRight = Vector2.zero;
 
   [Header("tools")]
   public Transform[] borders;
@@ -30,10 +30,12 @@ public class GameSpace : MonoBehaviour {
   private void Awake()
   {
     gameSpace = this;
+    updateSize();
   }
   
   [ContextMenu("resize")]
   public void updateSize() {
+
     if (Camera.main == null) {
       Debug.LogWarning("no main camera");
       return;
@@ -42,7 +44,8 @@ public class GameSpace : MonoBehaviour {
     if (matchScreen)
     {
       screenBotLeft = Camera.main.ScreenToWorldPoint(Vector2.zero);
-      screenTopRight = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, Screen.height));
+      //screenTopRight = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, Screen.height));
+      screenTopRight = Camera.main.ScreenToWorldPoint(new Vector2(Camera.main.pixelWidth, Camera.main.pixelHeight));
     }
     else {
 
@@ -124,6 +127,8 @@ public class GameSpace : MonoBehaviour {
     pos.y = Random.Range(screenBotLeft.y + borderGap, screenTopRight.y - borderGap);
     return pos;
   }
+
+#if UNITY_EDITOR
   
   void OnDrawGizmos() {
 
@@ -138,6 +143,13 @@ public class GameSpace : MonoBehaviour {
     Gizmos.color = Color.cyan;
     Gizmos.DrawLine(new Vector2(offsetSpace.xMin, offsetSpace.yMin), new Vector2(offsetSpace.xMax, offsetSpace.yMax));
 
+    string ct = "~GameSpace~";
+    ct += "\nScreen.width/height : " + Screen.width + "x" + Screen.height;
+    ct += "\nCamera.width/heiht : " + Camera.main.pixelWidth + "x" + Camera.main.pixelHeight;
+    ct += "\ncomputer resolution : " + Screen.currentResolution;
+    
+    UnityEditor.Handles.Label(transform.position + (Vector3.up * 4f) + Vector3.right, ct);
+    
     if (borders != null && borders.Length > 0)
     {
       if(borders.Length >= 1)
@@ -167,7 +179,7 @@ public class GameSpace : MonoBehaviour {
     }
   }
 
-
+#endif
 
 
 

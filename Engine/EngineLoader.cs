@@ -15,8 +15,9 @@ using System;
 public class EngineLoader : MonoBehaviour
 {
   protected List<AsyncOperation> _asyncs = new List<AsyncOperation>();
-
+  
   protected bool SHOW_DEBUG = false;
+  string prefix = "resource-";
 
   [RuntimeInitializeOnLoadMethod]
   static protected void init()
@@ -25,68 +26,69 @@ public class EngineLoader : MonoBehaviour
     Debug.Log("<color=gray><b>Engine</b> entry point</color>");
 #endif
 
-    //don't load engine on guide scenes
+    //don't load engine on guide scenes (starting with ~)
     if(SceneManager.GetActiveScene().name.StartsWith("~")) {
       Debug.LogWarning("<b>guide scene</b> not loading engine here");
       return;
     }
+    
+    //if (checkForFilteredScenes()) return;
+    
+    EngineLoader loader = GameObject.FindObjectOfType<EngineLoader>();
+    if (loader != null)
+    {
+      Debug.LogError("loader should not be added to something");
+      return;
+    }
 
-    //only load in game scene
+    new GameObject("[loader]").AddComponent<EngineLoader>();
+  }
+
+  static protected bool checkForFilteredScenes()
+  {
     string[] filter = { "screen", "resource", "level" };
     for (int i = 0; i < filter.Length; i++)
     {
       if (isSceneOfName(filter[i]))
       {
         //SceneManager.LoadScene("game");
-        Debug.LogWarning("<color=red><b>"+filter[i]+" SCENE ?!</b></color> can't load that");
-        return;
+        Debug.LogWarning("<color=red><b>" + filter[i] + " SCENE ?!</b></color> can't load that");
+        return false;
       }
 
     }
-
-    new GameObject("[loader]").AddComponent<EngineLoader>();
+    return true;
   }
   
   IEnumerator Start()
   {
     if (SHOW_DEBUG) Debug.Log("start of <color=green>system loading</color> ...");
-
-
-    yield return null;
-
-    List<string> all = new List<string>();
-
-    //default scenes
-    string prefix = "resource-";
-    all.Add(prefix+"engine");
-    all.Add(prefix+"sound");
-
-    ///// first, we load the basic engine dependencies
-    for (int i = 0; i < all.Count; i++) loadScene(all[i]);
-    while (_asyncs.Count > 0) yield return null;
-
-    all.Clear();
-
+    
+    ///// first we load engine, to get the feeder script
+    loadScene(prefix+"engine");
+    while (!allAsyncDone()) yield return null;
+    
     ///// feeder, additionnal scenes (from feeder script)
     EngineLoaderFeeder feeder = EngineLoaderFeeder.get();
-    if(feeder != null) all.AddRange(feeder.feed());
+    List<string> all = new List<string>();
+    if (feeder != null) all.AddRange(feeder.feed());
     
     ///// now wait for feeder scenes to load
     for (int i = 0; i < all.Count; i++) loadScene(all[i]);
-    while (_asyncs.Count > 0) yield return null;
-
-    //NEED multiples frames for all Start to process
-    yield return null;
-    yield return null;
-    yield return null;
-
-    all.Clear();
-
+    while (!allAsyncDone()) yield return null;
+    
     doneLoading();
+  }
+
+  bool allAsyncDone()
+  {
+    if (_asyncs.Count > 0) return false;
+    return true;
   }
 
   void doneLoading() {
 
+    //tell engine manager that loading is done
     EngineManager em = EngineManager.get();
     if (em != null) em.engine_scenes_loaded();
     
@@ -106,8 +108,11 @@ public class EngineLoader : MonoBehaviour
   {
 
     //can't reload same scene
-    if (isSceneOfName(sceneLoad)) yield break;
+    //if (isSceneOfName(sceneLoad)) yield break;
 
+    //don't double load same scene
+    if (SceneManager.GetSceneByName(sceneLoad).isLoaded) yield break;
+    
     AsyncOperation async = SceneManager.LoadSceneAsync(sceneLoad, LoadSceneMode.Additive);
     _asyncs.Add(async);
 

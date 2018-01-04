@@ -38,9 +38,9 @@ abstract public class ArenaManager : EngineObject {
     }
   }
 
-  protected override void fetchData()
+  protected override void fetchGlobal()
   {
-    base.fetchData();
+    base.fetchGlobal();
     fetchPauseCanvasScreen();
   }
 
@@ -149,8 +149,9 @@ abstract public class ArenaManager : EngineObject {
 
   override public string toString()
   {
-    string ct = name + " | live freeze timer ? " + liveFreezeTimer;
-    ct += "\n  freeze ? " + isFreezed() + " , state ? " + _state;
+    string ct = "live freeze timer ? " + liveFreezeTimer;
+    ct += "\nfreeze ? " + isFreezed();
+    ct += "\nstate ? " + _state;
     return ct;
   }
 
@@ -161,7 +162,7 @@ abstract public class ArenaManager : EngineObject {
     //pause modale kill gameplay
     if (pauseCanvas != null && pauseCanvas.enabled) return false;
 
-    return liveFreezeTimer < 0f && isAtState(ArenaState.LIVE);
+    return liveFreezeTimer <= 0f && isAtState(ArenaState.LIVE);
   }
   public bool isArenaStateEnd() { return isAtState(ArenaState.END); }
 

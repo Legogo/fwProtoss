@@ -23,7 +23,8 @@ public class DebugSelection : MonoBehaviour
 
   public GameObject target;
   
-  #if UNITY_EDITOR
+#if UNITY_EDITOR
+
   Rect guiRec = new Rect(0, 0, Screen.width, Screen.height);
   void OnGUI()
   {
@@ -114,5 +115,6 @@ public class DebugSelection : MonoBehaviour
     }
 
   }
-  #endif
+#endif
+
 }

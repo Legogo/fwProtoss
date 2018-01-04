@@ -19,19 +19,42 @@ public class SettingsManager : EngineObject {
   protected override void build()
   {
     base.build();
-    
-    //Application.runInBackground = false;
 
-    if (!Application.isEditor)
+
+    EngineManager em = EngineManager.get();
+    if(em != null)
     {
-      Application.SetStackTraceLogType(LogType.Log, StackTraceLogType.None);
-      Application.SetStackTraceLogType(LogType.Warning, StackTraceLogType.None);
-      Application.SetStackTraceLogType(LogType.Error, StackTraceLogType.ScriptOnly);
+      //preset
+      if (em.mobile_logs_preset)
+      {
+        //do be too wordy on smartphones
+        if (Application.isMobilePlatform)
+        {
+          Application.SetStackTraceLogType(LogType.Log, StackTraceLogType.None);
+          Application.SetStackTraceLogType(LogType.Warning, StackTraceLogType.None);
+          Application.SetStackTraceLogType(LogType.Error, StackTraceLogType.ScriptOnly);
+        }
+      }
+      else
+      {
+        Application.SetStackTraceLogType(LogType.Log, em.normal);
+        Application.SetStackTraceLogType(LogType.Warning, em.warning);
+        Application.SetStackTraceLogType(LogType.Error, em.error);
+      }
+
+      if (em.log_device_info) Debug.Log(getSystemInfo());
     }
-    
-    Debug.Log(getSystemInfo());
 
 #if UNITY_ANDROID
+    setupSonyAndroid();
+#endif
+  }
+
+  protected void setupSonyAndroid()
+  {
+    
+    //sony xperia as a software home menu we have to force "not fullscreen" to keep buttons visible
+    //some ad plugin doesn't manage alignment of bottom banner to home menu so it makes it float not anchored to the bottom
 
     string[] models = { "sony" };
 
@@ -50,11 +73,9 @@ public class SettingsManager : EngineObject {
         Screen.fullScreen = false;
       }
     }
-
-#endif
     
   }
-  
+
   public string getSystemInfo() {
     string str = "<color=red>SYSTEM INFO</color>";
 

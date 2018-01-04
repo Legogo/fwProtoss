@@ -11,12 +11,13 @@ using UnityEngine;
 abstract public class ArenaObject : EngineObject {
 
   bool _active = true;
-  
+
   protected ArenaManager _arena;
-  
-  protected override void fetchData()
+  protected ArenaObjectSettings ao_settings;
+
+  protected override void fetchGlobal()
   {
-    base.fetchData();
+    base.fetchGlobal();
 
     //if(name.Contains("timer_")) Debug.Log("<b>" + name + "." + GetType() + "</b> fetchData");
     
@@ -29,7 +30,12 @@ abstract public class ArenaObject : EngineObject {
     else Debug.LogWarning(name + " no arena ?", gameObject);
 
   }
-  
+
+  protected void subscribeToArenaSettings()
+  {
+    ao_settings = new ArenaObjectSettings(transform);
+  }
+
   protected override void destroy()
   {
     base.destroy();
@@ -48,6 +54,7 @@ abstract public class ArenaObject : EngineObject {
 
   virtual public void restart()
   {
+    if (ao_settings != null) ao_settings.applyRespawn();
   }
   
   virtual public void event_end()
@@ -104,7 +111,7 @@ abstract public class ArenaObject : EngineObject {
   {
     if (!_active) return;
     if (_freeze) return;
-
+    
     if (_arena.isArenaStateLive())
     {
       updateArenaLive(_arena.getElapsedTime());

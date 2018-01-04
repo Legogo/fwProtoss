@@ -12,9 +12,9 @@ public class UiTextStrombo : EngineObject {
 
   protected float frame = 0;
 
-  protected override void fetchData()
+  protected override void fetchGlobal()
   {
-    base.fetchData();
+    base.fetchGlobal();
     txt = GetComponent<Text>();
 
     //originColor = txt.color;
