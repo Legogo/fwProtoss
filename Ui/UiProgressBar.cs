@@ -9,8 +9,12 @@ public class UiProgressBar : EngineObject {
   protected Image render;
 
   [Header("progressive logic")]
-  public float progressiveSpeed = 0f;
-  protected float progressiveTarget = 0f;
+  public float progressiveSpeed = 999f;
+
+  [Range(0f,1f)]
+  public float progressiveStep = 1f; // where it's at
+
+  protected float progressiveTarget = 1f; // where it wanna go
   
   protected override void build()
   {
@@ -30,16 +34,33 @@ public class UiProgressBar : EngineObject {
 
     if (render == null) Debug.LogError("no filled image found for progress bar", gameObject);
 
-    progressiveTarget = 0f;
+    progressiveStep = 1f;
+    progressiveTarget = 1f;
+  }
+
+  public override void onEngineSceneLoaded()
+  {
+    base.onEngineSceneLoaded();
+
+    //Debug.Log("load "+progressiveStep + " / " + progressiveTarget);
   }
 
   public override void updateEngine()
   {
     base.updateEngine();
 
-    if (progressiveSpeed > 0f)
+    updateStep();
+  }
+
+  protected void updateStep()
+  {
+    //Debug.Log(progressiveStep + " / " + progressiveTarget);
+
+    //progress toward goal
+    if (progressiveTarget != progressiveStep)
     {
-      render.fillAmount = Mathf.MoveTowards(render.fillAmount, progressiveTarget, Time.deltaTime * progressiveSpeed);
+      progressiveStep = Mathf.MoveTowards(progressiveStep, progressiveTarget, Time.deltaTime * progressiveSpeed);
+      applyProgress();
     }
   }
 
@@ -52,15 +73,27 @@ public class UiProgressBar : EngineObject {
   public bool isFull() { return render.fillAmount >= 1f; }
   public bool isEmpty() { return render.fillAmount <= 0f; }
 
+  public void addProgress(float step)
+  {
+    progressiveTarget += step;
+    progressiveTarget = Mathf.Clamp01(progressiveTarget);
+
+    //Debug.Log("new target " + progressiveTarget);
+  }
+
   public void setProgress(float newProgress)
   {
-    if (progressiveSpeed > 0f)
-    {
-      progressiveTarget = newProgress;
-    }
-    else
-    {
-      render.fillAmount = newProgress;
-    }
+    progressiveTarget = newProgress; // new goal
+    applyProgress();
+  }
+
+  virtual public void applyProgress()
+  {
+    render.fillAmount = progressiveStep;
+  }
+
+  public float getProgress()
+  {
+    return progressiveStep;
   }
 }
