@@ -2,13 +2,33 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameTime {
+public class GameTime : MonoBehaviour {
+
+  static public float delta = 0f;
+  static public float scale = 1f;
 
   static public float elapsedTime = 0f;
 
-  static public void update()
-  {
-    elapsedTime += Time.deltaTime;
+  static GameTime _instance;
+
+  void FixedUpdate() {
+
+    if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyUp(KeyCode.M)) addScale(1f);
+    else if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyUp(KeyCode.L)) addScale(-1f);
+    
+    update();
   }
 
+  static protected void addScale(float step)
+  {
+    scale += step;
+    scale = Mathf.Max(0f, scale);
+    Debug.LogWarning("time scale is at " + scale);
+  }
+
+  static public void update()
+  {
+    delta = Time.deltaTime * scale;
+    elapsedTime += delta;
+  }
 }
