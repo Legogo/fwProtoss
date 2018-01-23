@@ -52,6 +52,7 @@ abstract public class ArenaObject : EngineObject {
 
   }
 
+  /* must be called by something */
   virtual public void restart()
   {
     if (ao_settings != null) ao_settings.applyRespawn();
@@ -109,9 +110,13 @@ abstract public class ArenaObject : EngineObject {
   /* called by arena manager */
   virtual public void updateArena()
   {
+    //Debug.Log(name + " , active ? " + _active + " ,  freeze ? " + _freeze);
+
     if (!_active) return;
     if (_freeze) return;
-    
+
+    //Debug.Log(_arena.isArenaStateLive());
+
     if (_arena.isArenaStateLive())
     {
       updateArenaLive(_arena.getElapsedTime());

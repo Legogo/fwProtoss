@@ -7,6 +7,14 @@ using System;
 using UnityEditor;
 #endif
 
+/// <summary>
+/// rich timer logic
+/// 
+/// - loop (auto restart)
+/// - settings (DataTimer)
+/// 
+/// </summary>
+
 public class Timer : ArenaObject {
 
   public string timerName = "";
@@ -94,7 +102,7 @@ public class Timer : ArenaObject {
   {
     base.updateArenaLive(timeStamp);
 
-    //Debug.Log("<b>"+timerName+"</b> live");
+    //Debug.Log("<b>"+timerName+"</b> live "+timeStamp);
 
     //next param time !
     if(balancing != null && balancing.hasMultipleParams())

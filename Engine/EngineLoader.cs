@@ -67,12 +67,16 @@ public class EngineLoader : MonoBehaviour
     ///// first we load engine, to get the feeder script
     loadScene(prefix+"engine");
     while (!allAsyncDone()) yield return null;
-    
+
+    Debug.Log("~EngineLoader~ engine scene is done loading");
+
     ///// feeder, additionnal scenes (from feeder script)
     EngineLoaderFeeder feeder = EngineLoaderFeeder.get();
     List<string> all = new List<string>();
     if (feeder != null) all.AddRange(feeder.feed());
-    
+
+    Debug.Log("~EngineLoader~ loading "+all.Count+" scenes");
+
     ///// now wait for feeder scenes to load
     for (int i = 0; i < all.Count; i++) loadScene(all[i]);
     while (!allAsyncDone()) yield return null;

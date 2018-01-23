@@ -57,6 +57,7 @@ abstract public class ArenaManager : EngineObject {
     }
     else if(_state == ArenaState.LIVE || _state == ArenaState.END)
     {
+      
       update_round();
     }
     
@@ -80,9 +81,8 @@ abstract public class ArenaManager : EngineObject {
 
   virtual protected void update_round()
   {
-
     //update all aobs
-    //Debug.Log("ARENA update (" + arenaObjects.Count + ")");
+    //Debug.Log("update_round (" + arenaObjects.Count + ")");
     for (int i = 0; i < arenaObjects.Count; i++)
     {
       arenaObjects[i].updateArena();
@@ -161,6 +161,8 @@ abstract public class ArenaManager : EngineObject {
 
     //pause modale kill gameplay
     if (pauseCanvas != null && pauseCanvas.enabled) return false;
+
+    //Debug.Log(_state);
 
     return liveFreezeTimer <= 0f && isAtState(ArenaState.LIVE);
   }
