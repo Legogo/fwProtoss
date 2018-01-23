@@ -77,7 +77,8 @@ public class UiProgressBarSplit : UiProgressBar {
       renders[i].enabled = (i < slots);
     }
 
-    if (idx < renders.Length - 1) renders[idx].fillAmount = subProg / step;
+    if (idx > renders.Length - 1) renders[renders.Length - 1].fillAmount = 1f;
+    else renders[idx].fillAmount = subProg / step;
   }
 
   /* transform current progress (based on current slots count) to progress with another slots counts */
