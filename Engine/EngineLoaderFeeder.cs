@@ -12,6 +12,7 @@ public class EngineLoaderFeeder : MonoBehaviour {
 
   public string[] resource_names;
   public string[] screen_names;
+  public string[] graphics_names;
   public string[] other_names;
 
   virtual public string[] feed()
@@ -20,6 +21,8 @@ public class EngineLoaderFeeder : MonoBehaviour {
 
     addWithPrefix("resource", resource_names);
     addWithPrefix("screen", screen_names);
+    addWithPrefix("graphics", graphics_names);
+
     addWithPrefix("", other_names);
 
     return scene_names.ToArray();
