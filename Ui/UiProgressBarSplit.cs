@@ -6,11 +6,16 @@ using UnityEngine.UI;
 public class UiProgressBarSplit : UiProgressBar {
   
   Image[] renders;
-  public int slots = 1; 
-  
-  protected override void fetchLocal()
+  public int slots = 1;
+
+  protected override void build()
   {
-    base.fetchLocal();
+    base.build();
+    fetchRefs();
+  }
+
+  protected void fetchRefs()
+  {
 
     if (renders != null && renders.Length > 0) return;
 
@@ -34,7 +39,7 @@ public class UiProgressBarSplit : UiProgressBar {
   {
     if (Application.isPlaying) return;
 
-    fetchLocal();
+    fetchRefs();
     applyProgress();
   }
 

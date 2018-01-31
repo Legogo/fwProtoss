@@ -14,15 +14,21 @@ using System;
 
 public class EngineLoader : MonoBehaviour
 {
+  static protected EngineLoader loader;
   protected List<AsyncOperation> _asyncs = new List<AsyncOperation>();
+
+  public Action onLoadingDone;
   
   protected bool SHOW_DEBUG = false;
   string prefix = "resource-";
-
+  
   [RuntimeInitializeOnLoadMethod]
   static protected void init()
   {
-    #if UNITY_EDITOR
+    loader = GameObject.FindObjectOfType<EngineLoader>();
+    if (loader != null) return; // already init
+
+#if UNITY_EDITOR
     Debug.Log("<color=gray><b>Engine</b> entry point</color>");
 #endif
 
@@ -32,16 +38,7 @@ public class EngineLoader : MonoBehaviour
       return;
     }
     
-    //if (checkForFilteredScenes()) return;
-    
-    EngineLoader loader = GameObject.FindObjectOfType<EngineLoader>();
-    if (loader != null)
-    {
-      Debug.LogError("loader should not be added to something");
-      return;
-    }
-
-    new GameObject("[loader]").AddComponent<EngineLoader>();
+    loader = new GameObject("[loader]").AddComponent<EngineLoader>();
   }
 
   static protected bool checkForFilteredScenes()
@@ -92,9 +89,9 @@ public class EngineLoader : MonoBehaviour
 
   void doneLoading() {
 
-    //tell engine manager that loading is done
-    EngineManager em = EngineManager.get();
-    if (em != null) em.engine_scenes_loaded();
+    //Debug.Log("onLoadingDone");
+
+    if (onLoadingDone != null) onLoadingDone();
     
     GameObject.DestroyImmediate(gameObject);
   }
@@ -147,4 +144,8 @@ public class EngineLoader : MonoBehaviour
     return isSceneOfName("level-");
   }
   
+  static public EngineLoader get() {
+    if (loader == null) init();
+    return loader;
+  }
 }

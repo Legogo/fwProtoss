@@ -37,14 +37,7 @@ public class UiProgressBar : EngineObject {
     progressiveStep = 1f;
     progressiveTarget = 1f;
   }
-
-  public override void onEngineSceneLoaded()
-  {
-    base.onEngineSceneLoaded();
-
-    //Debug.Log("load "+progressiveStep + " / " + progressiveTarget);
-  }
-
+  
   public override void updateEngine()
   {
     base.updateEngine();

@@ -39,11 +39,11 @@ public class EngineManager : MonoBehaviour {
       Debug.LogWarning("~EngineManager~ overriding target framerate to " + application_targetFramerate);
       Application.targetFrameRate = application_targetFramerate;
     }
-
-    //new CheckInternet();
-
+    
     state_loading = true;
     state_live = false;
+
+    EngineLoader.get().onLoadingDone += engine_scenes_loaded;
   }
 
   /* end of scenes loading */

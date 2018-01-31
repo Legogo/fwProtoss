@@ -8,67 +8,40 @@ using UnityEngine;
 
 public class LogicItem : ArenaObject
 {
-  protected List<LogicCapacity> capacities;
-
-  protected override void build()
+  protected List<LogicCapacity> capacities = new List<LogicCapacity>();
+  
+  protected override void fetchGlobal()
   {
-    base.build();
-
-    capacities = new List<LogicCapacity>();
-
-    //on doit aller chercher les capa existantes du LD
-    LogicCapacity[] temp = transform.GetComponentsInChildren<LogicCapacity>();
-    for (int i = 0; i < temp.Length; i++)
-    {
-      //Debug.Log("  "+name+" :: "+temp[i].GetType());
-      capacities.Add(temp[i]);
-    }
-    
-  }
-
-  public override void onEngineSceneLoaded()
-  {
-    base.onEngineSceneLoaded();
+    base.fetchGlobal();
     setupCapacities();
   }
-
+  
   /* after scenes load */
   protected void setupCapacities()
   {
-    for (int i = 0; i < capacities.Count; i++)
-    {
-      capacities[i].setupCapacity();
-    }
+    for (int i = 0; i < capacities.Count; i++) capacities[i].earlySetupCapacity();
+    for (int i = 0; i < capacities.Count; i++) capacities[i].setupCapacity();
+  }
+  
+  virtual public void clean()
+  {
+    for (int i = 0; i < capacities.Count; i++) capacities[i].clean();
   }
 
   public override void updateEngine()
   {
     base.updateEngine();
-
-    //Debug.Log(name + " update logic", gameObject);
-
-    for (int i = 0; i < capacities.Count; i++)
-    {
-      capacities[i].updateLogic();
-    }
+    for (int i = 0; i < capacities.Count; i++) capacities[i].updateLogic();
   }
 
-  public T addCapacity<T>() where T : LogicCapacity
+  public override void updateEngineLate()
   {
-    T comp = gameObject.GetComponent<T>();
-    if (comp == null) comp = gameObject.AddComponent<T>();
-    if (capacities.IndexOf(comp) < 0) capacities.Add(comp);
-    return comp;
+    base.updateEngineLate();
+    for (int i = 0; i < capacities.Count; i++) capacities[i].updateLogicLate();
   }
 
-  public T getCapacity<T>() where T : LogicCapacity
+  public void subscribeCapacity(LogicCapacity capa)
   {
-    for (int i = 0; i < capacities.Count; i++)
-    {
-       if (capacities[i].GetType() == typeof(T)) return (T)capacities[i];
-    }
-    //return addCapacity<T>();
-    return default(T);
+    capacities.Add(capa);
   }
-  
 }

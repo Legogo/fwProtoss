@@ -5,6 +5,174 @@ using UnityEngine;
 
 abstract public class CapacityMovement : LogicCapacity {
 
-  public bool lockMovement = false;
+  protected Transform _t;
+  protected CapacityCollision _collision;
+  protected Vector2 directionLast; // backup
   
+  protected Vector2 instantForce;
+  protected Vector2 velocityForce;
+
+  public CapacityPropertyLocker lockHorizontal;
+  public CapacityPropertyLocker lockGravity;
+
+  protected bool _moved;
+
+  //tools
+  protected Vector2 nextPosition;
+  
+  List<ForceBase> forces = new List<ForceBase>();
+
+  protected override void build()
+  {
+    base.build();
+    _t = transform;
+    lockHorizontal = new CapacityPropertyLocker();
+    lockGravity = new CapacityPropertyLocker();
+
+    _collision = _owner.GetComponent<CapacityCollision>();
+  }
+
+  public int getHorizontalDirection()
+  {
+    return (int)Mathf.Sign(directionLast.x);
+  }
+
+  public override void setupCapacity()
+  {
+    forces.Add(new ForceGravity(getGravityPower()));
+  }
+  
+  public void addForce(Vector2 stepForce)
+  {
+    addForce(stepForce.x, stepForce.y);
+    
+  }
+  public void addForce(float x, float y)
+  {
+    instantForce.x += x;
+    instantForce.y += y;
+  }
+  public void addForce(ForceBase force)
+  {
+    forces.Add(force);
+  }
+
+  public void addVelocity(Vector2 force)
+  {
+    velocityForce += force;
+  }
+  public void addVelocity(float x, float y)
+  {
+    velocityForce.x += x;
+    velocityForce.y += y;
+  }
+
+  public override void updateEngine(){
+    
+    int i = 0;
+    while(i < forces.Count)
+    {
+      forces[i].update(); // compute force step
+      velocityForce += forces[i].getValue(); // inject value
+      if (forces[i].needToBeRemoved()) forces.RemoveAt(i); // remove if needed
+      else i++;
+    }
+  }
+
+  public override void updateLogicLate()
+  {
+    instantForce += velocityForce;
+
+    moveStep(instantForce * Time.deltaTime);
+
+    directionLast = instantForce; //Save last
+    instantForce.x = instantForce.y = 0f;
+  }
+  
+  public void killHorizontalSpeed()
+  {
+    instantForce.x = velocityForce.x = 0f;
+  }
+  public void killVerticalSpeed()
+  {
+    instantForce.y = velocityForce.y = 0f;
+  }
+  public void killInstantSpeed()
+  {
+    instantForce = Vector2.zero;
+  }
+
+  public bool isGoingUp() { return directionLast.y > 0f; }
+  public bool isFalling() { return directionLast.y < 0f; }
+  public float getVerticalSpeed() { return directionLast.y; }
+  public float getHorizontalSpeed() { return directionLast.x; }
+
+  protected void moveStep(Vector2 step)
+  {
+    Vector2 originOfMovement = _t.position;
+
+    //store for direction
+    if (step.x != 0f) directionLast = step;
+
+    Debug.DrawLine(transform.position + (Vector3.down * 0.2f), transform.position + (Vector3.down * 0.2f) + ((Vector3)step * 5f), Color.black);
+
+    //cannot collide
+    if (_collision.isCollidable())
+    {
+      nextPosition = _collision.checkCollisionRaycasts(step);
+
+      /*
+      _t.position += (Vector3)step; // apply step move !
+      nextPosition = _t.position;
+      nextPosition = _collision.checkCollisionRectangle(nextPosition);
+      */
+    }
+
+    _moved = nextPosition != originOfMovement;
+
+    //Debug.DrawLine(_t.position, nextPosition, Color.white);
+    //Debug.DrawLine(Vector3.zero, nextPosition, Color.yellow);
+
+    _t.position = nextPosition;
+  }
+
+  /* dirige l'entité vers un point */
+  public Vector2 moveToward(Vector3 position, float speed)
+  {
+    Vector2 diff = (position - transform.position);
+    Vector2 speedVector = diff.normalized * speed;
+    instantForce += speedVector;
+    return speedVector;
+  }
+  
+  public override void clean()
+  {
+    directionLast.x = 0f;
+    directionLast.y = 0f;
+    _lock = false;
+    _moved = false;
+  }
+
+  public List<ForceBase> getForces() { return forces; }
+  
+  virtual public bool hasMoved()
+  {
+    return _moved;
+  }
+
+  abstract public float getGravityPower();
+
+  public override string toString()
+  {
+    string ct = base.toString();
+
+    if (_collision != null) ct += "\nisCollidable ? " + _collision.isCollidable();
+
+    ct += "\nmoved ? " + _moved;
+
+    ct += "\ninstant : " + instantForce.x + " x " + instantForce.y;
+    
+    return ct;
+  }
+
 }

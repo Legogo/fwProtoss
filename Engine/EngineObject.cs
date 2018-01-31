@@ -43,16 +43,9 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
 
   virtual protected void build()
   {
-    fetchLocal();
   }
-
-  /* fetch something on the current object */
-  virtual protected void fetchLocal()
-  {
-
-  }
-
-  /* fetch something in dependencies that are now ready to be fetched */
+  
+  /* called by onEngineSceneLoaded, fetch something in dependencies that are now ready to be fetched */
   virtual protected void fetchGlobal() {
     visibility = GetComponent<ModuleVisible>();
   }
@@ -96,8 +89,9 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
   }
 
   //called by loader
-  virtual public void onEngineSceneLoaded()
+  public void onEngineSceneLoaded()
   {
+    //Debug.Log(GetType()+" , <b>"+name+"</b>", gameObject);
     fetchGlobal();
     _ready = true;
   }

@@ -17,16 +17,7 @@ public class ScreensManager : EngineObject {
     base.fetchGlobal();
     screens = GameObject.FindObjectsOfType<ScreenObject>();
   }
-
-  public override void onEngineSceneLoaded()
-  {
-    base.onEngineSceneLoaded();
-    fetchGlobal(); // missing screens
-
-    //Debug.Log("  ScreensManager found " + screens.Length + " screens");
-    //for (int i = 0; i < screens.Length; i++) Debug.Log("  -" + screens[i].name);
-  }
-
+  
   public ScreenObject getScreen(string nm)
   {
     for (int i = 0; i < screens.Length; i++)

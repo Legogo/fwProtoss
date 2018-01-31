@@ -8,9 +8,9 @@ public class UiBump : UiAnimation {
   public float bumpStr = 1f;
   protected Vector2 scaleBase;
 
-  public override void onEngineSceneLoaded()
+  protected override void fetchGlobal()
   {
-    base.onEngineSceneLoaded();
+    base.fetchGlobal();
     scaleBase = owner.localScale;
   }
 

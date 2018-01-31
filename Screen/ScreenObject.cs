@@ -13,7 +13,7 @@ public class ScreenObject : EngineObject
   {
     base.build();
 
-    fetchGlobal();
+    fetchGlobal(); //specific case
 
     if (_canvas == null) Debug.LogError("no canvas ?");
 

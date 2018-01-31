@@ -3,6 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// NOT WORKING
+/// </summary>
+
 public class CapacityTopDownMovement : CapacityMovement {
 
   protected Vector2 direction;
@@ -15,7 +19,7 @@ public class CapacityTopDownMovement : CapacityMovement {
   public bool lockPosition = false;
   public bool concentrating = false;
   
-  InputKeyTopDown inputLocal;
+  InputKeyTopDown _inputLocal;
 
   GameSpace _gameSpace;
 
@@ -27,7 +31,7 @@ public class CapacityTopDownMovement : CapacityMovement {
 
   public override void setupCapacity()
   {
-    inputLocal = InputKeyManager.get<InputKeyTopDown>() as InputKeyTopDown;
+    _inputLocal = _owner.GetComponent<CapacityInput>().keys.get<InputKeyTopDown>() as InputKeyTopDown;
     _gameSpace = GameSpace.get();
   }
 
@@ -44,11 +48,11 @@ public class CapacityTopDownMovement : CapacityMovement {
 
     lockPosition = Input.GetKey(KeyCode.LeftControl);
 
-    if (inputLocal.press_up()) direction.y = 1f;
-    else if (inputLocal.press_down()) direction.y = -1f;
+    if (_inputLocal.pressing_up()) direction.y = 1f;
+    else if (_inputLocal.pressing_down()) direction.y = -1f;
 
-    if (inputLocal.press_left()) direction.x = -1f;
-    else if (inputLocal.press_right()) direction.x = 1f;
+    if (_inputLocal.pressing_left()) direction.x = -1f;
+    else if (_inputLocal.pressing_right()) direction.x = 1f;
 
     if (progressiveSpeed == 0f)
     {
@@ -72,7 +76,16 @@ public class CapacityTopDownMovement : CapacityMovement {
     //clamp in screen
     if (_gameSpace != null) forceWithinBounds(_gameSpace.offsetSpace);
   }
-
+  
   public Vector2 getLastDirection() { return lastDirection; }
   public Vector2 getDirection() { return solvedDirection; }
+  
+  public override void clean()
+  {
+  }
+
+  public override float getGravityPower()
+  {
+    return 0f;
+  }
 }
