@@ -24,7 +24,8 @@ public class EngineMonitoring : EditorWindow
       return;
     }
 
-    GUILayout.Label("GameState : "+GameState.state);
+    GUILayout.Label("mEngine loading ? " + EngineManager.isLoading());
+    GUILayout.Label("mEngine live ? "+EngineManager.isLive());
     
   }
   

@@ -94,7 +94,16 @@ public class EngineManager : MonoBehaviour {
       callPause(state_live);
     }
 
+    //exit app
+    if (Input.GetKeyUp(KeyCode.Delete) || Input.GetKeyUp(KeyCode.Backspace))
+    {
+      Application.Quit();
+      return;
+    }
+
     if (!isLive()) return;
+
+    GameTime.update();
 
     //update everything
 
