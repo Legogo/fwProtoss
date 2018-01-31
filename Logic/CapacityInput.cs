@@ -5,18 +5,9 @@ using UnityEngine;
 
 public class CapacityInput : LogicCapacity {
 
-  public XinputController controller;
   public InputKeyBridge keys;
 
-  public override void clean()
-  {
-    controller = null;
-  }
-
-  public bool isControlled()
-  {
-    return controller != null;
-  }
+  public override void clean(){}
 
   public override void setupCapacity(){}
 
