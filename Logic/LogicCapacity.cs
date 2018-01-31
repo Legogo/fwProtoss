@@ -26,12 +26,13 @@ abstract public class LogicCapacity : EngineObject {
 
     _character = gameObject.GetComponent<CharacterLogic>();
   }
-  
+
   /* called by LogicItem, on scene loading */
   virtual public void earlySetupCapacity() { }
-  abstract public void setupCapacity();
-  
-  abstract public void clean(); // explain how the module reset
+  virtual public void setupCapacity() { }
+
+  /* explain how the module resets */
+  virtual public void clean(){ }
 
   virtual public void updateLogic() { }
   virtual public void updateLogicLate() { }
