@@ -3,9 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ModuleVisibleMesh : ModuleVisible
+public class HelperVisibleMesh : HelperVisible
 {
-  public Renderer[] additionnal;
   Material _mat;
 
   MeshRenderer _render;
@@ -13,24 +12,43 @@ public class ModuleVisibleMesh : ModuleVisible
   
   public float scaleSize = 1f;
 
-  protected override void fetchRefs()
+  protected override Transform fetchCarrySymbol()
   {
+    return _t.GetChild(0);
+  }
+
+  public override void setup(EngineObject parent)
+  {
+    base.setup(parent);
+
+    Debug.Log(_owner.name + " fetching ...");
+
     ///// render
-    _render = GetComponent<MeshRenderer>();
-    if (_render == null) _render = GetComponentInChildren<MeshRenderer>();
+    _render = _t.GetComponent<MeshRenderer>();
+    if (_render == null) _render = _t.GetComponentInChildren<MeshRenderer>();
 
-    _collider = GetComponent<BoxCollider2D>();
-    if (_collider == null) _collider = GetComponentInChildren<BoxCollider2D>();
+    _collider = _t.GetComponent<BoxCollider2D>();
+    if (_collider == null) _collider = _t.GetComponentInChildren<BoxCollider2D>();
 
-    //isolate material
-    _mat = _render.material;
-    _render.material = _mat;
+    //no use of module visible if there is nothing to show
+    if (_render == null)
+    {
+      Debug.LogWarning("no render for <b>" + _owner.name+"</b>", _owner.gameObject);
+      return;
+    }
+
+    if (_render != null)
+    {
+      //isolate material
+      _mat = _render.material;
+      _render.material = _mat;
+    }
 
     rescale(scaleSize);
 
     ///// text
 
-    _label = transform.GetComponent<TextMesh>();
+    _label = _t.GetComponent<TextMesh>();
     if (_label != null)
     {
       _render = _label.GetComponent<MeshRenderer>();
@@ -41,7 +59,7 @@ public class ModuleVisibleMesh : ModuleVisible
   {
     scaleSize = newScale;
 
-    transform.localScale = Vector3.one * scaleSize;
+    _t.localScale = Vector3.one * scaleSize;
 
     //use the collider to solve bounds
     if (_collider != null)
@@ -78,12 +96,13 @@ public class ModuleVisibleMesh : ModuleVisible
   
   override protected void swapColor(Color col)
   {
+    if (_mat == null) {
+      Debug.LogWarning("asking to swap color on null material");
+      return;
+    }
+
     _mat.SetColor("_EmissionColor", col);
     
-    for (int i = 0; i < additionnal.Length; i++)
-    {
-      additionnal[i].sharedMaterial.SetColor("_EmissionColor", col);
-    }
   }
   
   public void updateLabelText(string content)
@@ -97,11 +116,7 @@ public class ModuleVisibleMesh : ModuleVisible
     {
       _render.enabled = flag;
     }
-
-    for (int i = 0; i < additionnal.Length; i++)
-    {
-      additionnal[i].enabled = flag;
-    }
+    
   }
 
   override public bool isVisible()
@@ -113,11 +128,11 @@ public class ModuleVisibleMesh : ModuleVisible
   public Vector2 getObjectPointNearestToTransform(Transform tr)
   {
     //choppe le point au bord du cercle dans la direction du block
-    Vector2 dir = tr.position - transform.position;
+    Vector2 dir = tr.position - _t.position;
     dir = dir.normalized * (getRadius() * 0.6f);
-    dir = (Vector2)transform.position + dir;
+    dir = (Vector2)_t.position + dir;
 
-    Debug.DrawLine(dir, transform.position, Color.green);
+    Debug.DrawLine(dir, _t.position, Color.green);
     return dir;
   }
 
@@ -126,12 +141,12 @@ public class ModuleVisibleMesh : ModuleVisible
   {
     if (Application.isPlaying) return;
 
-    transform.localScale = Vector3.one;
+    _t.localScale = Vector3.one;
 
     //draw symbol
-    if (transform.childCount > 0)
+    if (_t.childCount > 0)
     {
-      Transform tr = transform.GetChild(0);
+      Transform tr = _t.GetChild(0);
       tr.localScale = Vector3.one * scaleSize;
     }
 

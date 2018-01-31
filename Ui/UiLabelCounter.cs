@@ -18,8 +18,8 @@ public class UiLabelCounter : ArenaObject {
   protected float score_target_timer = 0f;
   protected int score_target = 0;
 
-  protected ModuleVisibleMesh textMesh;
-  protected ModuleVisibleUi textUi;
+  protected HelperVisibleMesh textMesh;
+  protected HelperVisibleUi textUi;
 
   [Header("layout")]
   public bool scoreBolded = false;
@@ -28,8 +28,8 @@ public class UiLabelCounter : ArenaObject {
   protected override void build()
   {
     base.build();
-    textMesh = visibility as ModuleVisibleMesh;
-    textUi = visibility as ModuleVisibleUi;
+    textMesh = visibility as HelperVisibleMesh;
+    textUi = visibility as HelperVisibleUi;
   }
 
   public override void restart()

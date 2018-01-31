@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GameTime : MonoBehaviour {
 
-  static public float delta = 0f;
+  static public float deltaTime = 0f;
   static public float scale = 1f;
 
   static public float elapsedTime = 0f;
@@ -28,7 +28,7 @@ public class GameTime : MonoBehaviour {
 
   static public void update()
   {
-    delta = Time.deltaTime * scale;
-    elapsedTime += delta;
+    deltaTime = Time.deltaTime * scale;
+    elapsedTime += deltaTime;
   }
 }

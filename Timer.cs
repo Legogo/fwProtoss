@@ -253,9 +253,7 @@ public class Timer : ArenaObject {
 
     if (_arena != null) ct += "\n  arena live ? " + _arena.isArenaStateLive() + " , end ? " + _arena.isArenaStateEnd();
     else ct += "\n  no arena ?";
-
-    ct += "\n  eos idx : "+EngineObject.eos.IndexOf(this);
-
+    
     //balancing stuff
     if (hasBalancing())
     {

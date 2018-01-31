@@ -11,7 +11,7 @@ using System;
 abstract public class CapacityAnimation : LogicCapacity {
 
   protected Animator _anim;
-  protected ModuleVisible visibility_spr;
+  protected HelperVisibleSprite visibility_spr;
   
   protected bool _animCaptured = false;
 
@@ -19,7 +19,7 @@ abstract public class CapacityAnimation : LogicCapacity {
   {
     base.build();
 
-    visibility_spr = _owner.visibility as ModuleVisibleSprite;
+    visibility_spr = _owner.visibility as HelperVisibleSprite;
 
     _anim = gameObject.GetComponentsInChildren<Animator>().FirstOrDefault();
   }

@@ -8,7 +8,8 @@ using System;
 /// </summary>
 
 public class EngineManager : MonoBehaviour {
-  
+  static public Dictionary<int, List<EngineObject>> eosLayers;
+
   static protected bool state_live = false;
   static protected bool state_loading = true;
   static protected int loadedCount = 0;
@@ -46,32 +47,61 @@ public class EngineManager : MonoBehaviour {
     EngineLoader.get().onLoadingDone += engine_scenes_loaded;
   }
 
+  static public void subscribe(EngineObject obj)
+  {
+    if (eosLayers == null) eosLayers = new Dictionary<int, List<EngineObject>>();
+
+    if (!eosLayers.ContainsKey(obj.engineLayer)) eosLayers.Add(obj.engineLayer, new List<EngineObject>());
+    eosLayers[obj.engineLayer].Add(obj);
+
+    //Debug.Log(obj.name + " added to eos on layer "+obj.engineLayer);
+  }
+  static public void unsubscribe(EngineObject obj)
+  {
+    if (eosLayers == null) return;
+    eosLayers[obj.engineLayer].Remove(obj);
+  }
+
   /* end of scenes loading */
   public void engine_scenes_loaded()
   {
     ResourceManager.reload();
 
     //Debug.Log("EngineManager, engine_scenes_loaded, calling all callbacks for end of loading");
-    StartCoroutine(processScenesLoaded());
+    //StartCoroutine(processScenesLoaded());
+    processScenesLoaded();
   }
 
-  IEnumerator processScenesLoaded() {
+  /* telle everybody present that all scenes are now loaded */
+  void processScenesLoaded() {
     
-    int count = 0;
+    Debug.Log("~EngineManager~ <b>scenes loaded</b> | layer count ? " + eosLayers.Count);
 
-    //Debug.Log("scenes loaded eos count prev ? "+EngineObject.eos.Count);
-
-    while(count < EngineObject.eos.Count)
+    for (int i = 0; i < eosLayers.Count; i++)
     {
-      EngineObject.eos[count].onEngineSceneLoaded();
+      List<EngineObject> list = eosLayers[i];
 
-      while (!EngineObject.eos[count].isReady()) yield return null;
+      Debug.Log("end of loading for layer " + i+" | objects count ? "+list.Count);
 
-      count++;
-      yield return null;
+      //int count = list.Count;
+
+      int idx = 0;
+      while (idx < list.Count)
+      {
+        //might add objects to layer list during loop
+        list[idx].onEngineSceneLoaded();
+        idx++;
+
+        //object was destroy on end loading ? next
+        //if (list[idx] == null) list.RemoveAt(idx);
+        //else idx++;
+      }
+
+      //more objects added during loading
+      //if (count != list.Count) Debug.LogError("something changed");
     }
 
-    //Debug.Log("scenes loaded eos count after ? " + EngineObject.eos.Count);
+    Debug.Log("~mEngine~ <color=yellow># SCENES LOADED #</color>");
 
     game_loading_done();
   }
@@ -102,22 +132,26 @@ public class EngineManager : MonoBehaviour {
     }
 
     if (!isLive()) return;
-
-    GameTime.update();
-
+    
     //update everything
-
-    List<EngineObject> objects = EngineObject.eos;
-
-    //processUpdateObjectsDebug(objects);
-    processUpdateObjects(objects);
-
-    //late
-    for (int i = 0; i < objects.Count; i++)
+    
+    foreach(KeyValuePair<int, List<EngineObject>> layer in eosLayers)
     {
-      if (!objects[i].canUpdate()) continue;
-      objects[i].updateEngineLate();
+      for (int i = 0; i < layer.Value.Count; i++)
+      {
+        layer.Value[i].updateEngine();
+      }
+      for (int i = 0; i < layer.Value.Count; i++)
+      {
+        layer.Value[i].updateEngineLate();
+      }
     }
+    
+  }
+
+  private void FixedUpdate()
+  {
+    GameTime.update();
   }
 
   void processUpdateObjectsDebug(List<EngineObject> objects)

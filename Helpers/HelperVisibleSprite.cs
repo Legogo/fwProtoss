@@ -4,16 +4,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ModuleVisibleSprite : ModuleVisible
+public class HelperVisibleSprite : HelperVisible
 {
 
   SpriteRenderer _render;
   public string sortingLayerName = "";
 
-  protected override void fetchRefs()
+  protected override Transform fetchCarrySymbol()
   {
-    _render = GetComponent<SpriteRenderer>();
-    if (_render == null) _render = GetComponentInChildren<SpriteRenderer>();
+    return _render.transform;
+  }
+
+  public override void setup(EngineObject parent)
+  {
+    base.setup(parent);
+
+    _render = _t.GetComponent<SpriteRenderer>();
+    if (_render == null) _render = _t.GetComponentInChildren<SpriteRenderer>();
     
     if (sortingLayerName.Length > 0)
     {

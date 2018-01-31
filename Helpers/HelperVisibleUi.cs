@@ -4,21 +4,29 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ModuleVisibleUi : ModuleVisible {
+public class HelperVisibleUi : HelperVisible
+{
 
   CanvasGroup _group;
 
   MaskableGraphic _render;
   Text _label;
 
-  protected override void fetchRefs()
+  protected override Transform fetchCarrySymbol()
   {
-    _group = GetComponent<CanvasGroup>();
-    _render = GetComponent<Image>();
-    if (_render == null) _render = GetComponentInChildren<Image>();
+    return _render.transform;
+  }
 
-    _label = GetComponent<Text>();
-    if (_label == null) _label = GetComponentInChildren<Text>();
+  public override void setup(EngineObject parent)
+  {
+    base.setup(parent);
+
+    _group = _t.GetComponent<CanvasGroup>();
+    _render = _t.GetComponent<Image>();
+    if (_render == null) _render = _t.GetComponentInChildren<Image>();
+
+    _label = _t.GetComponent<Text>();
+    if (_label == null) _label = _t.GetComponentInChildren<Text>();
 
     //override image when label
     if (_label != null) _render = _label;
@@ -54,5 +62,5 @@ public class ModuleVisibleUi : ModuleVisible {
   {
     return _render.color;
   }
-  
+
 }

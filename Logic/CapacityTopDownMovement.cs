@@ -74,7 +74,7 @@ public class CapacityTopDownMovement : CapacityMovement {
     }
 
     //clamp in screen
-    if (_gameSpace != null) forceWithinBounds(_gameSpace.offsetSpace);
+    if (_gameSpace != null) _owner.forceWithinBounds(_gameSpace.offsetSpace);
   }
   
   public Vector2 getLastDirection() { return lastDirection; }

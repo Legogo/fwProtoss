@@ -5,18 +5,22 @@ using UnityEngine;
 
 abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
 {
-  //loading list
-  static public List<EngineObject> eos = new List<EngineObject>();
-
   protected EngineManager _eManager;
 
-  //static int loadingFrameCount = 10;
+  [HideInInspector]
+  public int engineLayer = 0;
 
   protected Transform _tr;
   protected bool _freeze = false;
   protected bool _ready = false;
+  
+  [Serializable]public enum VisibilityMode { NONE, SPRITE, UI, MESH };
+  public VisibilityMode visibilityMode;
+  public HelperVisible visibility;
+  
+  //[Serializable]public enum InputMode { NONE, MOUSE };
+  //public InputMode inputMode;
 
-  [HideInInspector]public ModuleVisible visibility;
   protected InputObject input;
 
   //constructor
@@ -25,36 +29,59 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
     _tr = transform;
 
     _ready = false;
-    eos.Add(this);
 
     //Debug.Log(name);
-    //if(name.Contains("ui_")) Debug.Log(name+" <b>added to eos</b>");
+    //if(name.Contains("hopper")) Debug.Log("build <b>"+name+"</b>");
 
     build();
   }
 
+  protected void overrideLayer(int newLayer)
+  {
+    if (_ready)
+    {
+      Debug.LogError("you can't switch layer after constructor");
+      return;
+    }
+    engineLayer = newLayer;
+  }
+
   void Start() {
-    
+
     //usually objects startup their dependencies in the onEngineSceneLoaded
     //so if the object as other monobehavior generated at the same time (same Resource object) engine needs a frame to have all dependencies finish their build() process
-    
-    if (!EngineManager.isLoading()) onEngineSceneLoaded();
+
+    //Debug.Log(GetType() + " <b>" + name + "</b> START", gameObject);
+
+    if (!EngineManager.isLoading())
+    {
+      //Debug.Log(GetType() + " <b>" + name + "</b> engine is not loading, sending callback", gameObject);
+      onEngineSceneLoaded();
+    }
   }
 
   virtual protected void build()
   {
+    buildVisibilty();
+    EngineManager.subscribe(this);
   }
-  
-  /* called by onEngineSceneLoaded, fetch something in dependencies that are now ready to be fetched */
-  virtual protected void fetchGlobal() {
-    visibility = GetComponent<ModuleVisible>();
+
+  protected void buildVisibilty()
+  {
+    switch (visibilityMode)
+    {
+      case VisibilityMode.SPRITE: visibility = new HelperVisibleSprite();break;
+      case VisibilityMode.MESH: visibility = new HelperVisibleMesh(); break;
+      case VisibilityMode.NONE: break;
+      default: Debug.LogError("no implem yet"); break;
+    }
   }
 
   protected void subscribeToInput(string carryName) {
     GameObject carry = GameObject.Find(carryName);
-    if(carry != null) {
+    if (carry != null) {
       InputObject io = carry.GetComponent<InputObject>();
-      if(io != null) {
+      if (io != null) {
         subscribeToInput(io);
         return;
       }
@@ -63,9 +90,10 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
     Debug.LogWarning("asking for inputobject carry " + carryName + " but couldn't find it");
     subscribeToInput();
   }
+
   protected void subscribeToInput(InputObject io = null)
   {
-    if(io != null) {
+    if (io != null) {
       input = io;
     }
     else {
@@ -91,23 +119,44 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
   //called by loader
   public void onEngineSceneLoaded()
   {
-    //Debug.Log(GetType()+" , <b>"+name+"</b>", gameObject);
+    //Debug.Log(GetType()+" , <b>"+name+ "</b> onEngineSceneLoaded", gameObject);
+
+    createGlobal();
+
     fetchGlobal();
+
     _ready = true;
   }
-  
+
+  /* how this object will create some stuff before fetching (ie : symbols) */
+  virtual protected void createGlobal()
+  {
+
+  }
+
+  /* called by onEngineSceneLoaded, fetch something in dependencies that are now ready to be fetched */
+  virtual protected void fetchGlobal()
+  {
+    //Debug.Log("fetching global <b>" + name + "</b> (layer " + engineLayer + ") | visibility ? "+visibility, gameObject);
+    if (visibility != null) visibility.setup(this);
+  }
+
   /* called by EngineManager */
-  virtual public void updateEngine(){}
-  virtual public void updateEngineLate(){}
+  virtual public void updateEngine() { }
+  virtual public void updateEngineLate() { }
 
   virtual public bool canUpdate()
   {
     if (isFreezed()) return false;
     return true;
   }
-  
+
   private void OnDestroy()
   {
+#if UNITY_EDITOR
+    //don't clear anything if editor stop playing
+    if (!UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode) return;
+#endif
     //Debug.Log(name + " OnDestroy ", gameObject);
     destroy();
   }
@@ -115,47 +164,23 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
   virtual protected void destroy()
   {
     //Debug.Log(name + " destroy() ", gameObject);
-    if (eos.IndexOf(this) > -1) eos.Remove(this);
+    //if (eos.IndexOf(this) > -1) eos.Remove(this);
+    EngineManager.unsubscribe(this);
   }
 
   public bool isFreezed() { return _freeze; }
-  public void setFreeze(bool flag) {_freeze = flag;}
+  public void setFreeze(bool flag) { _freeze = flag; }
   public bool isReady() { return _ready; }
-
-  public void forceWithinBounds(Rect boundsClamp)
-  {
-    if (visibility == null) Debug.LogWarning("asking for bounds clamping but no visible module");
-
-    Rect localRec = visibility.getWorldBounds();
-    float gap = 0f;
-
-    //Debug.Log(localRec);
-    //Debug.Log(boundsClamp);
-
-    gap = boundsClamp.xMax - localRec.xMax;
-    if (gap < 0f) transform.position += Vector3.right * gap;
-
-    gap = boundsClamp.xMin - localRec.xMin;
-    //Debug.Log(boundsClamp.xMin + " - " + localRec.xMin + " = xmin " + gap);
-    if (gap > 0f) transform.position += Vector3.right * gap;
-
-    gap = boundsClamp.yMax - localRec.yMax;
-    //Debug.Log(boundsClamp.yMax+" - "+localRec.yMax+" = ymax " + gap);
-    if (gap < 0f) transform.position += Vector3.up * gap;
-
-    gap = boundsClamp.yMin - localRec.yMin;
-    //Debug.Log(boundsClamp.yMin + " - " + localRec.yMin + " = ymin " + gap);
-    if (gap > 0f) transform.position += Vector3.up * gap;
-    
-  }
 
   virtual public string toString()
   {
-    return name + " freeze ? " + isFreezed()+" canUpdate("+canUpdate()+")";
+    return name + " freeze ? " + isFreezed() + " canUpdate(" + canUpdate() + ")";
   }
 
   public string toStringDebug()
   {
     return toString();
   }
+
+  
 }
