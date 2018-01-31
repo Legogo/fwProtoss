@@ -64,7 +64,7 @@ abstract public class CapacityHittable : LogicCapacity
     //si le collider de l'épée de l'attacker overlap pas avec mon collider (corps)
     if (!overlap(getCollider(), attackerCapa.attackCollider)) return false;
 
-    Debug.Log(_owner.name + " <-ATTACK- " + attackerCapa.getPlayerLogic().name);
+    Debug.Log(_owner.name + " <-ATTACK- " + attackerCapa.getOwner().name);
     
     return true;
   }
@@ -74,11 +74,7 @@ abstract public class CapacityHittable : LogicCapacity
     //si le collider de l'épée de l'adversaire overlap pas avec la mienne
     if (!overlap(_attack.attackCollider, attackerCapa.attackCollider)) return false;
     
-    //si on tape sur un player
-    PlayerLogic attackerPlayer = attackerCapa.getPlayerLogic();
-    if (attackerPlayer == null) return false;
-
-    Debug.Log(_owner.name + " <-WEAPONS-> " + attackerCapa.getPlayerLogic().name);
+    Debug.Log(_owner.name + " <-WEAPONS-> " + attackerCapa.getOwner().name);
 
     //balance l'event sur l'attacker qu'il a tapé une épée
     attackerCapa.HitBySomething(_attack);
