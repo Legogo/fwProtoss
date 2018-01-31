@@ -15,7 +15,7 @@ public class InputKeyAim : InputKey {
 
     return Input.GetKeyDown(KeyCode.A);
   }
-  public bool pressed_release()
+  public bool released_aim()
   {
     if (_xinput != null)
     {
@@ -27,4 +27,5 @@ public class InputKeyAim : InputKey {
     return Input.GetKeyUp(KeyCode.A);
   }
   
+  public Vector2 getJoystickVector() { return getController().leftStickVector; }
 }

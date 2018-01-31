@@ -12,7 +12,7 @@ using UnityEngine;
 
 abstract public class CapacityAim : LogicCapacity
 {
-  protected InputKeyAim _inputAim;
+   //protected InputKeyAim _inputAim;
 
   protected int _direction = 0;
   protected float _angle = 0f;
@@ -20,38 +20,33 @@ abstract public class CapacityAim : LogicCapacity
   public override void setupCapacity() {
     if (_character == null) Debug.LogError(name+" need character logic", gameObject);
 
-    CapacityInput ci = _character.GetComponent<CapacityInput>();
-    _inputAim = ci.keys.get<InputKeyAim>();
+    //CapacityInput ci = _character.GetComponent<CapacityInput>();
+    //_inputAim = ci.keys.get<InputKeyAim>();
   }
   
   public override void updateLogic() {
     _direction = _character.Direction;
     _angle = getRightStickAngle();
     
-    if (_inputAim.pressed_aim()) onAimPress();
-    else if (_inputAim.pressed_release()) onAimRelease();
+    if (pressed_aim()) onAimPress();
+    else if (release_aim()) onAimRelease();
   }
 
   abstract protected void onAimPress();
   abstract protected void onAimRelease();
-  
+
+  abstract protected Vector2 getJoystickVector();
+  abstract protected bool pressed_aim();
+  abstract protected bool release_aim();
+
   public float getRightStickAngle()
   {
 
     float angle = _direction < 0 ? 0f : 180f;
-
-    XinputController controller = _inputAim.getXinput();
-
-    if (controller != null)
+    Vector2 joyVector = getJoystickVector();
+    if(joyVector.sqrMagnitude != 0f)
     {
-      if (controller.rightStickVector != Vector3.zero)
-      {
-        angle = -ComputeSignedAngle(new Vector2(-1, 0), controller.rightStickVector);
-      }
-      else if (controller.leftStickVector != Vector3.zero)
-      {
-        angle = -ComputeSignedAngle(new Vector2(-1, 0), controller.leftStickVector);
-      }
+      angle = -ComputeSignedAngle(new Vector2(-1, 0), joyVector);
     }
 
     return angle;
