@@ -13,7 +13,6 @@ abstract public class LogicCapacity : EngineObject {
   protected bool _lock;
   protected LogicItem _owner;
   protected CharacterLogic _character;
-
   
   protected override void build()
   {

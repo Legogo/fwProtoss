@@ -7,14 +7,14 @@ using UnityEngine;
 abstract public class CapacityJump : LogicCapacity
 {
   CapacityCollision _collision;
-  HiddenCapacityMovement _move;
+  CapacityMovement _move;
 
   InputKeyTopDown _input;
 
   public override void setupCapacity()
   {
     _collision = _owner.GetComponent<CapacityCollision>();
-    _move = _owner.GetComponent<HiddenCapacityMovement>();
+    _move = _owner.GetComponent<CapacityMovement>();
     _input = _owner.GetComponent<CapacityInput>().keys.get<InputKeyTopDown>();
   }
 
