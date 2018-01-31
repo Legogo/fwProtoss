@@ -204,8 +204,6 @@ abstract public class CapacityAttack : LogicCapacity
     return _character.Direction;
   }
 
-  public PlayerLogic getPlayerLogic() { return _owner as PlayerLogic; }
-  
   public override void clean()
   {
   }
