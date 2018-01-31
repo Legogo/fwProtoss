@@ -11,15 +11,15 @@ public class InputKeyBridge {
 
   protected Dictionary<Type, InputKey> list = new Dictionary<Type, InputKey>();
 
-  public InputKey create<T>() where T : new()
+  public T create<T>() where T : new()
   {
-    if (list.ContainsKey(typeof(T))) return list[typeof(T)];
+    if (list.ContainsKey(typeof(T))) return default(T); // null
     
     T ik = (T)Activator.CreateInstance(typeof(T));
     list.Add(typeof(T), ik as InputKey);
     //Debug.Log("created : " + ik);
 
-    return ik as InputKey;
+    return ik;
   }
 
   public T get<T>() where T : InputKey
