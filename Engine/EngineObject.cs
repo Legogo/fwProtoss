@@ -11,7 +11,7 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
   public int engineLayer = 0;
 
   protected Transform _tr;
-  protected bool _freeze = false;
+  protected bool _unfreeze = true;
   protected bool _ready = false;
   
   [Serializable]public enum VisibilityMode { NONE, SPRITE, UI, MESH };
@@ -21,7 +21,7 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
   //[Serializable]public enum InputMode { NONE, MOUSE };
   //public InputMode inputMode;
 
-  protected InputObject input;
+  private InputObject inputObject;
 
   //constructor
   void Awake()
@@ -77,34 +77,39 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
     }
   }
 
-  protected void subscribeToInput(string carryName) {
-    GameObject carry = GameObject.Find(carryName);
-    if (carry != null) {
-      InputObject io = carry.GetComponent<InputObject>();
-      if (io != null) {
-        subscribeToInput(io);
-        return;
+  protected void subscribeToInput(string carryName, Action<InputTouchFinger> touch, Action<InputTouchFinger> release = null) {
+    if(carryName.Length > 0)
+    {
+      GameObject carry = GameObject.Find(carryName);
+      if (carry != null)
+      {
+        InputObject io = carry.GetComponent<InputObject>();
+        if (io != null)
+        {
+          subscribeToInput(touch, release, io);
+          return;
+        }
       }
     }
 
     Debug.LogWarning("asking for inputobject carry " + carryName + " but couldn't find it");
-    subscribeToInput();
+    subscribeToInput(touch, release, null);
   }
 
-  protected void subscribeToInput(InputObject io = null)
+  protected void subscribeToInput(Action<InputTouchFinger> touch, Action<InputTouchFinger> release = null, InputObject io = null)
   {
     if (io != null) {
-      input = io;
+      inputObject = io;
     }
     else {
-      input = GetComponent<InputObject>();
-      if (input == null) input = gameObject.AddComponent<InputObject>();
+      inputObject = GetComponent<InputObject>();
+      if (inputObject == null) inputObject = gameObject.AddComponent<InputObject>();
     }
 
     //Debug.Log(input.name, input.gameObject);
 
-    input.cbTouch += touchPress;
-    input.cbRelease += touchRelease;
+    inputObject.cbTouch += touchPress;
+    inputObject.cbRelease += touchRelease;
   }
 
   virtual protected void touchRelease(InputTouchFinger finger) {
@@ -168,16 +173,21 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
     EngineManager.unsubscribe(this);
   }
 
-  public bool isFreezed() { return _freeze; }
-  public void setFreeze(bool flag) { _freeze = flag; }
+  public bool isFreezed() { return !_unfreeze; }
+  public void setFreeze(bool flag) { _unfreeze = !flag; }
   public bool isReady() { return _ready; }
 
   virtual public string toString()
   {
-    return name + " freeze ? " + isFreezed() + " canUpdate(" + canUpdate() + ")";
+    return name + "\n └ "+iStringFormatBool("unfreezed", _unfreeze)+"\n └ "+iStringFormatBool("can update", canUpdate());
   }
 
-  public string toStringDebug()
+  protected string iStringFormatBool(string label, bool val)
+  {
+    return label + " ? " + (val ? "<color=green>true</color>" : "<color=red><b>false</b></color>");
+  }
+
+  public string iString()
   {
     return toString();
   }

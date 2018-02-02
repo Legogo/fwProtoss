@@ -7,7 +7,7 @@ abstract public class CapacityMovement : LogicCapacity {
 
   protected Transform _t;
   protected CapacityCollision _collision;
-  protected Vector2 directionLast; // backup
+  protected Vector2 lastInstantForce; // backup
   
   protected Vector2 instantForce;
   protected Vector2 velocityForce;
@@ -34,7 +34,7 @@ abstract public class CapacityMovement : LogicCapacity {
 
   public int getHorizontalDirection()
   {
-    return (int)Mathf.Sign(directionLast.x);
+    return (int)Mathf.Sign(lastInstantForce.x);
   }
 
   public override void setupCapacity()
@@ -67,8 +67,9 @@ abstract public class CapacityMovement : LogicCapacity {
     velocityForce.y += y;
   }
 
-  public override void updateEngine(){
-    
+  public override void updateLogic(){
+    base.updateLogic();
+
     int i = 0;
     while(i < forces.Count)
     {
@@ -81,11 +82,13 @@ abstract public class CapacityMovement : LogicCapacity {
 
   public override void updateLogicLate()
   {
+    base.updateLogicLate();
+
     instantForce += velocityForce;
 
     moveStep(instantForce * Time.deltaTime);
-
-    directionLast = instantForce; //Save last
+    
+    lastInstantForce = instantForce; //Save last
     instantForce.x = instantForce.y = 0f;
   }
   
@@ -102,17 +105,17 @@ abstract public class CapacityMovement : LogicCapacity {
     instantForce = Vector2.zero;
   }
 
-  public bool isGoingUp() { return directionLast.y > 0f; }
-  public bool isFalling() { return directionLast.y < 0f; }
-  public float getVerticalSpeed() { return directionLast.y; }
-  public float getHorizontalSpeed() { return directionLast.x; }
+  public bool isGoingUp() { return lastInstantForce.y > 0f; }
+  public bool isFalling() { return lastInstantForce.y < 0f; }
+  public float getVerticalSpeed() { return lastInstantForce.y; }
+  public float getHorizontalSpeed() { return lastInstantForce.x; }
 
   protected void moveStep(Vector2 step)
   {
     Vector2 originOfMovement = _t.position;
 
     //store for direction
-    if (step.x != 0f) directionLast = step;
+    if (step.x != 0f) lastInstantForce = step;
 
     Debug.DrawLine(transform.position + (Vector3.down * 0.2f), transform.position + (Vector3.down * 0.2f) + ((Vector3)step * 5f), Color.black);
 
@@ -126,6 +129,10 @@ abstract public class CapacityMovement : LogicCapacity {
       nextPosition = _t.position;
       nextPosition = _collision.checkCollisionRectangle(nextPosition);
       */
+    }
+    else
+    {
+      nextPosition = originOfMovement + step;
     }
 
     _moved = nextPosition != originOfMovement;
@@ -147,8 +154,8 @@ abstract public class CapacityMovement : LogicCapacity {
   
   public override void clean()
   {
-    directionLast.x = 0f;
-    directionLast.y = 0f;
+    lastInstantForce.x = 0f;
+    lastInstantForce.y = 0f;
     _lock = false;
     _moved = false;
   }
@@ -166,13 +173,19 @@ abstract public class CapacityMovement : LogicCapacity {
   {
     string ct = base.toString();
 
-    if (_collision != null) ct += "\nisCollidable ? " + _collision.isCollidable();
+    if (_collision != null) ct += "\n └ " + iStringFormatBool("collidable ?", _collision.isCollidable());
 
-    ct += "\nmoved ? " + _moved;
+    ct += "\n └ moved ? " + _moved;
 
-    ct += "\ninstant : " + instantForce.x + " x " + instantForce.y;
-    
+    ct += "\n └ position : " + transform.position;
+
+    ct += "\n~forces~";
+
+    ct += "\n └ velocity : " + velocityForce.x + " x " + velocityForce.y;
+    ct += "\n └ instant : " + instantForce.x + " x " + instantForce.y;
+    ct += "\n └ last instant : " + lastInstantForce.x + " x " + lastInstantForce.y;
+
     return ct;
   }
-
+  
 }

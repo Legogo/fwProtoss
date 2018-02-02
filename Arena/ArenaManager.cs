@@ -24,7 +24,7 @@ abstract public class ArenaManager : EngineObject {
   }
 
   virtual public void restart_setup() {
-    _freeze = false;
+    _unfreeze = false;
     _state = ArenaState.LIVE;
   }
 

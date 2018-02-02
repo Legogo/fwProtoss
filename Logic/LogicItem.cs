@@ -10,10 +10,15 @@ using System.Linq;
 public class LogicItem : ArenaObject
 {
   protected List<LogicCapacity> capacities = new List<LogicCapacity>();
-  
+
+  [HideInInspector]
+  public CapacityInput input;
+
   protected override void fetchGlobal()
   {
     base.fetchGlobal();
+
+    input = GetComponent<CapacityInput>();
 
     setupCapacities();
   }

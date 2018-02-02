@@ -14,7 +14,7 @@ namespace Interfaces
 {
   public interface IDebugSelection
   {
-    string toStringDebug();
+    string iString();
   }
 }
 
@@ -70,7 +70,7 @@ public class DebugSelection : MonoBehaviour
     }
 
     if (info != null) {
-      Handles.Label(obj.transform.position + Vector3.right, info.toStringDebug(), style);
+      Handles.Label(obj.transform.position + Vector3.right, info.iString(), style);
     }
   }
 
@@ -94,7 +94,7 @@ public class DebugSelection : MonoBehaviour
     IDebugSelection[] infos = obj.GetComponents<IDebugSelection>();
     for (int i = 0; i < infos.Length; i++)
     {
-      info = "{"+infos[i].GetType()+"}\n"+infos[i].toStringDebug();
+      info = "{"+infos[i].GetType()+"}\n"+infos[i].iString();
       
       //if (i > 0) guiRec.y += 30;
       GUI.Label(guiRec, info, style);

@@ -15,16 +15,14 @@ public class CapacityCollision : LogicCapacity
 {
   [HideInInspector] public CapacityCollision[] all; // all other objects in scenes
   [HideInInspector] public BoxCollider2D boxCollider;
-  [HideInInspector] public Rect recBound = new Rect();
+  [HideInInspector] public Rect recBound = new Rect(); // expressed in world coordinates
 
   protected Transform _t;
-  private IList<GameObject> _collidedObjects;
-
+  
   //step tools
   protected float rayDistance = 5f;
   protected RaycastHit2D hit;
   Vector2 origin = Vector2.zero;
-  Rect destinationBounds = new Rect();
   float min;
   float cornerGap = 0.03f;
 
@@ -42,102 +40,21 @@ public class CapacityCollision : LogicCapacity
   public override void setupCapacity()
   {
     boxCollider = gameObject.GetComponent<BoxCollider2D>();
+    if (boxCollider == null) boxCollider = gameObject.GetComponentInChildren<BoxCollider2D>();
+    if (boxCollider == null) Debug.LogWarning("no collider for " + name, gameObject);
+
+    if(boxCollider.transform.localScale != Vector3.one)
+    {
+      Debug.LogError(GetType() + " can't manage scale on collider !", gameObject);
+      return;
+    }
 
     recBound = new Rect();
-    destinationBounds = new Rect();
+    //destinationBounds = new Rect();
 
     all = GameObject.FindObjectsOfType<CapacityCollision>();
   }
-  public override void updateLogic()
-  {
-  }
 
-  public Rect solveDestinationBounds(Vector2 step)
-  {
-    solveBounds();
-    
-    //copy
-    destinationBounds.xMin = recBound.xMin;
-    destinationBounds.xMax = recBound.xMax;
-    destinationBounds.yMin = recBound.yMin;
-    destinationBounds.yMax = recBound.yMax;
-
-    //displace
-    destinationBounds.center += step;
-
-    return destinationBounds;
-  }
-  
-  public Rect solveBounds()
-  {
-    float x = transform.position.x + boxCollider.offset.x;
-    recBound.xMin = x - boxCollider.bounds.extents.x;
-    recBound.xMax = x + boxCollider.bounds.extents.x;
-    //Debug.Log(transform.position.x+" -> "+ x + " -> " + recBound.xMin + " - " + recBound.xMax);
-
-    float y = transform.position.y + boxCollider.offset.y;
-    recBound.yMin = y + boxCollider.bounds.extents.y;
-    recBound.yMax = y - boxCollider.bounds.extents.y;
-    //Debug.Log(transform.position.y +" -> "+ y + " -> " + recBound.yMin + " - " + recBound.yMax);
-
-    return recBound;
-  }
-
-  public bool isCollidable() {
-    if (!enabled)
-    {
-      //Debug.Log("  not enabled ? "+enabled);
-      return false;
-    }
-
-    if (boxCollider == null)
-    {
-      //Debug.Log("  no box collider ?");
-      return false;
-    }
-
-    if (!boxCollider.enabled)
-    {
-      //Debug.Log("  box collider not enabled");
-      return false;
-    }
-    return true;
-  }
-
-  public override void updateEngineLate()
-  {
-    base.updateEngineLate();
-    //resetCollisionInfo();
-  }
-
-  public int GetCollisionDirection
-  {
-    get { return info.touching_left ? -1 : info.touching_right ? 1 : 0; }
-  }
-
-  public IList<GameObject> CollidedObjects
-  {
-    get
-    {
-      return _collidedObjects;
-    }
-  }
-
-  public bool isGrounded()
-  {
-    return info.touching_ground;
-  }
-
-  public bool isTouchingSide()
-  {
-    return info.touching_left || info.touching_right;
-  }
-
-  public bool isRoofed()
-  {
-    return info.touching_ceiling;
-  }
-  
   private void resetCollisionInfo()
   {
 
@@ -146,11 +63,10 @@ public class CapacityCollision : LogicCapacity
     info.touching_ground = info.touching_ceiling = false;
 
   }
-
+  
   public Vector2 checkCollisionRaycasts(Vector2 step)
   {
     solveBounds();
-    //drawBox(bnd, Color.black);
     
     //Debug.Log(destinationBounds.xMin + " , " + destinationBounds.xMax);
 
@@ -169,7 +85,8 @@ public class CapacityCollision : LogicCapacity
 
     checkRaycastHorizontal(step, step.x < 0f ? Vector2.left : Vector2.right);
     checkRaycastHorizontal(step, step.x > 0f ? Vector2.right : Vector2.left);
-    
+
+    //return recBound.center;
     return recBound.center - boxCollider.offset;
   }
   
@@ -258,7 +175,7 @@ public class CapacityCollision : LogicCapacity
 
     hit = Physics2D.Raycast(origin, dir, distance, rayLayer);
 
-    int safe = 300;
+    int safe = 600;
     
     //l'origin est DANS un obstacle, faut reculer jusqu'à trouvé un endroit safe
     while (hit.collider != null && hit.distance == 0f && safe > 0)
@@ -273,7 +190,7 @@ public class CapacityCollision : LogicCapacity
       safe--;
     }
 
-    if (safe <= 0) Debug.LogWarning(name+" safe "+tmpOrigin+" , "+movement+" , "+dir+" , "+step);
+    if (safe <= 0) Debug.LogWarning(name+" safe! "+tmpOrigin+" , "+movement+" , "+dir+" , "+step);
 
     //si j'ai qq chose en face
     if(hit.collider != null)
@@ -285,6 +202,165 @@ public class CapacityCollision : LogicCapacity
     return touch;
   }
   
+
+  public Rect solveBounds()
+  {
+    //Debug.Log(boxCollider.offset);
+
+    float x = transform.position.x + boxCollider.offset.x;
+    //float x = transform.position.x;
+    recBound.xMin = x - boxCollider.bounds.extents.x;
+    recBound.xMax = x + boxCollider.bounds.extents.x;
+    
+
+    float y = transform.position.y + boxCollider.offset.y;
+    //float y = transform.position.y;
+    recBound.yMin = y + boxCollider.bounds.extents.y;
+    recBound.yMax = y - boxCollider.bounds.extents.y;
+
+    //Debug.DrawLine(new Vector3(recBound.xMin, recBound.yMin, 0f), new Vector3(recBound.xMax, recBound.yMax), Color.white, 3f);
+
+    drawBox(recBound, Color.white);
+
+    return recBound;
+  }
+
+  public int GetCollisionDirection
+  {
+    get { return info.touching_left ? -1 : info.touching_right ? 1 : 0; }
+  }
+  
+  public bool isCollidable()
+  {
+    if (!enabled)
+    {
+      //Debug.Log("  not enabled ? "+enabled);
+      return false;
+    }
+
+    if (boxCollider == null)
+    {
+      //Debug.Log("  no box collider ?");
+      return false;
+    }
+
+    if (!boxCollider.enabled)
+    {
+      //Debug.Log("  box collider not enabled");
+      return false;
+    }
+    return true;
+  }
+
+  public bool isGrounded()
+  {
+    return info.touching_ground;
+  }
+
+  public bool isTouchingSide()
+  {
+    return info.touching_left || info.touching_right;
+  }
+
+  public bool isRoofed()
+  {
+    return info.touching_ceiling;
+  }
+
+  protected void drawBox(Rect rect, Color col)
+  {
+    Debug.DrawLine(new Vector2(rect.xMin, rect.yMin), new Vector2(rect.xMax, rect.yMax), col);
+    Debug.DrawLine(new Vector2(rect.xMin, rect.yMax), new Vector2(rect.xMax, rect.yMin), col);
+  }
+
+  void OnDrawGizmos() {
+    if (!Application.isPlaying) return;
+
+    //actual bounds
+    //solveBounds();
+    drawBox(recBound, Color.yellow); // yellow is destination
+    
+    // COLLISION
+    
+    if (info.touching_left) Debug.DrawLine(new Vector2(recBound.xMin, recBound.yMin), new Vector2(recBound.xMin, recBound.yMax), Color.red);
+    if (info.touching_right) Debug.DrawLine(new Vector2(recBound.xMax, recBound.yMin), new Vector2(recBound.xMax, recBound.yMax), Color.red);
+
+    if (info.touching_ceiling) Debug.DrawLine(new Vector2(recBound.xMin, recBound.yMin), new Vector2(recBound.xMax, recBound.yMin), Color.red);
+    if (info.touching_ground) Debug.DrawLine(new Vector2(recBound.xMin, recBound.yMax), new Vector2(recBound.xMax, recBound.yMax), Color.red);
+    
+    //Gizmos.DrawSphere(recBound.center, 0.05f);
+  }
+
+  public override string toString()
+  {
+    string ct = base.toString();
+    ct += "\n"+info.touching_ceiling;
+    ct += "\n" + info.touching_left + " " + info.touching_right;
+    ct += "\n" + info.touching_ground;
+
+    if (!isCollidable())
+    {
+      ct += "\n  ~notCollidable~";
+      ct += "\n  " + iStringFormatBool("enabled", enabled);
+      ct += "\n  " + iStringFormatBool("boxCollider", boxCollider != null);
+      if(boxCollider != null) ct += "\n  " + iStringFormatBool("boxCollider.enabled", boxCollider.enabled);
+    }
+
+    ct += "\n  ~box~";
+    ct += "\n"+boxBoundsToString();
+
+    return ct;
+  }
+
+  protected string boxBoundsToString()
+  {
+    if (boxCollider == null) return "no box collider";
+
+    string ct = "";
+    ct = recBound.xMin + " x " + recBound.yMin + " ┌ " + boxCollider.bounds.extents.x + " ┐ " + recBound.xMax + " - " + recBound.yMin;
+    ct += "\n" + boxCollider.bounds.extents.y + " |     | ";
+    ct += "\n" + recBound.xMin + " x " + recBound.yMax + " └ " + boxCollider.bounds.extents.x + " ┘ " + recBound.xMax + " - " + recBound.yMax;
+
+    return ct;
+  }
+
+  public override void clean()
+  {
+  }
+}
+
+public struct CollisionInfo
+{
+  public bool touching_left;
+  public bool touching_right;
+  public bool touching_ground;
+  public bool touching_ceiling;
+}
+
+
+/*
+
+  
+  public Rect solveDestinationBounds(Vector2 step)
+  {
+    //solve bounds based on collider and position
+    solveBounds();
+
+    //copy
+    destinationBounds.xMin = recBound.xMin;
+    destinationBounds.xMax = recBound.xMax;
+    destinationBounds.yMin = recBound.yMin;
+    destinationBounds.yMax = recBound.yMax;
+
+    //displace to have bounds at destination of next movement
+    destinationBounds.center += step;
+
+    return destinationBounds;
+  }
+
+
+
+
   public Vector2 checkCollisionRectangle(Vector2 position)
   {
     //mine
@@ -334,50 +410,4 @@ public class CapacityCollision : LogicCapacity
 
     return position;
   }
-  
-  protected void drawBox(Rect rect, Color col)
-  {
-    Debug.DrawLine(new Vector2(rect.xMin, rect.yMin), new Vector2(rect.xMax, rect.yMax), col);
-    Debug.DrawLine(new Vector2(rect.xMin, rect.yMax), new Vector2(rect.xMax, rect.yMin), col);
-  }
-
-  void OnDrawGizmos() {
-    if (!Application.isPlaying) return;
-
-    //actual bounds
-    //solveBounds();
-    drawBox(recBound, Color.yellow);
-    //drawBox(destinationBounds, Color.cyan);
-    
-    // COLLISION
-    
-    if (info.touching_left) Debug.DrawLine(new Vector2(recBound.xMin, recBound.yMin), new Vector2(recBound.xMin, recBound.yMax), Color.red);
-    if (info.touching_right) Debug.DrawLine(new Vector2(recBound.xMax, recBound.yMin), new Vector2(recBound.xMax, recBound.yMax), Color.red);
-
-    if (info.touching_ceiling) Debug.DrawLine(new Vector2(recBound.xMin, recBound.yMin), new Vector2(recBound.xMax, recBound.yMin), Color.red);
-    if (info.touching_ground) Debug.DrawLine(new Vector2(recBound.xMin, recBound.yMax), new Vector2(recBound.xMax, recBound.yMax), Color.red);
-    
-    //Gizmos.DrawSphere(recBound.center, 0.05f);
-  }
-
-  public override string toString()
-  {
-    string ct = base.toString();
-    ct += "\n"+info.touching_ceiling;
-    ct += "\n" + info.touching_left + " " + info.touching_right;
-    ct += "\n" + info.touching_ground;
-    return ct;
-  }
-
-  public override void clean()
-  {
-  }
-}
-
-public struct CollisionInfo
-{
-  public bool touching_left;
-  public bool touching_right;
-  public bool touching_ground;
-  public bool touching_ceiling;
-}
+*/

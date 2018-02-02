@@ -19,9 +19,9 @@ public class EngineLoaderFeeder : MonoBehaviour {
   {
     if (scene_names == null) scene_names = new List<string>();
 
-    addWithPrefix("resource", resource_names);
-    addWithPrefix("screen", screen_names);
-    addWithPrefix("graphics", graphics_names);
+    addWithPrefix("resource-", resource_names);
+    addWithPrefix("screen-", screen_names);
+    addWithPrefix("graphics-", graphics_names);
 
     addWithPrefix("", other_names);
 
@@ -36,7 +36,7 @@ public class EngineLoaderFeeder : MonoBehaviour {
 
     for (int i = 0; i < names.Length; i++)
     {
-      scene_names.Add(prefix + "-"+ names[i]);
+      scene_names.Add(prefix + names[i]);
     }
   }
 

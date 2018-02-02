@@ -11,7 +11,6 @@ abstract public class CapacityAttack : LogicCapacity
   protected WeaponLogic _weapon;
   
   protected Coroutine coProcessAttack;
-  protected CapacityInput _input;
   protected CapacityMovement _move;
 
   protected CapacityHittable _hittable;
@@ -31,7 +30,7 @@ abstract public class CapacityAttack : LogicCapacity
 
   public override void setupCapacity()
   {
-    inputDirection = _character.GetComponent<CapacityInput>().keys.get<InputKeyTopDown>();
+    inputDirection = _character.input.keys.get<InputKeyTopDown>();
     fetchWeapon();
 
     if (_weapon == null)

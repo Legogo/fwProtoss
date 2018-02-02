@@ -4,30 +4,37 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-abstract public class CapacityJump : LogicCapacity
+public class CapacityJump : LogicCapacity
 {
   CapacityCollision _collision;
   CapacityMovement _move;
 
-  InputKeyTopDown _input;
+  InputKeyTopDown _inputKey;
 
   public override void setupCapacity()
   {
     _collision = _owner.GetComponent<CapacityCollision>();
     _move = _owner.GetComponent<CapacityMovement>();
-    _input = _owner.GetComponent<CapacityInput>().keys.get<InputKeyTopDown>();
+
+    if (_owner.input.keys != null) _inputKey = _owner.input.keys.get<InputKeyTopDown>();
+    _owner.input.touch += touch;
+  }
+
+  protected void touch(InputTouchFinger finger)
+  {
+    solveJump();
   }
 
   public override void updateLogic()
   {
-    //jump when snapped on wall
-    if (_input.pressed_jump())
+    base.updateLogic();
+    if(_inputKey != null)
     {
-      solveJump();
+      if (_inputKey.pressed_jump()) solveJump();
     }
   }
-  
-  protected void solveJump()
+
+  public void solveJump()
   {
     bool isGrounded = _collision.isGrounded();
     
@@ -39,5 +46,8 @@ abstract public class CapacityJump : LogicCapacity
     
   }
   
-  abstract public float getJumpPower();
+  virtual public float getJumpPower()
+  {
+    return 1f;
+  }
 }

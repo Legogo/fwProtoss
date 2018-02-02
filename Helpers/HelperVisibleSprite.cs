@@ -12,6 +12,9 @@ public class HelperVisibleSprite : HelperVisible
 
   protected override Transform fetchCarrySymbol()
   {
+    _render = _t.GetComponent<SpriteRenderer>();
+    if (_render == null) _render = _t.GetComponentInChildren<SpriteRenderer>();
+
     return _render.transform;
   }
 
@@ -19,9 +22,6 @@ public class HelperVisibleSprite : HelperVisible
   {
     base.setup(parent);
 
-    _render = _t.GetComponent<SpriteRenderer>();
-    if (_render == null) _render = _t.GetComponentInChildren<SpriteRenderer>();
-    
     if (sortingLayerName.Length > 0)
     {
       _render.sortingLayerName = sortingLayerName;

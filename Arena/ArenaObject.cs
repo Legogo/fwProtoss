@@ -113,7 +113,7 @@ abstract public class ArenaObject : EngineObject {
     //Debug.Log(name + " , active ? " + _active + " ,  freeze ? " + _freeze);
 
     if (!_active) return;
-    if (_freeze) return;
+    if (_unfreeze) return;
 
     //Debug.Log(_arena.isArenaStateLive());
 
@@ -160,7 +160,7 @@ abstract public class ArenaObject : EngineObject {
 
   public override string toString()
   {
-    return name+" freeze ? "+_freeze+" , active ? "+_active;
+    return name+" freeze ? "+_unfreeze+" , active ? "+_active;
   }
 
 }

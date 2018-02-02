@@ -11,7 +11,7 @@ public class InputKeyBridge {
 
   protected Dictionary<Type, InputKey> list = new Dictionary<Type, InputKey>();
 
-  public T create<T>() where T : new()
+  public T create<T>() where T : InputKey
   {
     if (list.ContainsKey(typeof(T))) return default(T); // null
     
