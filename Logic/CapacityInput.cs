@@ -42,7 +42,7 @@ public class CapacityInput : LogicCapacity {
 
   protected void inputTouch(InputTouchFinger finger)
   {
-    if (_unfreeze) return;
+    if (isFreezed()) return;
     if (touch != null) touch(finger);
   }
 

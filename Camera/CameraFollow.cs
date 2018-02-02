@@ -25,20 +25,21 @@ public class CameraFollow : EngineObject
     followCamera = GetComponent<Camera>();
 
     starting_zoom_level = getZoomLevel();
-
-    restart();
   }
 
   virtual protected void setupOffset()
   {
     offset.y = 1f;
   }
-
+  
   public void restart()
   {
     setupOffset();
     setZoomLevel(starting_zoom_level);
     zoomOffset = 0f;
+
+    solveAimPosition();
+    transform.position = aimPosition; // force on target
   }
 
   public override void updateEngine()
@@ -52,14 +53,21 @@ public class CameraFollow : EngineObject
   {
     if (target == null) return;
 
-    aimPosition = target.position + offset;
-    aimPosition.z = transform.position.z; // override z
-    
+    solveAimPosition();
+
     float solvedSpeed = Mathf.Lerp(camera_speed_movement.x, camera_speed_movement.y, Mathf.InverseLerp(0f, 10f, Vector2.Distance(transform.position, aimPosition)));
 
     transform.position = Vector3.MoveTowards(transform.position, aimPosition, solvedSpeed * GameTime.deltaTime);
 
     updateZoomLevel();
+  }
+
+  void solveAimPosition()
+  {
+
+    aimPosition = target.position + offset;
+    aimPosition.z = transform.position.z; // override z
+
   }
 
   void setAtDestination()

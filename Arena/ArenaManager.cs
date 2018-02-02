@@ -19,12 +19,13 @@ abstract public class ArenaManager : EngineObject {
   public List<ArenaObject> arenaObjects = new List<ArenaObject>();
   
   virtual public void restart_normal() {
+    Debug.Log("~<b>Arena</b>~ restart_normal");
     time = 0f;
     restart_setup();
   }
 
   virtual public void restart_setup() {
-    _unfreeze = false;
+    setFreeze(false);
     _state = ArenaState.LIVE;
   }
 
@@ -47,9 +48,11 @@ abstract public class ArenaManager : EngineObject {
   public override void updateEngine()
   {
     base.updateEngine();
-
+    
     //freeze timer at start NEED to update
     update_time();
+
+    //Debug.Log("update arena " + _state);
 
     if (_state == ArenaState.MENU)
     {
@@ -57,7 +60,6 @@ abstract public class ArenaManager : EngineObject {
     }
     else if(_state == ArenaState.LIVE || _state == ArenaState.END)
     {
-      
       update_round();
     }
     
@@ -149,8 +151,13 @@ abstract public class ArenaManager : EngineObject {
 
   override public string toString()
   {
-    string ct = "live freeze timer ? " + liveFreezeTimer;
-    ct += "\nfreeze ? " + isFreezed();
+    string ct = base.toString();
+    ct += "\narena objects to update : " + arenaObjects.Count;
+    for (int i = 0; i < arenaObjects.Count; i++)
+    {
+      ct += "\n  " + arenaObjects[i].name + " " + arenaObjects[i].GetType();
+    }
+    ct += "\nlive freeze timer ? " + liveFreezeTimer;
     ct += "\nstate ? " + _state;
     return ct;
   }

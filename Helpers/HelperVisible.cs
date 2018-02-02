@@ -75,8 +75,6 @@ abstract public class HelperVisible
     swapColor(col);
   }
   
-  public Transform getSymbol() { return _symbolCarry; }
-
   public void show() { setVisibility(true); }
   public void hide(){ setVisibility(false); }
 
@@ -97,6 +95,24 @@ abstract public class HelperVisible
     return _wbounds;
   }
   
+  public Transform getSymbolTransform()
+  {
+    return _t;
+  }
+
+  public Transform getSymbol() { return _symbolCarry; }
+
+  public void setSymbolTransformScale(Vector3 newScale)
+  {
+    _t.localScale = newScale;
+  }
+
+  public void flipHorizontalScale(int dir)
+  {
+    Vector3 flipScale = _t.localScale;
+    flipScale.x = flipScale.x * Mathf.Sign(dir);
+    _t.localScale = flipScale;
+  }
 
   /*(legacy) try not using these (overhead) */
   protected bool isSprite(){ return this as HelperVisibleSprite!= null;}

@@ -11,6 +11,7 @@ using UnityEngine;
 abstract public class ArenaObject : EngineObject {
 
   bool _active = true;
+  bool _collectable = false;
 
   protected ArenaManager _arena;
   protected ArenaObjectSettings ao_settings;
@@ -29,6 +30,11 @@ abstract public class ArenaObject : EngineObject {
     }
     else Debug.LogWarning(name + " no arena ?", gameObject);
 
+  }
+
+  protected void subscribeToCollectable()
+  {
+    _collectable = true;
   }
 
   protected void subscribeToArenaSettings()
@@ -110,10 +116,10 @@ abstract public class ArenaObject : EngineObject {
   /* called by arena manager */
   virtual public void updateArena()
   {
-    //Debug.Log(name + " , active ? " + _active + " ,  freeze ? " + _freeze);
+    //Debug.Log(name + " , active ? " + _active + " ,  freeze ? " + isFreezed());
 
     if (!_active) return;
-    if (_unfreeze) return;
+    if (isFreezed()) return;
 
     //Debug.Log(_arena.isArenaStateLive());
 
@@ -125,7 +131,11 @@ abstract public class ArenaObject : EngineObject {
     {
       updateArenaEnd();
     }
-    else updateArenaMenu();
+    else
+    {
+      updateArenaMenu();
+    }
+    
   }
 
   virtual protected void updateArenaMenu()
@@ -140,6 +150,12 @@ abstract public class ArenaObject : EngineObject {
 
   virtual protected void updateArenaLive(float timeStamp)
   {
+    //Debug.Log(name);
+  }
+
+  /* déclanche le process de collect quand l'objet touche l'avatar */
+  protected void update_collectable()
+  {
     if (!isCollectable()) return;
     if (isCollidingWithAvatar()) collect();
   }
@@ -151,7 +167,7 @@ abstract public class ArenaObject : EngineObject {
 
   virtual public bool isCollectable()
   {
-    return isActive();
+    return _collectable && isActive();
   }
 
   protected void setActive(bool flag) { _active = flag; }
@@ -160,7 +176,25 @@ abstract public class ArenaObject : EngineObject {
 
   public override string toString()
   {
-    return name+" freeze ? "+_unfreeze+" , active ? "+_active;
+    string ct = base.toString();
+
+    ct += "\n  " + iStringFormatBool("active", _active);
+
+    if(_arena != null)
+    {
+      ct += "\n~arena~";
+      ct += "\n  " + iStringFormatBool("arena", _arena != null);
+      ct += "\n  " + iStringFormatBool("arena live", _arena.isArenaStateLive());
+      ct += "\n  " + iStringFormatBool("arena end", _arena.isArenaStateEnd());
+    }
+
+    if (isCollectable())
+    {
+      ct += "\n  collectable !";
+      ct += "\n  " + iStringFormatBool("base. colliding /w avatar", isCollidingWithAvatar());
+    }
+    
+    return ct;
   }
 
 }

@@ -17,6 +17,7 @@ public class EngineObjectMonitoring : EditorWindow
   string[] options;
   int dropdownIndex = 0;
 
+  GameObject last;
   GUIStyle style;
   
   void OnGUI()
@@ -39,6 +40,12 @@ public class EngineObjectMonitoring : EditorWindow
     GameObject obj = Selection.activeGameObject;
     if (obj == null) return;
 
+    if(obj != last)
+    {
+      dropdownIndex = 0;
+      last = obj;
+    }
+    
     EngineObject[] list = obj.GetComponents<EngineObject>();
     if (list.Length <= 0) return;
 
@@ -53,7 +60,10 @@ public class EngineObjectMonitoring : EditorWindow
     dropdownIndex = EditorGUILayout.Popup("Objects", dropdownIndex, options, EditorStyles.popup);
     GUILayout.EndHorizontal();
 
-    GUILayout.Label(list[dropdownIndex].toString(), style);
+    if(dropdownIndex >= 0 && dropdownIndex < list.Length)
+    {
+      GUILayout.Label(list[dropdownIndex].toString(), style);
+    }
   }
   
 }

@@ -24,11 +24,16 @@ public class CapacityCollision : LogicCapacity
   protected RaycastHit2D hit;
   Vector2 origin = Vector2.zero;
   float min;
-  float cornerGap = 0.03f;
+  float cornerGap = 0.1f;
 
   //a l'updateLate on reset donc dans l'inspecteur on voit jamais la valeur
   public CollisionInfo info;
   public LayerMask rayLayer;
+
+  // debug, pour savoir combien de déplacement il y a eu
+  private Vector2 frame_h_step;
+  private Vector2 frame_v_step;
+  private Vector2 frame_last_step;
 
   protected override void build()
   {
@@ -64,8 +69,13 @@ public class CapacityCollision : LogicCapacity
 
   }
   
+  /* called on moveStep of capacity movement */
   public Vector2 checkCollisionRaycasts(Vector2 step)
   {
+    //debug data
+    frame_h_step = frame_v_step = Vector2.zero;
+    frame_last_step = step;
+
     solveBounds();
     
     //Debug.Log(destinationBounds.xMin + " , " + destinationBounds.xMax);
@@ -81,10 +91,10 @@ public class CapacityCollision : LogicCapacity
     //il FAUT d'abord check la direction dans laquelle il faut aller (ie : priority pour jump)
 
     checkRaycastVertical(step, step.y < 0f ? Vector2.down : Vector2.up);
-    checkRaycastVertical(step, step.y > 0f ? Vector2.up: Vector2.down);
+    checkRaycastVertical(step, step.y < 0f ? Vector2.up: Vector2.down);
 
     checkRaycastHorizontal(step, step.x < 0f ? Vector2.left : Vector2.right);
-    checkRaycastHorizontal(step, step.x > 0f ? Vector2.right : Vector2.left);
+    checkRaycastHorizontal(step, step.x < 0f ? Vector2.right : Vector2.left);
 
     //return recBound.center;
     return recBound.center - boxCollider.offset;
@@ -115,10 +125,11 @@ public class CapacityCollision : LogicCapacity
       if (rayDir.y < 0) info.touching_ground = true;
       else if (rayDir.y > 0) info.touching_ceiling = true;  
     }
-    else if (moveStep.y != 0f && (Mathf.Sign(rayDir.y) == Mathf.Sign(moveStep.y)))  // on déplace que si c'est le sens du movement, sinon c'est fait au moment du raycast
+    else if (moveStep.y != 0f && (Mathf.Sign(rayDir.y) == Mathf.Sign(moveStep.y)))  // on déplace que si c'est le sens du movement, sinon c'est fait au moment du raycast (rectification de position)
     {
       Debug.DrawLine(recBound.center, recBound.center + rayDir * absStep, Color.magenta);
       recBound.center += rayDir * absStep;
+      frame_v_step += (rayDir * absStep); // debug
     }
     
   }
@@ -128,6 +139,9 @@ public class CapacityCollision : LogicCapacity
     float absStep = Mathf.Abs(moveStep.x); // to be sure
 
     bool touchedSomething = false;
+
+    //Debug.Log(moveStep + " , " + rayDir);
+    //Debug.Log(transform.position);
 
     origin.y = recBound.yMax + (recBound.yMin - recBound.yMax) * 0.5f; // center
     origin.x = rayDir.x < 0f ? recBound.xMin : recBound.xMax;
@@ -140,7 +154,9 @@ public class CapacityCollision : LogicCapacity
     origin.y = recBound.yMax + cornerGap; // bottom
     origin.x = rayDir.x < 0f ? recBound.xMin : recBound.xMax;
     if (raycastCheck(origin, rayDir, absStep)) touchedSomething = true;
-    
+
+    //Debug.Log(transform.position);
+
     if (touchedSomething)
     {
       //Debug.Log("collision horizontal");
@@ -153,11 +169,14 @@ public class CapacityCollision : LogicCapacity
       {
         Debug.DrawLine(recBound.center, recBound.center + rayDir * absStep, Color.magenta);
         recBound.center += rayDir * absStep;
+        frame_h_step += (rayDir * absStep); // debug
+        //Debug.Log(rayDir * absStep);
       }
     }
 
   }
 
+  /* layer pour caster (utilisé par les horiz/vertic) */
   protected bool raycastCheck(Vector2 origin, Vector2 dir, float distance)
   {
     distance = Mathf.Abs(distance);
@@ -186,7 +205,7 @@ public class CapacityCollision : LogicCapacity
       touch = true;
 
       hit = Physics2D.Raycast(tmpOrigin, dir, distance, rayLayer);
-      Debug.DrawLine(tmpOrigin, tmpOrigin + dir * distance, Color.blue, 0.1f);
+      Debug.DrawLine(tmpOrigin, tmpOrigin + dir * distance, Color.white);
       safe--;
     }
 
@@ -220,7 +239,7 @@ public class CapacityCollision : LogicCapacity
 
     //Debug.DrawLine(new Vector3(recBound.xMin, recBound.yMin, 0f), new Vector3(recBound.xMax, recBound.yMax), Color.white, 3f);
 
-    drawBox(recBound, Color.white);
+    //drawBox(recBound, Color.white);
 
     return recBound;
   }
@@ -294,9 +313,12 @@ public class CapacityCollision : LogicCapacity
   public override string toString()
   {
     string ct = base.toString();
-    ct += "\n"+info.touching_ceiling;
-    ct += "\n" + info.touching_left + " " + info.touching_right;
-    ct += "\n" + info.touching_ground;
+
+    ct += "\n~touching~";
+    ct += "\n " + iStringFormatBool("touching_ceiling", info.touching_ceiling);
+    ct += "\n " + iStringFormatBool("touching_left", info.touching_left);
+    ct += "\n " + iStringFormatBool("touching_right", info.touching_right);
+    ct += "\n " + iStringFormatBool("touching_ground", info.touching_ground);
 
     if (!isCollidable())
     {
@@ -305,6 +327,11 @@ public class CapacityCollision : LogicCapacity
       ct += "\n  " + iStringFormatBool("boxCollider", boxCollider != null);
       if(boxCollider != null) ct += "\n  " + iStringFormatBool("boxCollider.enabled", boxCollider.enabled);
     }
+
+    ct += "\n~data frame~";
+    ct += "\n  frame_step h : " + frame_h_step.x+" x "+frame_h_step.y;
+    ct += "\n  frame_step v : " + frame_v_step.x + " x " + frame_v_step.y;
+    ct += "\n  step : " + frame_last_step.x + " x " + frame_last_step.y;
 
     ct += "\n  ~box~";
     ct += "\n"+boxBoundsToString();

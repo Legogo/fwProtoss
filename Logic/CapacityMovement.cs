@@ -8,7 +8,8 @@ abstract public class CapacityMovement : LogicCapacity {
   protected Transform _t;
   protected CapacityCollision _collision;
   protected Vector2 lastInstantForce; // backup
-  
+  protected Vector2 lastFullMovement;
+
   protected Vector2 instantForce;
   protected Vector2 velocityForce;
 
@@ -36,12 +37,12 @@ abstract public class CapacityMovement : LogicCapacity {
   {
     return (int)Mathf.Sign(lastInstantForce.x);
   }
-
-  public override void setupCapacity()
+  
+  protected void subscribeToGravity()
   {
     forces.Add(new ForceGravity(getGravityPower()));
   }
-  
+
   public void addForce(Vector2 stepForce)
   {
     addForce(stepForce.x, stepForce.y);
@@ -86,10 +87,15 @@ abstract public class CapacityMovement : LogicCapacity {
 
     instantForce += velocityForce;
 
+    //Debug.Log(name + " = " + instantForce);
+    Vector3 position = transform.position;
     moveStep(instantForce * Time.deltaTime);
-    
+    lastFullMovement = transform.position - position;
+
     lastInstantForce = instantForce; //Save last
     instantForce.x = instantForce.y = 0f;
+    
+    if (_collision != null && _collision.isGrounded()) killVerticalSpeed();
   }
   
   public void killHorizontalSpeed()
@@ -119,9 +125,12 @@ abstract public class CapacityMovement : LogicCapacity {
 
     Debug.DrawLine(transform.position + (Vector3.down * 0.2f), transform.position + (Vector3.down * 0.2f) + ((Vector3)step * 5f), Color.black);
 
+    //Debug.Log(name + " , " + step);
+
     //cannot collide
-    if (_collision.isCollidable())
+    if (_collision != null && _collision.isCollidable())
     {
+      //Debug.Log(name + " , " + step);
       nextPosition = _collision.checkCollisionRaycasts(step);
 
       /*
@@ -167,6 +176,8 @@ abstract public class CapacityMovement : LogicCapacity {
     return _moved;
   }
 
+  public bool isGrounded() { return (_collision != null) ? _collision.isGrounded() : true; }
+
   abstract public float getGravityPower();
 
   public override string toString()
@@ -175,9 +186,10 @@ abstract public class CapacityMovement : LogicCapacity {
 
     if (_collision != null) ct += "\n └ " + iStringFormatBool("collidable ?", _collision.isCollidable());
 
-    ct += "\n └ moved ? " + _moved;
-
+    
     ct += "\n └ position : " + transform.position;
+    ct += "\n └ moved ? " + _moved;
+    ct += "\n └ movement last frame : " + lastFullMovement.x+" x "+lastFullMovement.y;
 
     ct += "\n~forces~";
 
