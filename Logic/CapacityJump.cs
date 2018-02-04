@@ -4,23 +4,22 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class CapacityJump : LogicCapacity
+abstract public class CapacityJump : LogicCapacity
 {
   CapacityCollision _collision;
   CapacityMovement _move;
-
-  InputKeyTopDown _inputKey;
-
+  
   public Action onJump;
 
   public override void setupCapacity()
   {
     _collision = _owner.GetComponent<CapacityCollision>();
     _move = _owner.GetComponent<CapacityMovement>();
-
-    if (_owner.input.keys != null) _inputKey = _owner.input.keys.get<InputKeyTopDown>();
+    
     _owner.input.touch += touch; // mouse input
   }
+
+  abstract protected bool pressJump();
 
   protected void touch(InputTouchFinger finger)
   {
@@ -31,11 +30,7 @@ public class CapacityJump : LogicCapacity
   {
     base.updateLogic();
 
-    if(_inputKey != null)
-    {
-      //Debug.Log(_inputKey.pressed_jump());
-      if (_inputKey.pressed_jump()) solveJump();
-    }
+    if(pressJump()) solveJump();
   }
 
   [ContextMenu("jump!")]

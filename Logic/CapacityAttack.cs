@@ -18,10 +18,7 @@ abstract public class CapacityAttack : LogicCapacity
 
   private float _attackTime;
   private float _interruptTime = 0f;
-
-  private XInputKeyTopDown inputMove;
-  private XInputKeyAttack inputAttack;
-
+  
   public bool debug_autoHit = false;
   
   /* describe where and what type of weapon to find */
@@ -32,9 +29,7 @@ abstract public class CapacityAttack : LogicCapacity
 
   public override void setupCapacity()
   {
-    inputAttack = _character.GetComponent<HiddenCapacityPlayerInput>().attack;
-    inputMove = _character.GetComponent<HiddenCapacityPlayerInput>().topdown;
-
+    
     fetchWeapon();
 
     if (_weapon == null)
@@ -59,6 +54,8 @@ abstract public class CapacityAttack : LogicCapacity
   }
 
   abstract public float getInterruptTime();
+  abstract protected bool pressAttack();
+  abstract protected string getAttackDirectionName(); // up,down,stand
 
   protected void refreshHittables()
   {
@@ -83,8 +80,7 @@ abstract public class CapacityAttack : LogicCapacity
     }
 
     //Debug.Log("attack ? "+inputAttack);
-
-    if (inputAttack.pressed_attack()) Attack();
+    if (pressAttack()) Attack();
   }
   
   internal void CancelAttack()
@@ -94,7 +90,7 @@ abstract public class CapacityAttack : LogicCapacity
 
   public void Attack()
   {
-    Debug.Log("attack ?");
+    //Debug.Log(name+" attack");
 
     if (coProcessAttack != null) return; // already attacking
     coProcessAttack = StartCoroutine(ProcessAttack());
@@ -104,21 +100,10 @@ abstract public class CapacityAttack : LogicCapacity
   {
     _attackTime = 0f;
     
-    string animToPlay = "player_attack";
+    string animToPlay = "player_attack_";
 
-    if (inputMove.pressing_up())
-    {
-      animToPlay += "_up";
-    }
-    else if (inputMove.pressing_down())
-    {
-      animToPlay += "_down";
-    }
-    else
-    {
-      animToPlay += "_stand";
-    }
-
+    animToPlay += getAttackDirectionName();
+    
     _character.captureAnim(animToPlay);
     
     //wait for anim to start in <animator>
@@ -127,6 +112,7 @@ abstract public class CapacityAttack : LogicCapacity
     // check if the anim is still playing and if the attack has not hit
     while (_character.isPlaying(animToPlay))
     {
+      //Debug.Log(name + " is playing animation");
       checkForAttackEvent();
       yield return null;
     }

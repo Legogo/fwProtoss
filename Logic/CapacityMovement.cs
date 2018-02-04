@@ -30,6 +30,7 @@ abstract public class CapacityMovement : LogicCapacity {
   protected override void build()
   {
     base.build();
+
     _t = transform;
     lockHorizontal = new CapacityPropertyLocker();
     lockGravity = new CapacityPropertyLocker();
@@ -58,7 +59,6 @@ abstract public class CapacityMovement : LogicCapacity {
     instantForce.y += y;
   }
   
-
   public void addVelocity(Vector2 force){velocityForce += force;}
   public void addVelocity(float x, float y)
   {
@@ -103,7 +103,6 @@ abstract public class CapacityMovement : LogicCapacity {
     }
 
     instantForce += velocityForce;
-    //Debug.Log(instantForce);
 
     Vector3 position = transform.position;
 

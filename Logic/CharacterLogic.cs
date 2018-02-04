@@ -56,6 +56,7 @@ public class CharacterLogic : LogicItem {
   public void captureAnim(string newAnimationName)
   {
     overrideNameAnimation = newAnimationName;
+    //_anim.Play(overrideNameAnimation);
   }
 
   public void releaseAnim()
@@ -101,6 +102,7 @@ public class CharacterLogic : LogicItem {
   public void PlayAnimOfName(string animName)
   {
     if (_anim == null) return;
+    //Debug.Log(animName);
     _anim.Play(animName);
   }
 
