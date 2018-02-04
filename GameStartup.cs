@@ -11,9 +11,9 @@ public class GameStartup : EngineObject {
 
   public string openingScreen = "home";
   
-  protected override void fetchGlobal()
+  protected override void setup()
   {
-    base.fetchGlobal();
+    base.setup();
 
     //need to be after loading (because engine manager might be in a resource scene)
     EngineManager em = EngineManager.get();

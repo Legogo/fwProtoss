@@ -29,7 +29,7 @@ public class EngineLoader : MonoBehaviour
     if (loader != null) return; // already init
 
 #if UNITY_EDITOR
-    Debug.Log("<color=gray><b>Engine</b> entry point</color>");
+    Debug.Log("<color=gray><b>~EngineLoader~</b> | app entry point</color>");
 #endif
 
     //don't load engine on guide scenes (starting with ~)
@@ -65,7 +65,7 @@ public class EngineLoader : MonoBehaviour
     loadScene(prefix+"engine");
     while (!allAsyncDone()) yield return null;
 
-    Debug.Log("~EngineLoader~ engine scene is done loading");
+    Debug.Log("<color=gray>~EngineLoader~ engine scene is done loading</color>");
 
     ///// feeder, additionnal scenes (from feeder script)
     EngineLoaderFeeder feeder = EngineLoaderFeeder.get();

@@ -28,6 +28,7 @@ abstract public class HelperVisible
     _collider = _owner.GetComponent<BoxCollider2D>();
     if (_collider == null) _collider = _owner.GetComponentInChildren<BoxCollider2D>();
 
+    fetchRenders();
     _symbolCarry = fetchCarrySymbol();
 
     updateBounds();
@@ -38,6 +39,7 @@ abstract public class HelperVisible
     }
   }
 
+  abstract protected void fetchRenders();
   abstract protected Transform fetchCarrySymbol();
 
   virtual public void updateBounds()
@@ -107,10 +109,10 @@ abstract public class HelperVisible
     _t.localScale = newScale;
   }
 
-  public void flipHorizontalScale(int dir)
+  virtual public void flipHorizontal(int dir)
   {
     Vector3 flipScale = _t.localScale;
-    flipScale.x = flipScale.x * Mathf.Sign(dir);
+    flipScale.x = Mathf.Abs(flipScale.x) * Mathf.Sign(dir);
     _t.localScale = flipScale;
   }
 

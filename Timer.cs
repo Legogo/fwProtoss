@@ -249,7 +249,7 @@ public class Timer : ArenaObject {
 
     //freeze stuff ?
     ct += "\n  liveOnEnd ? " + liveOnEnd + " , liveOnStartup ? " + liveOnStartup;
-    ct += "\n  active ? " + isActive() + " , freeze ? " + isFreezed() + " , progress ? " + getProgress();
+    ct += "\n  freeze ? " + isFreezed() + " , progress ? " + getProgress();
 
     if (_arena != null) ct += "\n  arena live ? " + _arena.isArenaStateLive() + " , end ? " + _arena.isArenaStateEnd();
     else ct += "\n  no arena ?";

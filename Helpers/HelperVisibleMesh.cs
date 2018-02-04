@@ -16,16 +16,20 @@ public class HelperVisibleMesh : HelperVisible
   {
     return _t.GetChild(0);
   }
+  protected override void fetchRenders()
+  {
+
+    ///// render
+    _render = _t.GetComponent<MeshRenderer>();
+    if (_render == null) _render = _t.GetComponentInChildren<MeshRenderer>();
+
+  }
 
   public override void setup(EngineObject parent)
   {
     base.setup(parent);
 
     Debug.Log(_owner.name + " fetching ...");
-
-    ///// render
-    _render = _t.GetComponent<MeshRenderer>();
-    if (_render == null) _render = _t.GetComponentInChildren<MeshRenderer>();
 
     _collider = _t.GetComponent<BoxCollider2D>();
     if (_collider == null) _collider = _t.GetComponentInChildren<BoxCollider2D>();

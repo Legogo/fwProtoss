@@ -3,22 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// active
-/// spawn
-/// update
+/// meant to react to arenamanager behavior (restart, update, end of round, ...)
 /// </summary>
 
 abstract public class ArenaObject : EngineObject {
-
-  bool _active = true;
+  
   bool _collectable = false;
 
   protected ArenaManager _arena;
   protected ArenaObjectSettings ao_settings;
 
-  protected override void fetchGlobal()
+  protected override void setup()
   {
-    base.fetchGlobal();
+    base.setup();
 
     //if(name.Contains("timer_")) Debug.Log("<b>" + name + "." + GetType() + "</b> fetchData");
     
@@ -37,25 +34,17 @@ abstract public class ArenaObject : EngineObject {
     _collectable = true;
   }
 
+  /* record some settings to apply on next restart (spawn position, etc) */
   protected void subscribeToArenaSettings()
   {
     ao_settings = new ArenaObjectSettings(transform);
   }
 
-  protected override void destroy()
-  {
-    base.destroy();
-    if (_arena == null) return;
-    _arena.arenaObjects.Remove(this);
-  }
-  
   /* contextuel */
   virtual public void launch()
   {
-
+    //arena overrides freeze state of engine object !
     setFreeze(false);
-    setActive(true);
-
   }
 
   /* must be called by something */
@@ -64,6 +53,13 @@ abstract public class ArenaObject : EngineObject {
     if (ao_settings != null) ao_settings.applyRespawn();
   }
   
+  protected override void destroy()
+  {
+    base.destroy();
+    if (_arena == null) return;
+    _arena.arenaObjects.Remove(this);
+  }
+
   virtual public void event_end()
   {
   }
@@ -80,11 +76,9 @@ abstract public class ArenaObject : EngineObject {
     transform.position = pos;
 
     //Debug.Log(name + " spawn");
-
-    setActive(true);
+    setFreeze(false);
     
     spawnProcess(pos);
-    return;
   }
 
   virtual protected void spawnProcess(Vector3 position)
@@ -103,8 +97,7 @@ abstract public class ArenaObject : EngineObject {
 
   virtual public void kill()
   {
-    setActive(false);
-
+    setFreeze(true);
     //Debug.Log(Time.time+" , "+name + " killed", gameObject);
   }
 
@@ -117,8 +110,6 @@ abstract public class ArenaObject : EngineObject {
   virtual public void updateArena()
   {
     //Debug.Log(name + " , active ? " + _active + " ,  freeze ? " + isFreezed());
-
-    if (!_active) return;
     if (isFreezed()) return;
 
     //Debug.Log(_arena.isArenaStateLive());
@@ -167,23 +158,18 @@ abstract public class ArenaObject : EngineObject {
 
   virtual public bool isCollectable()
   {
-    return _collectable && isActive();
+    return _collectable;
   }
-
-  protected void setActive(bool flag) { _active = flag; }
-
-  public bool isActive() { return _active; }
-
+  
   public override string toString()
   {
     string ct = base.toString();
 
-    ct += "\n  " + iStringFormatBool("active", _active);
+    ct += "\n~ArenaObject~";
 
-    if(_arena != null)
+    if (_arena != null)
     {
-      ct += "\n~arena~";
-      ct += "\n  " + iStringFormatBool("arena", _arena != null);
+      ct += "\n  " + iStringFormatBool("arena != null", _arena != null);
       ct += "\n  " + iStringFormatBool("arena live", _arena.isArenaStateLive());
       ct += "\n  " + iStringFormatBool("arena end", _arena.isArenaStateEnd());
     }

@@ -27,11 +27,6 @@ abstract public class WeaponLogic : LogicItem {
     getCollider().enabled = false;
   }
   
-  public int getOwnerDirection()
-  {
-    return _weaponOwner.Direction;
-  }
-  
   public bool isAttacking()
   {
     return _attack.isAttacking();
@@ -48,7 +43,7 @@ abstract public class WeaponLogic : LogicItem {
     WeaponLogic[] weapons = parent.GetComponentsInChildren<WeaponLogic>();
     foreach (WeaponLogic w in weapons)
     {
-      if (w.GetType() == typeof(T)) return w as T;
+      if (w as T != null) return w as T;
     }
     return null;
   }

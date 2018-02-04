@@ -9,12 +9,12 @@ public class ScreensManager : EngineObject {
   protected override void build()
   {
     base.build();
-    fetchGlobal();
+    setup();
   }
   
-  override protected void fetchGlobal()
+  override protected void setup()
   {
-    base.fetchGlobal();
+    base.setup();
     screens = GameObject.FindObjectsOfType<ScreenObject>();
   }
   
@@ -67,7 +67,7 @@ public class ScreensManager : EngineObject {
   [ContextMenu("kill all")]
   public void killAll(string filterName = "")
   {
-    fetchGlobal();
+    setup();
 
     for (int i = 0; i < screens.Length; i++)
     {
@@ -84,7 +84,7 @@ public class ScreensManager : EngineObject {
   [ContextMenu("show all")]
   public void showAll()
   {
-    fetchGlobal();
+    setup();
 
     for (int i = 0; i < screens.Length; i++)
     {

@@ -11,10 +11,9 @@ public class CapacityTopDownMovement : CapacityMovement {
 
   protected Vector2 direction;
   protected Vector2 solvedDirection; // [0,1]
-  protected Vector2 lastDirection;
-
+  
   protected float progressiveSpeed = 0f;
-  protected float clampSpeed = 1f;
+  protected float clampMagnitudeSpeed = 1f;
 
   public bool lockPosition = false;
   public bool concentrating = false;
@@ -31,14 +30,14 @@ public class CapacityTopDownMovement : CapacityMovement {
 
   public override void setupCapacity()
   {
-    _inputLocal = _owner.GetComponent<CapacityInput>().keys.get<InputKeyTopDown>() as InputKeyTopDown;
+    _inputLocal = _owner.GetComponent<CapacityInput>().keys.get<InputKeyTopDown>();
     _gameSpace = GameSpace.get();
   }
 
   public CapacityTopDownMovement setup(float progressiveSpeed, float clampSpeed)
   {
     this.progressiveSpeed = progressiveSpeed;
-    this.clampSpeed = clampSpeed;
+    this.clampMagnitudeSpeed = clampSpeed;
     return this;
   }
   
@@ -62,7 +61,7 @@ public class CapacityTopDownMovement : CapacityMovement {
     {
       solvedDirection.x = Mathf.MoveTowards(solvedDirection.x, direction.x, Time.deltaTime * progressiveSpeed);
       solvedDirection.y = Mathf.MoveTowards(solvedDirection.y, direction.y, Time.deltaTime * progressiveSpeed);
-      solvedDirection = Vector2.ClampMagnitude(solvedDirection, clampSpeed);
+      solvedDirection = Vector2.ClampMagnitude(solvedDirection, clampMagnitudeSpeed);
     }
 
     if (direction.sqrMagnitude > 0f) lastDirection = direction;
@@ -83,9 +82,5 @@ public class CapacityTopDownMovement : CapacityMovement {
   public override void clean()
   {
   }
-
-  public override float getGravityPower()
-  {
-    return 0f;
-  }
+  
 }

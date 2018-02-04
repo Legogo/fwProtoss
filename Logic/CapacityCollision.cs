@@ -24,7 +24,7 @@ public class CapacityCollision : LogicCapacity
   protected RaycastHit2D hit;
   Vector2 origin = Vector2.zero;
   float min;
-  float cornerGap = 0.1f;
+  float cornerGap = 0.05f;
 
   //a l'updateLate on reset donc dans l'inspecteur on voit jamais la valeur
   public CollisionInfo info;
@@ -85,58 +85,62 @@ public class CapacityCollision : LogicCapacity
     //destinationBounds.y += transform.position.y;
 
     resetCollisionInfo();
-
-    ///!\
-    //comme le déplacement effectif de l'avatar est fait dans le checkRaycast SI il recontre pas d'obstacle
-    //il FAUT d'abord check la direction dans laquelle il faut aller (ie : priority pour jump)
-
-    checkRaycastVertical(step, step.y < 0f ? Vector2.down : Vector2.up);
-    checkRaycastVertical(step, step.y < 0f ? Vector2.up: Vector2.down);
-
-    checkRaycastHorizontal(step, step.x < 0f ? Vector2.left : Vector2.right);
-    checkRaycastHorizontal(step, step.x < 0f ? Vector2.right : Vector2.left);
-
+    
+    if(step.y != 0f)
+    {
+      if (step.y < 0f) checkRaycastVertical(step, Mathf.Abs(step.y), Vector2.down);
+      if (step.y > 0f) checkRaycastVertical(step, Mathf.Abs(step.y), Vector2.up);
+    }
+    if(step.x != 0f)
+    {
+      if (step.x < 0f) checkRaycastHorizontal(step, Mathf.Abs(step.x), Vector2.left);
+      if (step.x > 0f) checkRaycastHorizontal(step, Mathf.Abs(step.x), Vector2.right);
+    }
+    
     //return recBound.center;
     return recBound.center - boxCollider.offset;
   }
   
-  protected void checkRaycastVertical(Vector2 moveStep, Vector2 rayDir)
+  protected void checkRaycastVertical(Vector2 moveStep, float rayDistance, Vector2 rayDir)
   {
-    float absStep = Mathf.Abs(moveStep.y);
+    //float absStep = Mathf.Abs(moveStep.y);
     
     bool touchedSomething = false;
 
-    origin.x = recBound.xMin + (recBound.xMax - recBound.xMin) * 0.5f; // center
+    origin.x = recBound.xMin + (recBound.width * 0.5f); // center
     origin.y = rayDir.y < 0f ? recBound.yMax : recBound.yMin;
-    if (raycastCheck(origin, rayDir, absStep)) touchedSomething = true;
+    if (raycastCheck(origin, rayDir, rayDistance)) touchedSomething = true;
 
     origin.x = recBound.xMin + cornerGap; // left
     origin.y = rayDir.y < 0f ? recBound.yMax : recBound.yMin;
-    if (raycastCheck(origin, rayDir, absStep)) touchedSomething = true;
+    if (raycastCheck(origin, rayDir, rayDistance)) touchedSomething = true;
 
     origin.x = recBound.xMax - cornerGap; // right
     origin.y = rayDir.y < 0f ? recBound.yMax : recBound.yMin;
-    if (raycastCheck(origin, rayDir, absStep)) touchedSomething = true;
+    if (raycastCheck(origin, rayDir, rayDistance)) touchedSomething = true;
 
     // on avance que si on a rien touché, sinon ça veut dire qu'il y avait l'espace de se déplacer
     if (touchedSomething)
     {
       //Debug.Log(name+" collision vertical "+rayDir);
       if (rayDir.y < 0) info.touching_ground = true;
-      else if (rayDir.y > 0) info.touching_ceiling = true;  
+      else if (rayDir.y > 0) info.touching_ceiling = true;
     }
-    else if (moveStep.y != 0f && (Mathf.Sign(rayDir.y) == Mathf.Sign(moveStep.y)))  // on déplace que si c'est le sens du movement, sinon c'est fait au moment du raycast (rectification de position)
+    else
     {
-      Debug.DrawLine(recBound.center, recBound.center + rayDir * absStep, Color.magenta);
-      recBound.center += rayDir * absStep;
-      frame_v_step += (rayDir * absStep); // debug
+      // VERTICAL nothing was touched during step, and this is the raycast that is meant to move the transform
+      if (moveStep.y != 0f && (Mathf.Sign(rayDir.y) == Mathf.Sign(moveStep.y)))
+      {
+        Debug.DrawLine(recBound.center, recBound.center + rayDir * rayDistance, (moveStep.y > 0f) ? Color.magenta : Color.yellow); // up/down
+        recBound.center += rayDir * rayDistance;
+        frame_v_step += (rayDir * rayDistance); // debug
+      }
     }
-    
   }
 
-  protected void checkRaycastHorizontal(Vector2 moveStep, Vector2 rayDir)
+  protected void checkRaycastHorizontal(Vector2 moveStep, float rayDistance, Vector2 rayDir)
   {
-    float absStep = Mathf.Abs(moveStep.x); // to be sure
+    //float absStep = Mathf.Abs(moveStep.x); // to be sure
 
     bool touchedSomething = false;
 
@@ -145,15 +149,15 @@ public class CapacityCollision : LogicCapacity
 
     origin.y = recBound.yMax + (recBound.yMin - recBound.yMax) * 0.5f; // center
     origin.x = rayDir.x < 0f ? recBound.xMin : recBound.xMax;
-    if (raycastCheck(origin, rayDir, absStep)) touchedSomething = true;
+    if (raycastCheck(origin, rayDir, rayDistance)) touchedSomething = true;
 
     origin.y = recBound.yMin - cornerGap; // top
     origin.x = rayDir.x < 0f ? recBound.xMin : recBound.xMax;
-    if (raycastCheck(origin, rayDir, absStep)) touchedSomething = true;
+    if (raycastCheck(origin, rayDir, rayDistance)) touchedSomething = true;
 
     origin.y = recBound.yMax + cornerGap; // bottom
     origin.x = rayDir.x < 0f ? recBound.xMin : recBound.xMax;
-    if (raycastCheck(origin, rayDir, absStep)) touchedSomething = true;
+    if (raycastCheck(origin, rayDir, rayDistance)) touchedSomething = true;
 
     //Debug.Log(transform.position);
 
@@ -165,11 +169,12 @@ public class CapacityCollision : LogicCapacity
     }
     else
     {
+      // HORIZONTAL nothing was touched during step, and this is the raycast that is meant to move the transform
       if (moveStep.x != 0f && (Mathf.Sign(rayDir.x) == Mathf.Sign(moveStep.x)))
       {
-        Debug.DrawLine(recBound.center, recBound.center + rayDir * absStep, Color.magenta);
-        recBound.center += rayDir * absStep;
-        frame_h_step += (rayDir * absStep); // debug
+        Debug.DrawLine(recBound.center, recBound.center + rayDir * rayDistance, Color.yellow); // left/right
+        recBound.center += rayDir * rayDistance;
+        frame_h_step += (rayDir * rayDistance); // debug
         //Debug.Log(rayDir * absStep);
       }
     }
@@ -188,6 +193,8 @@ public class CapacityCollision : LogicCapacity
     Vector2 tmpOrigin = origin;
     Vector2 step = dir * distance;
 
+    Debug.DrawLine(tmpOrigin, tmpOrigin + dir * distance, Color.green); // to show ray
+
     bool touch = false;
     bool noMove = distance == 0f; // cas specific
     if (dir.sqrMagnitude == 0f) Debug.LogError("dir ??");
@@ -205,13 +212,15 @@ public class CapacityCollision : LogicCapacity
       touch = true;
 
       hit = Physics2D.Raycast(tmpOrigin, dir, distance, rayLayer);
-      Debug.DrawLine(tmpOrigin, tmpOrigin + dir * distance, Color.white);
+
+      Debug.DrawLine(recBound.center, hit.point, Color.white); // to show where is the hit point
+
       safe--;
     }
 
     if (safe <= 0) Debug.LogWarning(name+" safe! "+tmpOrigin+" , "+movement+" , "+dir+" , "+step);
 
-    //si j'ai qq chose en face
+    //si j'ai qq chose en face je déplace
     if(hit.collider != null)
     {
       movement += dir * hit.distance;
@@ -221,7 +230,6 @@ public class CapacityCollision : LogicCapacity
     return touch;
   }
   
-
   public Rect solveBounds()
   {
     //Debug.Log(boxCollider.offset);
@@ -298,9 +306,10 @@ public class CapacityCollision : LogicCapacity
     //actual bounds
     //solveBounds();
     drawBox(recBound, Color.yellow); // yellow is destination
-    
+
     // COLLISION
-    
+    // drawing vertical / horizontal lines along player collider to show what side was touched
+
     if (info.touching_left) Debug.DrawLine(new Vector2(recBound.xMin, recBound.yMin), new Vector2(recBound.xMin, recBound.yMax), Color.red);
     if (info.touching_right) Debug.DrawLine(new Vector2(recBound.xMax, recBound.yMin), new Vector2(recBound.xMax, recBound.yMax), Color.red);
 

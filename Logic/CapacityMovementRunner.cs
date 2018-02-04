@@ -5,12 +5,8 @@ using UnityEngine;
 
 public class CapacityMovementRunner : CapacityMovement
 {
-  
-  public float forwardMovingSpeed = 1f;
-
-  [Header("gravity stuff")]
-  public bool useGravity = true;
   public float gravityPower = 1f;
+  public float forwardMovingSpeed = 1f;
 
   public override void setupCapacity()
   {
@@ -22,12 +18,7 @@ public class CapacityMovementRunner : CapacityMovement
   {
     base.updateLogic();
 
-    addForce(forwardMovingSpeed, 0f);
-  }
-
-  public override float getGravityPower()
-  {
-    return gravityPower;
+    addInstant(forwardMovingSpeed, 0f);
   }
 
   public override string toString()

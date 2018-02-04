@@ -11,27 +11,17 @@ public class InputKeyBridge {
 
   protected Dictionary<Type, InputKey> list = new Dictionary<Type, InputKey>();
 
-  public T create<T>() where T : InputKey
+  public T get<T>() where T : InputKey
   {
-    if (list.ContainsKey(typeof(T))) return default(T); // null
-    
+    if (list.ContainsKey(typeof(T))) return list[typeof(T)] as T;
+
     T ik = (T)Activator.CreateInstance(typeof(T));
     list.Add(typeof(T), ik as InputKey);
     //Debug.Log("created : " + ik);
 
     return ik;
   }
-
-  public T get<T>() where T : InputKey
-  {
-    if (!list.ContainsKey(typeof(T))) Debug.LogWarning("can't find InputKey of type " + typeof(T));
-
-    //foreach (KeyValuePair<Type, InputKey> entry in list) Debug.Log(entry.Key+" , "+entry.Value);
-    
-    InputKey ik = list[typeof(T)];
-    return list[typeof(T)] as T;
-  }
-
+  
   public void remove<T>() where T : InputKey
   {
     if (!list.ContainsKey(typeof(T))) return;

@@ -12,20 +12,20 @@ using UnityEngine;
 
 abstract public class CapacityAim : LogicCapacity
 {
-   //protected InputKeyAim _inputAim;
+  //protected InputKeyAim _inputAim;
 
-  protected int _direction = 0;
+  CapacityMovement _move;
   protected float _angle = 0f;
   
   public override void setupCapacity() {
     if (_character == null) Debug.LogError(name+" need character logic", gameObject);
 
+    _move = _owner.GetComponent<CapacityMovement>();
     //CapacityInput ci = _character.GetComponent<CapacityInput>();
     //_inputAim = ci.keys.get<InputKeyAim>();
   }
   
   public override void updateLogic() {
-    _direction = _character.Direction;
     _angle = getRightStickAngle();
     
     if (pressed_aim()) onAimPress();
@@ -42,7 +42,7 @@ abstract public class CapacityAim : LogicCapacity
   public float getRightStickAngle()
   {
 
-    float angle = _direction < 0 ? 0f : 180f;
+    float angle = _move.getHorizontalDirection() < 0 ? 0f : 180f;
     Vector2 joyVector = getJoystickVector();
     if(joyVector.sqrMagnitude != 0f)
     {

@@ -20,7 +20,7 @@ public class ResourceManager {
       else resources.Add(gos[i]);
     }
 
-    Debug.Log("~ResMa~ " + resources.Count + " resource(s) loaded");
+    Debug.Log("~ResMa~ <b>" + resources.Count + " resource(s)</b> loaded");
     for (int i = 0; i < resources.Count; i++)
     {
       //Debug.Log("    - " + resources[i].name, resources[i].gameObject);

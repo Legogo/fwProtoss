@@ -19,18 +19,16 @@ public class CapacityInput : LogicCapacity {
   {
     base.build();
 
-    if(inputKeyboardMode != InputKeyboardMode.NONE)
-    {
-      keys = new InputKeyBridge();
-    }
+    keys = new InputKeyBridge();
   }
 
   public override void earlySetupCapacity()
   {
     base.earlySetupCapacity();
+
     switch (inputKeyboardMode)
     {
-      case InputKeyboardMode.TOPDOWN: keys.create<InputKeyTopDown>(); break;
+      case InputKeyboardMode.TOPDOWN: keys.get<InputKeyTopDown>(); break;
       default: break;
     }
 
@@ -45,11 +43,5 @@ public class CapacityInput : LogicCapacity {
     if (isFreezed()) return;
     if (touch != null) touch(finger);
   }
-
-  /* must be called by owner if need more inputs */
-  public T setupKey<T>() where T : InputKey
-  {
-    keys.create<T>();
-    return keys.get<T>();
-  }
+  
 }

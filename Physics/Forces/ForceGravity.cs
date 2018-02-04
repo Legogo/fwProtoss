@@ -3,32 +3,18 @@ using UnityEngine;
 
 public class ForceGravity : ForceBase
 {
-  float gravityStrength = 0f;
+  PlayerLogic owner;
+  //HiddenCapacityWallGrab wallgrab;
 
-  public ForceGravity(float strength) : base("gravity", false)
+  public ForceGravity(PlayerLogic player) : base("gravity", false)
   {
-    gravityStrength = strength;
+    owner = player;
+    //wallgrab = owner.GetComponent<HiddenCapacityWallGrab>();
   }
 
   protected override void compute()
   {
-    _force.y = -gravityStrength;
-  }
-}
-
-public class AttractionForce : ForceBase
-{
-  private Vector3 _point;
-  private float forceStrength;
-
-  public AttractionForce(Vector2 point, float force, string name) : base(name, false)
-  {
-    _point = point;
-    forceStrength = force;
-  }
-
-  protected override void compute()
-  {
-    _force = (_point - _movement.transform.position) * forceStrength;
+    //if (wallgrab.isSnapped()) _force.y = -owner.getParam().movement.wallGravityClamp;
+    _force.y = -owner.getParam().movement.gravityFactor;
   }
 }

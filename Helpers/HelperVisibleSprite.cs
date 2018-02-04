@@ -12,10 +12,13 @@ public class HelperVisibleSprite : HelperVisible
 
   protected override Transform fetchCarrySymbol()
   {
+    return _render.transform;
+  }
+
+  protected override void fetchRenders()
+  {
     _render = _t.GetComponent<SpriteRenderer>();
     if (_render == null) _render = _t.GetComponentInChildren<SpriteRenderer>();
-
-    return _render.transform;
   }
 
   public override void setup(EngineObject parent)
@@ -49,6 +52,14 @@ public class HelperVisibleSprite : HelperVisible
   {
     _render.enabled = flag;
   }
+
+  /* dans le cas d'une animation il vaut mieux inverser le scale plutôt que de taper sur le flip sprite */
+  /*
+  public override void flipHorizontal(int dir)
+  {
+    _render.flipX = dir < 0;
+  }
+  */
 
   override public bool isVisible()
   {

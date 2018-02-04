@@ -5,11 +5,11 @@ using UnityEngine.UI;
 
 abstract public class ArenaManager : EngineObject {
   
-  public float time = 0f; // elasped time
+  public float round_time = 0f; // round elasped time
 
   protected float liveFreezeTimer = 0f;
 
-  public enum ArenaState { IDLE, MENU, LIVE, END }
+  public enum ArenaState { IDLE, MENU, SETUP_LIVE, LIVE, END }
   protected ArenaState _state = ArenaState.IDLE;
 
   protected Coroutine coProcessEnd;
@@ -20,11 +20,17 @@ abstract public class ArenaManager : EngineObject {
   
   virtual public void restart_normal() {
     Debug.Log("~<b>Arena</b>~ restart_normal");
-    time = 0f;
+    round_time = 0f;
     restart_setup();
   }
 
   virtual public void restart_setup() {
+
+    for (int i = 0; i < arenaObjects.Count; i++)
+    {
+      arenaObjects[i].restart();
+    }
+    
     setFreeze(false);
     _state = ArenaState.LIVE;
   }
@@ -39,9 +45,9 @@ abstract public class ArenaManager : EngineObject {
     }
   }
 
-  protected override void fetchGlobal()
+  protected override void setup()
   {
-    base.fetchGlobal();
+    base.setup();
     fetchPauseCanvasScreen();
   }
 
@@ -67,12 +73,7 @@ abstract public class ArenaManager : EngineObject {
   
   protected void update_time()
   {
-
-    //speed up debug arena timer
-    float mul = 1f;
-    
-    if (Input.GetKey(KeyCode.S)) mul = 100f; //debug, make ingame time go faster
-    time += Time.deltaTime * mul;
+    round_time += Time.deltaTime;
 
     if (liveFreezeTimer > 0f)
     {
@@ -146,24 +147,21 @@ abstract public class ArenaManager : EngineObject {
   
   public float getElapsedTime()
   {
-    return time;
+    return round_time;
   }
 
-  override public string toString()
+  protected void setAtState(ArenaState st)
   {
-    string ct = base.toString();
-    ct += "\narena objects to update : " + arenaObjects.Count;
-    for (int i = 0; i < arenaObjects.Count; i++)
-    {
-      ct += "\n  " + arenaObjects[i].name + " " + arenaObjects[i].GetType();
-    }
-    ct += "\nlive freeze timer ? " + liveFreezeTimer;
-    ct += "\nstate ? " + _state;
-    return ct;
+    Debug.Log("~Arena~ switched state to " + st.ToString());
+    _state = st;
   }
-
-  public ArenaState getState() { return _state; }
+  protected ArenaState getState() { return _state; }
   protected bool isAtState(ArenaState st) { return _state == st; }
+  
+  public void setArenaLive(){ setAtState(ArenaState.LIVE); }
+  public void setArenaMenu() { setAtState(ArenaState.MENU); }
+  public void setArenaSetupLive() { setAtState(ArenaState.SETUP_LIVE); }
+  
   public bool isArenaStateLive() {
 
     //pause modale kill gameplay
@@ -173,7 +171,27 @@ abstract public class ArenaManager : EngineObject {
 
     return liveFreezeTimer <= 0f && isAtState(ArenaState.LIVE);
   }
+
   public bool isArenaStateEnd() { return isAtState(ArenaState.END); }
+  public bool isArenaStateMenu() { return isAtState(ArenaState.MENU); }
+
+  override public string toString()
+  {
+    string ct = base.toString();
+    ct += "\narena objects to update : " + arenaObjects.Count;
+    for (int i = 0; i < arenaObjects.Count; i++)
+    {
+      ct += "\n    └ ~" + arenaObjects[i].GetType() + "~ " + arenaObjects[i].name;
+    }
+    ct += "\n  live freeze timer ? " + liveFreezeTimer;
+    ct += "\n  real state : " + _state;
+
+    ct += "\n" + iStringFormatBool("live", isArenaStateLive());
+    ct += "\n" + iStringFormatBool("menu", isArenaStateMenu());
+    ct += "\n" + iStringFormatBool("end", isArenaStateEnd());
+    
+    return ct;
+  }
 
   static protected ArenaManager _manager;
   static public ArenaManager get()

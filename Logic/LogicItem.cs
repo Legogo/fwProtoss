@@ -14,9 +14,9 @@ public class LogicItem : ArenaObject
   [HideInInspector]
   public CapacityInput input;
 
-  protected override void fetchGlobal()
+  protected override void setup()
   {
-    base.fetchGlobal();
+    base.setup();
 
     input = GetComponent<CapacityInput>();
 
@@ -38,6 +38,7 @@ public class LogicItem : ArenaObject
   public override void updateEngine()
   {
     base.updateEngine();
+    //Debug.Log(GetType()+" , "+ name, gameObject);
     for (int i = 0; i < capacities.Count; i++) capacities[i].updateLogic();
   }
 

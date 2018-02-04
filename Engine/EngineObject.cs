@@ -72,8 +72,9 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
     {
       case VisibilityMode.SPRITE: visibility = new HelperVisibleSprite();break;
       case VisibilityMode.MESH: visibility = new HelperVisibleMesh(); break;
+      case VisibilityMode.UI: visibility = new HelperVisibleUi(); break;
       case VisibilityMode.NONE: break;
-      default: Debug.LogError("no implem yet"); break;
+      default: Debug.LogError("this visibilty mode ("+visibilityMode.ToString()+") is not implem yet"); break;
     }
   }
 
@@ -126,21 +127,21 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
   {
     //Debug.Log(GetType()+" , <b>"+name+ "</b> onEngineSceneLoaded", gameObject);
 
-    createGlobal();
+    setupEarly();
 
-    fetchGlobal();
+    setup();
 
     _ready = true;
   }
 
-  /* how this object will create some stuff before fetching (ie : symbols) */
-  virtual protected void createGlobal()
+  /* how this object will create some stuff before setup-ing (ie : symbols) */
+  virtual protected void setupEarly()
   {
 
   }
 
   /* called by onEngineSceneLoaded, fetch something in dependencies that are now ready to be fetched */
-  virtual protected void fetchGlobal()
+  virtual protected void setup()
   {
     //Debug.Log("fetching global <b>" + name + "</b> (layer " + engineLayer + ") | visibility ? "+visibility, gameObject);
     if (visibility != null) visibility.setup(this);

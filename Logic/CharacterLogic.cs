@@ -23,9 +23,9 @@ public class CharacterLogic : LogicItem {
   private Transform _spawnReference;
 
   protected CapacityHitpoints _hp;
- 
-  private bool _animCaptured;
 
+  protected string overrideNameAnimation = "";
+  
   protected override void build()
   {
     base.build();
@@ -39,9 +39,9 @@ public class CharacterLogic : LogicItem {
 
   }
 
-  protected override void fetchGlobal()
+  protected override void setup()
   {
-    base.fetchGlobal();
+    base.setup();
 
     //Debug.Log(name + " <b>fetch</b> global", gameObject);
 
@@ -53,27 +53,32 @@ public class CharacterLogic : LogicItem {
   virtual public void setupBalancing(){}
 
   /* anim won't play something else */
-  public void CaptureAnim()
+  public void captureAnim(string newAnimationName)
   {
-    _animCaptured = true;
+    overrideNameAnimation = newAnimationName;
   }
 
-  public void ReleaseAnim()
+  public void releaseAnim()
   {
-    _animCaptured = false;
+    overrideNameAnimation = "";
   }
 
   public override void updateEngine()
   {
     base.updateEngine();
 
-    if (!_animCaptured) update_animation();
+    update_animation();
 
     ComputeOrientation(_move.getHorizontalDirection());
   }
 
   virtual protected void update_animation()
   {
+    if(overrideNameAnimation.Length > 0)
+    {
+      PlayAnimOfName(overrideNameAnimation);
+      return;
+    }
 
     if (!_move.isGrounded())
     {
@@ -156,25 +161,24 @@ public class CharacterLogic : LogicItem {
         break;
       case LogicGameType.PLATFORMER:
         //GetComponentInChildren<SpriteRenderer>().flipX = sign == 1f;
-        visibility.flipHorizontalScale(hDirection);
+        visibility.flipHorizontal(hDirection);
         break;
     }
 
     
   }
-
-  public int Direction
-  {
-    get { return GetComponentInChildren<SpriteRenderer>().transform.localScale.x == 1f ? -1 : 1;  }
-  }
   
-  public int getIntParam(string paramName)
+  /* it's interesting to have a hub that avoid to get the Movement capa every time */
+  public int getDirection()
   {
-    return 0;
-  }
-  public float getFloatParam(string paramName)
-  {
-    return 0f;
+    return _move.getHorizontalDirection();
   }
 
+  public override string toString()
+  {
+    string ct = base.toString();
+    ct += "\n~CharacterLogic~";
+    ct += "\n  direction ? " + getDirection();
+    return ct;
+  }
 }

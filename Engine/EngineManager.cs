@@ -4,7 +4,8 @@ using UnityEngine;
 using System;
 
 /// <summary>
-/// pop pop !
+/// Manager that will cal updates for all EngineObject(s)
+/// Everything starts when onLoadingDone is called (after engine scenes additive loading)
 /// </summary>
 
 public class EngineManager : MonoBehaviour {
@@ -75,13 +76,13 @@ public class EngineManager : MonoBehaviour {
   /* telle everybody present that all scenes are now loaded */
   void processScenesLoaded() {
     
-    Debug.Log("~EngineManager~ <b>scenes loaded</b> | layer count ? " + eosLayers.Count);
+    //Debug.Log("~EngineManager~ <b>scenes loaded</b> | layer count ? " + eosLayers.Count);
 
     for (int i = 0; i < eosLayers.Count; i++)
     {
       List<EngineObject> list = eosLayers[i];
 
-      Debug.Log("end of loading for layer " + i+" | objects count ? "+list.Count);
+      //Debug.Log("end of loading for layer " + i+" | objects count ? "+list.Count);
 
       //int count = list.Count;
 
@@ -101,15 +102,8 @@ public class EngineManager : MonoBehaviour {
       //if (count != list.Count) Debug.LogError("something changed");
     }
 
-    Debug.Log("~mEngine~ <color=yellow># SCENES LOADED #</color>");
-
-    game_loading_done();
-  }
-
-  public void game_loading_done()
-  {
-    //Debug.Log("EngineManager, game_loading_done");
-
+    Debug.Log("~EngineManager~ <color=yellow># SCENES LOADED #</color>");
+    
     state_loading = false;
     state_live = true;
 

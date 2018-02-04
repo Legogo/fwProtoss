@@ -14,7 +14,7 @@ public class ForceInstant : ForceBase {
     _force.x = strengthX;
     _force.y = strengthY;
 
-    Debug.Log(forceName + " , " + _force.x + "x" + _force.y);
+    //Debug.Log("ForceInstant "+forceName + " -> x " + _force.x + " , y " + _force.y);
   }
 
   protected override void compute()

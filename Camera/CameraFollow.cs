@@ -18,9 +18,9 @@ public class CameraFollow : EngineObject
 
   protected float zoomOffset = 0f;
   
-  protected override void fetchGlobal()
+  protected override void setup()
   {
-    base.fetchGlobal();
+    base.setup();
     
     followCamera = GetComponent<Camera>();
 

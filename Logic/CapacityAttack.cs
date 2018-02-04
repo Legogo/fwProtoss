@@ -18,7 +18,9 @@ abstract public class CapacityAttack : LogicCapacity
 
   private float _attackTime;
   private float _interruptTime = 0f;
-  private InputKeyTopDown inputDirection;
+
+  private XInputKeyTopDown inputMove;
+  private XInputKeyAttack inputAttack;
 
   public bool debug_autoHit = false;
   
@@ -30,7 +32,9 @@ abstract public class CapacityAttack : LogicCapacity
 
   public override void setupCapacity()
   {
-    inputDirection = _character.input.keys.get<InputKeyTopDown>();
+    inputAttack = _character.GetComponent<HiddenCapacityPlayerInput>().attack;
+    inputMove = _character.GetComponent<HiddenCapacityPlayerInput>().topdown;
+
     fetchWeapon();
 
     if (_weapon == null)
@@ -71,7 +75,16 @@ abstract public class CapacityAttack : LogicCapacity
   public override void updateLogic()
   {
     base.updateLogic();
-    if (debug_autoHit) Attack();
+
+    if (debug_autoHit)
+    {
+      Attack();
+      return;
+    }
+
+    //Debug.Log("attack ? "+inputAttack);
+
+    if (inputAttack.pressed_attack()) Attack();
   }
   
   internal void CancelAttack()
@@ -81,6 +94,8 @@ abstract public class CapacityAttack : LogicCapacity
 
   public void Attack()
   {
+    Debug.Log("attack ?");
+
     if (coProcessAttack != null) return; // already attacking
     coProcessAttack = StartCoroutine(ProcessAttack());
   }
@@ -91,13 +106,11 @@ abstract public class CapacityAttack : LogicCapacity
     
     string animToPlay = "player_attack";
 
-    _character.CaptureAnim();
-
-    if (inputDirection.pressing_up())
+    if (inputMove.pressing_up())
     {
       animToPlay += "_up";
     }
-    else if (inputDirection.pressing_down())
+    else if (inputMove.pressing_down())
     {
       animToPlay += "_down";
     }
@@ -106,10 +119,8 @@ abstract public class CapacityAttack : LogicCapacity
       animToPlay += "_stand";
     }
 
-    //start animation
-    _character.PlayAnimOfName(animToPlay);
-    //Vector3 scale = _player.transform.localScale;
-
+    _character.captureAnim(animToPlay);
+    
     //wait for anim to start in <animator>
     yield return null;
     
@@ -127,7 +138,7 @@ abstract public class CapacityAttack : LogicCapacity
   {
     if (coProcessAttack != null) StopCoroutine(coProcessAttack);
 
-    _character.ReleaseAnim();
+    _character.releaseAnim();
 
     coProcessAttack = null;
     _attackTime = 0f;
@@ -200,7 +211,7 @@ abstract public class CapacityAttack : LogicCapacity
   public int getAttackDirection()
   {
     if (!isAttacking()) return 0;
-    return _character.Direction;
+    return _move.getHorizontalDirection();
   }
 
   public override void clean()

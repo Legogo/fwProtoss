@@ -23,7 +23,12 @@ public class EngineObjectMonitoring : EditorWindow
   void OnGUI()
   {
     GUILayout.Label("~Protoss framework~ objects");
-    
+
+    if (!Application.isPlaying)
+    {
+      return;
+    }
+
     if(style == null)
     {
       style = new GUIStyle();
@@ -65,5 +70,13 @@ public class EngineObjectMonitoring : EditorWindow
       GUILayout.Label(list[dropdownIndex].toString(), style);
     }
   }
-  
+
+  void Update()
+  {
+    if (EditorApplication.isPlaying && !EditorApplication.isPaused)
+    {
+      Repaint();
+    }
+  }
+
 }

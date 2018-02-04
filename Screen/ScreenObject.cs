@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class ScreenObject : EngineObject
 {
+  protected ArenaManager _arena;
   public bool sticky = false;
   
   protected Canvas[] _canvas;
@@ -13,7 +14,7 @@ public class ScreenObject : EngineObject
   {
     base.build();
 
-    fetchGlobal(); //specific case
+    setup(); //specific case
 
     if (_canvas == null) Debug.LogError("no canvas ?");
 
@@ -23,34 +24,44 @@ public class ScreenObject : EngineObject
   }
   
   [ContextMenu("fetch")]
-  override protected void fetchGlobal()
+  override protected void setup()
   {
-    base.fetchGlobal();
+    base.setup();
 
     _canvas = transform.GetComponentsInChildren<Canvas>();
+    _arena = ArenaManager.get();
 
     //Debug.Log(name + " --> " + _canvas);
   }
 
   virtual public void reset()
   {
-
+    
   }
 
   public override void updateEngineLate()
   {
     base.updateEngineLate();
-
-    if(isVisible() && !sticky) {
-      if (Input.GetKeyUp(KeyCode.Escape))
-      {
-        //Debug.Log(name + " pressed back button");
-        action_back();
-      }
-    }
     
+    update_input_keyboard();
   }
-  
+
+  protected void update_input_keyboard()
+  {
+    if (Input.GetKeyUp(KeyCode.UpArrow)) keyboard_up();
+    if (Input.GetKeyUp(KeyCode.DownArrow)) keyboard_down();
+    if (Input.GetKeyUp(KeyCode.Escape)) keyboard_esc();
+  }
+
+  virtual protected void keyboard_esc() {
+    if (isVisible() && !sticky)
+    {
+      action_back();
+    }
+  }
+  virtual protected void keyboard_up() { }
+  virtual protected void keyboard_down() { }
+
   virtual protected void action_back() {
 
     call_home();
@@ -62,7 +73,7 @@ public class ScreenObject : EngineObject
     {
       if (_canvas[i].name.Contains(nm)) return _canvas[i];
     }
-    Debug.LogWarning("no canvas that CONTAINS " + nm);
+    Debug.LogWarning("~ScreenObject~ getCanvas() no canvas named <b>" + nm+"</b>");
     return null;
   }
 
@@ -77,7 +88,7 @@ public class ScreenObject : EngineObject
   public void toggleVisible(bool flag)
   {
     //si le scriptorder fait que le ScreenObject arrive après le Screenmanager ...
-    if(_canvas == null) fetchGlobal();
+    if(_canvas == null) setup();
     
     if (_canvas == null) Debug.LogError("no canvas ? for "+name, gameObject);
 
@@ -125,15 +136,6 @@ public class ScreenObject : EngineObject
   
   public bool isVisible()
   {
-    //at least one
-    /*
-    for (int i = 0; i < _canvas.Length; i++)
-    {
-      if (_canvas[i].enabled) return true;
-    }
-    return false;
-    */
-
     return transform.position.sqrMagnitude == 0f;
   }
 

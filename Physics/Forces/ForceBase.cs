@@ -46,7 +46,11 @@ public abstract class ForceBase
 
     if (_instant)
     {
-      if (!_applied) _applied = true;
+      if (!_applied)
+      {
+        _applied = true;
+        //Debug.Log(Name + " is done applying");
+      }
     }
 
     compute();
