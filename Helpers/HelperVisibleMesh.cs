@@ -101,7 +101,7 @@ public class HelperVisibleMesh : HelperVisible
   override protected void swapColor(Color col)
   {
     if (_mat == null) {
-      Debug.LogWarning("asking to swap color on null material");
+      Debug.LogWarning("asking to swap color on null material for "+_owner.name, _owner.gameObject);
       return;
     }
 
