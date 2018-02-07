@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ResourceManager {
   
@@ -29,6 +30,9 @@ public class ResourceManager {
     
   }
   
+  /// <summary>
+  /// returned the original object
+  /// </summary>
   static public GameObject getResourceByName(string nm)
   {
     for (int i = 0; i < resources.Count; i++)
@@ -38,7 +42,7 @@ public class ResourceManager {
     return null;
   }
 
-  static public T getDuplicate<T>(string nm, string rename = "")
+  static public T getDuplicate<T>(string nm, string rename = "") where T : Component
   {
     GameObject obj = getDuplicate(nm, rename);
     if (obj == null)
@@ -46,12 +50,21 @@ public class ResourceManager {
       Debug.LogWarning("no object found in resources named : <b>" + nm+"</b>");
       return default(T);
     }
-
+    
     T comp = obj.GetComponent<T>();
+
+    GameObject go = getResourceByName(nm);
+    Canvas cs = go.GetComponentInParent<Canvas>();
+
+    if(cs != null)
+    {
+      obj.transform.SetParent(go.transform.parent);
+    }
+
     if (comp == null) comp = obj.GetComponentInChildren<T>();
     return comp;
   }
-
+  
   static public GameObject getDuplicate(string nm, string rename = "")
   {
     GameObject obj = getResourceByName(nm);
