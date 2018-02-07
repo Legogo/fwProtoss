@@ -21,6 +21,8 @@ abstract public class ArenaObject : EngineObject {
     
     _arena = ArenaManager.get();
 
+    if (gameObject.CompareTag("resource")) return;
+
     if (_arena != null)
     {
       if (_arena.arenaObjects.IndexOf(this) < 0) _arena.arenaObjects.Add(this);

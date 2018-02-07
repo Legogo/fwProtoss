@@ -30,6 +30,7 @@ abstract public class LogicCapacity : EngineObject {
   /* called by LogicItem, on scene loading */
   virtual public void earlySetupCapacity() { }
   virtual public void setupCapacity() { }
+  virtual public void restartCapacity() { }
 
   /* explain how the module resets */
   virtual public void clean(){ }

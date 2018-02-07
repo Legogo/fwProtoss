@@ -22,7 +22,13 @@ public class LogicItem : ArenaObject
 
     setupCapacities();
   }
-  
+
+  public override void restart()
+  {
+    base.restart();
+    for (int i = 0; i < capacities.Count; i++) capacities[i].restartCapacity();
+  }
+
   /* after scenes load */
   protected void setupCapacities()
   {

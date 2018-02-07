@@ -71,6 +71,7 @@ public class ResourceManager {
     if (obj == null) return null;
     obj = GameObject.Instantiate(obj);
     if(rename.Length > 0) obj.name = rename;
+    obj.tag = "Untagged"; // remove resource tag !
     obj.SetActive(true);
     return obj;
   }
