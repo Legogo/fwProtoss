@@ -1,20 +1,14 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class ForceGravity : ForceBase
-{
-  PlayerLogic owner;
-  //HiddenCapacityWallGrab wallgrab;
-
-  public ForceGravity(PlayerLogic player) : base("gravity", false)
+public class ForceGravity : ForceBase {
+  
+  public ForceGravity(float gravityPower) : base("gravity", false)
   {
-    owner = player;
-    //wallgrab = owner.GetComponent<HiddenCapacityWallGrab>();
+    _force.y = gravityPower;
   }
 
-  protected override void compute()
-  {
-    //if (wallgrab.isSnapped()) _force.y = -owner.getParam().movement.wallGravityClamp;
-    _force.y = -owner.getParam().movement.gravityFactor;
-  }
+  protected override void compute(){}
 }
