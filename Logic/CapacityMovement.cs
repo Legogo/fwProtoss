@@ -152,6 +152,7 @@ abstract public class CapacityMovement : LogicCapacity {
   public bool isFalling() { return lastDirection.y < 0f; }
   public float getVerticalSpeed() { return lastFullMovement.y; }
   public float getHorizontalSpeed() { return lastFullMovement.x; }
+  public float getHorizontalVelocity() { return velocityForce.x; }
 
   protected void moveStep(Vector2 step)
   {
@@ -202,6 +203,22 @@ abstract public class CapacityMovement : LogicCapacity {
     _moved = false;
   }
 
+  public bool hasForceOfName(string name)
+  {
+    for (int i = 0; i < forces.Count; i++)
+    {
+      if (forces[i].Name == name) return true;
+    }
+    return false;
+  }
+  public bool hasForceOfType<T>()where T : ForceBase
+  {
+    for (int i = 0; i < forces.Count; i++)
+    {
+      if (forces[i].GetType() == typeof(T)) return true;
+    }
+    return false;
+  }
   public List<ForceBase> getForces() { return forces; }
   
   public int getHorizontalDirection(bool raw = false)

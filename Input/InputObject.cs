@@ -111,7 +111,7 @@ public class InputObject : MonoBehaviour {
       //Debug.Log(name + " <b>captured</b> finger " + finger.fingerId);
       finger.captured = this;
     }
-
+    
     onTouchOver(finger, hit);
   }
 
@@ -163,7 +163,7 @@ public class InputObject : MonoBehaviour {
   #region to override by children
 
   virtual protected void onTouch(InputTouchFinger finger) {
-    //Debug.Log(name + " touch scene");
+    //Debug.Log(name + " onTouch");Debug.Log(cbTouch);
     if (cbTouch != null) cbTouch(finger);
   }
   virtual protected void onRelease(InputTouchFinger finger) {
@@ -176,7 +176,7 @@ public class InputObject : MonoBehaviour {
     if (cbOver != null) cbOver(finger);
   }
   virtual protected void onTouchOver(InputTouchFinger finger, RaycastHit2D hit) {
-    //Debug.Log(name + " touch over");
+    //Debug.Log(name + " touch over");Debug.Log(cbTouchOver);
     if (cbTouchOver != null) cbTouchOver(finger, hit);
   }
   virtual protected void onReleaseOver(InputTouchFinger finger, RaycastHit2D hit) {

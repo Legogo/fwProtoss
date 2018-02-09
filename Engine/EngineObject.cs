@@ -110,19 +110,10 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
 
     //Debug.Log(input.name, input.gameObject);
 
-    inputObject.cbTouch += touchPress;
-    inputObject.cbRelease += touchRelease;
+    inputObject.cbTouch += touch;
+    inputObject.cbRelease += release;
   }
-
-  virtual protected void touchRelease(InputTouchFinger finger) {
-
-  }
-
-  virtual protected void touchPress(InputTouchFinger finger)
-  {
-
-  }
-
+  
   //called by loader
   public void onEngineSceneLoaded()
   {

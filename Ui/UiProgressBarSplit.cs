@@ -38,9 +38,10 @@ public class UiProgressBarSplit : UiProgressBar {
   private void OnValidate()
   {
     if (Application.isPlaying) return;
-
+    
     fetchRefs();
     applyProgress();
+    
   }
 
   public UiProgressBarSplit setSlotsCount(int newCount)
@@ -84,6 +85,13 @@ public class UiProgressBarSplit : UiProgressBar {
 
     if (idx > renders.Length - 1) renders[renders.Length - 1].fillAmount = 1f;
     else renders[idx].fillAmount = subProg / step;
+  }
+
+  /* adds whatever is the progress step based on slot count */
+  public void addProgressSlotStep(int qty)
+  {
+    float step = 1f / renders.Length;
+    addProgress(qty * step);
   }
 
   /* transform current progress (based on current slots count) to progress with another slots counts */

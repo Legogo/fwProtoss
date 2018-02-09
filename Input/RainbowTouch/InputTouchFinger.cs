@@ -252,11 +252,11 @@ public class InputTouchFinger {
 		return total;
 	}
 	
-  public bool hasStayedNearStartTouchPosition(float distanceFromStart = 1f)
+  public bool hasStayedNearStartTouchPosition(float distanceFromStartPx = 1f)
   {
     float dist = Vector3.Distance(screenStartPosition, screenPosition);
     //Debug.Log(dist + " < " + distanceFromStart);
-    return dist < distanceFromStart;
+    return dist < distanceFromStartPx;
   }
 
   public bool isCapturedBy(InputObject obj) { if (!isCaptured()) return false; return obj == captured; }

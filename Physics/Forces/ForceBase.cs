@@ -61,7 +61,7 @@ public abstract class ForceBase
   /* descibe what to do when updating */
   abstract protected void compute();
   
-  public bool needToBeRemoved()
+  virtual public bool needToBeRemoved()
   {
     return _instant && _applied;
   }

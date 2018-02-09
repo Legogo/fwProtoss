@@ -7,10 +7,9 @@ public class CameraFollow : EngineObject
 
   [Header("tweakable")]
   public Vector2 camera_speed_movement = Vector2.one;
-
-  [Header("system")]
+  
   Camera followCamera;
-  public Transform target;
+  Transform target;
 
   protected float starting_zoom_level = 0f;
   protected Vector3 offset = Vector3.zero;
@@ -115,6 +114,11 @@ public class CameraFollow : EngineObject
   public void addZoom(float step)
   {
     zoomOffset += step;
+  }
+
+  public void setTarget(Transform newTarget)
+  {
+    target = newTarget;
   }
 
   public override string toString()

@@ -35,7 +35,7 @@ public class Version : MonoBehaviour {
   }
 
 #if UNITY_EDITOR
-  [MenuItem("Version/Increase Minor")]
+  [MenuItem("Version/Increase Minor (0.X.0)")]
   static protected void increase_minor()
   {
     Version v = GameObject.FindObjectOfType<Version>();
@@ -49,7 +49,7 @@ public class Version : MonoBehaviour {
     v.updatePlayerSettings();
   }
 
-  [MenuItem("Version/Increase Version")]
+  [MenuItem("Version/Increase Version (0.0.X)")]
   static protected void increase_fix()
   {
     Version v = GameObject.FindObjectOfType<Version>();
