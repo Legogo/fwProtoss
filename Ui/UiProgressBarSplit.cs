@@ -88,7 +88,7 @@ public class UiProgressBarSplit : UiProgressBar {
   }
 
   /* adds whatever is the progress step based on slot count */
-  public void addProgressSlotStep(int qty)
+  public void addProgressSlotStep(float qty)
   {
     float step = 1f / renders.Length;
     addProgress(qty * step);

@@ -12,7 +12,7 @@ public class CameraFollow : EngineObject
   Transform target;
 
   protected float starting_zoom_level = 0f;
-  protected Vector3 offset = Vector3.zero;
+  public Vector3 offset = Vector3.zero;
   protected Vector3 aimPosition;
 
   protected float zoomOffset = 0f;
@@ -25,15 +25,9 @@ public class CameraFollow : EngineObject
 
     starting_zoom_level = getZoomLevel();
   }
-
-  virtual protected void setupOffset()
-  {
-    offset.y = 1f;
-  }
   
   public void restart()
   {
-    setupOffset();
     setZoomLevel(starting_zoom_level);
     zoomOffset = 0f;
 
