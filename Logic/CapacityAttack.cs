@@ -38,7 +38,7 @@ abstract public class CapacityAttack : LogicCapacity
       return;
     }
 
-    attackCollider = _weapon.getCollider() as BoxCollider2D;
+    attackCollider = _weapon.getDefaultCollider() as BoxCollider2D;
     if(attackCollider == null)
     {
       Debug.LogError("no collider for weapon " + _weapon.name + " ?", gameObject);
@@ -49,6 +49,8 @@ abstract public class CapacityAttack : LogicCapacity
 
     _hittable = _owner.GetComponent<CapacityHittable>();
     refreshHittables();
+
+    _move = _owner.GetComponent<CapacityMovement>();
 
     _interruptTime = getInterruptTime();
   }
