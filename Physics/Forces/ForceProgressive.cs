@@ -9,10 +9,12 @@ using UnityEngine;
 
 public class ForceProgressive : ForceBase
 {
+  Vector2 originPower;
   float frixion;
 
   public ForceProgressive(string name, Vector2 forcePower, float frixionPower = 1f) : base(name, false)
   {
+    originPower = forcePower;
     frixion = frixionPower;
     _force = forcePower;
   }
@@ -20,6 +22,15 @@ public class ForceProgressive : ForceBase
   protected override void compute()
   {
     _force = Vector3.MoveTowards(_force, Vector3.zero, frixion * Time.deltaTime);
+  }
+
+  public float getDeltaWithOrigin()
+  {
+    return Mathf.Abs(originPower.magnitude - _force.magnitude);
+  }
+  public float getDeltaWithOriginProgress()
+  {
+    return getDeltaWithOrigin() / originPower.magnitude;
   }
 
   public override bool needToBeRemoved()

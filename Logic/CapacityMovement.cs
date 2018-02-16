@@ -203,6 +203,15 @@ abstract public class CapacityMovement : LogicCapacity {
     _moved = false;
   }
 
+  public T getForce<T>(string nm) where T : ForceBase
+  {
+    for (int i = 0; i < forces.Count; i++)
+    {
+      if (forces[i].Name == nm && forces[i].GetType() == typeof(T)) return forces[i] as T;
+    }
+    return null;
+  }
+
   public bool hasForceOfName(string name)
   {
     for (int i = 0; i < forces.Count; i++)

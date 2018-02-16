@@ -119,16 +119,16 @@ public class ArenaLane : ArenaObject {
         collisionType = ArenaLaneObstacleCollision.BAD;
       }
 
-      //good (+both)
+      //good
       if(obs.timing_good != null && box.bounds.Intersects(obs.timing_good.bounds))
       {
-        collisionType = collisionType == ArenaLaneObstacleCollision.BAD ? ArenaLaneObstacleCollision.BOTH : ArenaLaneObstacleCollision.GOOD;
+        collisionType = ArenaLaneObstacleCollision.GOOD;
       }
       
-      //dashing ?
+      //if not touched other, check intersects with visual
       if(collisionType == ArenaLaneObstacleCollision.NONE)
       {
-        if (box.bounds.Intersects(obs.render.bounds)) collisionType = ArenaLaneObstacleCollision.DASHING;
+        if (box.bounds.Intersects(obs.render.bounds)) collisionType = ArenaLaneObstacleCollision.TOUCHED;
       }
 
       if (collisionType != ArenaLaneObstacleCollision.NONE) {
@@ -169,7 +169,7 @@ public class ArenaLane : ArenaObject {
   
 }
 
-public enum ArenaLaneObstacleCollision { NONE, DASHING, BAD, GOOD, BOTH };
+public enum ArenaLaneObstacleCollision { NONE, TOUCHED, BAD, GOOD };
 
 public class ArenaLaneObstacle
 {
