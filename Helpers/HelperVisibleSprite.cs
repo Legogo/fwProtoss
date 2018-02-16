@@ -54,13 +54,16 @@ public class HelperVisibleSprite : HelperVisible
   }
 
   /* dans le cas d'une animation il vaut mieux inverser le scale plutôt que de taper sur le flip sprite */
-  /*
   public override void flipHorizontal(int dir)
   {
-    _render.flipX = dir < 0;
-  }
-  */
+    //base.flipHorizontal(dir);
+    Vector3 flipScale = _render.transform.localScale;
+    flipScale.x = Mathf.Abs(flipScale.x) * Mathf.Sign(dir);
+    _render.transform.localScale = flipScale;
 
+    // _render.flipX = dir < 0;
+  }
+  
   override public bool isVisible()
   {
     if (_render != null) return _render.enabled;

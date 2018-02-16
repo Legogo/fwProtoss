@@ -41,7 +41,6 @@ public class LandscapeGenerator : ArenaObject {
   protected void solveGeneration()
   {
     //Vector2 diff = currentGenerationPosition - lastGenerationPosition;
-    
   }
 
   protected void spawnTimeout()

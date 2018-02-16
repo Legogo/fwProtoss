@@ -294,6 +294,12 @@ public class CapacityCollision : LogicCapacity
     return info.touching_ceiling;
   }
 
+  public bool isTouchingSomething(bool butGround = false)
+  {
+    if (butGround) return isTouchingSide() || isRoofed();
+    return isGrounded() || isTouchingSide() || isRoofed();
+  }
+
   protected void drawBox(Rect rect, Color col)
   {
     Debug.DrawLine(new Vector2(rect.xMin, rect.yMin), new Vector2(rect.xMax, rect.yMax), col);

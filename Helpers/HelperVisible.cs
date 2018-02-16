@@ -107,6 +107,7 @@ abstract public class HelperVisible
   public void setSymbolTransformScale(Vector3 newScale)
   {
     _t.localScale = newScale;
+    //Debug.Log(_t.localScale);
   }
 
   virtual public void flipHorizontal(int dir)

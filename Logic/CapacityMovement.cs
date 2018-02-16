@@ -70,7 +70,8 @@ abstract public class CapacityMovement : LogicCapacity {
     base.updateLogic();
 
     int i = 0;
-    while(i < forces.Count)
+    int safe = 100;
+    while(i < forces.Count && safe > 0)
     {
       forces[i].update(); // compute force step
       velocityForce += forces[i].getValue(); // inject value
@@ -80,7 +81,11 @@ abstract public class CapacityMovement : LogicCapacity {
         forces.RemoveAt(i); // remove if needed
       }
       else i++;
+
+      safe--;
     }
+
+    if (safe <= 0) Debug.LogError("safe !");
 
     //default horizontal frixion
     velocityForce.x = Mathf.MoveTowards(velocityForce.x, 0f, horizontalFrixion);
@@ -94,9 +99,16 @@ abstract public class CapacityMovement : LogicCapacity {
 
     //if someone is locking this direction
     int? lockDirection = lockHorizontal.getLockDirection();
+
+    //Debug.Log(lockDirection);
+
     if(lockDirection != null)
     {
-      if (Mathf.Sign(instantForce.x) == lockDirection.Value)
+      if(lockDirection.Value == 0f) // all direction
+      {
+        killInstantSpeed();
+      }
+      else if (Mathf.Sign(instantForce.x) == lockDirection.Value) // specific direction
       {
         instantForce.x = 0f;
       }

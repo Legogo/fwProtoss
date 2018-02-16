@@ -166,7 +166,6 @@ public class CharacterLogic : LogicItem {
         visibility.flipHorizontal(hDirection);
         break;
     }
-
     
   }
   
