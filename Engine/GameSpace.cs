@@ -16,9 +16,9 @@ public class GameSpace : MonoBehaviour {
   public float bottomBorder;
 
   [Header("solved")]
-  [HideInInspector]public Rect offsetSpace = new Rect();
   [HideInInspector] public Rect screenSpace = new Rect();
-
+  [HideInInspector] public Rect offsetSpace = new Rect(); // screenspace + offset
+  
   protected Vector2 screenBotLeft = Vector2.zero;
   protected Vector2 screenTopRight = Vector2.zero;
 
@@ -32,7 +32,12 @@ public class GameSpace : MonoBehaviour {
     gameSpace = this;
     updateSize();
   }
-  
+
+  private void Update()
+  {
+    updateSize();
+  }
+
   [ContextMenu("resize")]
   public void updateSize() {
 
@@ -147,9 +152,11 @@ public class GameSpace : MonoBehaviour {
     ct += "\nScreen.width/height : " + Screen.width + "x" + Screen.height;
     ct += "\nCamera.width/heiht : " + Camera.main.pixelWidth + "x" + Camera.main.pixelHeight;
     ct += "\ncomputer resolution : " + Screen.currentResolution;
-    
     UnityEditor.Handles.Label(transform.position + (Vector3.up * 4f) + Vector3.right, ct);
-    
+
+    UnityEditor.Handles.Label(new Vector3(screenSpace.xMax, screenSpace.yMax, 0f) + Vector3.right + Vector3.up, screenSpace.xMax+"x"+screenSpace.yMax);
+    UnityEditor.Handles.Label(new Vector3(screenSpace.xMin, screenSpace.yMin, 0f) + Vector3.right + Vector3.down, screenSpace.xMin+"x"+screenSpace.yMin);
+
     if (borders != null && borders.Length > 0)
     {
       if(borders.Length >= 1)

@@ -12,6 +12,10 @@ public class HelperVisibleMesh : HelperVisible
   
   public float scaleSize = 1f;
 
+  public HelperVisibleMesh(EngineObject parent) : base(parent)
+  {
+  }
+
   protected override Transform fetchCarrySymbol()
   {
     return _t.GetChild(0);
@@ -25,9 +29,9 @@ public class HelperVisibleMesh : HelperVisible
 
   }
 
-  public override void setup(EngineObject parent)
+  public override void setup()
   {
-    base.setup(parent);
+    base.setup();
 
     Debug.Log(_owner.name + " fetching ...");
 
@@ -154,6 +158,11 @@ public class HelperVisibleMesh : HelperVisible
       tr.localScale = Vector3.one * scaleSize;
     }
 
+  }
+
+  public override Bounds getSymbolBounds()
+  {
+    return _render.bounds;
   }
 #endif
 

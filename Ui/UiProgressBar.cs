@@ -78,6 +78,7 @@ public class UiProgressBar : EngineObject {
   {
     progressiveTarget = newProgress; // new goal
     applyProgress();
+    updateStep();
   }
 
   virtual public void applyProgress()

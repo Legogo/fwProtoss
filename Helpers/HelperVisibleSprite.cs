@@ -7,67 +7,76 @@ using UnityEngine.UI;
 public class HelperVisibleSprite : HelperVisible
 {
 
-  SpriteRenderer _render;
+  SpriteRenderer _renderSprite;
   public string sortingLayerName = "";
+
+  public HelperVisibleSprite(EngineObject parent) : base(parent)
+  {
+  }
 
   protected override Transform fetchCarrySymbol()
   {
-    return _render.transform;
+    return _renderSprite.transform;
   }
 
   protected override void fetchRenders()
   {
-    _render = _t.GetComponent<SpriteRenderer>();
-    if (_render == null) _render = _t.GetComponentInChildren<SpriteRenderer>();
+    _renderSprite = _t.GetComponent<SpriteRenderer>();
+    if (_renderSprite == null) _renderSprite = _t.GetComponentInChildren<SpriteRenderer>();
   }
 
-  public override void setup(EngineObject parent)
+  public override void setup()
   {
-    base.setup(parent);
+    base.setup();
 
     if (sortingLayerName.Length > 0)
     {
-      _render.sortingLayerName = sortingLayerName;
+      _renderSprite.sortingLayerName = sortingLayerName;
     } 
   }
   
-  public Sprite getSprite() { return _render.sprite; }
+  public Sprite getSprite() { return _renderSprite.sprite; }
 
   public void setSprite(Sprite newSprite)
   {
-    _render.sprite = newSprite;
+    _renderSprite.sprite = newSprite;
   }
   
   override public Color getColor()
   {
-    return _render.color;
+    return _renderSprite.color;
   }
   
   override protected void swapColor(Color col)
   {
-    _render.color = col;
+    _renderSprite.color = col;
   }
   
   override protected void setVisibility(bool flag)
   {
-    _render.enabled = flag;
+    _renderSprite.enabled = flag;
   }
 
   /* dans le cas d'une animation il vaut mieux inverser le scale plutôt que de taper sur le flip sprite */
   public override void flipHorizontal(int dir)
   {
     //base.flipHorizontal(dir);
-    Vector3 flipScale = _render.transform.localScale;
+    Vector3 flipScale = _renderSprite.transform.localScale;
     flipScale.x = Mathf.Abs(flipScale.x) * Mathf.Sign(dir);
-    _render.transform.localScale = flipScale;
+    _renderSprite.transform.localScale = flipScale;
 
     // _render.flipX = dir < 0;
   }
   
   override public bool isVisible()
   {
-    if (_render != null) return _render.enabled;
+    if (_renderSprite != null) return _renderSprite.enabled;
     return false;
   }
-  
+
+  public override Bounds getSymbolBounds()
+  {
+    if (_renderSprite == null) Debug.LogWarning("no render sprite for <b>" + _owner.name+"</b>", _owner);
+    return _renderSprite.bounds;
+  }
 }

@@ -11,6 +11,10 @@ public class HelperVisibleUi : HelperVisible
   MaskableGraphic _render;
   Text _label;
 
+  public HelperVisibleUi(EngineObject parent) : base(parent)
+  {
+  }
+
   protected override void fetchRenders()
   {
     _render = _t.GetComponent<Image>();
@@ -22,9 +26,9 @@ public class HelperVisibleUi : HelperVisible
     return _render.transform;
   }
 
-  public override void setup(EngineObject parent)
+  public override void setup()
   {
-    base.setup(parent);
+    base.setup();
 
     _group = _t.GetComponent<CanvasGroup>();
     
@@ -66,4 +70,9 @@ public class HelperVisibleUi : HelperVisible
     return _render.color;
   }
 
+  /* no bounds for ui */
+  public override Bounds getSymbolBounds()
+  {
+    throw new NotImplementedException();
+  }
 }

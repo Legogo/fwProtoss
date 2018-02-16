@@ -10,8 +10,6 @@ using UnityEngine.UI;
 
 abstract public class HelperVisible
 {
-  public bool dontHideOnStartup = false;
-
   protected Rect _bounds; // bounds expressed in local position
   protected Rect _wbounds; // bounds expressed in world position
   protected BoxCollider2D _collider;
@@ -20,23 +18,24 @@ abstract public class HelperVisible
   protected Transform _t;
   protected Transform _symbolCarry;
 
-  virtual public void setup(EngineObject parent)
+  public HelperVisible(EngineObject parent)
   {
     _owner = parent;
     _t = _owner.transform;
 
     _collider = _owner.GetComponent<BoxCollider2D>();
     if (_collider == null) _collider = _owner.GetComponentInChildren<BoxCollider2D>();
+    
+    setup();
+  }
 
+  /* called on build AND at engineobject setup (for symbol loaded) */
+  virtual public void setup()
+  {
     fetchRenders();
     _symbolCarry = fetchCarrySymbol();
 
     updateBounds();
-
-    if (!dontHideOnStartup)
-    {
-      hide();
-    }
   }
 
   abstract protected void fetchRenders();
@@ -78,14 +77,16 @@ abstract public class HelperVisible
   }
   
   public void show() { setVisibility(true); }
-  public void hide(){ setVisibility(false); }
+  public void hide() { Debug.Log("hide " + _owner.name); setVisibility(false); }
 
   abstract protected void setVisibility(bool flag);
   abstract public bool isVisible();
 
   /* local bounds */
   public Rect getRect() { return _bounds; }
-  public Bounds getBounds() {
+  abstract public Bounds getSymbolBounds();
+
+  public Bounds getColliderBounds() {
     if(_collider == null) Debug.LogError("no collider for "+_owner.gameObject, _owner.gameObject);
     return _collider.bounds;
   }

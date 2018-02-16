@@ -70,10 +70,10 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
   {
     switch (visibilityMode)
     {
-      case VisibilityMode.SPRITE: visibility = new HelperVisibleSprite();break;
-      case VisibilityMode.MESH: visibility = new HelperVisibleMesh(); break;
-      case VisibilityMode.UI: visibility = new HelperVisibleUi(); break;
-      case VisibilityMode.SKINNED: visibility = new HelperVisibleSkinned(); break;
+      case VisibilityMode.SPRITE: visibility = new HelperVisibleSprite(this);break;
+      case VisibilityMode.MESH: visibility = new HelperVisibleMesh(this); break;
+      case VisibilityMode.UI: visibility = new HelperVisibleUi(this); break;
+      case VisibilityMode.SKINNED: visibility = new HelperVisibleSkinned(this); break;
       case VisibilityMode.NONE: break;
       default: Debug.LogError("this visibilty mode ("+visibilityMode.ToString()+") is not implem yet"); break;
     }
@@ -136,7 +136,7 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
   virtual protected void setup()
   {
     //Debug.Log("fetching global <b>" + name + "</b> (layer " + engineLayer + ") | visibility ? "+visibility, gameObject);
-    if (visibility != null) visibility.setup(this);
+    if (visibility != null) visibility.setup();
   }
 
   /* called by EngineManager */

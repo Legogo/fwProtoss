@@ -26,6 +26,13 @@ public class ArenaLane : ArenaObject {
     base.restart();
     timer.setupAndStart(data.timer);
     //Debug.Log(name + " restart");
+
+    //clean
+    while(obstacles.Count > 0)
+    {
+      GameObject.DestroyImmediate(obstacles[0].gameObject);
+      obstacles.RemoveAt(0);
+    }
   }
 
   protected void spawnTimeout()
@@ -35,28 +42,20 @@ public class ArenaLane : ArenaObject {
     Sprite spr = data.obstacles[Random.Range(0, data.obstacles.Length)];
     GameObject obj = ResourceManager.getDuplicate(spr.name);
 
+    if (obj == null)
+    {
+      Debug.LogError("no object " + spr.name + " found in resources");
+      return;
+    }
+
     //Debug.Log(spr.name);
     //Debug.Log(obj, obj);
 
     //obj.transform.SetParent(transform);
     obj.transform.position = transform.position;
 
-    ArenaLaneObstacle obs = new ArenaLaneObstacle();
-    obs.carry = obj.transform;
-    obs.speed = data.obstacleTranslateSpeed;
-    if(data.obstacleSpeedRange.sqrMagnitude != 0f)
-    {
-      obs.speed = Random.Range(data.obstacleSpeedRange.x, data.obstacleSpeedRange.y);
-    }
-
-    obs.render = obj.GetComponent<SpriteRenderer>();
-
-    if(obj.transform.childCount > 0)
-    {
-      obs.timing_bad = obj.transform.GetChild(0).GetComponent<BoxCollider2D>();
-      obs.timing_good = obj.transform.GetChild(1).GetComponent<BoxCollider2D>();
-    }
-
+    ArenaLaneObstacle obs = obj.GetComponent<ArenaLaneObstacle>();
+    obs.setupOnLane(this);
     obstacles.Add(obs);
   }
   
@@ -88,12 +87,12 @@ public class ArenaLane : ArenaObject {
       }
 
       //translate
-      obstacles[i].carry.Translate(Vector3.left * obstacles[i].speed * Time.deltaTime);
+      obstacles[i].transform.Translate(Vector3.left * obstacles[i].getSpeed() * Time.deltaTime);
 
       //remove on ooscreen
-      if (obstacles[i].carry.position.x < -12f)
+      if (obstacles[i].transform.position.x < -12f)
       {
-        GameObject.DestroyImmediate(obstacles[i].carry.gameObject);
+        GameObject.DestroyImmediate(obstacles[i].transform.gameObject);
         obstacles[i] = null;
         continue;
       }
@@ -103,7 +102,7 @@ public class ArenaLane : ArenaObject {
 
   }
 
-  public void checkTouchObstacle(BoxCollider2D box, Action<ArenaLaneObstacle, ArenaLaneObstacleCollision> onTouchSomething = null)
+  public void checkTouchObstacle(BoxCollider2D refCollider, Action<ArenaLaneObstacle, string> onTouchSomething = null, string filter = "")
   {
     
     for (int i = 0; i < obstacles.Count; i++)
@@ -111,37 +110,28 @@ public class ArenaLane : ArenaObject {
       if (obstacles[i] == null) continue;
 
       ArenaLaneObstacle obs = obstacles[i];
-      ArenaLaneObstacleCollision collisionType = ArenaLaneObstacleCollision.NONE;
 
-      //bad
-      if (obstacles[i].timing_bad != null && box.bounds.Intersects(obs.timing_bad.bounds))
-      {
-        collisionType = ArenaLaneObstacleCollision.BAD;
-      }
-
-      //good
-      if(obs.timing_good != null && box.bounds.Intersects(obs.timing_good.bounds))
-      {
-        collisionType = ArenaLaneObstacleCollision.GOOD;
-      }
+      if (filter.Length > 0 && obs.name.Contains(filter)) continue;
       
-      //if not touched other, check intersects with visual
-      if(collisionType == ArenaLaneObstacleCollision.NONE)
+      string collisionType = solveCollisionComparison(refCollider, obs);
+      if(collisionType.Length > 0)
       {
-        if (box.bounds.Intersects(obs.render.bounds)) collisionType = ArenaLaneObstacleCollision.TOUCHED;
-      }
-
-      if (collisionType != ArenaLaneObstacleCollision.NONE) {
         solveTouchedObstacle(obs, collisionType, onTouchSomething);
         obstacles[i] = null;
       }
     }
   }
   
-  virtual protected void solveTouchedObstacle(ArenaLaneObstacle obstacle, ArenaLaneObstacleCollision collisionType, Action<ArenaLaneObstacle, ArenaLaneObstacleCollision> onTouchSomething = null)
+  virtual protected void solveTouchedObstacle(ArenaLaneObstacle obstacle, string type, Action<ArenaLaneObstacle, string> onTouchSomething = null)
   {
-    if (onTouchSomething != null) onTouchSomething(obstacle, collisionType);
-    GameObject.DestroyImmediate(obstacle.carry.gameObject);
+    if (onTouchSomething != null) onTouchSomething(obstacle, type);
+    GameObject.DestroyImmediate(obstacle.gameObject);
+  }
+
+  virtual protected string solveCollisionComparison(Collider2D collider, ArenaLaneObstacle obs)
+  {
+    if (collider.bounds.Intersects(obs.visibility.getSymbolBounds())) return "symbol";
+    return "";
   }
 
   public bool positionTouching(Vector2 position) {
@@ -169,13 +159,3 @@ public class ArenaLane : ArenaObject {
   
 }
 
-public enum ArenaLaneObstacleCollision { NONE, TOUCHED, BAD, GOOD };
-
-public class ArenaLaneObstacle
-{
-  public Transform carry;
-  public float speed;
-  public SpriteRenderer render;
-  public BoxCollider2D timing_bad;
-  public BoxCollider2D timing_good;
-}

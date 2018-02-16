@@ -118,8 +118,11 @@ abstract public class ArenaManager : EngineObject {
     UiAnimation.killAll();
   }
 
+  /* end of round ? */
   public void event_end()
   {
+    //Debug.Log("~Arena~ event end");
+
     _state = ArenaState.END;
 
     //send info to all arena objects
@@ -131,13 +134,14 @@ abstract public class ArenaManager : EngineObject {
 
     if (coProcessEnd != null)
     {
-      Debug.LogError("already processing end ??");
+      Debug.LogError("~Arena~ already processing end ??");
       return;
     }
     
     coProcessEnd = StartCoroutine(processEnd());
   }
   
+  /* inheritence NEED to set coprocessend = null manually */
   virtual protected IEnumerator processEnd()
   {
     yield return null;

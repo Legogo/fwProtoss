@@ -8,6 +8,10 @@ public class HelperVisibleSkinned : HelperVisible {
   SkinnedMeshRenderer skinRender;
   Material mat;
 
+  public HelperVisibleSkinned(EngineObject parent) : base(parent)
+  {
+  }
+
   protected override void fetchRenders()
   {
     skinRender = _owner.GetComponentInChildren<SkinnedMeshRenderer>();
@@ -38,5 +42,9 @@ public class HelperVisibleSkinned : HelperVisible {
   {
     return skinRender.enabled;
   }
-  
+
+  public override Bounds getSymbolBounds()
+  {
+    return skinRender.bounds;
+  }
 }
