@@ -7,12 +7,16 @@ public class LandscapeGenerator : ArenaObject {
   protected GameSpace gspace;
 
   public DataResourceAtlas atlas;
-  public List<Transform> landscapeObjects;
+
+  //public struct LandscapeData { public float pos, public  }
+  List<SpriteRenderer> landscapeObjects = new List<SpriteRenderer>();
 
   protected Vector2 currentGenerationPosition;
   protected Vector2 lastGenerationPosition;
 
   public long seed = 0;
+
+  float rndLimit = 0.8f;
 
   protected override void setup()
   {
@@ -46,47 +50,65 @@ public class LandscapeGenerator : ArenaObject {
     float minInterval = 1f;
     float left = gspace.screenSpace.xMin;
     int qty = Mathf.FloorToInt(left / minInterval);
-    float startx = qty * minInterval;
+    float border = minInterval * 10f;
+    float startx = (qty * minInterval);
     float w = gspace.getWidth();
 
     int idx = 0;
 
     //Debug.Log("start : "+startx + " , end : " + (startx + w) + " , interval : " + minInterval);
-    for (float i = startx; i < startx + w; i+=minInterval)
+
+    //Debug.Log("[]");
+    Debug.DrawLine(Vector3.right * startx, Vector3.right * (startx + w), Color.green);
+
+    for (float i = startx - border; i < startx + (w + border); i+=minInterval)
     {
       float val = rand(Mathf.FloorToInt(i * 1000));
-
-      //Debug.Log(startx+" | "+i + " == " + val);
-
-      if(val > 0.8f)
+      
+      if (val > rndLimit)
       {
-        while (landscapeObjects.Count < idx+1) spawn(Mathf.InverseLerp(0.5f, 1f, val));
+        //Debug.Log(i + " == " + val);
+        //Debug.Log(i+" -> rnd : "+val+" (limit : "+rndLimit+")");
+
+        Debug.DrawLine((Vector3.down * i) + (Vector3.right * startx), (Vector3.down * i) + Vector3.right * (startx + i), Color.green);
+
+        Sprite spr = getSpriteAtPosition(i);
+        while (landscapeObjects.Count < idx+1) spawn(spr);
+
+        landscapeObjects[idx].sprite = spr;
         //Debug.Log(idx + " / " + landscapeObjects.Count);
         Vector3 pos = landscapeObjects[idx].transform.position;
         pos.x = i;
         landscapeObjects[idx].transform.position = pos;
+
+        //Debug.Log(i+" <=> "+idx + " at " + pos);
         idx++;
       }
     }
 
   }
 
-  protected SpriteRenderer spawn(float rnd)
+  protected Sprite getSpriteAtPosition(float pos)
   {
     if (atlas.list.Length <= 0) return null;
-
-    int idx = Mathf.FloorToInt(rnd * atlas.list.Length-1);
+    float rnd = rand(Mathf.FloorToInt(pos * 1000));
+    rnd = Mathf.InverseLerp(rndLimit, 1f, rnd);
+    int idx = Mathf.FloorToInt(rnd * (atlas.list.Length - 1));
     if (idx >= atlas.list.Length) Debug.LogError(idx + " > " + atlas.list.Length);
+    return atlas.list[idx];
+  }
 
-    Sprite spr = atlas.list[idx];
+  protected SpriteRenderer spawn(Sprite spr)
+  {
     GameObject obj = ResourceManager.getDuplicate(spr.name);
     if (obj == null) Debug.Log("no object for " + spr.name);
 
     obj.transform.position = transform.position;
 
-    landscapeObjects.Add(obj.transform);
+    SpriteRenderer render = obj.GetComponent<SpriteRenderer>();
+    landscapeObjects.Add(render);
 
-    return obj.GetComponent<SpriteRenderer>();
+    return render;
   }
 
 }

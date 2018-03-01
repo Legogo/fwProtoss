@@ -9,7 +9,6 @@ public class DataLane : ScriptableObject {
   public Sprite[] obstacles;
   public DataTimer timer;
 
-  public Vector2 obstacleSpeedRange;
-  public float obstacleTranslateSpeed = 1f;
+  public float laneFactorSpeed = 1f;
 
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 using Random = UnityEngine.Random;
 
-public class ArenaLane : ArenaObject {
+abstract public class ArenaLane : ArenaObject {
   
   public DataLane data;
   protected Timer timer;
@@ -78,31 +78,40 @@ public class ArenaLane : ArenaObject {
     int i = 0;
     while (i < obstacles.Count)
     {
+      
       //remove cleared
-      if(obstacles[i] == null)
+      if (obstacles[i] == null)
       {
         obstacles.RemoveAt(i);
         //Debug.Log("removed at " + i);
         continue;
       }
 
-      //translate
-      obstacles[i].transform.Translate(Vector3.left * obstacles[i].getSpeed() * Time.deltaTime);
-
-      //remove on ooscreen
-      if (obstacles[i].transform.position.x < -12f)
+      //doing something else
+      if (obstacles[i].canTranslate())
       {
-        GameObject.DestroyImmediate(obstacles[i].transform.gameObject);
-        obstacles[i] = null;
-        continue;
+        //translate
+        obstacles[i].transform.Translate(Vector3.left * obstacles[i].getSpeed() * Time.deltaTime);
+
+        obstacles[i].checkOutOfScreen();
       }
-      
-      i++;
+
+      if (obstacles[i] != null && obstacles[i].canBeCollidedWith())
+      {
+        //check for collision after everything is done moving
+        solveCollision(obstacles[i]);
+      }
+
+      //if was not removed, step fwd in array
+      if (obstacles[i] != null) i++;
     }
 
   }
 
-  public void checkTouchObstacle(BoxCollider2D refCollider, Action<ArenaLaneObstacle, string> onTouchSomething = null, string filter = "")
+  /* bridge to describe how to solve collision for each obstacle */
+  abstract protected void solveCollision(ArenaLaneObstacle obs);
+  
+  public void checkTouchObstacle(BoxCollider2D refCollider, Action<ArenaLaneObstacle> onTouchSomething = null, string filter = "")
   {
     
     for (int i = 0; i < obstacles.Count; i++)
@@ -113,25 +122,23 @@ public class ArenaLane : ArenaObject {
 
       if (filter.Length > 0 && obs.name.Contains(filter)) continue;
       
-      string collisionType = solveCollisionComparison(refCollider, obs);
-      if(collisionType.Length > 0)
+      if(solveCollisionWithObstacle(refCollider, obs))
       {
-        solveTouchedObstacle(obs, collisionType, onTouchSomething);
-        obstacles[i] = null;
+        //tell asking collision checker that this object was touched
+        if (onTouchSomething != null) onTouchSomething(obs);
+
+        //remove from scene
+        GameObject.DestroyImmediate(obs.gameObject);
+        
+        if(obs == null) obstacles[i] = null; //destroyed ?
       }
     }
   }
   
-  virtual protected void solveTouchedObstacle(ArenaLaneObstacle obstacle, string type, Action<ArenaLaneObstacle, string> onTouchSomething = null)
+  virtual protected bool solveCollisionWithObstacle(Collider2D collider, ArenaLaneObstacle obs)
   {
-    if (onTouchSomething != null) onTouchSomething(obstacle, type);
-    GameObject.DestroyImmediate(obstacle.gameObject);
-  }
-
-  virtual protected string solveCollisionComparison(Collider2D collider, ArenaLaneObstacle obs)
-  {
-    if (collider.bounds.Intersects(obs.visibility.getSymbolBounds())) return "symbol";
-    return "";
+    if (collider.bounds.Intersects(obs.visibility.getSymbolBounds())) return true;
+    return false;
   }
 
   public bool positionTouching(Vector2 position) {
@@ -151,6 +158,8 @@ public class ArenaLane : ArenaObject {
 
   private void OnDrawGizmos()
   {
+    if (data == null) return;
+
     Color col = Color.green;
     col.a = 0.1f;
     Gizmos.color = col;
