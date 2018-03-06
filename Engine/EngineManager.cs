@@ -80,43 +80,58 @@ public class EngineManager : MonoBehaviour {
     ResourceManager.reload();
 
     //Debug.Log("EngineManager, engine_scenes_loaded, calling all callbacks for end of loading");
-    //StartCoroutine(processScenesLoaded());
-    processScenesLoaded();
+    StartCoroutine(processScenesLoaded());
+    //processScenesLoaded();
   }
 
   /* telle everybody present that all scenes are now loaded */
-  void processScenesLoaded() {
-    
+  IEnumerator processScenesLoaded() {
+
     //Debug.Log("~EngineManager~ <b>scenes loaded</b> | layer count ? " + eosLayers.Count);
 
+    List<EngineObject> list;
+    int idx = 0;
+
+    //setupEarly()
     for (int i = 0; i < eosLayers.Count; i++)
     {
-      List<EngineObject> list = eosLayers[i];
+      list = eosLayers[i];
 
-      //Debug.Log("end of loading for layer " + i+" | objects count ? "+list.Count);
-
-      //int count = list.Count;
-
-      int idx = 0;
+      //while --> might add objects to layer list during loop
+      
+      idx = 0;
       while (idx < list.Count)
       {
-        //might add objects to layer list during loop
         list[idx].onEngineSceneLoaded();
         idx++;
-
-        //object was destroy on end loading ? next
-        //if (list[idx] == null) list.RemoveAt(idx);
-        //else idx++;
       }
-
-      //more objects added during loading
-      //if (count != list.Count) Debug.LogError("something changed");
     }
 
-    Debug.Log("~EngineManager~ <color=yellow># SCENES LOADED #</color>");
+    yield return null;
+
+    //setup()
+    for (int i = 0; i < eosLayers.Count; i++)
+    {
+      list = eosLayers[i];
+      
+      idx = 0;
+      while (idx < list.Count)
+      {
+        list[idx].onEngineSceneLoaded();
+        idx++;
+      }
+
+    }
+
+    //more objects added during loading
+    //if (count != list.Count) Debug.LogError("something changed");
+
+    Debug.Log("~EngineManager~ <color=orange># SCENES LOADED #</color>");
     
     state_loading = false;
     state_live = true;
+    
+    yield return null;
 
     //broadcast
     if (onLoadingDone != null) onLoadingDone();

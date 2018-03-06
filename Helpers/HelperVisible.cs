@@ -85,7 +85,7 @@ abstract public class HelperVisible
   /* local bounds */
   public Rect getRect() { return _bounds; }
   abstract public Bounds getSymbolBounds();
-
+  
   public Bounds getColliderBounds() {
     if(_collider == null) Debug.LogError("no collider for "+_owner.gameObject, _owner.gameObject);
     return _collider.bounds;

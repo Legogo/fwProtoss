@@ -16,7 +16,7 @@ public class CameraFollow : EngineObject
   protected Vector3 aimPosition;
 
   protected float zoomOffset = 0f;
-  
+
   protected override void setup()
   {
     base.setup();

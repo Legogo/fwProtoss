@@ -75,6 +75,15 @@ public class HelperVisibleUi : HelperVisible
     return _render.color;
   }
 
+  public void setSprite(Sprite spr)
+  {
+    Image img = _render as Image;
+    if (img != null) img.sprite = spr;
+  }
+
+  public Image getImage() { return _render as Image; }
+  public Text getText() { return _label; }
+
   /* no bounds for ui */
   public override Bounds getSymbolBounds()
   {

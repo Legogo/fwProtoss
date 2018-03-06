@@ -16,6 +16,8 @@ public class HelperVisibleSprite : HelperVisible
 
   protected override Transform fetchCarrySymbol()
   {
+    //if (_renderSprite == null) Debug.LogError(_owner.GetType()+" no render sprite for " + _owner.name, _owner.gameObject);
+    if (_renderSprite == null) return null;
     return _renderSprite.transform;
   }
 

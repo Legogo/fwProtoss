@@ -17,7 +17,19 @@ abstract public class ArenaManager : EngineObject {
   protected Canvas pauseCanvas;
 
   public List<ArenaObject> arenaObjects = new List<ArenaObject>();
-  
+
+  protected override void build()
+  {
+    base.build();
+    EngineManager.get().onLoadingDone += onLoadingFinished;
+  }
+
+  /* this is default behavior, it needs to be overrided if need to delay startup of arena */
+  virtual protected void onLoadingFinished()
+  {
+    restart_normal();
+  }
+
   virtual public void restart_normal() {
     Debug.Log("~<b>Arena</b>~ restart_normal");
     round_time = 0f;

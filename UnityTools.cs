@@ -205,6 +205,13 @@ static public class ToolsComponent
 
   public static T getComponentByCarryName<T>(string carryName) {
     GameObject obj = GameObject.Find(carryName);
+
+    if (obj == null)
+    {
+      Debug.LogWarning("couldn't find " + carryName);
+      return default(T);
+    }
+
     return obj.GetComponent<T>();
   }
 

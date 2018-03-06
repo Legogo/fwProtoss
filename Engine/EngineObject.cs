@@ -116,16 +116,19 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
     inputObject.cbRelease += release;
   }
   
-  //called by loader
+  //called by loader (twice for early and setup)
   public void onEngineSceneLoaded()
   {
     //Debug.Log(GetType()+" , <b>"+name+ "</b> onEngineSceneLoaded", gameObject);
 
-    setupEarly();
+    if (!_ready)
+    {
+      setupEarly();
+      _ready = true;
+      return;
+    }
 
     setup();
-
-    _ready = true;
   }
 
   /* how this object will create some stuff before setup-ing (ie : symbols) */
