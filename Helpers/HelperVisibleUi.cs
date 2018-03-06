@@ -4,6 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// this manage also Text elements
+/// </summary>
+
 public class HelperVisibleUi : HelperVisible
 {
   CanvasGroup _group;
@@ -17,8 +21,9 @@ public class HelperVisibleUi : HelperVisible
 
   protected override void fetchRenders()
   {
-    _render = _t.GetComponent<Image>();
-    if (_render == null) _render = _t.GetComponentInChildren<Image>();
+    _render = _t.GetComponent<MaskableGraphic>();
+    if (_render == null) _render = _t.GetComponentInChildren<MaskableGraphic>();
+    if (_render == null) Debug.LogError("need render");
   }
 
   protected override Transform fetchCarrySymbol()

@@ -5,11 +5,11 @@ using UnityEngine.UI;
 
 public class UiTextSlide : UiAnimation
 {
-
   static public UiTextSlide create(string typeResource)
   {
-    GameObject obj = GameObject.Instantiate(Resources.Load(typeResource)) as GameObject;
-    return obj.GetComponent<UiTextSlide>();
+    return ResourceManager.getDuplicate<UiTextSlide>(typeResource);
+    //GameObject obj = GameObject.Instantiate(Resources.Load(typeResource)) as GameObject;
+    //return obj.GetComponent<UiTextSlide>();
   }
 
   protected Vector3 origin;
