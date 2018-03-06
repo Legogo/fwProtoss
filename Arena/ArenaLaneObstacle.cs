@@ -6,7 +6,7 @@ using Random = UnityEngine.Random;
 
 abstract public class ArenaLaneObstacle : ArenaObject {
 
-  public float laneSpeed = 1f;
+  public float obstacleLaneSpeed = 1f;
   protected float solvedSpeed = 1f;
   protected Collider2D[] _colliders;
   
@@ -16,7 +16,7 @@ abstract public class ArenaLaneObstacle : ArenaObject {
   {
     fetchColliders();
 
-    solvedSpeed = laneSpeed * lane.data.laneFactorSpeed;
+    solvedSpeed = obstacleLaneSpeed * lane.getLaneSolvedSpeed();
     
     visibility.show();
   }

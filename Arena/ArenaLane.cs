@@ -5,41 +5,144 @@ using System;
 using Random = UnityEngine.Random;
 
 abstract public class ArenaLane : ArenaObject {
-  
-  public DataLane data;
-  protected Timer timer;
 
+  [Header("to setup")]
+  public DataLanes data;
   public Transform spawnOffsetReferencial;
 
+  [Header("read only")]
+  public DataLane lane;
+  public DataLanePattern pattern;
+
+  protected int laneIdx = 0;
+  protected int patternIdx = 0;
+  
+  protected float timer = 0f;
+  protected int obstacleIdx = 0;
+  
   protected List<ArenaLaneObstacle> obstacles = new List<ArenaLaneObstacle>();
 
   protected override void build()
   {
     base.build();
 
-    timer = gameObject.AddComponent<Timer>();
-    timer.timeout += spawnTimeout;
+    //timer = gameObject.AddComponent<Timer>();
+    //timer.timeout += spawnTimeout;
   }
 
   public override void restart()
   {
     base.restart();
-    timer.setupAndStart(data.timer);
+    //timer.setupAndStart(data.timer);
     //Debug.Log(name + " restart");
 
-    //clean
-    while(obstacles.Count > 0)
+    //clean obstacles
+    while (obstacles.Count > 0)
     {
       GameObject.DestroyImmediate(obstacles[0].gameObject);
       obstacles.RemoveAt(0);
     }
+
+    nextLane();
+  }
+  
+  protected void nextLane()
+  {
+    timer = 0f;
+
+    obstacleIdx = 0;
+    patternIdx = 0;
+    
+    if(laneIdx > data.lanes.Length)
+    {
+      Debug.LogWarning("end of lanes patterns design");
+      Debug.LogWarning("selecting random lane (endless)");
+      lane = data.lanes[Random.Range(0, data.lanes.Length)].lane;
+    }
+    else
+    {
+      lane = data.lanes[laneIdx].lane;
+    }
+
+    Debug.Log("next lane : " + lane.name);
+
+    nextPattern();
+
+    laneIdx++;
   }
 
-  protected void spawnTimeout()
+  /* including current pattern speed */
+  public float getLaneSolvedSpeed()
   {
-    if (data.obstacles.Length <= 0) return;
+    return lane.laneSpeed * pattern.patternFactorSpeed;
+  }
+  
+  protected int getWinPatternCountOfLane(DataLane lane)
+  {
+    for (int i = 0; i < data.lanes.Length; i++)
+    {
+      if (data.lanes[i].lane == lane) return data.lanes[i].patternWinCount;
+    }
+    return 1;
+  }
 
-    Sprite spr = data.obstacles[Random.Range(0, data.obstacles.Length)];
+  protected void nextPattern()
+  {
+    timer = 0f;
+    obstacleIdx = 0;
+
+    if(patternIdx >= getWinPatternCountOfLane(lane))
+    {
+      nextLane();
+      return;
+    }
+
+    if (lane.randomNextPattern)
+    {
+      pattern = getRandomPattern();
+    }
+    else
+    {
+      if(patternIdx > lane.patterns.Length - 1)
+      {
+        Debug.LogWarning("asking for too many win pattern in a non random setup of lane !");
+        Debug.LogWarning("returning random pattern instead");
+        pattern = getRandomPattern();
+      }
+      else
+      {
+        pattern = lane.patterns[patternIdx];
+      }
+    }
+
+    Debug.Log("next pattern (win : "+patternIdx+") : " + pattern.name);
+    patternIdx++;
+  }
+
+  protected void nextObstacle()
+  {
+    spawn(pattern.obstacles[obstacleIdx]);
+    timer = 0f;
+
+    Debug.Log("obstacle : " + obstacleIdx);
+
+    obstacleIdx++;
+  }
+
+  protected DataLanePattern getRandomPattern()
+  {
+    return lane.patterns[Random.Range(0, lane.patterns.Length)];
+  }
+
+  protected Sprite getRandomObstacle()
+  {
+    return pattern.obstacles[Random.Range(0, pattern.obstacles.Length)];
+  }
+
+  protected void spawn(Sprite spr)
+  {
+    if (lane.patterns.Length <= 0) return;
+    
     GameObject obj = ResourceManager.getDuplicate(spr.name);
 
     if (obj == null)
@@ -47,10 +150,7 @@ abstract public class ArenaLane : ArenaObject {
       Debug.LogError("no object " + spr.name + " found in resources");
       return;
     }
-
-    //Debug.Log(spr.name);
-    //Debug.Log(obj, obj);
-
+    
     //obj.transform.SetParent(transform);
     obj.transform.position = transform.position;
 
@@ -58,13 +158,55 @@ abstract public class ArenaLane : ArenaObject {
     obs.setupOnLane(this);
     obstacles.Add(obs);
   }
-  
+
   public override void updateArena()
   {
     base.updateArena();
 
+    updateSpawnPosition();
+    updateObstacles();
+
+    //Debug.Log(timer);
+    
+    //end buffer
+    if(obstacleIdx >= pattern.obstacles.Length)
+    {
+      if(timer < lane.bufferEnd.bufferTime)
+      {
+        timer += Time.deltaTime;
+        if(timer > lane.bufferEnd.bufferTime)
+        {
+          //Debug.Log("buffer end !");
+          nextPattern();
+        }
+      }
+      return;
+    }
+
+    //between obstacles
+    if(timer < pattern.spawnTimer)
+    {
+      timer += Time.deltaTime;
+
+      //Debug.Log(timer + "/ " + pattern.spawnTimer);
+      if(timer >= pattern.spawnTimer)
+      {
+        //Debug.Log("spawned obs");
+        nextObstacle();
+      }
+    }
+  }
+
+  protected void update_timer_spawn() {
+    updateSpawnPosition();
+    updateObstacles();
+  }
+
+  protected void updateSpawnPosition()
+  {
+
     //make spawn offset based on a referencial
-    if(spawnOffsetReferencial != null)
+    if (spawnOffsetReferencial != null)
     {
       //Debug.Log(GameSpace.get().getWidth());
 
@@ -75,10 +217,15 @@ abstract public class ArenaLane : ArenaObject {
       transform.position = pos;
     }
 
+  }
+
+  protected void updateObstacles()
+  {
+
     int i = 0;
     while (i < obstacles.Count)
     {
-      
+
       //remove cleared
       if (obstacles[i] == null)
       {
@@ -158,12 +305,12 @@ abstract public class ArenaLane : ArenaObject {
 
   private void OnDrawGizmos()
   {
-    if (data == null) return;
+    if (lane == null) return;
 
     Color col = Color.green;
     col.a = 0.1f;
     Gizmos.color = col;
-    Gizmos.DrawCube(transform.position, new Vector3(100f, data.laneHeight, 1f));
+    Gizmos.DrawCube(transform.position, new Vector3(100f, lane.laneHeight, 1f));
   }
   
 }

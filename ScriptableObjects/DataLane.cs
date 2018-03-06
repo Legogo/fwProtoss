@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "dino/new DataLane", order = 100)]
+[CreateAssetMenu(menuName = "data/new DataLane", order = 100)]
 public class DataLane : ScriptableObject {
+  
+  public DataLanePattern[] patterns;
+
+  public bool randomNextPattern = false;
 
   public float laneHeight = 1f;
-  public Sprite[] obstacles;
-  public DataTimer timer;
+  public float laneSpeed = 1f;
 
-  public float laneFactorSpeed = 1f;
-
+  public DataLaneBuffer bufferEnd;
 }
