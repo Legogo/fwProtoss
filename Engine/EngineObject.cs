@@ -68,6 +68,8 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
 
   protected void buildVisibilty()
   {
+    //Debug.Log(name + " build visib");
+
     switch (visibilityMode)
     {
       case VisibilityMode.SPRITE: visibility = new HelperVisibleSprite(this);break;

@@ -17,12 +17,13 @@ public class HelperVisibleUi : HelperVisible
 
   protected override void fetchRenders()
   {
-    _render = _t.GetComponent<Image>();
-    if (_render == null) _render = _t.GetComponentInChildren<Image>();
+    _render = _t.GetComponent<MaskableGraphic>();
+    if (_render == null) _render = _t.GetComponentInChildren<MaskableGraphic>();
   }
 
   protected override Transform fetchCarrySymbol()
   {
+    if (_render == null) Debug.LogError("no render ?", _owner.gameObject);
     return _render.transform;
   }
 

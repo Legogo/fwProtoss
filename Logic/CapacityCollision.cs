@@ -69,6 +69,9 @@ public class CapacityCollision : LogicCapacity
 
   }
   
+
+
+
   /* called on moveStep of capacity movement */
   public Vector2 checkCollisionRaycasts(Vector2 step)
   {
