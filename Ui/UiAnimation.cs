@@ -13,27 +13,29 @@ using System;
 
 abstract public class UiAnimation : EngineObject
 {
-  protected Canvas ownerCanvas;
-  protected RectTransform owner;
+  protected Canvas canvas;
+  protected RectTransform rec;
 
-  public float animationLength = 1f;
   protected float animTimer = 0f;
-
-  public AnimationCurve curve;
   public Action onAnimationDone;
 
+  [Header("basic")]
+  public float animationLength = 1f;
+  public AnimationCurve curve = AnimationCurve.Linear(0f,0f,1f,1f);
+  
   protected override void build()
   {
     base.build();
-    owner = GetComponent<RectTransform>();
+    rec = GetComponent<RectTransform>();
     
-    ownerCanvas = GetComponent<Canvas>();
-    if (ownerCanvas == null) ownerCanvas = GetComponentInParent<Canvas>();
+    canvas = GetComponent<Canvas>();
+    if (canvas == null) canvas = GetComponentInParent<Canvas>();
+    if (canvas == null) canvas = GameObject.FindObjectOfType<Canvas>();
 
     setFreeze(true);
   }
 
-  public void play()
+  public UiAnimation play()
   {
     reset();
     setFreeze(false);
@@ -42,8 +44,10 @@ abstract public class UiAnimation : EngineObject
 
     animStart();
     //Debug.Log(name + " play !");
-  }
 
+    return this;
+  }
+  
   virtual public void reset()
   {
     animTimer = 0f;
@@ -53,19 +57,21 @@ abstract public class UiAnimation : EngineObject
   public override void updateEngine()
   {
     base.updateEngine();
-
+    
     if (isFreezed()) return;
 
     if(animTimer < animationLength)
     {
       animTimer += Time.deltaTime;
+      
       if(animTimer >= animationLength)
       {
         animTimer = animationLength;
+        animUpdate();
         animEnd();
+        return;
       }
     }
-    
 
     animUpdate();
   }
@@ -77,7 +83,7 @@ abstract public class UiAnimation : EngineObject
   }
 
   virtual protected void animStart() {
-    if (ownerCanvas != null) ownerCanvas.enabled = true;
+    if (canvas != null) canvas.enabled = true;
   }
 
   virtual protected void animUpdate()
@@ -92,7 +98,7 @@ abstract public class UiAnimation : EngineObject
   }
 
   virtual public void clean() {
-    if (ownerCanvas != null) ownerCanvas.enabled = false;
+    if (canvas != null) canvas.enabled = false;
   }
 
   static public void killAll()
@@ -102,5 +108,12 @@ abstract public class UiAnimation : EngineObject
     {
       anims[i].reset();
     }
+  }
+
+  public override string toString()
+  {
+    string ct = base.toString();
+    ct += "\ntimer : " + animTimer + " / " + animationLength;
+    return ct;
   }
 }

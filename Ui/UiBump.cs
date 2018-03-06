@@ -11,19 +11,19 @@ public class UiBump : UiAnimation {
   protected override void setup()
   {
     base.setup();
-    scaleBase = owner.localScale;
+    scaleBase = rec.localScale;
   }
 
   protected override void animStart()
   {
     base.animStart();
-    owner.localScale = scaleBase;
+    rec.localScale = scaleBase;
   }
 
   protected override void animUpdate()
   {
     base.animUpdate();
-    owner.localScale = Vector2.Lerp(scaleBase, scaleBase * bumpStr, getProgress());
+    rec.localScale = Vector2.Lerp(scaleBase, scaleBase * bumpStr, getProgress());
   }
 
   static public void callBump(GameObject obj) {

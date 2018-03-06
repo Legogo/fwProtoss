@@ -19,7 +19,14 @@ public class UiTextScale : UiAnimation {
 
     originalFontSize = txt.fontSize;
   }
+  
+  protected override void animUpdate()
+  {
+    base.animUpdate();
 
+    txt.fontSize = Mathf.FloorToInt(Mathf.Lerp(originalFontSize, fontSizeTarget, getProgress()));
+  }
+  
   override public void reset()
   {
     base.reset();
@@ -27,10 +34,4 @@ public class UiTextScale : UiAnimation {
     txt.fontSize = originalFontSize;
   }
 
-  protected override void animUpdate()
-  {
-    base.animUpdate();
-
-    txt.fontSize = Mathf.FloorToInt(Mathf.Lerp(originalFontSize, fontSizeTarget, getProgress()));
-  }
 }

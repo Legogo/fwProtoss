@@ -67,6 +67,9 @@ public class EngineLoader : MonoBehaviour
 
     Debug.Log("<color=gray>~EngineLoader~ engine scene is done loading</color>");
 
+    //NEEDED
+    EngineManager.create();
+
     ///// feeder, additionnal scenes (from feeder script)
     EngineLoaderFeeder feeder = EngineLoaderFeeder.get();
     List<string> all = new List<string>();
@@ -98,6 +101,14 @@ public class EngineLoader : MonoBehaviour
   
   void loadScene(string sceneLoad)
   {
+    //Debug.Log(SceneManager.sceneCountInBuildSettings);
+
+    if(SceneManager.sceneCountInBuildSettings <= 1)
+    {
+      Debug.LogWarning("could not launch loading of " + sceneLoad + " because build settings scenes is <b>empty</b>");
+      return;
+    }
+    
     //do not load the current active scene
     if (!isSceneOfName(sceneLoad))
     {

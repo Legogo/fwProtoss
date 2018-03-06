@@ -9,6 +9,17 @@ using System;
 /// </summary>
 
 public class EngineManager : MonoBehaviour {
+  
+  static public void create()
+  {
+    EngineManager em = GameObject.FindObjectOfType<EngineManager>();
+    if(em == null)
+    {
+      em = new GameObject("[engine]").AddComponent<EngineManager>();
+      Debug.LogWarning("engine manager wasn't loaded or is non existent. creating one");
+    }
+  }
+
   static public Dictionary<int, List<EngineObject>> eosLayers;
 
   static protected bool state_live = false;
