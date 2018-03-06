@@ -23,11 +23,11 @@ public class HelperVisibleUi : HelperVisible
   {
     _render = _t.GetComponent<MaskableGraphic>();
     if (_render == null) _render = _t.GetComponentInChildren<MaskableGraphic>();
-    if (_render == null) Debug.LogError("need render");
   }
 
   protected override Transform fetchCarrySymbol()
   {
+    if (_render == null) Debug.LogError("no render ?", _owner.gameObject);
     return _render.transform;
   }
 

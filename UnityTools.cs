@@ -8,6 +8,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// Lots of various tools to write things faster in unity
+/// Contributors : 
+///   André Berlemont @andreberlemont
+///   Romain Pechot @opotable
+/// </summary>
+
 #region ui
 
 static public class ToolsUi
@@ -159,13 +166,13 @@ static public class ToolsColor
 
 	}// parse()
 
-	/// <summary>
-	/// Retourne une Color avec le canal d'Alpha modifié.
-	/// </summary>
-	/// <param name="color">La Color cible.</param>
-	/// <param name="a">La valeur du canal Alpha [0,1]</param>
-	/// <returns></returns>
-	static public Color setAlpha(this Color color, float a = 1f)
+  /// <summary>
+  /// Retourne une Color avec le canal d'Alpha modifié.
+  /// </summary>
+  /// <param name="color">La Color cible.</param>
+  /// <param name="a">La valeur du canal Alpha [0,1]</param>
+  /// <returns>La Color avec le canal d'alpha modifié.</returns>
+  static public Color setAlpha(this Color color, float a = 1f)
 	{
 		color.a = a;
 

@@ -9,7 +9,7 @@ public class CameraFollow : EngineObject
   public Vector2 camera_speed_movement = Vector2.one;
   
   Camera followCamera;
-  Transform target;
+  public Transform target;
 
   protected float starting_zoom_level = 0f;
   public Vector3 offset = Vector3.zero;

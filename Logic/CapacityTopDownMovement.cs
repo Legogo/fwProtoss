@@ -14,10 +14,9 @@ public class CapacityTopDownMovement : CapacityMovement {
   
   protected float progressiveSpeed = 0f;
   protected float clampMagnitudeSpeed = 1f;
-
-  public bool lockPosition = false;
-  public bool concentrating = false;
   
+  public float moveSpeed = 1f;
+
   InputKeyTopDown _inputLocal;
 
   GameSpace _gameSpace;
@@ -26,6 +25,8 @@ public class CapacityTopDownMovement : CapacityMovement {
   {
     base.build();
     lastDirection = Vector2.right;
+
+    setup(0f, 1f);
   }
 
   public override void setupCapacity()
@@ -44,9 +45,7 @@ public class CapacityTopDownMovement : CapacityMovement {
   public override void updateLogic()
   {
     direction.x = direction.y = 0f;
-
-    lockPosition = Input.GetKey(KeyCode.LeftControl);
-
+    
     if (_inputLocal.pressing_up()) direction.y = 1f;
     else if (_inputLocal.pressing_down()) direction.y = -1f;
 
@@ -59,18 +58,14 @@ public class CapacityTopDownMovement : CapacityMovement {
     }
     else
     {
-      solvedDirection.x = Mathf.MoveTowards(solvedDirection.x, direction.x, Time.deltaTime * progressiveSpeed);
-      solvedDirection.y = Mathf.MoveTowards(solvedDirection.y, direction.y, Time.deltaTime * progressiveSpeed);
+      solvedDirection.x = Mathf.MoveTowards(solvedDirection.x, direction.x, progressiveSpeed);
+      solvedDirection.y = Mathf.MoveTowards(solvedDirection.y, direction.y, progressiveSpeed);
       solvedDirection = Vector2.ClampMagnitude(solvedDirection, clampMagnitudeSpeed);
     }
 
     if (direction.sqrMagnitude > 0f) lastDirection = direction;
-    
-    //move
-    if (!lockPosition)
-    {
-      _owner.transform.Translate(getDirection());
-    }
+
+    instantForce += solvedDirection * moveSpeed;
 
     //clamp in screen
     if (_gameSpace != null) _owner.forceWithinBounds(_gameSpace.offsetSpace);
