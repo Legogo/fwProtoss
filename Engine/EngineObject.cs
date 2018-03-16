@@ -57,6 +57,7 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
     {
       //Debug.Log(GetType() + " <b>" + name + "</b> engine is not loading, sending callback", gameObject);
       onEngineSceneLoaded();
+      onEngineSceneLoaded();
     }
   }
 

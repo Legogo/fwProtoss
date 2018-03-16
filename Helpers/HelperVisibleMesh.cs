@@ -144,6 +144,11 @@ public class HelperVisibleMesh : HelperVisible
     return dir;
   }
 
+  public override Bounds getSymbolBounds()
+  {
+    return _render.bounds;
+  }
+
 #if UNITY_EDITOR
   private void OnDrawGizmosSelected()
   {
@@ -160,10 +165,6 @@ public class HelperVisibleMesh : HelperVisible
 
   }
 
-  public override Bounds getSymbolBounds()
-  {
-    return _render.bounds;
-  }
 #endif
 
 }

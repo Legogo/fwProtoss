@@ -53,7 +53,7 @@ abstract public class ArenaLane : ArenaObject {
     obstacleIdx = 0;
     patternIdx = 0;
     
-    if(laneIdx > data.lanes.Length)
+    if(laneIdx > data.lanes.Length-1)
     {
       Debug.LogWarning("end of lanes patterns design");
       Debug.LogWarning("selecting random lane (endless)");
@@ -124,7 +124,7 @@ abstract public class ArenaLane : ArenaObject {
     spawn(pattern.obstacles[obstacleIdx]);
     timer = 0f;
 
-    Debug.Log("obstacle : " + obstacleIdx);
+    //Debug.Log("obstacle : " + obstacleIdx);
 
     obstacleIdx++;
   }
