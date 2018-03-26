@@ -6,8 +6,8 @@ using UnityEngine;
 
 abstract public class CapacityJump : LogicCapacity
 {
-  CapacityCollision _collision;
-  CapacityMovement _move;
+  protected CapacityCollision _collision;
+  protected CapacityMovement _move;
   
   public Action onJump;
 
@@ -46,8 +46,8 @@ abstract public class CapacityJump : LogicCapacity
     if (isGrounded)
     {
       _move.addVelocity(0f, getJumpPower());
-      
-      SoundManager.call("PlayerJump");
+
+      soundPlayJump();
     }
     
   }
@@ -55,5 +55,10 @@ abstract public class CapacityJump : LogicCapacity
   virtual public float getJumpPower()
   {
     return 1f;
+  }
+
+  virtual public void soundPlayJump()
+  {
+    SoundManager.call("PlayerJump");
   }
 }
