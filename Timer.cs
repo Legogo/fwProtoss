@@ -17,8 +17,8 @@ public class Timer : ArenaObject {
   public bool timeoutOnPlay = false;
 
   [Header("read only")]
-  public float timer = -1f;
-  public float timerTimeout = -1f;
+  public float timer = 0f;
+  public float timerTimeout = -1f; // -1 == pas de timeout
 
   protected DataTimer balancingTimer;
 

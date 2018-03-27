@@ -47,6 +47,7 @@ public class Chrono : Timer {
     if(txt_sec == null)
     {
       string output = "";
+
       if (addZeros && min < 10) output = "0" + min;
       else output = "" + min;
 

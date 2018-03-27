@@ -45,7 +45,11 @@ public class LogicItem : ArenaObject
   {
     base.updateEngine();
     //Debug.Log(GetType()+" , "+ name, gameObject);
-    for (int i = 0; i < capacities.Count; i++) capacities[i].updateLogic();
+    for (int i = 0; i < capacities.Count; i++)
+    {
+      if (capacities[i].isLocked()) continue;
+      capacities[i].updateLogic();
+    }
   }
 
   public override void updateEngineLate()

@@ -38,8 +38,9 @@ abstract public class LogicCapacity : EngineObject {
   virtual public void updateLogic() { }
   virtual public void updateLogicLate() { }
   
-  public void lockCapacity() { _lock = true; }
-  public void unlockCapacity() { _lock = true; }
+  public bool isLocked() { return _lock; }
+  public void lockCapacity() { _lock = true; Debug.Log(GetType() + " is now locked"); }
+  public void unlockCapacity() { _lock = false; Debug.Log(GetType() + " is now unlocked"); }
 
   public LogicItem getOwner() { return _owner; }
 }
