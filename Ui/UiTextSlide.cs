@@ -50,19 +50,17 @@ public class UiTextSlide : UiAnimation
     GameObject.DestroyImmediate(gameObject);
   }
 
-  public void callSlide(Vector3 position, string overrideText = "")
+  public void callSlide(Vector3 position, string[] overrideText = null)
   {
     rec.SetParent(GameObject.FindObjectOfType<Canvas>().transform);
     rec.position = Camera.main.WorldToScreenPoint(position);
 
-    if (overrideText.Length > 0)
+    if(overrideText != null && overrideText.Length > 0)
     {
-      txt.text = overrideText;
+      possibleText = overrideText;
     }
-    else
-    {
-      txt.text = possibleText[Random.Range(0, possibleText.Length)];
-    }
+
+    txt.text = possibleText[Random.Range(0, possibleText.Length)];
     
     //Debug.Log(origin.position);
 

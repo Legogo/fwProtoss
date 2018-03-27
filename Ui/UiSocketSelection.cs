@@ -18,9 +18,9 @@ public class UiSocketSelection : EngineObject {
 
   public void setupSocket(int idx)
   {
-    
-
     idx = Mathf.Clamp(idx, 0, sprites.Length-1);
+
+    ui.getImage().enabled = sprites[idx] != null;
     ui.setSprite(sprites[idx]);
   }
 
@@ -33,5 +33,10 @@ public class UiSocketSelection : EngineObject {
     size.x = img.sprite.rect.width;
     size.y = img.sprite.rect.height;
     img.rectTransform.sizeDelta = size;
+  }
+
+  public Sprite getCurrentSprite()
+  {
+    return img.sprite;
   }
 }
