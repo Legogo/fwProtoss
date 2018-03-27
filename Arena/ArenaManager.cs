@@ -76,9 +76,13 @@ abstract public class ArenaManager : EngineObject {
     {
       update_menu();
     }
-    else if(_state == ArenaState.LIVE || _state == ArenaState.END)
+    else if(_state == ArenaState.LIVE)
     {
       update_round();
+    }
+    else if(_state == ArenaState.END)
+    {
+      update_end();
     }
     
   }
@@ -102,6 +106,11 @@ abstract public class ArenaManager : EngineObject {
     {
       arenaObjects[i].updateArena();
     }
+
+  }
+
+  virtual protected void update_end()
+  {
 
   }
 
@@ -135,7 +144,7 @@ abstract public class ArenaManager : EngineObject {
   {
     //Debug.Log("~Arena~ event end");
 
-    _state = ArenaState.END;
+    setAtState(ArenaState.END);
 
     //send info to all arena objects
     ArenaObject[] aobjs = GameObject.FindObjectsOfType<ArenaObject>();
@@ -168,7 +177,7 @@ abstract public class ArenaManager : EngineObject {
 
   protected void setAtState(ArenaState st)
   {
-    Debug.Log("~Arena~ switched state to " + st.ToString());
+    Debug.Log("~Arena~ switched state to <b>" + st.ToString()+"</b>");
     _state = st;
   }
   protected ArenaState getState() { return _state; }
