@@ -49,8 +49,25 @@ public class CapacityInventory : LogicCapacity {
     return items.Count;
   }
 
+  public InventoryItem[] getItems(string filterUid = "")
+  {
+    if (filterUid.Length <= 0) return items.ToArray();
+
+    List<InventoryItem> output = new List<InventoryItem>();
+    for (int i = 0; i < items.Count; i++)
+    {
+      if (!items[i].isItem(filterUid)) output.Add(items[i]);
+    }
+    return output.ToArray();
+  }
+
   public InventoryItem getItem(int idx)
   {
+    if (idx < 0)
+    {
+      Debug.LogWarning("asking for item " + idx + " ?");
+      return null;
+    }
     if(items.Count > idx) return items[idx];
     return null;
   }
