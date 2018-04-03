@@ -67,13 +67,18 @@ public class CapacityInventory : LogicCapacity {
   public override string toString()
   {
     string ct = base.toString();
+    ct += "\n" + debug_display();
+    return ct;
+  }
 
+  public string debug_display(int selectionIdx = -1)
+  {
+    string ct = "\n logic : "+name;
     for (int i = 0; i < items.Count; i++)
     {
       MarketInventoryItem item = items[i] as MarketInventoryItem;
-      ct += "\n  " + item.symbol + " x " + item.getQuantity();
+      ct += "\n  "+ ((selectionIdx == i) ? ">" : " ") + item.symbol + " x " + item.getQuantity();
     }
-
     return ct;
   }
 }

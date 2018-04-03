@@ -13,7 +13,9 @@ abstract public class LogicCapacity : EngineObject {
   protected bool _lock;
   protected LogicItem _owner;
   protected CharacterLogic _character;
-  
+
+  public LogicCapacity[] lockDependencies;
+
   protected override void build()
   {
     base.build();
@@ -39,8 +41,37 @@ abstract public class LogicCapacity : EngineObject {
   virtual public void updateLogicLate() { }
   
   public bool isLocked() { return _lock; }
-  public void lockCapacity() { _lock = true; Debug.Log(GetType() + " is now locked"); }
-  public void unlockCapacity() { _lock = false; Debug.Log(GetType() + " is now unlocked"); }
+  public void lockCapacity(bool flag, bool onlyDependencies = false) {
+
+    if (onlyDependencies)
+    {
+      setupLockDependencies(flag);
+      return;
+    }
+    
+    // /w\ inf loop !
+    if (_lock != flag)
+    {
+      //Debug.Log("locking ? " + flag + " capacity : " + GetType()+" and "+lockDependencies.Length+" other dep");
+      _lock = flag;
+      setupLockDependencies(_lock);
+    }
+    
+  }
+
+  protected void setupLockDependencies(bool flag)
+  {
+    if (lockDependencies != null && lockDependencies.Length > 0)
+    {
+      //Debug.Log("also locking " + lockDependencies.Length + " other capacities");
+
+      for (int i = 0; i < lockDependencies.Length; i++)
+      {
+        lockDependencies[i].lockCapacity(flag);
+      }
+    }
+
+  }
 
   public LogicItem getOwner() { return _owner; }
 }
