@@ -93,8 +93,8 @@ public class CapacityInventory : LogicCapacity {
     string ct = "\n logic : "+name;
     for (int i = 0; i < items.Count; i++)
     {
-      MarketInventoryItem item = items[i] as MarketInventoryItem;
-      ct += "\n  "+ ((selectionIdx == i) ? ">" : " ") + item.symbol + " x " + item.getQuantity();
+      InventoryItem item = items[i];
+      ct += "\n  "+ ((selectionIdx == i) ? ">" : " ") + item.getId() + " x " + item.getQuantity();
     }
     return ct;
   }
