@@ -7,16 +7,13 @@ using Random = UnityEngine.Random;
 abstract public class ArenaLaneObstacle : ArenaObject {
 
   public float obstacleLaneSpeed = 1f;
-  protected float solvedSpeed = 1f;
   protected Collider2D[] _colliders;
   
   abstract public void fetchColliders();
 
-  virtual public void setupOnLane(ArenaLane lane)
+  virtual public void setupOnLane()
   {
     fetchColliders();
-
-    solvedSpeed = obstacleLaneSpeed * lane.getLaneSolvedSpeed();
     
     visibility.show();
   }
@@ -44,8 +41,6 @@ abstract public class ArenaLaneObstacle : ArenaObject {
     return null;
   }
   
-  public float getSpeed() { return solvedSpeed; }
-
   virtual public bool canBeCollidedWith()
   {
     return true;
@@ -58,4 +53,17 @@ abstract public class ArenaLaneObstacle : ArenaObject {
   }
 
   //abstract public void onTouched(ArenaObject other, Collider2D otherColliderTouched);
+
+  static public void cleanAllObstacles()
+  {
+    ArenaLaneObstacle[] obstacles = GameObject.FindObjectsOfType<ArenaLaneObstacle>();
+
+    //clean obstacles
+    while (obstacles.Length > 0)
+    {
+      GameObject.DestroyImmediate(obstacles[0].gameObject);
+      //obstacles.RemoveAt(0);
+    }
+      
+  }
 }

@@ -12,10 +12,6 @@ public class GameTime : MonoBehaviour {
   static GameTime _instance;
 
   void FixedUpdate() {
-
-    if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyUp(KeyCode.M)) addScale(1f); // change time scale
-    else if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyUp(KeyCode.L)) addScale(-1f); // change time scale
-    
     update();
   }
 
@@ -28,7 +24,26 @@ public class GameTime : MonoBehaviour {
 
   static public void update()
   {
+    update_debug();
+
     deltaTime = Time.deltaTime * scale;
     elapsedTime += deltaTime;
+  }
+
+  static protected void update_debug()
+  {
+
+    if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyUp(KeyCode.M)) addScale(1f); // change time scale
+    else if (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyUp(KeyCode.L)) addScale(-1f); // change time scale
+
+    if (Input.GetMouseButton(1))
+    {
+      scale = 5f;
+    }
+    else
+    {
+      scale = 1f;
+    }
+
   }
 }
