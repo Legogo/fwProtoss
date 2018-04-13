@@ -5,8 +5,7 @@ using System;
 using Random = UnityEngine.Random;
 
 abstract public class ArenaLaneObstacle : ArenaObject {
-
-  public float obstacleLaneSpeed = 1f;
+  
   protected Collider2D[] _colliders;
   
   abstract public void fetchColliders();
@@ -14,7 +13,6 @@ abstract public class ArenaLaneObstacle : ArenaObject {
   virtual public void setupOnLane()
   {
     fetchColliders();
-    
     visibility.show();
   }
   

@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// only works for 2D orthographics game
+/// </summary>
+
 public class GameSpace : MonoBehaviour {
   
   [Header("setup")]
@@ -45,12 +49,18 @@ public class GameSpace : MonoBehaviour {
       Debug.LogWarning("no main camera");
       return;
     }
-    
+
+    Camera c = Camera.main;
+
     if (matchScreen)
     {
-      screenBotLeft = Camera.main.ScreenToWorldPoint(Vector2.zero);
-      //screenTopRight = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, Screen.height));
-      screenTopRight = Camera.main.ScreenToWorldPoint(new Vector2(Camera.main.pixelWidth, Camera.main.pixelHeight));
+      if (c.orthographic)
+      {
+        screenBotLeft = Camera.main.ScreenToWorldPoint(Vector2.zero);
+        //screenTopRight = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, Screen.height));
+        screenTopRight = Camera.main.ScreenToWorldPoint(new Vector2(Camera.main.pixelWidth, Camera.main.pixelHeight));
+      }
+      
     }
     else {
 
