@@ -9,9 +9,9 @@ using UnityEditor;
 [CreateAssetMenu(menuName = "data/new DataSettings", order = 100)]
 public class DataSettings : ScriptableObject
 {
-  public string compagny_name = "playwing";
-  public string product_name = "Snake Smash";
-  public string package_name = "com.playwing.snakesmash";
+  public string compagny_name = "*";
+  public string product_name = "*";
+  public string package_name = "com.*.*";
   
   #if UNITY_EDITOR
   public UIOrientation orientation_default = UIOrientation.Portrait;

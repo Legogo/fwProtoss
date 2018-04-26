@@ -123,7 +123,7 @@ public class CapacityInventory : LogicCapacity {
     for (int i = 0; i < items.Count; i++)
     {
       InventoryItem item = items[i];
-      ct += "\n  "+ ((selectionIdx == i) ? ">" : " ") + MarketInventoryItem.getSprite(item.getId()).name + " x " + item.getQuantity();
+      ct += "\n  "+ ((selectionIdx == i) ? ">" : " ") + item.getId() + " x " + item.getQuantity();
     }
     return ct;
   }
