@@ -21,14 +21,17 @@ public class InputObject : MonoBehaviour {
   public Action<InputTouchFinger, RaycastHit2D> cbReleaseOver;
   public Action<InputTouchFinger> cbOver;
   
-  void Awake()
+  virtual protected void Awake()
   {
     InputTouchBridge.get();
 
     _inputLayerAtStart = gameObject.layer == LayerMask.NameToLayer("input");
 
     //_colliders = ToolsComponent.fetchComponents<BoxCollider>(transform);
-    _colliders = transform.GetComponentsInChildren<Collider2D>();
+    List<Collider2D> list = new List<Collider2D>();
+    list.AddRange(transform.GetComponents<Collider2D>());
+    list.AddRange(transform.GetComponentsInChildren<Collider2D>());
+    _colliders = list.ToArray();
     //if(_colliders.Length <= 0) Debug.LogWarning(name + " , colliders count = " + _colliders.Length);
   }
 
@@ -157,10 +160,7 @@ public class InputObject : MonoBehaviour {
   {
     eventOnTouch(finger);
   }
-
-
-
-  #region to override by children
+  
 
   virtual protected void onTouch(InputTouchFinger finger) {
     //Debug.Log(name + " onTouch");Debug.Log(cbTouch);
@@ -183,10 +183,7 @@ public class InputObject : MonoBehaviour {
     //Debug.Log(name + " release over");
     if (cbReleaseOver != null) cbReleaseOver(finger, hit);
   }
-
-  #endregion
-
-
+  
 
 
   protected RaycastHit2D? getLocalMatchingColliderWithFinger(InputTouchFinger finger) {
