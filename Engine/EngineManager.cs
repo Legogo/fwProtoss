@@ -165,10 +165,12 @@ public class EngineManager : MonoBehaviour {
       {
         for (int i = 0; i < layer.Value.Count; i++)
         {
+          if (!layer.Value[i].enabled || !layer.Value[i].gameObject.activeSelf) continue;
           layer.Value[i].updateEngine();
         }
         for (int i = 0; i < layer.Value.Count; i++)
         {
+          if (!layer.Value[i].enabled || !layer.Value[i].gameObject.activeSelf) continue;
           layer.Value[i].updateEngineLate();
         }
       }
