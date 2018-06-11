@@ -174,6 +174,8 @@ public class InputTouchBridge : MonoBehaviour
       // Find the difference in the distances between each frame.
       deltaPinch = prevTouchDeltaMag - touchDeltaMag;
     }
+    else
+      deltaPinch = 0f;
   }
   
   public bool hasTouchedCollider(Collider[] list) {
