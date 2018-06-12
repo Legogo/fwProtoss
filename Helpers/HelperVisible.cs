@@ -59,7 +59,7 @@ abstract public class HelperVisible
   {
     Color col = getColor();
     col.a = newAlpha;
-    setColor(col);
+    swapColor(col);
   }
   
   virtual public float getAlpha()
