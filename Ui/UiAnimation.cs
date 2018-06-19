@@ -6,9 +6,19 @@ using System;
 
 /// <summary>
 /// 2017-10-30
+/// 
 /// Base class manage progress and call updateUiAnimation during animation progress
 /// getProgress() returns evaluated (curve) percentage of animation progress
 /// owner var is RectTransform of carry
+/// 
+/// must setup : animationLength
+/// 
+/// play, reset
+/// animStart
+/// animUpdate
+/// animEnd
+/// clean
+/// 
 /// </summary>
 
 abstract public class UiAnimation : EngineObject

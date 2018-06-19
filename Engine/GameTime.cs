@@ -24,7 +24,7 @@ public class GameTime : MonoBehaviour {
 
   static public void update()
   {
-    update_debug();
+    //update_debug();
 
     deltaTime = Time.deltaTime * scale;
     elapsedTime += deltaTime;

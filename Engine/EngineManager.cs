@@ -91,34 +91,38 @@ public class EngineManager : MonoBehaviour {
 
     List<EngineObject> list;
     int idx = 0;
-
+    
     //setupEarly()
-    for (int i = 0; i < eosLayers.Count; i++)
+    if(eosLayers != null)
     {
-      list = eosLayers[i];
-
-      //while --> might add objects to layer list during loop
-      
-      idx = 0;
-      while (idx < list.Count)
+      for (int i = 0; i < eosLayers.Count; i++)
       {
-        list[idx].onEngineSceneLoaded();
-        idx++;
+        list = eosLayers[i];
+
+        //while --> might add objects to layer list during loop
+
+        idx = 0;
+        while (idx < list.Count)
+        {
+          list[idx].onEngineSceneLoaded();
+          idx++;
+        }
       }
-    }
-
-    yield return null;
-
-    //setup()
-    for (int i = 0; i < eosLayers.Count; i++)
-    {
-      list = eosLayers[i];
       
-      idx = 0;
-      while (idx < list.Count)
+      //yield return null;
+
+      //setup()
+      for (int i = 0; i < eosLayers.Count; i++)
       {
-        list[idx].onEngineSceneLoaded();
-        idx++;
+        list = eosLayers[i];
+      
+        idx = 0;
+        while (idx < list.Count)
+        {
+          list[idx].onEngineSceneLoaded();
+          idx++;
+        }
+
       }
 
     }
@@ -155,18 +159,23 @@ public class EngineManager : MonoBehaviour {
     
     //update everything
     
-    foreach(KeyValuePair<int, List<EngineObject>> layer in eosLayers)
+    if(eosLayers != null)
     {
-      for (int i = 0; i < layer.Value.Count; i++)
+      foreach (KeyValuePair<int, List<EngineObject>> layer in eosLayers)
       {
-        layer.Value[i].updateEngine();
-      }
-      for (int i = 0; i < layer.Value.Count; i++)
-      {
-        layer.Value[i].updateEngineLate();
+        for (int i = 0; i < layer.Value.Count; i++)
+        {
+          if (!layer.Value[i].enabled || !layer.Value[i].gameObject.activeSelf) continue;
+          layer.Value[i].updateEngine();
+        }
+        for (int i = 0; i < layer.Value.Count; i++)
+        {
+          if (!layer.Value[i].enabled || !layer.Value[i].gameObject.activeSelf) continue;
+          layer.Value[i].updateEngineLate();
+        }
       }
     }
-    
+
   }
 
   private void FixedUpdate()

@@ -88,7 +88,9 @@ public class CapacityCollision : LogicCapacity
     //destinationBounds.y += transform.position.y;
 
     resetCollisionInfo();
-    
+
+    boxCollider.enabled = false;
+
     if(step.y != 0f)
     {
       if (step.y < 0f) checkRaycastVertical(step, Mathf.Abs(step.y), Vector2.down);
@@ -99,7 +101,9 @@ public class CapacityCollision : LogicCapacity
       if (step.x < 0f) checkRaycastHorizontal(step, Mathf.Abs(step.x), Vector2.left);
       if (step.x > 0f) checkRaycastHorizontal(step, Mathf.Abs(step.x), Vector2.right);
     }
-    
+
+    boxCollider.enabled = true;
+
     //return recBound.center;
     return recBound.center - boxCollider.offset;
   }

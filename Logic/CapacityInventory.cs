@@ -1,10 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class CapacityInventory : LogicCapacity {
   
   List<InventoryItem> items = new List<InventoryItem>();
+
+  public Action<InventoryItem> onItemAdded;
+
+  [Serializable]
+  public class ItemStartupData
+  {
+    public string uid;
+    public int qty;
+  }
+
+  public ItemStartupData[] startup_items;
 
   protected override void setup()
   {
@@ -19,7 +31,11 @@ public class CapacityInventory : LogicCapacity {
       }
       items.Clear();
     }
-    
+
+    for (int i = 0; i < startup_items.Length; i++)
+    {
+      addItem(startup_items[i].uid, startup_items[i].qty);
+    }
   }
 
   public bool hasSome(string uid)
@@ -32,14 +48,27 @@ public class CapacityInventory : LogicCapacity {
     return false;
   }
 
+  public InventoryItem addItem(string uid, int qty = 1)
+  {
+    InventoryItem ii = getItem(uid);
+    if (ii == null) {
+      ii = new InventoryItem(uid);
+      ii.setQuantity(qty);
+      addItem(ii);
+    }
+    return ii;
+  }
+  
   public InventoryItem addItem(InventoryItem newItem)
   {
     InventoryItem ii = getItem(newItem.getId());
-    if(ii == null) items.Add(newItem);
-    else
+    if (ii == null)
     {
-      ii.add(newItem.getQuantity() - ii.getQuantity());
+      items.Add(newItem);
+      if (onItemAdded != null) onItemAdded(ii);
     }
+
+    ii.setQuantity(newItem.getQuantity());
 
     return ii;
   }
