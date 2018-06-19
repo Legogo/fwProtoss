@@ -11,7 +11,7 @@ public class GameTime : MonoBehaviour {
 
   static GameTime _instance;
 
-  void FixedUpdate() {
+  void Update() {
     update();
   }
 
