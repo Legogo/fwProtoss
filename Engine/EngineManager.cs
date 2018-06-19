@@ -20,7 +20,7 @@ public class EngineManager : MonoBehaviour {
     }
   }
 
-  static public Dictionary<int, List<EngineObject>> eosLayers;
+  static public SortedDictionary<int, List<EngineObject>> eosLayers;
 
   static protected bool state_live = false;
   static protected bool state_loading = true;
@@ -61,13 +61,14 @@ public class EngineManager : MonoBehaviour {
 
   static public void subscribe(EngineObject obj)
   {
-    if (eosLayers == null) eosLayers = new Dictionary<int, List<EngineObject>>();
+    if (eosLayers == null) eosLayers = new SortedDictionary<int, List<EngineObject>>();
 
     if (!eosLayers.ContainsKey(obj.engineLayer)) eosLayers.Add(obj.engineLayer, new List<EngineObject>());
     eosLayers[obj.engineLayer].Add(obj);
 
     //Debug.Log(obj.name + " added to eos on layer "+obj.engineLayer);
   }
+  
   static public void unsubscribe(EngineObject obj)
   {
     if (eosLayers == null) return;
@@ -143,6 +144,8 @@ public class EngineManager : MonoBehaviour {
 
   void Update()
   {
+    GameTime.update();
+
     if (Input.GetKeyUp(KeyCode.P)) // pause
     {
       callPause(state_live);
@@ -177,12 +180,7 @@ public class EngineManager : MonoBehaviour {
     }
 
   }
-
-  private void FixedUpdate()
-  {
-    GameTime.update();
-  }
-
+  
   void processUpdateObjectsDebug(List<EngineObject> objects)
   {
     Debug.Log("UBER update (" + objects.Count+")");
