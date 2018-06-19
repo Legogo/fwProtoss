@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 /// <summary>
 /// mean to be a bridge with some visual representation of the parent
@@ -38,12 +39,8 @@ abstract public class HelperVisible
     updateBounds();
   }
 
-  abstract protected void fetchRenders();
-  abstract protected Transform fetchCarrySymbol();
-
   virtual public void updateBounds()
   {
-
     //use the collider to solve bounds
     if (_collider != null)
     {
@@ -67,9 +64,6 @@ abstract public class HelperVisible
     return getColor().a;
   }
   
-  abstract public Color getColor();
-  abstract protected void swapColor(Color col);
-
   public void setColor(Color col)
   {
     col.a = getAlpha();
@@ -79,8 +73,61 @@ abstract public class HelperVisible
   public void show() { setVisibility(true); }
   public void hide() { Debug.Log("hide " + _owner.name); setVisibility(false); }
 
+  /// <summary>
+  /// fade alpha toward given target value (using coroutine), callback returns target alpha on completion
+  /// </summary>
+  public void fadeByDuration(float targetAlpha, float duration, Action<float> onFadingDone = null, float? startingAlpha = null)
+  {
+    if (_owner == null)
+    {
+      Debug.LogWarning("can't fade, no owner given ?");
+      return;
+    }
+
+    _owner.StartCoroutine(processFading(targetAlpha, duration, onFadingDone, startingAlpha));
+  }
+
+  protected IEnumerator processFading(float target, float duration, Action<float> onFadingDone = null, float? startingAlpha = null)
+  {
+    float timer = 0f;
+    
+    if(startingAlpha != null)
+    {
+      setAlpha(startingAlpha.Value);
+    }
+    else
+    {
+      startingAlpha = getAlpha();
+    }
+
+    if(duration > 0f)
+    {
+      while (timer < duration)
+      {
+        timer += GameTime.deltaTime;
+
+        setAlpha(Mathf.InverseLerp(startingAlpha.Value, target, timer / duration));
+
+        yield return null;
+      }
+
+    }
+
+    if (onFadingDone != null) onFadingDone(target);
+  }
+
+  /* ABSTRACTS, specific case based on nature of visual element */
+
+  abstract protected void fetchRenders();
+  abstract protected Transform fetchCarrySymbol();
+
+  abstract public Color getColor();
+  abstract protected void swapColor(Color col);
+
   abstract protected void setVisibility(bool flag);
   abstract public bool isVisible();
+
+
 
   /* local bounds */
   public Rect getRect() { return _bounds; }

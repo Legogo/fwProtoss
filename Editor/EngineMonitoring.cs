@@ -23,7 +23,7 @@ public class EngineMonitoring : EditorWindow
       return;
     }
 
-    Dictionary<int, List<EngineObject>> layers = EngineManager.eosLayers;
+    SortedDictionary<int, List<EngineObject>> layers = EngineManager.eosLayers;
 
     for (int i = 0; i < layers.Count; i++)
     {
