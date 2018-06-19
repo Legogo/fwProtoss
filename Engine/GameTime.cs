@@ -8,7 +8,6 @@ static public class GameTime {
   static public float scale = 1f;
 
   static public float elapsedTime = 0f;
-  
   static public void addScale(float step)
   {
     scale += step;
