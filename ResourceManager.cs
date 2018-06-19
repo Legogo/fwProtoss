@@ -17,17 +17,25 @@ public class ResourceManager {
     //kill all unused
     for (int i = 0; i < gos.Length; i++)
     {
-      if (gos[i].name.StartsWith("~")) GameObject.DestroyImmediate(gos[i].gameObject);
-      else resources.Add(gos[i]);
+      //you might need to have a guide canvas to work on UI visuals
+      //instaed of removing it (default behavior with guides objects) we just deactivate it
+      Canvas cv = gos[i].GetComponentInParent<Canvas>();
+
+      if(cv != null && cv.name.StartsWith("~")) cv.enabled = false; // kill canvas guide of resource object
+
+      if (gos[i].name.StartsWith("~")) GameObject.DestroyImmediate(gos[i].gameObject); // guides objects
+      else resources.Add(gos[i]); // normal resource object
+
     }
 
-    Debug.Log("~ResMa~ <b>" + resources.Count + " resource(s)</b> loaded");
+    string debugContent = "~ResMa~ <b>" + resources.Count + " resource(s)</b> loaded ("+gos.Length+" initially found)";
     for (int i = 0; i < resources.Count; i++)
     {
-      //Debug.Log("    - " + resources[i].name, resources[i].gameObject);
+      debugContent += "\n    - " + resources[i].name;
       resources[i].gameObject.SetActive(false);
     }
-    
+
+    if (debugContent.Length > 0) Debug.Log(debugContent);
   }
   
   /// <summary>
@@ -42,6 +50,9 @@ public class ResourceManager {
     return null;
   }
 
+  /// <summary>
+  /// will create a duplicate of resource element of given name, remove parent if parent is canvas. Object is deactivated by default !
+  /// </summary>
   static public T getDuplicate<T>(string nm, string rename = "") where T : Component
   {
     GameObject obj = getDuplicate(nm, rename);

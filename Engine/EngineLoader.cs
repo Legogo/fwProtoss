@@ -75,7 +75,9 @@ public class EngineLoader : MonoBehaviour
     List<string> all = new List<string>();
     if (feeder != null) all.AddRange(feeder.feed());
 
-    Debug.Log("~EngineLoader~ loading <b>"+all.Count+" scenes</b>");
+    string debugContent = "~EngineLoader~ now loading <b>" + all.Count + " scenes</b> ... ";
+    for (int i = 0; i < all.Count; i++) debugContent += "\n  " + all[i];
+    Debug.Log(debugContent);
 
     ///// now wait for feeder scenes to load
     for (int i = 0; i < all.Count; i++) loadScene(all[i]);
@@ -92,7 +94,7 @@ public class EngineLoader : MonoBehaviour
 
   void doneLoading() {
 
-    //Debug.Log("onLoadingDone");
+    Debug.Log("~EngineLoader~ ... done loading!");
 
     if (onLoadingDone != null) onLoadingDone();
     
