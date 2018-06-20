@@ -113,7 +113,7 @@ public class HelperVisibleMesh : HelperVisible
     
   }
   
-  public void updateLabelText(string content)
+  public void setTextMeshLabel(string content)
   {
     if (_label != null) _label.text = content;
   }

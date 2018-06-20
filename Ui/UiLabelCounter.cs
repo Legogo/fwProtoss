@@ -94,8 +94,8 @@ public class UiLabelCounter : ArenaObject {
     if (scoreBolded) ct += "<b>" + score + "</b>";
     else ct += score;
 
-    if (textMesh != null) textMesh.updateLabelText(ct);
-    if (textUi != null) textUi.updateLabelText(ct);
+    if (textMesh != null) textMesh.setTextMeshLabel(ct);
+    if (textUi != null) textUi.setTextLabel(ct);
   }
 
   public void addToCount(float step)

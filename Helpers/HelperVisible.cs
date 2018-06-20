@@ -71,7 +71,7 @@ abstract public class HelperVisible
   }
   
   public void show() { setVisibility(true); }
-  public void hide() { Debug.Log("hide " + _owner.name); setVisibility(false); }
+  public void hide() { setVisibility(false); }
 
   /// <summary>
   /// fade alpha toward given target value (using coroutine), callback returns target alpha on completion

@@ -44,8 +44,7 @@ public class HelperVisibleUi : HelperVisible
     if (_label != null) _render = _label;
   }
 
-  public void updateLabelText(string content)
-  {
+  public void setTextLabel(string content) {
     if (_label != null) _label.text = content;
   }
 

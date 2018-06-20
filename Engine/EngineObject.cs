@@ -82,7 +82,10 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
     }
   }
 
-  protected void subscribeToInput(string carryName, Action<InputTouchFinger> touch, Action<InputTouchFinger> release = null) {
+  /// <summary>
+  /// subscribe touch() & release() callbacks to <InputObject>, carryName can be empty to use/create attached <InputObject>
+  /// </summary>
+  protected void subscribeToInput(Action<InputTouchFinger> touch, Action<InputTouchFinger> release = null, string carryName = "") {
     if(carryName.Length > 0)
     {
       GameObject carry = GameObject.Find(carryName);
@@ -91,17 +94,17 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
         InputObject io = carry.GetComponent<InputObject>();
         if (io != null)
         {
-          subscribeToInput(touch, release, io);
+          subscribeToInput(io, touch, release);
           return;
         }
       }
     }
 
     Debug.LogWarning("asking for inputobject carry " + carryName + " but couldn't find it");
-    subscribeToInput(touch, release, null);
+    subscribeToInput(null, touch, release);
   }
 
-  protected void subscribeToInput(Action<InputTouchFinger> touch, Action<InputTouchFinger> release = null, InputObject io = null)
+  private void subscribeToInput(InputObject io, Action<InputTouchFinger> touch, Action<InputTouchFinger> release)
   {
     if (io != null) {
       inputObject = io;

@@ -19,13 +19,13 @@ public class VersionManager : MonoBehaviour
 {
 
   [RuntimeInitializeOnLoadMethod]
-  static protected void logVersion()
+  static public void logVersion()
   {
     //https://docs.unity3d.com/Manual/StyledText.html
     Debug.Log("<color=teal>v" + getFormatedVersion() + "</color>");
   }
 
-  static private string getFormatedVersion(int[] data = null)
+  static public string getFormatedVersion(int[] data = null)
   {
     if (data == null) data = getVersion();
     return data[0] + "." + data[1] + "." + data[2];
@@ -55,7 +55,6 @@ public class VersionManager : MonoBehaviour
 
 
 #if UNITY_EDITOR
-
 
   [MenuItem("Version/log current")]
   static protected void menuLogVersion()
@@ -110,7 +109,7 @@ public class VersionManager : MonoBehaviour
 
     apply(v);
   }
-
+  
   static private void apply(int[] data)
   {
     PlayerSettings.Android.bundleVersionCode++;
