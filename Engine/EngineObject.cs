@@ -98,9 +98,10 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
           return;
         }
       }
+
+      Debug.LogWarning("asking for inputobject carry " + carryName + " but couldn't find it");
     }
 
-    Debug.LogWarning("asking for inputobject carry " + carryName + " but couldn't find it");
     subscribeToInput(null, touch, release);
   }
 
