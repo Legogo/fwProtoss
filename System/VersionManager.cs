@@ -17,8 +17,8 @@ using UnityEditor;
 
 public class VersionManager : MonoBehaviour
 {
-#if UNITY_EDITOR
-    [RuntimeInitializeOnLoadMethod]
+
+  [RuntimeInitializeOnLoadMethod]
   static protected void logVersion()
   {
     //https://docs.unity3d.com/Manual/StyledText.html
@@ -33,8 +33,16 @@ public class VersionManager : MonoBehaviour
 
   static private int[] getVersion()
   {
-    //Debug.Log(PlayerSettings.bundleVersion);
-    string[] split = PlayerSettings.bundleVersion.Split('.');
+
+    string v = "";
+#if UNITY_EDITOR
+    //v = PlayerSettings.bundleVersion;
+    v = Application.version;
+#else
+    v = Application.version;
+#endif
+
+    string[] split = v.Split('.');
     int[] output = new int[split.Length];
     for (int i = 0; i < split.Length; i++)
     {
@@ -45,6 +53,8 @@ public class VersionManager : MonoBehaviour
   }
 
 
+
+#if UNITY_EDITOR
 
 
   [MenuItem("Version/log current")]
@@ -113,4 +123,4 @@ public class VersionManager : MonoBehaviour
 
 #endif
 
-}
+  }
