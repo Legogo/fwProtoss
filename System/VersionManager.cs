@@ -19,11 +19,38 @@ public class VersionManager : MonoBehaviour
 {
 
   [RuntimeInitializeOnLoadMethod]
-  [MenuItem("Version/log current")]
   static protected void logVersion()
   {
     //https://docs.unity3d.com/Manual/StyledText.html
     Debug.Log("<color=teal>v" + getFormatedVersion() + "</color>");
+  }
+
+  static private string getFormatedVersion(int[] data = null)
+  {
+    if (data == null) data = getVersion();
+    return data[0] + "." + data[1] + "." + data[2];
+  }
+
+  static private int[] getVersion()
+  {
+    //Debug.Log(PlayerSettings.bundleVersion);
+    string[] split = PlayerSettings.bundleVersion.Split('.');
+    int[] output = new int[split.Length];
+    for (int i = 0; i < split.Length; i++)
+    {
+      output[i] = int.Parse(split[i]);
+    }
+    return output;
+    //return new int[] { int.Parse(split[0]), int.Parse(split[1]), int.Parse(split[2]) };
+  }
+
+
+#if UNITY_EDITOR
+
+  [MenuItem("Version/log current")]
+  static protected void menuLogVersion()
+  {
+    logVersion();
   }
 
   [MenuItem("Version/Increment X.minor.build")]
@@ -84,22 +111,6 @@ public class VersionManager : MonoBehaviour
     logVersion();
   }
 
-  static private string getFormatedVersion(int[] data = null)
-  {
-    if (data == null) data = getVersion();
-    return data[0] + "." + data[1] + "." + data[2];
-  }
+#endif
 
-  static private int[] getVersion()
-  {
-    //Debug.Log(PlayerSettings.bundleVersion);
-    string[] split = PlayerSettings.bundleVersion.Split('.');
-    int[] output = new int[split.Length];
-    for (int i = 0; i < split.Length; i++)
-    {
-      output[i] = int.Parse(split[i]);
-    }
-    return output;
-    //return new int[] { int.Parse(split[0]), int.Parse(split[1]), int.Parse(split[2]) };
-  }
 }
