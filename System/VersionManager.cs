@@ -17,8 +17,8 @@ using UnityEditor;
 
 public class VersionManager : MonoBehaviour
 {
-
-  [RuntimeInitializeOnLoadMethod]
+#if UNITY_EDITOR
+    [RuntimeInitializeOnLoadMethod]
   static protected void logVersion()
   {
     //https://docs.unity3d.com/Manual/StyledText.html
@@ -45,7 +45,7 @@ public class VersionManager : MonoBehaviour
   }
 
 
-#if UNITY_EDITOR
+
 
   [MenuItem("Version/log current")]
   static protected void menuLogVersion()
