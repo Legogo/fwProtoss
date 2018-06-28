@@ -44,7 +44,10 @@ public class InputTouchBridge : MonoBehaviour
 			_fingers.Add(new InputTouchFinger());
 		}
 
-	}
+#if UNITY_EDITOR
+    if (drawDebug) Debug.LogWarning("debug drawing for " + GetType() + " is active");
+#endif
+  }
 	
 	public void reset(){
     deltaPinch = 0f;
