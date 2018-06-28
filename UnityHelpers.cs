@@ -2,8 +2,39 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-static public class UnityHelpers {
-  
+public class qh
+{
+  static public T gc<T>() where T : UnityEngine.Object
+  {
+    return GameObject.FindObjectOfType<T>();
+  }
+
+  static public T dupl<T>(GameObject refObject) where T : UnityEngine.Object
+  {
+    return GameObject.Instantiate(refObject).GetComponent<T>();
+  }
+}
+
+public class UnityHelpers {
+
+  /// <summary> Converts given bitmask to layer number </summary>
+  /// <returns> layer number </returns>
+  public static int ToLayer(int bitmask)
+  {
+    int result = bitmask > 0 ? 0 : 31;
+    while (bitmask > 1)
+    {
+      bitmask = bitmask >> 1;
+      result++;
+    }
+    return result;
+  }
+
+  static public bool isInLayerMask(GameObject obj, LayerMask layerMask)
+  {
+    return ((layerMask.value & (1 << obj.layer)) > 0);
+  }
+
   static public Collider2D[] getColliders2D(Transform parent)
   {
     List<Collider2D> tmp = new List<Collider2D>();
