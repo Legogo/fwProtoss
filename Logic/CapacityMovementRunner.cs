@@ -14,9 +14,9 @@ public class CapacityMovementRunner : CapacityMovement
     if (useGravity) subscribeToGravity();
   }
 
-  public override void updateLogic()
+  public override void updateCapacity()
   {
-    base.updateLogic();
+    base.updateCapacity();
 
     addInstant(forwardMovingSpeed, 0f);
   }

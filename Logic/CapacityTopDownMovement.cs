@@ -42,7 +42,7 @@ public class CapacityTopDownMovement : CapacityMovement {
     return this;
   }
   
-  public override void updateLogic()
+  public override void updateCapacity()
   {
     direction.x = direction.y = 0f;
     

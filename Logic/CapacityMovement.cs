@@ -42,11 +42,14 @@ abstract public class CapacityMovement : LogicCapacity {
   {
     base.setupCapacity();
 
+    //Debug.Log(GetType() + " , " + name + " setup capacity");
+
     if (useGravity) subscribeToGravity();
   }
 
   virtual protected void subscribeToGravity()
   {
+    Debug.Log(name+" subscribe to gravity");
     forces.Add(new ForceConstant("gravity", Vector2.down));
   }
 
@@ -66,8 +69,8 @@ abstract public class CapacityMovement : LogicCapacity {
     velocityForce.y += y;
   }
 
-  public override void updateLogic(){
-    base.updateLogic();
+  public override void updateCapacity(){
+    base.updateCapacity();
 
     int i = 0;
     int safe = 100;
@@ -91,9 +94,9 @@ abstract public class CapacityMovement : LogicCapacity {
     velocityForce.x = Mathf.MoveTowards(velocityForce.x, 0f, horizontalFrixion);
   }
 
-  public override void updateLogicLate()
+  public override void updateCapacityLate()
   {
-    base.updateLogicLate();
+    base.updateCapacityLate();
 
     //Debug.Log(Time.frameCount+" , now solving movement for " + name, gameObject);
 
@@ -116,9 +119,11 @@ abstract public class CapacityMovement : LogicCapacity {
 
     instantForce += velocityForce;
 
-    Vector3 position = transform.position;
+    clampInstantForce();
+    
+    Vector3 position = transform.position; // save position before moving
 
-    moveStep(instantForce * Time.fixedDeltaTime);
+    moveStep(instantForce * GameTime.deltaTime);
 
     lastFullMovement = transform.position - position;
 
@@ -144,6 +149,11 @@ abstract public class CapacityMovement : LogicCapacity {
     }
 
     //Debug.Log(Time.frameCount + " end of movestep");
+  }
+
+  virtual protected void clampInstantForce()
+  {
+    //...
   }
 
   public void killHorizontalSpeed()

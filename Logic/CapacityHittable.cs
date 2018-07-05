@@ -25,7 +25,7 @@ abstract public class CapacityHittable : LogicCapacity
     _hp = _owner.GetComponent<CapacityHitpoints>();
   }
 
-  public override void updateLogic()
+  public override void updateCapacity()
   {
     
     // transform.localScale = new Vector3(1f, hitTimer > 0f ? 0.5f : 1f);

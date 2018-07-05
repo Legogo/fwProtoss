@@ -22,7 +22,7 @@ public class CharacterLogic : LogicItem {
   
   private Transform _spawnReference;
 
-  protected CapacityHitpoints _hp;
+  protected CapacityHitpoints _hitPoints;
 
   protected string overrideNameAnimation = "";
   
@@ -47,7 +47,7 @@ public class CharacterLogic : LogicItem {
 
     _anim = gameObject.GetComponentInChildren<Animator>();
     
-    _hp = gameObject.GetComponent<CapacityHitpoints>();
+    _hitPoints = gameObject.GetComponent<CapacityHitpoints>();
   }
 
   virtual public void setupBalancing(){}
@@ -116,7 +116,7 @@ public class CharacterLogic : LogicItem {
 
   virtual public void Respawn(Transform spawn = null)
   {
-    if (_hp != null) _hp.setupCapacity();
+    if (_hitPoints != null) _hitPoints.setupCapacity();
 
     if(_move != null) _move.clean();
     
@@ -130,7 +130,7 @@ public class CharacterLogic : LogicItem {
     show();
   }
 
-  public float getHp() { if (_hp == null) return 1f; return _hp.getHealth(); }
+  public float getHp() { if (_hitPoints == null) return 1f; return _hitPoints.getHealth(); }
 
   public void show()
   {

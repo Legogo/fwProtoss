@@ -14,8 +14,7 @@ public class ScreenObject : EngineObject
   {
     base.build();
 
-    setup(); //specific case
-
+    _canvas = transform.GetComponentsInChildren<Canvas>();
     if (_canvas == null) Debug.LogError("no canvas ?");
 
     //if (_canvas == null) Debug.LogError("wat ?");
@@ -28,7 +27,7 @@ public class ScreenObject : EngineObject
   {
     base.setup();
 
-    _canvas = transform.GetComponentsInChildren<Canvas>();
+    
     _arena = ArenaManager.get();
 
     //Debug.Log(name + " --> " + _canvas);
@@ -39,13 +38,18 @@ public class ScreenObject : EngineObject
     
   }
 
-  public override void updateEngineLate()
+  public override void updateEngine()
   {
-    base.updateEngineLate();
-    
-    update_input_keyboard();
+    base.updateEngine();
+
+    if (isVisible()) updateVisible();
   }
 
+  virtual protected void updateVisible()
+  {
+    update_input_keyboard();
+  }
+  
   protected void update_input_keyboard()
   {
     if (Input.GetKeyUp(KeyCode.UpArrow)) keyboard_up();
@@ -105,7 +109,7 @@ public class ScreenObject : EngineObject
   [ContextMenu("show")]
   virtual public void show()
   {
-    Debug.Log("~Screen~ show() <b>"+name + "</b>");
+    Debug.Log("~Screen~ <color=green>show()</color> <b>"+name + "</b>");
 
     //if(ScreensManager.get() != null) ScreensManager.get().killAll();
 
@@ -117,6 +121,8 @@ public class ScreenObject : EngineObject
   virtual public void hide()
   {
     if (sticky) return;
+
+    Debug.Log("~Screen~ <color=red>hide()</color> <b>" + name + "</b>");
 
     forceHide();
   }

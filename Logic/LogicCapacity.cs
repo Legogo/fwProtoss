@@ -37,8 +37,8 @@ abstract public class LogicCapacity : EngineObject {
   /* explain how the module resets */
   virtual public void clean(){ }
 
-  virtual public void updateLogic() { }
-  virtual public void updateLogicLate() { }
+  virtual public void updateCapacity() { }
+  virtual public void updateCapacityLate() { }
   
   public bool isLocked() { return _lock; }
   public void lockCapacity(bool flag, bool onlyDependencies = false) {

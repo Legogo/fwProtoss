@@ -14,11 +14,17 @@ public class LogicItem : ArenaObject
   [HideInInspector]
   public CapacityInput input;
 
+  protected override void setupEarly()
+  {
+    base.setupEarly();
+    input = GetComponent<CapacityInput>();
+  }
+
   protected override void setup()
   {
     base.setup();
 
-    input = GetComponent<CapacityInput>();
+    //Debug.Log(GetType() + " , " + name + " , setup");
 
     setupCapacities();
   }
@@ -32,6 +38,7 @@ public class LogicItem : ArenaObject
   /* after scenes load */
   protected void setupCapacities()
   {
+    //Debug.Log(GetType() + " , "+ name+" , setup capacs !");
     for (int i = 0; i < capacities.Count; i++) capacities[i].earlySetupCapacity();
     for (int i = 0; i < capacities.Count; i++) capacities[i].setupCapacity();
   }
@@ -44,18 +51,20 @@ public class LogicItem : ArenaObject
   public override void updateEngine()
   {
     base.updateEngine();
+    
     //Debug.Log(GetType()+" , "+ name, gameObject);
+
     for (int i = 0; i < capacities.Count; i++)
     {
       if (capacities[i].isLocked()) continue;
-      capacities[i].updateLogic();
+      capacities[i].updateCapacity();
     }
   }
 
   public override void updateEngineLate()
   {
     base.updateEngineLate();
-    for (int i = 0; i < capacities.Count; i++) capacities[i].updateLogicLate();
+    for (int i = 0; i < capacities.Count; i++) capacities[i].updateCapacityLate();
   }
 
   public void subscribeCapacity(LogicCapacity capa)

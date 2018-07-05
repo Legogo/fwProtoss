@@ -27,6 +27,7 @@ abstract public class ArenaManager : EngineObject {
   /* this is default behavior, it needs to be overrided if need to delay startup of arena */
   virtual protected void onLoadingFinished()
   {
+    Debug.Log("~ArenaManager~ loading is finished, calling restart_normal() <- this should be overriten by context");
     restart_normal();
   }
 

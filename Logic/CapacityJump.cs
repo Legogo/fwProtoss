@@ -26,9 +26,9 @@ abstract public class CapacityJump : LogicCapacity
     solveJump();
   }
 
-  public override void updateLogic()
+  public override void updateCapacity()
   {
-    base.updateLogic();
+    base.updateCapacity();
 
     if(pressJump()) solveJump();
   }

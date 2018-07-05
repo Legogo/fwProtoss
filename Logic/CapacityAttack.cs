@@ -71,9 +71,9 @@ abstract public class CapacityAttack : LogicCapacity
     _otherHittables = tmp.ToArray();
   }
   
-  public override void updateLogic()
+  public override void updateCapacity()
   {
-    base.updateLogic();
+    base.updateCapacity();
 
     if (debug_autoHit)
     {
