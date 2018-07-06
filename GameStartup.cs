@@ -31,10 +31,10 @@ public class GameStartup : EngineObject {
 #if UNITY_EDITOR
     if (HiddenGameManager.get().settings.skip_home_menu)
     {
-      Debug.Log("skip home menu");
+      //Debug.Log("skip home menu");
 
       ScreenObject activeScreen = ScreensManager.get().getOpenedScreen();
-      Debug.Log(activeScreen.name);
+      //Debug.Log(activeScreen.name);
 
       if(activeScreen as ScreenMenuHome)
       {

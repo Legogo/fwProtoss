@@ -64,9 +64,9 @@ public class CharacterLogic : LogicItem {
     overrideNameAnimation = "";
   }
 
-  public override void updateEngine()
+  protected override void updateArenaLive(float timeStamp)
   {
-    base.updateEngine();
+    base.updateArenaLive(timeStamp);
 
     update_animation();
 

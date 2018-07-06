@@ -48,12 +48,9 @@ public class LogicItem : ArenaObject
     for (int i = 0; i < capacities.Count; i++) capacities[i].clean();
   }
 
-  public override void updateEngine()
+  protected override void updateArenaLive(float timeStamp)
   {
-    base.updateEngine();
-    
-    //Debug.Log(GetType()+" , "+ name, gameObject);
-
+    base.updateArenaLive(timeStamp);
     for (int i = 0; i < capacities.Count; i++)
     {
       if (capacities[i].isLocked()) continue;
@@ -61,10 +58,14 @@ public class LogicItem : ArenaObject
     }
   }
 
-  public override void updateEngineLate()
+  protected override void updateArenaLiveLate(float timeStamp)
   {
-    base.updateEngineLate();
-    for (int i = 0; i < capacities.Count; i++) capacities[i].updateCapacityLate();
+    base.updateArenaLiveLate(timeStamp);
+    for (int i = 0; i < capacities.Count; i++)
+    {
+      if (capacities[i].isLocked()) continue;
+      capacities[i].updateCapacityLate();
+    }
   }
 
   public void subscribeCapacity(LogicCapacity capa)

@@ -123,6 +123,9 @@ abstract public class CapacityMovement : LogicCapacity {
     
     Vector3 position = transform.position; // save position before moving
 
+    //Debug.Log(Time.time);
+
+    //MOVEMENT
     moveStep(instantForce * GameTime.deltaTime);
 
     lastFullMovement = transform.position - position;
