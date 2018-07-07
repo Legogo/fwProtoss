@@ -38,6 +38,15 @@ abstract public class CapacityMovement : LogicCapacity {
     _collision = _owner.GetComponent<CapacityCollision>();
   }
 
+  public override void restartCapacity()
+  {
+    base.restartCapacity();
+
+    killHorizontalSpeed();
+    killVerticalSpeed();
+    killInstantSpeed();
+  }
+
   public override void setupCapacity()
   {
     base.setupCapacity();
