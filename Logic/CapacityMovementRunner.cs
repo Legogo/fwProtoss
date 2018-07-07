@@ -18,7 +18,7 @@ public class CapacityMovementRunner : CapacityMovement
   {
     base.updateCapacity();
 
-    addInstant(forwardMovingSpeed, 0f);
+    addInstant(forwardMovingSpeed, 0f); // use joystick to move horizontaly
   }
 
   public override string toString()

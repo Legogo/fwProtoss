@@ -116,6 +116,9 @@ public class EngineManager : MonoBehaviour {
         for (int i = 0; i < layer.Value.Count; i++)
         {
           if (!layer.Value[i].enabled || !layer.Value[i].gameObject.activeSelf) continue;
+
+          //Debug.Log("updating " + layer.Value[i].name);
+
           layer.Value[i].updateEngine();
         }
         for (int i = 0; i < layer.Value.Count; i++)

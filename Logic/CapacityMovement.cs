@@ -11,8 +11,9 @@ abstract public class CapacityMovement : LogicCapacity {
   protected Vector2 lastStep; // previous frame step
   protected Vector2 lastFullMovement; // debug
 
-  protected Vector2 instantForce;
-  protected Vector2 velocityForce;
+  protected Vector2 solvedVelocity;
+  protected Vector2 additionnalVelocity; // remit a 0 a la fin de la frame
+  protected Vector2 velocity;
   
   public CapacityPropertyLocker lockHorizontal;
   public CapacityPropertyLocker lockGravity;
@@ -50,34 +51,44 @@ abstract public class CapacityMovement : LogicCapacity {
   virtual protected void subscribeToGravity()
   {
     Debug.Log(name+" subscribe to gravity");
-    forces.Add(new ForceConstant("gravity", Vector2.down));
+    addForce(new ForceConstant("gravity", Vector2.down));
   }
 
   public void addForce(ForceBase force) { forces.Add(force); }
 
-  public void addInstant(Vector2 stepForce){ addInstant(stepForce.x, stepForce.y);}
+  //public void addInstant(Vector2 stepForce){ addInstant(stepForce.x, stepForce.y);}
   public void addInstant(float x, float y)
   {
-    instantForce.x += x;
-    instantForce.y += y;
+    additionnalVelocity.x += x;
+    additionnalVelocity.y += y;
   }
   
-  public void addVelocity(Vector2 force){velocityForce += force;}
+  //public void addVelocity(Vector2 force){velocity += force;}
   public void addVelocity(float x, float y)
   {
-    velocityForce.x += x;
-    velocityForce.y += y;
+    velocity.x += x;
+    velocity.y += y;
+
+    //Debug.Log(" added " + y + " to velocity.y = " + velocity.y);
   }
 
   public override void updateCapacity(){
     base.updateCapacity();
+
+    Vector2 forceToAdd;
 
     int i = 0;
     int safe = 100;
     while(i < forces.Count && safe > 0)
     {
       forces[i].update(); // compute force step
-      velocityForce += forces[i].getValue(); // inject value
+
+      // inject value
+      forceToAdd = forces[i].getValue() * Time.deltaTime;
+
+      //Debug.Log("  adding force " + forceToAdd.x + " , " + forceToAdd.y);
+      velocity += forceToAdd;
+      
       if (forces[i].needToBeRemoved())
       {
         //Debug.Log("remove " + forces[i].Name);
@@ -90,8 +101,10 @@ abstract public class CapacityMovement : LogicCapacity {
 
     if (safe <= 0) Debug.LogError("safe !");
 
+    //Debug.Log(velocity.y);
+
     //default horizontal frixion
-    velocityForce.x = Mathf.MoveTowards(velocityForce.x, 0f, horizontalFrixion);
+    velocity.x = Mathf.MoveTowards(velocity.x, 0f, horizontalFrixion * Time.deltaTime);
   }
 
   public override void updateCapacityLate()
@@ -111,32 +124,40 @@ abstract public class CapacityMovement : LogicCapacity {
       {
         killInstantSpeed();
       }
-      else if (Mathf.Sign(instantForce.x) == lockDirection.Value) // specific direction
+      else if (Mathf.Sign(additionnalVelocity.x) == lockDirection.Value) // specific direction
       {
-        instantForce.x = 0f;
+        additionnalVelocity.x = 0f;
       }
     }
 
-    instantForce += velocityForce;
+    solvedVelocity = additionnalVelocity + velocity;
 
-    clampInstantForce();
+    //clampSolvedVelocity();
     
     Vector3 position = transform.position; // save position before moving
 
     //Debug.Log(Time.time);
 
     //MOVEMENT
-    moveStep(instantForce * GameTime.deltaTime);
+    //instantForce *= GameTime.deltaTime;
+
+    //Debug.Log(name+" , "+Time.frameCount+" , "+instantForce+" ("+GameTime.deltaTime+")");
+    //Debug.Log(GameTime.deltaTime);
+    //Application.targetFrameRate = 60;
+
+    //Debug.Log(Time.frameCount + " , velocity | x : " + solvedVelocity.x+" y : "+solvedVelocity.y);
+
+    moveStep(solvedVelocity * Time.deltaTime);
 
     lastFullMovement = transform.position - position;
 
-    lastStep = instantForce;
+    lastStep = additionnalVelocity;
 
     //direction
-    if (instantForce.x != 0f) lastDirection.x = Mathf.Sign(instantForce.x);
-    if (instantForce.y != 0f) lastDirection.y = Mathf.Sign(instantForce.y);
+    if (additionnalVelocity.x != 0f) lastDirection.x = Mathf.Sign(additionnalVelocity.x);
+    if (additionnalVelocity.y != 0f) lastDirection.y = Mathf.Sign(additionnalVelocity.y);
     
-    instantForce.x = instantForce.y = 0f;
+    additionnalVelocity.x = additionnalVelocity.y = 0f;
     
     /*
     Debug.Log(Time.frameCount + " end of movement for " + name, gameObject);
@@ -154,30 +175,30 @@ abstract public class CapacityMovement : LogicCapacity {
     //Debug.Log(Time.frameCount + " end of movestep");
   }
 
-  virtual protected void clampInstantForce()
+  virtual protected void clampSolvedVelocity()
   {
     //...
   }
 
   public void killHorizontalSpeed()
   {
-    instantForce.x = velocityForce.x = 0f;
+    additionnalVelocity.x = velocity.x = 0f;
   }
   public void killVerticalSpeed()
   {
     //Debug.Log(Time.frameCount+" kill vertical");
-    instantForce.y = velocityForce.y = 0f;
+    additionnalVelocity.y = velocity.y = 0f;
   }
   public void killInstantSpeed()
   {
-    instantForce = Vector2.zero;
+    additionnalVelocity = Vector2.zero;
   }
 
   public bool isGoingUp() { return lastDirection.y > 0f; }
   public bool isFalling() { return lastDirection.y < 0f; }
   public float getVerticalSpeed() { return lastFullMovement.y; }
   public float getHorizontalSpeed() { return lastFullMovement.x; }
-  public float getHorizontalVelocity() { return velocityForce.x; }
+  public float getHorizontalVelocity() { return velocity.x; }
 
   protected void moveStep(Vector2 step)
   {
@@ -216,7 +237,7 @@ abstract public class CapacityMovement : LogicCapacity {
   {
     Vector2 diff = (position - transform.position);
     Vector2 speedVector = diff.normalized * speed;
-    instantForce += speedVector;
+    additionnalVelocity += speedVector;
     return speedVector;
   }
   
@@ -283,8 +304,8 @@ abstract public class CapacityMovement : LogicCapacity {
     ct += "\n" + iStringFormatBool("lock horizontal", lockHorizontal.isLocked());
 
     ct += "\n~solved step data~";
-    ct += "\n └ velocity : " + velocityForce.x + " x " + velocityForce.y;
-    ct += "\n └ instant : " + instantForce.x + " x " + instantForce.y;
+    ct += "\n └ velocity : " + velocity.x + " x " + velocity.y;
+    ct += "\n └ instant : " + additionnalVelocity.x + " x " + additionnalVelocity.y;
     ct += "\n └ instant : " + lastStep.x + " x " + lastStep.y;
     ct += "\n └ last direction : " + lastDirection.x + " x " + lastDirection.y;
 

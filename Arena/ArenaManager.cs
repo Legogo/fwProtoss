@@ -73,6 +73,8 @@ abstract public class ArenaManager : EngineObject {
 
     //Debug.Log("update arena " + _state);
 
+    //Debug.Log(GetType() + " , update engine");
+
     if (_state == ArenaState.MENU)
     {
       update_menu();
