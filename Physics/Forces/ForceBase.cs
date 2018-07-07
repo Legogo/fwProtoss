@@ -8,15 +8,15 @@ public abstract class ForceBase
   protected GameObject _owner;
   protected CapacityMovement _movement;
 
-  protected bool _instant = false; // only one frame
+  protected bool _once = false; // only one frame
   protected bool _applied = false; // already applied ? (one frame)
 
   protected Vector2 _force = Vector2.zero;
 
-  protected ForceBase(string name, bool instant)
+  protected ForceBase(string name, bool appliedOnce)
   {
     _name = name;
-    _instant = instant;
+    _once = appliedOnce;
   }
 
   public void assignOwner(GameObject newOwner)
@@ -32,7 +32,7 @@ public abstract class ForceBase
 
   bool canApply()
   {
-    if (_instant && _applied) return false;
+    if (_once && _applied) return false;
     return true;
   }
 
@@ -44,7 +44,7 @@ public abstract class ForceBase
       return;
     }
 
-    if (_instant)
+    if (_once)
     {
       if (!_applied)
       {
@@ -63,6 +63,6 @@ public abstract class ForceBase
   
   virtual public bool needToBeRemoved()
   {
-    return _instant && _applied;
+    return _once && _applied;
   }
 }

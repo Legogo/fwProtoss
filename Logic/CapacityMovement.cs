@@ -17,8 +17,7 @@ abstract public class CapacityMovement : LogicCapacity {
   
   public CapacityPropertyLocker lockHorizontal;
   public CapacityPropertyLocker lockGravity;
-
-  protected float horizontalFrixion = 1f;
+  
   protected bool _moved;
   
   public bool useGravity = true;
@@ -102,9 +101,8 @@ abstract public class CapacityMovement : LogicCapacity {
     if (safe <= 0) Debug.LogError("safe !");
 
     //Debug.Log(velocity.y);
-
-    //default horizontal frixion
-    velocity.x = Mathf.MoveTowards(velocity.x, 0f, horizontalFrixion * Time.deltaTime);
+    
+    velocity.x = Mathf.MoveTowards(velocity.x, 0f, getHorizontalFrixion() * GameTime.deltaTime);
   }
 
   public override void updateCapacityLate()
@@ -178,6 +176,11 @@ abstract public class CapacityMovement : LogicCapacity {
   virtual protected void clampSolvedVelocity()
   {
     //...
+  }
+
+  virtual protected float getHorizontalFrixion()
+  {
+    return 1f;
   }
 
   public void killHorizontalSpeed()
