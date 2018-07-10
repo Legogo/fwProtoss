@@ -4,6 +4,7 @@ using UnityEngine;
 public abstract class ForceBase
 {
   private string _name;
+  private bool _isActive = true;
 
   protected GameObject _owner;
   protected CapacityMovement _movement;
@@ -17,6 +18,12 @@ public abstract class ForceBase
   {
     _name = name;
     _once = appliedOnce;
+  }
+
+  public bool IsActive
+  {
+    get { return _isActive; }
+    set { _isActive = value; }
   }
 
   public void assignOwner(GameObject newOwner)
@@ -56,7 +63,7 @@ public abstract class ForceBase
     compute();
   }
 
-  public Vector2 getValue() { return _force; }
+  public Vector2 getValue() { return IsActive ? _force : Vector2.zero; }
 
   /* descibe what to do when updating */
   abstract protected void compute();

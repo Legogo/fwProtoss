@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 abstract public class CapacityMovement : LogicCapacity {
@@ -30,7 +31,7 @@ abstract public class CapacityMovement : LogicCapacity {
   protected override void build()
   {
     base.build();
-
+    
     _t = transform;
     lockHorizontal = new CapacityPropertyLocker();
     lockGravity = new CapacityPropertyLocker();
@@ -60,6 +61,16 @@ abstract public class CapacityMovement : LogicCapacity {
   {
     Debug.Log(name+" subscribe to gravity");
     addForce(new ForceConstant("gravity", Vector2.down));
+  }
+
+  public void enableGravity()
+  {
+    forces.FirstOrDefault(x => x.Name == "gravity").IsActive = true;
+  }
+
+  public void disableGravity()
+  {
+    forces.FirstOrDefault(x => x.Name == "gravity").IsActive = false;
   }
 
   public void addForce(ForceBase force) { forces.Add(force); }
@@ -108,7 +119,6 @@ abstract public class CapacityMovement : LogicCapacity {
     }
 
     if (safe <= 0) Debug.LogError("safe !");
-
     //Debug.Log(velocity.y);
     
     velocity.x = Mathf.MoveTowards(velocity.x, 0f, getHorizontalFrixion() * GameTime.deltaTime);
