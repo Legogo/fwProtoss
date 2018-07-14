@@ -24,11 +24,11 @@ abstract public class ArenaManager : EngineObject {
     EngineManager.get().onLoadingDone += onLoadingFinished;
   }
 
-  /* this is default behavior, it needs to be overrided if need to delay startup of arena */
+  /* this is default behavior for arena manager, it needs to be overrided if need to delay startup of arena */
   virtual protected void onLoadingFinished()
   {
     Debug.Log("~ArenaManager~ loading is finished, calling restart_normal() <- this should be overriten by context");
-    (HiddenArenaManager.get() as HiddenArenaManager).restart_round();
+    restart_normal();
   }
 
   virtual public void restart_normal() {
