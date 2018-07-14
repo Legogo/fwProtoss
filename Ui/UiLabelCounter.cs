@@ -41,9 +41,9 @@ public class UiLabelCounter : ArenaObject {
     updateTextWithCount();
   }
 
-  public override void updateEngine()
+  protected override void updateArenaLive(float timeStamp)
   {
-    base.updateEngine();
+    base.updateArenaLive(timeStamp);
 
     if (progressiveScoring) updateCountTarget();
   }

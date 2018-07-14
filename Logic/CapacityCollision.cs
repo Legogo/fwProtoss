@@ -285,7 +285,7 @@ public class CapacityCollision : LogicCapacity
     }
     return true;
   }
-
+  
   public bool isGrounded()
   {
     return info.touching_ground;

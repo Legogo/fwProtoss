@@ -103,32 +103,24 @@ abstract public class ArenaObject : EngineObject {
     //Debug.Log(Time.time+" , "+name + " killed", gameObject);
   }
 
-  virtual public void updateMenu()
+  public sealed override void updateEngine()
   {
-
+    base.updateEngine();
+  }
+  
+  /// <summary>
+  /// called by arena manager
+  /// </summary>
+  public void updateArena()
+  {
+    if (_arena.isArenaStateLive()) updateArenaLive(_arena.getElapsedTime());
+    else if (_arena.isArenaStateEnd()) updateArenaEnd();
+    else updateArenaMenu();
   }
 
-  /* called by arena manager */
-  virtual public void updateArena()
+  public void updateArenaLate()
   {
-    //Debug.Log(name + " , active ? " + _active + " ,  freeze ? " + isFreezed());
-    if (isFreezed()) return;
-
-    //Debug.Log(_arena.isArenaStateLive());
-
-    if (_arena.isArenaStateLive())
-    {
-      updateArenaLive(_arena.getElapsedTime());
-    }
-    else if (_arena.isArenaStateEnd())
-    {
-      updateArenaEnd();
-    }
-    else
-    {
-      updateArenaMenu();
-    }
-    
+    if (_arena.isArenaStateLive()) updateArenaLiveLate(_arena.getElapsedTime());
   }
 
   virtual protected void updateArenaMenu()
@@ -141,10 +133,8 @@ abstract public class ArenaObject : EngineObject {
 
   }
 
-  virtual protected void updateArenaLive(float timeStamp)
-  {
-    //Debug.Log(name);
-  }
+  virtual protected void updateArenaLive(float timeStamp){}
+  virtual protected void updateArenaLiveLate(float timeStamp){}
 
   /* déclanche le process de collect quand l'objet touche l'avatar */
   protected void update_collectable()

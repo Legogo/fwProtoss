@@ -25,7 +25,7 @@ abstract public class CapacityAim : LogicCapacity
     //_inputAim = ci.keys.get<InputKeyAim>();
   }
   
-  public override void updateLogic() {
+  public override void updateCapacity() {
     _angle = getStickAngle();
     
     if (pressed_aim()) onAimPress();
@@ -78,6 +78,6 @@ abstract public class CapacityAim : LogicCapacity
     return angle;
   }
   
-  public override void updateLogicLate() { }
+  public override void updateCapacityLate() { }
   public override void clean(){}
 }

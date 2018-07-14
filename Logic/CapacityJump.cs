@@ -8,7 +8,10 @@ abstract public class CapacityJump : LogicCapacity
 {
   protected CapacityCollision _collision;
   protected CapacityMovement _move;
-  
+
+  bool grounded = false;
+  bool jumping = false;
+
   public Action onJump;
 
   public override void setupCapacity()
@@ -26,10 +29,18 @@ abstract public class CapacityJump : LogicCapacity
     solveJump();
   }
 
-  public override void updateLogic()
+  public override void updateCapacity()
   {
-    base.updateLogic();
+    base.updateCapacity();
 
+    grounded = _collision.isGrounded();
+
+    if (jumping && grounded)
+    {
+      //Debug.Log("-------------------------- <b>LAND</b> "+Time.frameCount);
+      jumping = false;
+    }
+    
     if(pressJump()) solveJump();
   }
 
@@ -45,6 +56,8 @@ abstract public class CapacityJump : LogicCapacity
 
     if (isGrounded)
     {
+      jumping = true;
+      //Debug.Log(" ------------------------ <b>JUMP</b> "+Time.frameCount);
       _move.addVelocity(0f, getJumpPower());
 
       soundPlayJump();

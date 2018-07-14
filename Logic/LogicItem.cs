@@ -14,11 +14,17 @@ public class LogicItem : ArenaObject
   [HideInInspector]
   public CapacityInput input;
 
+  protected override void setupEarly()
+  {
+    base.setupEarly();
+    input = GetComponent<CapacityInput>();
+  }
+
   protected override void setup()
   {
     base.setup();
 
-    input = GetComponent<CapacityInput>();
+    //Debug.Log(GetType() + " , " + name + " , setup");
 
     setupCapacities();
   }
@@ -32,6 +38,7 @@ public class LogicItem : ArenaObject
   /* after scenes load */
   protected void setupCapacities()
   {
+    //Debug.Log(GetType() + " , "+ name+" , setup capacs !");
     for (int i = 0; i < capacities.Count; i++) capacities[i].earlySetupCapacity();
     for (int i = 0; i < capacities.Count; i++) capacities[i].setupCapacity();
   }
@@ -41,21 +48,24 @@ public class LogicItem : ArenaObject
     for (int i = 0; i < capacities.Count; i++) capacities[i].clean();
   }
 
-  public override void updateEngine()
+  protected override void updateArenaLive(float timeStamp)
   {
-    base.updateEngine();
-    //Debug.Log(GetType()+" , "+ name, gameObject);
+    base.updateArenaLive(timeStamp);
     for (int i = 0; i < capacities.Count; i++)
     {
       if (capacities[i].isLocked()) continue;
-      capacities[i].updateLogic();
+      capacities[i].updateCapacity();
     }
   }
 
-  public override void updateEngineLate()
+  protected override void updateArenaLiveLate(float timeStamp)
   {
-    base.updateEngineLate();
-    for (int i = 0; i < capacities.Count; i++) capacities[i].updateLogicLate();
+    base.updateArenaLiveLate(timeStamp);
+    for (int i = 0; i < capacities.Count; i++)
+    {
+      if (capacities[i].isLocked()) continue;
+      capacities[i].updateCapacityLate();
+    }
   }
 
   public void subscribeCapacity(LogicCapacity capa)

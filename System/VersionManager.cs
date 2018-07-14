@@ -33,18 +33,28 @@ public class VersionManager : MonoBehaviour
 
   static private int[] getVersion()
   {
-
     string v = "";
-#if UNITY_EDITOR
-    //v = PlayerSettings.bundleVersion;
-    v = Application.version;
-#else
-    v = Application.version;
-#endif
 
-    string[] split = v.Split('.');
-    int[] output = new int[split.Length];
-    for (int i = 0; i < split.Length; i++)
+    v = Application.version;
+
+    if(v.Length < 1 || v.IndexOf(".") < 0)
+    {
+      v = "0.0.1";
+    }
+
+    List<string> split = new List<string>();
+    split.AddRange(v.Split('.'));
+    
+    //Debug.Log(split.Count);
+
+    if (split.Count < 1) split.Add("0");
+    if (split.Count < 2) split.Add("0");
+    if (split.Count < 3) split.Add("0");
+
+    //Debug.Log(split.Count);
+
+    int[] output = new int[split.Count];
+    for (int i = 0; i < split.Count; i++)
     {
       output[i] = int.Parse(split[i]);
     }

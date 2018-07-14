@@ -14,11 +14,11 @@ public class CapacityMovementRunner : CapacityMovement
     if (useGravity) subscribeToGravity();
   }
 
-  public override void updateLogic()
+  public override void updateCapacity()
   {
-    base.updateLogic();
+    base.updateCapacity();
 
-    addInstant(forwardMovingSpeed, 0f);
+    addInstant(forwardMovingSpeed, 0f); // use joystick to move horizontaly
   }
 
   public override string toString()

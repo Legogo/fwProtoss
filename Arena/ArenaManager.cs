@@ -27,7 +27,8 @@ abstract public class ArenaManager : EngineObject {
   /* this is default behavior, it needs to be overrided if need to delay startup of arena */
   virtual protected void onLoadingFinished()
   {
-    restart_normal();
+    Debug.Log("~ArenaManager~ loading is finished, calling restart_normal() <- this should be overriten by context");
+    (HiddenArenaManager.get() as HiddenArenaManager).restart_round();
   }
 
   virtual public void restart_normal() {
@@ -72,6 +73,8 @@ abstract public class ArenaManager : EngineObject {
 
     //Debug.Log("update arena " + _state);
 
+    //Debug.Log(GetType() + " , update engine");
+
     if (_state == ArenaState.MENU)
     {
       update_menu();
@@ -79,12 +82,18 @@ abstract public class ArenaManager : EngineObject {
     else if(_state == ArenaState.LIVE)
     {
       update_round();
+      update_round_late();
     }
     else if(_state == ArenaState.END)
     {
       update_end();
     }
     
+  }
+
+  virtual protected void update_menu()
+  {
+
   }
   
   protected void update_time()
@@ -104,22 +113,23 @@ abstract public class ArenaManager : EngineObject {
     //Debug.Log("update_round (" + arenaObjects.Count + ")");
     for (int i = 0; i < arenaObjects.Count; i++)
     {
+      if (arenaObjects[i].isFreezed()) continue;
       arenaObjects[i].updateArena();
     }
 
   }
 
-  virtual protected void update_end()
-  {
-
-  }
-
-  virtual protected void update_menu()
+  virtual protected void update_round_late()
   {
     for (int i = 0; i < arenaObjects.Count; i++)
     {
-      arenaObjects[i].updateMenu();
+      if (arenaObjects[i].isFreezed()) continue;
+      arenaObjects[i].updateArenaLate();
     }
+  }
+
+  virtual protected void update_end()
+  {
 
   }
 
@@ -204,10 +214,8 @@ abstract public class ArenaManager : EngineObject {
   {
     string ct = base.toString();
     ct += "\narena objects to update : " + arenaObjects.Count;
-    for (int i = 0; i < arenaObjects.Count; i++)
-    {
-      ct += "\n    └ ~" + arenaObjects[i].GetType() + "~ " + arenaObjects[i].name;
-    }
+    //for (int i = 0; i < arenaObjects.Count; i++) ct += "\n    └ ~" + arenaObjects[i].GetType() + "~ " + arenaObjects[i].name;
+
     ct += "\n  live freeze timer ? " + liveFreezeTimer;
     ct += "\n  real state : " + _state;
 

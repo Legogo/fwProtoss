@@ -24,7 +24,7 @@ abstract public class CapacityAnimation : LogicCapacity {
     _anim = gameObject.GetComponentsInChildren<Animator>().FirstOrDefault();
   }
 
-  public override void updateLogic()
+  public override void updateCapacity()
   {
     updateAnimation();
   }

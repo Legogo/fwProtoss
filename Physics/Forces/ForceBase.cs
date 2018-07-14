@@ -4,19 +4,26 @@ using UnityEngine;
 public abstract class ForceBase
 {
   private string _name;
+  private bool _isActive = true;
 
   protected GameObject _owner;
   protected CapacityMovement _movement;
 
-  protected bool _instant = false; // only one frame
+  protected bool _once = false; // only one frame
   protected bool _applied = false; // already applied ? (one frame)
 
   protected Vector2 _force = Vector2.zero;
 
-  protected ForceBase(string name, bool instant)
+  protected ForceBase(string name, bool appliedOnce)
   {
     _name = name;
-    _instant = instant;
+    _once = appliedOnce;
+  }
+
+  public bool IsActive
+  {
+    get { return _isActive; }
+    set { _isActive = value; }
   }
 
   public void assignOwner(GameObject newOwner)
@@ -32,7 +39,7 @@ public abstract class ForceBase
 
   bool canApply()
   {
-    if (_instant && _applied) return false;
+    if (_once && _applied) return false;
     return true;
   }
 
@@ -44,7 +51,7 @@ public abstract class ForceBase
       return;
     }
 
-    if (_instant)
+    if (_once)
     {
       if (!_applied)
       {
@@ -56,13 +63,13 @@ public abstract class ForceBase
     compute();
   }
 
-  public Vector2 getValue() { return _force; }
+  public Vector2 getValue() { return IsActive ? _force : Vector2.zero; }
 
   /* descibe what to do when updating */
   abstract protected void compute();
   
   virtual public bool needToBeRemoved()
   {
-    return _instant && _applied;
+    return _once && _applied;
   }
 }

@@ -11,7 +11,7 @@ abstract public class WeaponLogic : LogicItem {
   protected Collider2D[] _colliders;
   protected CharacterLogic _weaponOwner;
   protected CapacityAttack _attack;
-
+  
   protected override void build()
   {
     base.build();
@@ -24,9 +24,9 @@ abstract public class WeaponLogic : LogicItem {
     _weaponOwner = GetComponentInParent<CharacterLogic>();
     _attack = _weaponOwner.GetComponent<CapacityAttack>();
 
-    toggleCollider(false);
+    //toggleCollider(false);
   }
-  
+
   public bool isAttacking()
   {
     return _attack.isAttacking();
@@ -37,12 +37,9 @@ abstract public class WeaponLogic : LogicItem {
     return _colliders[0];
   }
   
-  protected void toggleCollider(bool flag)
+  public BoxCollider2D getMainCollider()
   {
-    for (int i = 0; i < _colliders.Length; i++)
-    {
-      _colliders[i].enabled = flag;
-    }
+    return (BoxCollider2D)_colliders[0];
   }
 
   /* helper to grab weapon */

@@ -6,8 +6,6 @@ using System;
 
 abstract public class CapacityAttack : LogicCapacity
 {
-  public BoxCollider2D attackCollider; // collider use for overlap comparison
-  
   protected WeaponLogic _weapon;
   
   protected Coroutine coProcessAttack;
@@ -38,14 +36,7 @@ abstract public class CapacityAttack : LogicCapacity
       return;
     }
 
-    attackCollider = _weapon.getDefaultCollider() as BoxCollider2D;
-    if(attackCollider == null)
-    {
-      Debug.LogError("no collider for weapon " + _weapon.name + " ?", gameObject);
-      return;
-    }
-
-    attackCollider.enabled = false;
+    //_weapon.toggleCollider(false);
 
     _hittable = _owner.GetComponent<CapacityHittable>();
     refreshHittables();
@@ -71,9 +62,9 @@ abstract public class CapacityAttack : LogicCapacity
     _otherHittables = tmp.ToArray();
   }
   
-  public override void updateLogic()
+  public override void updateCapacity()
   {
-    base.updateLogic();
+    base.updateCapacity();
 
     if (debug_autoHit)
     {
@@ -130,7 +121,8 @@ abstract public class CapacityAttack : LogicCapacity
 
     coProcessAttack = null;
     _attackTime = 0f;
-    attackCollider.enabled = false;
+
+    //_weapon.toggleCollider(false);
   }
 
   /* called each frame while attacking coroutine is running */
@@ -173,11 +165,11 @@ abstract public class CapacityAttack : LogicCapacity
   
   protected void doRecoil(Vector2 recoilPower)
   {
-    _move.addForce(new ForceInstant("recoil",
-      _move.getHorizontalDirection() * recoilPower.x, recoilPower.y));
-
+    //Debug.Log(name + " do recoil");
+    _move.addVelocity(-_move.getHorizontalDirection() * recoilPower.x, recoilPower.y);
     CancelAttack();
   }
+
   public WeaponLogic getWeapon() { return _weapon; }
   
   public bool isAttacking()
@@ -193,7 +185,7 @@ abstract public class CapacityAttack : LogicCapacity
   public bool Hittable()
   {
     if (getOwner().isFreezed()) return false;
-    return attackCollider.enabled;
+    return _weapon.getMainCollider().enabled;
   }
 
   public int getAttackDirection()

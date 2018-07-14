@@ -46,25 +46,26 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
     engineLayer = newLayer;
   }
 
-  void Start() {
+  IEnumerator Start() {
 
     //usually objects startup their dependencies in the onEngineSceneLoaded
     //so if the object as other monobehavior generated at the same time (same Resource object) engine needs a frame to have all dependencies finish their build() process
 
     //Debug.Log(GetType() + " <b>" + name + "</b> START", gameObject);
 
-    if (!EngineManager.isLoading())
-    {
-      //Debug.Log(GetType() + " <b>" + name + "</b> engine is not loading, sending callback", gameObject);
-      onEngineSceneLoaded();
-      onEngineSceneLoaded();
-    }
+    while (EngineManager.isLoading()) yield return null;
+    
+    onEngineSceneLoaded(); // setupEarly
+
+    //yield return null; // nope --> ce yield fait qu'il y a un premier update avant setup()
+
+    onEngineSceneLoaded(); // setup
   }
 
   virtual protected void build()
   {
     buildVisibilty();
-    EngineManager.subscribe(this);
+    EngineManager.subscribe(this); // to have updates functions working
   }
 
   protected void buildVisibilty()
@@ -124,7 +125,7 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
   //called by loader (twice for early and setup)
   public void onEngineSceneLoaded()
   {
-    //Debug.Log(GetType()+" , <b>"+name+ "</b> onEngineSceneLoaded", gameObject);
+    //Debug.Log(GetType()+" , <b>"+name+ "</b> <color=gray>onEngineSceneLoaded</color> , ready ? "+_ready, gameObject);
 
     if (!_ready)
     {
@@ -155,6 +156,7 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
 
   virtual public bool canUpdate()
   {
+    if (_ready) return false;
     if (isFreezed()) return false;
     return true;
   }

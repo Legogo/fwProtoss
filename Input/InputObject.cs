@@ -38,7 +38,7 @@ public class InputObject : MonoBehaviour {
   public void setupCollider(Collider2D[] newColliders) {
     _colliders = newColliders;
   }
-
+  
   virtual protected void Start()
   {
     
@@ -47,7 +47,11 @@ public class InputObject : MonoBehaviour {
     if (_input == null)
     {
       _input = InputTouchBridge.get();
-      if (_input == null) Debug.LogError("<EngineObject> no [input] in scene ??", gameObject);
+      if (_input == null)
+      {
+        Debug.LogWarning(name+" is trying to subscribe to input framework but no manager found in scene ??", gameObject);
+        return;
+      }
 
       //subscribe to manager
       _input.onTouch += eventOnTouch;

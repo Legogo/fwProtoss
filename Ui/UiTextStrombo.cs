@@ -12,12 +12,11 @@ public class UiTextStrombo : EngineObject {
 
   protected float frame = 0;
 
-  protected override void setup()
+  protected override void build()
   {
-    base.setup();
-    txt = GetComponent<Text>();
+    base.build();
 
-    //originColor = txt.color;
+    txt = GetComponent<Text>();
   }
 
   public override void updateEngine()

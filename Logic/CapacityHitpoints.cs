@@ -12,7 +12,7 @@ public class CapacityHitpoints : LogicCapacity {
   {
     health = startingHealth;
   }
-  public override void updateLogic()
+  public override void updateCapacity()
   {
   }
 

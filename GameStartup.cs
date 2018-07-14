@@ -9,26 +9,42 @@ using UnityEngine;
 
 public class GameStartup : EngineObject {
 
-  public string openingScreen = "home";
+  public string openingScreen;
   
+  /* this is called after eveything is done reacting to loading end */
   protected override void setup()
   {
     base.setup();
+    Debug.Log("~Startup~ starting ... opening screen : <b>" + openingScreen + "</b>");
 
-    //need to be after loading (because engine manager might be in a resource scene)
-    EngineManager em = EngineManager.get();
-    if (em == null) Debug.LogError("no engine manager ?");
-    else em.onLoadingDone += engineLoadingDone;
-
-    //show loading
-    ScreensManager.get().call("loading");
+    StopAllCoroutines();
+    StartCoroutine(processStartup());
   }
-  
-  /* this is called after eveything is done reacting to loading end */
-  protected void engineLoadingDone()
+
+  IEnumerator processStartup()
   {
-    Debug.Log("~Startup~ starting ... opening screen : <b>"+openingScreen+"</b>");
+    
     ScreensManager.get().call(openingScreen);
+
+    yield return null;
+
+#if UNITY_EDITOR
+    if (HiddenGameManager.get().settings.skip_home_menu)
+    {
+      //Debug.Log("skip home menu");
+
+      ScreenObject activeScreen = ScreensManager.get().getOpenedScreen();
+      //Debug.Log(activeScreen.name);
+
+      if(activeScreen as ScreenMenuHome)
+      {
+        Debug.LogWarning("~DEBUG~ <color=orange><b>skipping home screen</b></color> " + name, gameObject);
+        (activeScreen as ScreenMenuHome).skip();
+      }
+      
+    }
+#endif
+    
   }
   
 }

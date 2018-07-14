@@ -79,69 +79,16 @@ public class EngineManager : MonoBehaviour {
   public void engine_scenes_loaded()
   {
     ResourceManager.reload();
-
-    //Debug.Log("EngineManager, engine_scenes_loaded, calling all callbacks for end of loading");
-    StartCoroutine(processScenesLoaded());
-    //processScenesLoaded();
-  }
-
-  /* telle everybody present that all scenes are now loaded */
-  IEnumerator processScenesLoaded() {
-
-    //Debug.Log("~EngineManager~ <b>scenes loaded</b> | layer count ? " + eosLayers.Count);
-
-    List<EngineObject> list;
-    int idx = 0;
     
-    //setupEarly()
-    if(eosLayers != null)
-    {
-      for (int i = 0; i < eosLayers.Count; i++)
-      {
-        list = eosLayers[i];
-
-        //while --> might add objects to layer list during loop
-
-        idx = 0;
-        while (idx < list.Count)
-        {
-          list[idx].onEngineSceneLoaded();
-          idx++;
-        }
-      }
-      
-      //yield return null;
-
-      //setup()
-      for (int i = 0; i < eosLayers.Count; i++)
-      {
-        list = eosLayers[i];
-      
-        idx = 0;
-        while (idx < list.Count)
-        {
-          list[idx].onEngineSceneLoaded();
-          idx++;
-        }
-
-      }
-
-    }
-
-    //more objects added during loading
-    //if (count != list.Count) Debug.LogError("something changed");
-
     Debug.Log("~EngineManager~ <color=orange># SCENES LOADED #</color>");
-    
+
     state_loading = false;
     state_live = true;
     
-    yield return null;
-
     //broadcast
     if (onLoadingDone != null) onLoadingDone();
   }
-
+  
   void Update()
   {
     GameTime.update();
@@ -169,6 +116,9 @@ public class EngineManager : MonoBehaviour {
         for (int i = 0; i < layer.Value.Count; i++)
         {
           if (!layer.Value[i].enabled || !layer.Value[i].gameObject.activeSelf) continue;
+
+          //Debug.Log("updating " + layer.Value[i].name);
+
           layer.Value[i].updateEngine();
         }
         for (int i = 0; i < layer.Value.Count; i++)
