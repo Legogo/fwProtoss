@@ -1,6 +1,12 @@
 ﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using System;
+
+/// <summary>
+/// 2018-07-14
+///   now parent need to call the setup() for that behavior to subscribe to input manager
+/// </summary>
 
 public class InputObject : MonoBehaviour {
 
@@ -33,15 +39,25 @@ public class InputObject : MonoBehaviour {
     list.AddRange(transform.GetComponentsInChildren<Collider2D>());
     _colliders = list.ToArray();
     //if(_colliders.Length <= 0) Debug.LogWarning(name + " , colliders count = " + _colliders.Length);
+
+    //parent NEED to call setup()
+    //...
   }
 
+  IEnumerator Start()
+  {
+    while (InputTouchBridge.get() == null) yield return null;
+
+    setup();
+  }
+  
   public void setupCollider(Collider2D[] newColliders) {
     _colliders = newColliders;
   }
   
-  virtual protected void Start()
+  void setup()
   {
-    
+
     //input est dispo QUE après le loading de common
     //only once
     if (_input == null)
@@ -49,7 +65,7 @@ public class InputObject : MonoBehaviour {
       _input = InputTouchBridge.get();
       if (_input == null)
       {
-        Debug.LogWarning(name+" is trying to subscribe to input framework but no manager found in scene ??", gameObject);
+        Debug.LogWarning(name + " is trying to subscribe to input framework but no manager found in scene ??", gameObject);
         return;
       }
 
@@ -58,7 +74,7 @@ public class InputObject : MonoBehaviour {
       _input.onRelease += eventOnRelease;
       _input.onOverring += eventOnOverring;
     }
-
+    
   }
 
   virtual public void unlink() {

@@ -26,10 +26,28 @@ public class InputTouchBridge : MonoBehaviour
     //debugOverlays = GameObject.FindObjectsOfType<DebugWindowSettings>();
 
     if (_camera == null) {
+      //camera child of this manager
       _camera = transform.GetComponentInChildren<Camera>();
+
+      //camera tagged as 'input'
       if (_camera == null)
       {
-        Debug.LogWarning("{RainbowInputManager} input will use global camera");
+        Camera[] cams = GameObject.FindObjectsOfType<Camera>();
+        for (int i = 0; i < cams.Length; i++)
+        {
+          if (_camera != null) continue;
+          if(UnityHelpers.isInLayerMask(cams[i].gameObject, _layer))
+          {
+            _camera = cams[i];
+            Debug.LogWarning("{InputTouchBridge} found a camera on 'input' layer");
+          }
+        }
+      }
+
+      //main camera
+      if(_camera == null)
+      {
+        Debug.LogWarning("{RainbowInputManager} input will use main camera");
         _camera = Camera.main;
       }
     }
@@ -307,11 +325,15 @@ public class InputTouchBridge : MonoBehaviour
   }
 
   public bool drawDebug = false;
+  protected GUIStyle style = new GUIStyle();
   void OnGUI() {
     if (!drawDebug) return;
 
     string ctx = toString();
-    GUI.Label(new Rect(10, 10, 500, 500), ctx);
+
+    style.fontSize = Mathf.FloorToInt((Screen.width / Screen.height) * 30f);
+
+    GUI.Label(new Rect(10, 10, 500, 500), ctx, style);
   }
 
 #endif
