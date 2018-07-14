@@ -31,37 +31,46 @@ abstract public class ArenaManager : EngineObject {
     restart_normal();
   }
 
-  virtual public void restart_normal() {
-    Debug.Log("~<b>Arena</b>~ restart_normal");
-    round_time = 0f;
-    restart_setup();
-  }
-
-  virtual public void restart_setup() {
-
-    for (int i = 0; i < arenaObjects.Count; i++)
-    {
-      arenaObjects[i].restart();
-    }
-    
-    setFreeze(false);
-    _state = ArenaState.LIVE;
+  protected override void setup()
+  {
+    base.setup();
+    fetchPauseCanvasScreen();
   }
 
   /* how the arena can get the pause screen */
   virtual protected void fetchPauseCanvasScreen()
   {
-    if(ScreensManager.get() != null)
+    if (ScreensManager.get() != null)
     {
       ScreenObject obj = ScreensManager.get().getScreen("ingame");
       if (obj != null) pauseCanvas = obj.getCanvas("pause");
     }
   }
 
-  protected override void setup()
-  {
-    base.setup();
-    fetchPauseCanvasScreen();
+
+  /// <summary>
+  /// normal path to restart a round
+  /// </summary>
+  virtual public void restart_normal() {
+    Debug.Log("~<b>Arena</b>~ restart_normal");
+    round_time = 0f;
+    restart_setup();
+  }
+
+  /// <summary>
+  /// describe how to setup a restart
+  /// </summary>
+  virtual public void restart_setup() {
+
+    for (int i = 0; i < arenaObjects.Count; i++)
+    {
+      arenaObjects[i].arena_round_restart();
+    }
+    
+    setFreeze(false);
+
+    //Debug.Log("live !");
+    _state = ArenaState.LIVE;
   }
 
   public override void updateEngine()
@@ -83,26 +92,30 @@ abstract public class ArenaManager : EngineObject {
     {
       update_round();
       update_round_late();
+
+      if(checkRoundEnd())
+      {
+        event_round_end();
+      }
     }
     else if(_state == ArenaState.END)
     {
-      update_end();
+      update_round_end();
     }
     
   }
 
-  virtual protected void update_menu()
-  {
+  abstract protected bool checkRoundEnd();
 
-  }
+  virtual protected void update_menu(){}
   
   protected void update_time()
   {
-    round_time += Time.deltaTime;
+    round_time += GameTime.deltaTime;
 
     if (liveFreezeTimer > 0f)
     {
-      liveFreezeTimer -= Time.deltaTime;
+      liveFreezeTimer -= GameTime.deltaTime;
     }
     
   }
@@ -128,31 +141,18 @@ abstract public class ArenaManager : EngineObject {
     }
   }
 
-  virtual protected void update_end()
+  virtual protected void update_round_end()
   {
 
   }
-
-  virtual public void debug_round_cancel() {
-    event_end();
-  }
-
-  virtual public void kill()
+  
+  /// <summary>
+  /// launch round end process
+  /// called by specific game arena manager
+  /// </summary>
+  protected void event_round_end()
   {
-    if(coProcessEnd != null)
-    {
-      StopCoroutine(coProcessEnd);
-    }
-
-    //for (int i = 0; i < arenaObjects.Count; i++) arenaObjects[i].kill();
-
-    UiAnimation.killAll();
-  }
-
-  /* end of round ? */
-  public void event_end()
-  {
-    //Debug.Log("~Arena~ event end");
+    Debug.Log("~Arena~ <color=orange>event_round_end</color>");
 
     setAtState(ArenaState.END);
 
@@ -160,7 +160,7 @@ abstract public class ArenaManager : EngineObject {
     ArenaObject[] aobjs = GameObject.FindObjectsOfType<ArenaObject>();
     for (int i = 0; i < aobjs.Length; i++)
     {
-      aobjs[i].event_end();
+      aobjs[i].arena_round_end();
     }
 
     if (coProcessEnd != null)
@@ -169,21 +169,27 @@ abstract public class ArenaManager : EngineObject {
       return;
     }
     
-    coProcessEnd = StartCoroutine(processEnd());
+    StartCoroutine(processEnd());
   }
-  
-  /* inheritence NEED to set coprocessend = null manually */
-  virtual protected IEnumerator processEnd()
+
+  IEnumerator processEnd()
+  {
+    IEnumerator ie = process_before_restart();
+
+    while (ie.MoveNext()) yield return null;
+
+    restart_normal();
+  }
+
+  /// <summary>
+  /// use to describe what to do after round ended, will lead to restart_normal()
+  /// </summary>
+  virtual protected IEnumerator process_before_restart()
   {
     yield return null;
-
-    coProcessEnd = null;
   }
   
-  public float getElapsedTime()
-  {
-    return round_time;
-  }
+  public float getElapsedTime(){ return round_time; }
 
   protected void setAtState(ArenaState st)
   {

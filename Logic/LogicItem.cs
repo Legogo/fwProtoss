@@ -29,9 +29,9 @@ public class LogicItem : ArenaObject
     setupCapacities();
   }
 
-  public override void restart()
+  public override void arena_round_restart()
   {
-    base.restart();
+    base.arena_round_restart();
     for (int i = 0; i < capacities.Count; i++) capacities[i].restartCapacity();
   }
 

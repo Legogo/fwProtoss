@@ -33,7 +33,7 @@ public class HelperVisibleSkinned : HelperVisible {
     mat.color = col;
   }
 
-  protected override void setVisibility(bool flag)
+  override protected void setVisibility(bool flag)
   {
     skinRender.enabled = flag;
   }

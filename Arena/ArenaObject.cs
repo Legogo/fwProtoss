@@ -21,6 +21,7 @@ abstract public class ArenaObject : EngineObject {
     
     _arena = ArenaManager.get();
 
+    //resource ref must NOT be updated by arena
     if (gameObject.CompareTag("resource")) return;
 
     if (_arena != null)
@@ -49,8 +50,10 @@ abstract public class ArenaObject : EngineObject {
     setFreeze(false);
   }
 
-  /* must be called by something */
-  virtual public void restart()
+  /// <summary>
+  /// called by ArenaManager on round restart
+  /// </summary>
+  virtual public void arena_round_restart()
   {
     if (ao_settings != null) ao_settings.applyRespawn();
   }
@@ -62,7 +65,10 @@ abstract public class ArenaObject : EngineObject {
     _arena.arenaObjects.Remove(this);
   }
 
-  virtual public void event_end()
+  /// <summary>
+  /// called by ArenaManager
+  /// </summary>
+  virtual public void arena_round_end()
   {
   }
 

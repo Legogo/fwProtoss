@@ -16,9 +16,9 @@ public class UiTextScore : ArenaObject {
     label = (visibility as HelperVisibleUi).getText();
   }
 
-  public override void restart()
+  public override void arena_round_restart()
   {
-    base.restart();
+    base.arena_round_restart();
     score = 0f;
     updateVisual();
   }

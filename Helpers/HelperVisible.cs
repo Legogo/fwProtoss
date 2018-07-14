@@ -124,6 +124,9 @@ abstract public class HelperVisible
   abstract public Color getColor();
   abstract protected void swapColor(Color col);
 
+  /// <summary>
+  /// use hide/show to toggle visibility
+  /// </summary>
   abstract protected void setVisibility(bool flag);
   abstract public bool isVisible();
 

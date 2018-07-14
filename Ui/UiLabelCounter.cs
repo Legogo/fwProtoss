@@ -32,9 +32,9 @@ public class UiLabelCounter : ArenaObject {
     textUi = visibility as HelperVisibleUi;
   }
 
-  public override void restart()
+  public override void arena_round_restart()
   {
-    base.restart();
+    base.arena_round_restart();
     score_target_timer = 0f;
 
     count_target = count = 0;

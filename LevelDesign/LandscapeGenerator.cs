@@ -24,9 +24,9 @@ public class LandscapeGenerator : ArenaObject {
     gspace = GameSpace.get();
   }
 
-  public override void restart()
+  public override void arena_round_restart()
   {
-    base.restart();
+    base.arena_round_restart();
     
     //fill screen
     //...

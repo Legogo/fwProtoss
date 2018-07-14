@@ -60,6 +60,12 @@ public class HelperVisibleUi : HelperVisible
 
   protected override void setVisibility(bool flag)
   {
+    if(_group != null)
+    {
+      _group.alpha = flag ? 1f : 0f;
+      return;
+    }
+
     _render.enabled = flag;
   }
 
