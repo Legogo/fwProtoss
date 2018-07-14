@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+#if UNITY_EDITOR
+using UnityEditor;
+using System.Reflection;
+#endif
+
 public class qh
 {
   static public T gc<T>() where T : UnityEngine.Object
@@ -42,5 +47,17 @@ public class UnityHelpers {
     tmp.AddRange(parent.GetComponentsInChildren<Collider2D>());
     return tmp.ToArray();
   }
-  
+
+
+#if UNITY_EDITOR
+  [MenuItem("Tools/Clear console #c")]
+  public static void ClearConsole()
+  {
+    var assembly = Assembly.GetAssembly(typeof(SceneView));
+    var type = assembly.GetType("UnityEditor.LogEntries");
+    var method = type.GetMethod("Clear");
+    method.Invoke(new object(), null);
+  }
+#endif
+
 }

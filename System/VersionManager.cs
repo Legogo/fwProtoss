@@ -73,7 +73,7 @@ public class VersionManager : MonoBehaviour
   }
 
   [MenuItem("Version/Increment X.minor.build")]
-  private static void incrementMajor()
+  static protected void incrementMajor()
   {
     int[] v = getVersion();
 
@@ -103,7 +103,7 @@ public class VersionManager : MonoBehaviour
   }
 
   [MenuItem("Version/Increment major.minor.X")]
-  private static void incrementFix()
+  public static void incrementFix()
   {
     int[] v = getVersion();
 
