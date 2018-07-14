@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class VersionToggle : EngineObject
 {
@@ -16,6 +15,12 @@ public class VersionToggle : EngineObject
     subscribeToInput(touch);
 
     visibility.hide();
+  }
+
+  [ContextMenu("apply current version")]
+  protected void updateText()
+  {
+    GetComponent<Text>().text = VersionManager.getFormatedVersion();
   }
 
   protected void touch(InputTouchFinger finger)
