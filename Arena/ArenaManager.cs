@@ -189,8 +189,12 @@ abstract public class ArenaManager : EngineObject {
   {
     IEnumerator ie = process_before_restart();
 
+    Debug.Log("waiting for pre-restart process to be finished ...");
+
     while (ie.MoveNext()) yield return null;
 
+    Debug.Log("... pre-restart process is <b>done</b> !");
+    
     restart_normal();
   }
 
