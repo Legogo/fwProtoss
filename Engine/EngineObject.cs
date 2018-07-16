@@ -48,20 +48,41 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
 
   IEnumerator Start() {
 
+    //si le manager recoit l'event de fin de loading après que Start soit exec
+    //yield return null;
+
     //usually objects startup their dependencies in the onEngineSceneLoaded
     //so if the object as other monobehavior generated at the same time (same Resource object) engine needs a frame to have all dependencies finish their build() process
 
     //Debug.Log(GetType() + " <b>" + name + "</b> START", gameObject);
 
-    while (EngineManager.isLoading()) yield return null;
+    //attendre que le l'engine ai démarré
+    //qui doit etre contenu dans resource-engine.scene
+    while (EngineManager.get() == null) yield return null;
+
+    if (EngineManager.isLoading())
+    {
+      EngineManager.get().onLoadingDone += onEngineLoadingDone;
+      yield break;
+    }
     
+    //si le manager recoit l'event de fin de loading après que Start soit exec
+    //il y aura un UPDATE de l'engine avant de repasser par ici et de setup l'objet
+    //while (EngineManager.isLoading()) yield return null;
+
+    onEngineLoadingDone();
+  }
+
+  protected void onEngineLoadingDone()
+  {
+
     onEngineSceneLoaded(); // setupEarly
 
     //yield return null; // nope --> ce yield fait qu'il y a un premier update avant setup()
 
     onEngineSceneLoaded(); // setup
   }
-
+  
   virtual protected void build()
   {
     buildVisibilty();
@@ -156,8 +177,12 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
 
   virtual public bool canUpdate()
   {
-    if (_ready) return false;
+    if (!enabled) return false;
+    if (!gameObject.activeSelf) return false;
+
+    if (!_ready) return false; // loading
     if (isFreezed()) return false;
+
     return true;
   }
 
@@ -179,12 +204,12 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
   }
 
   public bool isFreezed() { return !_unfreeze; }
-  public void setFreeze(bool flag) { _unfreeze = !flag; }
+  public void setFreeze(bool flag) { _unfreeze = !flag; } // unfreeze true == ça tourne !
   public bool isReady() { return _ready; }
 
   virtual public string toString()
   {
-    return name + "\n └ "+iStringFormatBool("unfreezed", _unfreeze)+"\n └ "+iStringFormatBool("can update", canUpdate());
+    return name + "\n └ "+iStringFormatBool("UNfreezed", _unfreeze)+"\n └ "+iStringFormatBool("can update", canUpdate());
   }
 
   protected string iStringFormatBool(string label, bool val)

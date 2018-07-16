@@ -28,13 +28,21 @@ abstract public class ArenaManager : EngineObject {
   protected Coroutine coProcessEnd;
 
   protected Canvas pauseCanvas;
-
+  
   public List<ArenaObject> arenaObjects = new List<ArenaObject>();
 
   protected override void build()
   {
     base.build();
     EngineManager.get().onLoadingDone += onLoadingFinished;
+
+    EngineEventSystem.onPause += onPause;
+  }
+
+  virtual protected void onPause(bool state)
+  {
+    Debug.Log("pause ! " + state);
+    setFreeze(state);
   }
 
   /* this is default behavior for arena manager, it needs to be overrided if need to delay startup of arena */

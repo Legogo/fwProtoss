@@ -11,6 +11,9 @@ public class ScreenObject : EngineObject
   
   protected Canvas[] _canvas;
 
+  float moveTimerDelayTime = 0.2f;
+  float moveTimerDelay = 0f;
+
   protected override void build()
   {
     base.build();
@@ -38,9 +41,24 @@ public class ScreenObject : EngineObject
   sealed public override void updateEngine()
   {
     base.updateEngine();
+
+    if (moveTimerDelay > 0f)
+    {
+      moveTimerDelay -= GameTime.deltaTime;
+    }
+
+    //Debug.Log(name + " update " + canUpdate());
+
     if (isVisible()) updateVisible();
+    else updateNotVisible();
   }
 
+  sealed public override void updateEngineLate() { base.updateEngineLate(); }
+
+  virtual protected void updateNotVisible()
+  {
+
+  }
   virtual protected void updateVisible()
   {
     update_input_keyboard();
@@ -48,8 +66,12 @@ public class ScreenObject : EngineObject
   
   protected void update_input_keyboard()
   {
-    if (Input.GetKeyUp(KeyCode.UpArrow)) keyboard_up();
-    if (Input.GetKeyUp(KeyCode.DownArrow)) keyboard_down();
+    if(moveTimerDelay <= 0f)
+    {
+      if (Input.GetKeyUp(KeyCode.UpArrow)) keyboard_up();
+      if (Input.GetKeyUp(KeyCode.DownArrow)) keyboard_down();
+    }
+
     if (Input.GetKeyUp(KeyCode.Escape)) keyboard_esc();
   }
 
@@ -59,13 +81,20 @@ public class ScreenObject : EngineObject
       action_back();
     }
   }
-  virtual protected void keyboard_up() { }
-  virtual protected void keyboard_down() { }
 
-  virtual protected void action_back() {
+  virtual protected void keyboard_up() { resetTimerDelay(); }
+  virtual protected void keyboard_down() { resetTimerDelay(); }
 
-    call_home();
+  protected bool isDelaying()
+  {
+    return moveTimerDelay > 0f;
   }
+  protected void resetTimerDelay()
+  {
+    moveTimerDelay = moveTimerDelayTime;
+  }
+
+  virtual protected void action_back() {}
 
   public Canvas getCanvas(string nm)
   {
@@ -134,18 +163,13 @@ public class ScreenObject : EngineObject
   }
 
   [ContextMenu("hide")]
-  public void forceHide() {
+  public void forceHide()
+  {
     transform.position = Vector3.down * 3000f;
 
     toggleVisible(false);
   }
 
-  public override bool canUpdate()
-  {
-    if (!isVisible()) return false;
-    return base.canUpdate();
-  }
-  
   public bool isVisible()
   {
     return transform.position.sqrMagnitude == 0f;
@@ -153,7 +177,7 @@ public class ScreenObject : EngineObject
 
   virtual public void act_call_home()
   {
-    call_home();
+    static_call_home();
   }
 
   public override string toString()
@@ -161,7 +185,7 @@ public class ScreenObject : EngineObject
     return base.toString() + "\nisVisible ? " + isVisible() + "\ncanvas count ? " + _canvas.Length;
   }
 
-  static public void call_home()
+  static public void static_call_home()
   {
     ScreensManager.openByEnum(ScreensManager.ScreenNames.home);
   }

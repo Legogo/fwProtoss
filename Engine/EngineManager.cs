@@ -83,12 +83,13 @@ public class EngineManager : MonoBehaviour {
     Debug.Log("~EngineManager~ <color=orange># SCENES LOADED #</color>");
 
     state_loading = false;
-    state_live = true;
     
     //broadcast
     if (onLoadingDone != null) onLoadingDone();
+
+    state_live = true;
   }
-  
+
   void Update()
   {
     GameTime.update();
@@ -106,31 +107,35 @@ public class EngineManager : MonoBehaviour {
     }
 
     if (!isLive()) return;
-    
+
     //update everything
-    
-    if(eosLayers != null)
+    processUpdateLayers();
+  }
+
+  void processUpdateLayers()
+  {
+    if (eosLayers == null) return;
+
+    EngineObject obj;
+    foreach (KeyValuePair<int, List<EngineObject>> layer in eosLayers)
     {
-      foreach (KeyValuePair<int, List<EngineObject>> layer in eosLayers)
+      for (int i = 0; i < layer.Value.Count; i++)
       {
-        for (int i = 0; i < layer.Value.Count; i++)
-        {
-          if (!layer.Value[i].enabled || !layer.Value[i].gameObject.activeSelf) continue;
+        obj = layer.Value[i];
+        if (!obj.canUpdate()) continue;
+        obj.updateEngine();
+      }
 
-          //Debug.Log("updating " + layer.Value[i].name);
-
-          layer.Value[i].updateEngine();
-        }
-        for (int i = 0; i < layer.Value.Count; i++)
-        {
-          if (!layer.Value[i].enabled || !layer.Value[i].gameObject.activeSelf) continue;
-          layer.Value[i].updateEngineLate();
-        }
+      for (int i = 0; i < layer.Value.Count; i++)
+      {
+        obj = layer.Value[i];
+        if (!obj.canUpdate()) continue;
+        obj.updateEngineLate();
       }
     }
-
+    
   }
-  
+
   void processUpdateObjectsDebug(List<EngineObject> objects)
   {
     Debug.Log("UBER update (" + objects.Count+")");
@@ -157,7 +162,7 @@ public class EngineManager : MonoBehaviour {
       
       if (!canUpdate) continue;
 
-      objects[i].updateEngine();
+      objects[i].updateEngine(); // processUpdateObjectsDebug
       count++;
     }
 
@@ -166,6 +171,9 @@ public class EngineManager : MonoBehaviour {
 
   }
 
+  /// <summary>
+  /// deprecated, see 
+  /// </summary>
   void processUpdateObjects(List<EngineObject> objects)
   {
     
