@@ -60,8 +60,8 @@ public class EngineLoader : MonoBehaviour
   IEnumerator Start()
   {
     if (SHOW_DEBUG) Debug.Log("start of <color=green>system loading</color> ...");
-    
-    ///// first we load engine, to get the feeder script
+
+    ///// then we load engine, to get the feeder script
     loadScene(prefix+"engine");
     while (!allAsyncDone()) yield return null;
 
@@ -110,7 +110,7 @@ public class EngineLoader : MonoBehaviour
       Debug.LogWarning("could not launch loading of " + sceneLoad + " because build settings scenes is <b>empty</b>");
       return;
     }
-    
+
     //do not load the current active scene
     if (!isSceneOfName(sceneLoad))
     {
@@ -120,7 +120,6 @@ public class EngineLoader : MonoBehaviour
 
   IEnumerator process_loadScene(string sceneLoad)
   {
-
     //can't reload same scene
     //if (isSceneOfName(sceneLoad)) yield break;
 
@@ -160,5 +159,25 @@ public class EngineLoader : MonoBehaviour
   static public EngineLoader get() {
     if (loader == null) init();
     return loader;
+  }
+
+  static public bool isSceneInBuildSettingsList(string scName)
+  {
+    bool found = true;
+
+#if UNITY_EDITOR
+
+    found = false;
+
+    UnityEditor.EditorBuildSettingsScene[] scenes = UnityEditor.EditorBuildSettings.scenes;
+    for (int i = 0; i < scenes.Length; i++)
+    {
+      //UnityEditor.SceneManagement.EditorSceneManager.GetSceneByBuildIndex()
+      if (scenes[i].path.Contains(scName)) found = true;
+    }
+    
+#endif
+
+    return found;
   }
 }

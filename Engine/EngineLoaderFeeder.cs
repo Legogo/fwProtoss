@@ -21,7 +21,7 @@ public class EngineLoaderFeeder : MonoBehaviour {
 
   [Header("no prefix")]
   public string[] other_names;
-
+  
   virtual public string[] feed()
   {
     if (scene_names == null) scene_names = new List<string>();
@@ -31,6 +31,8 @@ public class EngineLoaderFeeder : MonoBehaviour {
     addWithPrefix("graphics-", graphics_names);
 
     addWithPrefix("", other_names);
+
+    GameObject.DestroyImmediate(this);
 
     return scene_names.ToArray();
   }

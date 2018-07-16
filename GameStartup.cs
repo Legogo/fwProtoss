@@ -28,6 +28,13 @@ abstract public class GameStartup : EngineObject {
 
     yield return null;
 
+    ScreenLoading sl = ScreenLoading.get();
+    if (sl != null) {
+      sl.hideLoadingScreen();
+    }
+
+    yield return null;
+
     setup_startup();
   }
 

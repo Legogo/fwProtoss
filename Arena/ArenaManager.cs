@@ -22,7 +22,7 @@ abstract public class ArenaManager : EngineObject {
 
   protected float liveFreezeTimer = 0f;
 
-  public enum ArenaState { IDLE, MENU, SETUP_LIVE, LIVE, END }
+  public enum ArenaState { IDLE, MENU, LIVE, END }
   protected ArenaState _state = ArenaState.IDLE;
 
   protected Coroutine coProcessEnd;
@@ -215,7 +215,6 @@ abstract public class ArenaManager : EngineObject {
   public void setArenaIdle() { setAtState(ArenaState.IDLE); }
   public void setArenaLive(){ setAtState(ArenaState.LIVE); }
   public void setArenaMenu() { setAtState(ArenaState.MENU); }
-  public void setArenaSetupLive() { setAtState(ArenaState.SETUP_LIVE); }
   
   public bool isArenaStateLive() {
 

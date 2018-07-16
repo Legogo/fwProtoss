@@ -6,7 +6,8 @@ using UnityEngine.UI;
 public class ScreenObject : EngineObject
 {
   protected ArenaManager _arena;
-  public bool sticky = false;
+
+  public bool sticky = false; // can't be hidden
   
   protected Canvas[] _canvas;
 
@@ -88,7 +89,7 @@ public class ScreenObject : EngineObject
     }
   }
 
-  public void toggleVisible(bool flag)
+  protected void toggleVisible(bool flag)
   {
     //si le scriptorder fait que le ScreenObject arrive après le Screenmanager ...
     if(_canvas == null) setup();

@@ -23,6 +23,7 @@ public class ScreensManager : EngineObject {
   {
     for (int i = 0; i < screens.Length; i++)
     {
+      if (screens[i].sticky) continue;
       if (screens[i].isVisible()) return screens[i];
     }
     return null;
@@ -104,7 +105,7 @@ public class ScreensManager : EngineObject {
 
     for (int i = 0; i < screens.Length; i++)
     {
-      screens[i].toggleVisible(true);
+      screens[i].show();
     }
 
   }
