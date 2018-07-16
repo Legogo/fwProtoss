@@ -35,7 +35,6 @@ abstract public class HelperVisible
   {
     fetchRenders();
     _symbolCarry = fetchCarrySymbol();
-
     updateBounds();
   }
 

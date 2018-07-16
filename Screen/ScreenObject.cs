@@ -26,11 +26,7 @@ public class ScreenObject : EngineObject
   override protected void setup()
   {
     base.setup();
-
-    
     _arena = ArenaManager.get();
-
-    //Debug.Log(name + " --> " + _canvas);
   }
 
   virtual public void reset()
@@ -38,10 +34,9 @@ public class ScreenObject : EngineObject
     
   }
 
-  public override void updateEngine()
+  sealed public override void updateEngine()
   {
     base.updateEngine();
-
     if (isVisible()) updateVisible();
   }
 
@@ -85,7 +80,11 @@ public class ScreenObject : EngineObject
   {
     for (int i = 0; i < _canvas.Length; i++)
     {
-      if (_canvas[i].name.Contains(nm)) _canvas[i].enabled = flag;
+      if (_canvas[i].name.Contains(nm))
+      {
+        //Debug.Log(flag + " for " + nm);
+        _canvas[i].enabled = flag;
+      }
     }
   }
 
@@ -96,11 +95,17 @@ public class ScreenObject : EngineObject
     
     if (_canvas == null) Debug.LogError("no canvas ? for "+name, gameObject);
 
+    //Debug.Log(name + " visibility ? " + flag+" for "+_canvas.Length+" canvas");
+    
     //show all canvas of screen
     for (int i = 0; i < _canvas.Length; i++)
     {
       //Debug.Log(name + "  " + _canvas[i].name);
-      if (_canvas[i].enabled != flag) _canvas[i].enabled = flag;
+      if (_canvas[i].enabled != flag)
+      {
+        //Debug.Log("canvas " + _canvas[i].name + " toggle to " + flag);
+        _canvas[i].enabled = flag;
+      }
     }
 
     //Debug.Log(name+" , "+flag, gameObject);
@@ -157,13 +162,7 @@ public class ScreenObject : EngineObject
 
   static public void call_home()
   {
-
-    ScreensManager sm = ScreensManager.get();
-    if(sm != null)
-    {
-      sm.call("home");
-    }
-    
+    ScreensManager.openByEnum(ScreensManager.ScreenNames.home);
   }
 
   static public Canvas getCanvas(string screenName, string canvasName) {

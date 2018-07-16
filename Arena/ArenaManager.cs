@@ -3,6 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// 
+/// onLoadingFinished()
+/// restart_normal()
+/// 
+/// update_round()
+/// while(checkRoundEnd()) ...
+///   
+/// event_round_end()
+/// process_before_restart() coroutine
+/// 
+/// </summary>
+
 abstract public class ArenaManager : EngineObject {
   
   public float round_time = 0f; // round elasped time
@@ -198,7 +211,8 @@ abstract public class ArenaManager : EngineObject {
   }
   protected ArenaState getState() { return _state; }
   protected bool isAtState(ArenaState st) { return _state == st; }
-  
+
+  public void setArenaIdle() { setAtState(ArenaState.IDLE); }
   public void setArenaLive(){ setAtState(ArenaState.LIVE); }
   public void setArenaMenu() { setAtState(ArenaState.MENU); }
   public void setArenaSetupLive() { setAtState(ArenaState.SETUP_LIVE); }

@@ -10,9 +10,16 @@ public class EngineLoaderFeeder : MonoBehaviour {
 
   protected List<string> scene_names;
 
+  [Header("prefix resource-")]
   public string[] resource_names;
+
+  [Header("prefix screen-")]
   public string[] screen_names;
+
+  [Header("prefix graphics-")]
   public string[] graphics_names;
+
+  [Header("no prefix")]
   public string[] other_names;
 
   virtual public string[] feed()
