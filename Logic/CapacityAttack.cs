@@ -89,6 +89,9 @@ abstract public class CapacityAttack : LogicCapacity
     coProcessAttack = StartCoroutine(ProcessAttack());
   }
 
+  /// <summary>
+  /// process qui décrit le déroulement de l'attaque
+  /// </summary>
   IEnumerator ProcessAttack()
   {
     _attackTime = 0f;
@@ -106,11 +109,16 @@ abstract public class CapacityAttack : LogicCapacity
     while (_character.isPlaying(animToPlay))
     {
       //Debug.Log(name + " is playing animation");
-      checkForAttackEvent();
+      checksDuringAnimation();
       yield return null;
     }
 
     processEndOfAttach();
+  }
+
+  virtual protected void checksDuringAnimation()
+  {
+    checkForAttackEvent();
   }
 
   protected void processEndOfAttach()

@@ -40,6 +40,9 @@ abstract public class LogicCapacity : EngineObject {
   virtual public void updateCapacity() { }
   virtual public void updateCapacityLate() { }
   
+  /// <summary>
+  /// is capacity locked by another (sort of freeze)
+  /// </summary>
   public bool isLocked() { return _lock; }
   public void lockCapacity(bool flag, bool onlyDependencies = false) {
 
