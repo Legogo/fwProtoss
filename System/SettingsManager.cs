@@ -10,17 +10,28 @@ public class SettingsManager : EngineObject {
 
   public DataSettings data_settings;
 
-  public const string ppref_mute_name = "mute";
+  public const string ppref_sound_master_volume = "ppref_sound_volume_master";
+  public const string ppref_sound_music_volume = "ppref_sound_volume_music";
+  public const string ppref_sound_fx_volume = "ppref_sound_volume_fx";
+  public const string ppref_sound_muted = "ppref_sound_muted";
 
+  public const string ppref_fullscreen = "ppref_fullscreen";
+  public const string ppref_resolution = "ppref_resolution";
+  
   static public SettingsManager get() {
     return GameObject.FindObjectOfType<SettingsManager>();
+  }
+
+  [RuntimeInitializeOnLoadMethod]
+  static protected void setupStartupSettings()
+  {
+    setupResolution();
   }
 
   protected override void build()
   {
     base.build();
-
-
+    
     EngineManager em = EngineManager.get();
     if(em != null)
     {
@@ -48,8 +59,10 @@ public class SettingsManager : EngineObject {
 #if UNITY_ANDROID
     setupSonyAndroid();
 #endif
-  }
 
+    setupVolumes();
+  }
+  
   protected void setupSonyAndroid()
   {
     
@@ -111,7 +124,7 @@ public class SettingsManager : EngineObject {
 
 
 #if UNITY_EDITOR
-  [ContextMenu("apply")]
+  [ContextMenu("apply build settings")]
   public void apply() {
     PlayerSettings.productName = data_settings.product_name;
     PlayerSettings.companyName = data_settings.compagny_name;
@@ -123,14 +136,66 @@ public class SettingsManager : EngineObject {
   }
 #endif
 
-  static public void setMuted(bool muted)
+  static public void setupResolution()
   {
-    PlayerPrefs.SetFloat(ppref_mute_name, (muted) ? 1f : 0f);
+    
+    bool fs = PlayerPrefs.GetInt(ppref_fullscreen, 1) == 1;
+
+    string res = PlayerPrefs.GetString(ppref_resolution, "none");
+
+    //https://answers.unity.com/questions/16216/how-to-get-native-screen-resolution.html
+    Resolution resolution = Screen.currentResolution;
+    if (res.ToLower() == "none") res = resolution.width + "x" + resolution.height; // just whatever is setup right now
+    else if (res.ToLower() == "native") res = getHighestResolution(); // highest possible resolution for this screen
+    else if (res.ToLower() == "default") res = "1920x1080";
+
+    string[] sizes = res.Split('x');
+    Vector2 outputRes = new Vector2(int.Parse(sizes[0]), int.Parse(sizes[1]));
+
+    Debug.Log("~SettingsManager~ setup reoslution to " + outputRes + " (ppref ? " + res + ") , fullscreen ? " + fs);
+    Screen.SetResolution((int)outputRes.x, (int)outputRes.y, fs);
+
     PlayerPrefs.Save();
   }
 
-  static public bool isMuted()
+  static public string getHighestResolution()
   {
-    return PlayerPrefs.GetFloat(ppref_mute_name, 0f) == 1f;
+    //https://docs.unity3d.com/ScriptReference/Screen-resolutions.html
+    Resolution[] resolutions = Screen.resolutions;
+    int w = 0;
+    int h = 0;
+    foreach (Resolution res in resolutions)
+    {
+      w = Mathf.Max(w, res.width);
+      h = Mathf.Max(h, res.height);
+    }
+    return w + "x" + h;
   }
+
+  static public void setupVolumes()
+  {
+    applyMasterVolume();
+    applyMusicVolume();
+    applyFxVolume();
+    Debug.Log("~SettingsManager~ setup volumes");
+
+    PlayerPrefs.Save();
+  }
+  
+  static protected void applyMasterVolume() { applyVolume("master", ppref_sound_master_volume, PlayerPrefs.GetInt(ppref_sound_muted, 0)); }
+  static protected void applyFxVolume() { applyVolume("fx", ppref_sound_fx_volume); }
+  static protected void applyMusicVolume() { applyVolume("music", ppref_sound_music_volume); }
+
+  static protected void applyVolume(string category, string ppref_const, float ratio = 1f)
+  {
+    float volume = PlayerPrefs.GetFloat(ppref_const, 1f);
+    EngineManager em = GameObject.FindObjectOfType<EngineManager>();
+    if (em == null) return;
+    if (em.mixer == null) {
+      Debug.LogWarning("no mixer ?");
+      return;
+    }
+    em.mixer.SetFloat("master", volume * ratio);
+  }
+  
 }

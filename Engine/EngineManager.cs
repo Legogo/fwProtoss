@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 using System;
 
 /// <summary>
@@ -35,6 +36,7 @@ public class EngineManager : MonoBehaviour {
   public bool log_device_info = true;
 
   [Header("sound")]
+  public AudioMixer mixer;
   public DataSounds sounds;
 
   [Header("logs")]

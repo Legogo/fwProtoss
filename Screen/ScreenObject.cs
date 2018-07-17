@@ -11,7 +11,7 @@ public class ScreenObject : EngineObject
 
   protected float notInteractiveTimer = 0f;
 
-  float moveTimerDelayTime = 0.2f;
+  float moveTimerDelayTime = 0.1f;
   float moveTimerDelay = 0f;
 
   protected Action onPressedDown;
@@ -157,11 +157,11 @@ public class ScreenObject : EngineObject
   [ContextMenu("show")]
   virtual public void show()
   {
-    Debug.Log("~Screen~ <color=green>show()</color> <b>"+name + "</b>");
+    //Debug.Log("~Screen~ <color=green>show()</color> <b>"+name + "</b>");
 
     //if(ScreensManager.get() != null) ScreensManager.get().killAll();
 
-    notInteractiveTimer = 0.5f; // to kill interactive frame offset
+    notInteractiveTimer = 0.2f; // to kill interactive frame offset
 
     transform.position = Vector3.zero;
 
@@ -172,7 +172,7 @@ public class ScreenObject : EngineObject
   {
     if (sticky) return;
 
-    Debug.Log("~Screen~ <color=white>hide()</color> <b>" + name + "</b>");
+    //Debug.Log("~Screen~ <color=white>hide()</color> <b>" + name + "</b>");
 
     forceHide();
   }
