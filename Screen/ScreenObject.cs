@@ -11,6 +11,8 @@ public class ScreenObject : EngineObject
   
   protected Canvas[] _canvas;
 
+  protected float notInteractiveTimer = 0f;
+
   float moveTimerDelayTime = 0.2f;
   float moveTimerDelay = 0f;
 
@@ -47,6 +49,12 @@ public class ScreenObject : EngineObject
       moveTimerDelay -= GameTime.deltaTime;
     }
 
+    if (notInteractiveTimer > 0f)
+    {
+      notInteractiveTimer -= GameTime.deltaTime;
+      return;
+    }
+    
     //Debug.Log(name + " update " + canUpdate());
 
     if (isVisible()) updateVisible();
@@ -55,10 +63,7 @@ public class ScreenObject : EngineObject
 
   sealed public override void updateEngineLate() { base.updateEngineLate(); }
 
-  virtual protected void updateNotVisible()
-  {
-
-  }
+  virtual protected void updateNotVisible(){}
   virtual protected void updateVisible()
   {
     update_input_keyboard();
@@ -68,22 +73,19 @@ public class ScreenObject : EngineObject
   {
     if(moveTimerDelay <= 0f)
     {
-      if (Input.GetKeyUp(KeyCode.UpArrow)) keyboard_up();
-      if (Input.GetKeyUp(KeyCode.DownArrow)) keyboard_down();
+      if (Input.GetKeyUp(KeyCode.UpArrow)) pressed_up();
+      if (Input.GetKeyUp(KeyCode.DownArrow)) pressed_down();
+      if (Input.GetKeyUp(KeyCode.LeftArrow)) pressed_left();
+      if (Input.GetKeyUp(KeyCode.RightArrow)) pressed_right();
     }
 
-    if (Input.GetKeyUp(KeyCode.Escape)) keyboard_esc();
+    if (Input.GetKeyUp(KeyCode.Escape)) action_back();
   }
-
-  virtual protected void keyboard_esc() {
-    if (isVisible() && !sticky)
-    {
-      action_back();
-    }
-  }
-
-  virtual protected void keyboard_up() { resetTimerDelay(); }
-  virtual protected void keyboard_down() { resetTimerDelay(); }
+  
+  virtual protected void pressed_up() { resetTimerDelay(); }
+  virtual protected void pressed_down() { resetTimerDelay(); }
+  virtual protected void pressed_left() { resetTimerDelay(); }
+  virtual protected void pressed_right() { resetTimerDelay(); }
 
   protected bool isDelaying()
   {
@@ -147,6 +149,8 @@ public class ScreenObject : EngineObject
     Debug.Log("~Screen~ <color=green>show()</color> <b>"+name + "</b>");
 
     //if(ScreensManager.get() != null) ScreensManager.get().killAll();
+
+    notInteractiveTimer = 0.5f; // to kill interactive frame offset
 
     transform.position = Vector3.zero;
 

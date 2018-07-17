@@ -81,7 +81,7 @@ abstract public class ArenaManager : EngineObject {
   /// <summary>
   /// describe how to setup a restart
   /// </summary>
-  virtual public void restart_setup() {
+  virtual protected void restart_setup() {
 
     for (int i = 0; i < arenaObjects.Count; i++)
     {
