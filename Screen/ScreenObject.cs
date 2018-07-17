@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class ScreenObject : EngineObject
 {
@@ -16,6 +14,11 @@ public class ScreenObject : EngineObject
   float moveTimerDelayTime = 0.2f;
   float moveTimerDelay = 0f;
 
+  protected Action onPressedDown;
+  protected Action onPressedUp;
+  protected Action onPressedLeft;
+  protected Action onPressedRight;
+
   protected override void build()
   {
     base.build();
@@ -26,6 +29,14 @@ public class ScreenObject : EngineObject
     //if (_canvas == null) Debug.LogError("wat ?");
 
     hide();
+  }
+
+  public void subscribeToPressedEvents(Action down, Action up, Action left, Action right)
+  {
+    if (down != null) onPressedDown += down;
+    if (up != null) onPressedUp += up;
+    if (left != null) onPressedLeft += left;
+    if (right != null) onPressedRight += right;
   }
   
   [ContextMenu("fetch")]
@@ -82,10 +93,10 @@ public class ScreenObject : EngineObject
     if (Input.GetKeyUp(KeyCode.Escape)) action_back();
   }
   
-  virtual protected void pressed_up() { resetTimerDelay(); }
-  virtual protected void pressed_down() { resetTimerDelay(); }
-  virtual protected void pressed_left() { resetTimerDelay(); }
-  virtual protected void pressed_right() { resetTimerDelay(); }
+  virtual protected void pressed_up() { resetTimerDelay(); if (onPressedUp != null) onPressedUp(); }
+  virtual protected void pressed_down() { resetTimerDelay(); if (onPressedDown != null) onPressedDown(); }
+  virtual protected void pressed_left() { resetTimerDelay(); if (onPressedLeft != null) onPressedLeft(); }
+  virtual protected void pressed_right() { resetTimerDelay(); if (onPressedRight != null) onPressedRight(); }
 
   protected bool isDelaying()
   {
@@ -161,7 +172,7 @@ public class ScreenObject : EngineObject
   {
     if (sticky) return;
 
-    Debug.Log("~Screen~ <color=red>hide()</color> <b>" + name + "</b>");
+    Debug.Log("~Screen~ <color=white>hide()</color> <b>" + name + "</b>");
 
     forceHide();
   }
@@ -181,19 +192,14 @@ public class ScreenObject : EngineObject
 
   virtual public void act_call_home()
   {
-    static_call_home();
+    ScreensManager.openByEnum(ScreensManager.ScreenNames.home);
   }
 
   public override string toString()
   {
     return base.toString() + "\nisVisible ? " + isVisible() + "\ncanvas count ? " + _canvas.Length;
   }
-
-  static public void static_call_home()
-  {
-    ScreensManager.openByEnum(ScreensManager.ScreenNames.home);
-  }
-
+  
   static public Canvas getCanvas(string screenName, string canvasName) {
     ScreenObject screen = ScreensManager.get().getScreen(screenName);
     return screen.getCanvas(canvasName);

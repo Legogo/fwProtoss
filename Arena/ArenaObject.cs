@@ -57,6 +57,11 @@ abstract public class ArenaObject : EngineObject {
   {
     if (ao_settings != null) ao_settings.applyRespawn();
   }
+
+  virtual public void arena_round_stop()
+  {
+
+  }
   
   protected override void destroy()
   {

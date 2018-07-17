@@ -168,6 +168,22 @@ abstract public class ArenaManager : EngineObject {
   }
   
   /// <summary>
+  /// called if system need to interrupt gameplay
+  /// </summary>
+  virtual public void round_stop()
+  {
+    setArenaIdle();
+    
+    //send info to all arena objects
+    ArenaObject[] aobjs = GameObject.FindObjectsOfType<ArenaObject>();
+    for (int i = 0; i < aobjs.Length; i++)
+    {
+      aobjs[i].arena_round_stop();
+    }
+
+  }
+
+  /// <summary>
   /// launch round end process
   /// called by specific game arena manager
   /// </summary>
