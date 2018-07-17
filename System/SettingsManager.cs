@@ -199,7 +199,7 @@ public class SettingsManager : EngineObject {
 
   static protected void applyVolume(string category, string ppref_const, float boost = 0f)
   {
-    float volume = PlayerPrefs.GetFloat(ppref_const, 0f); // 0 == no variation
+    float volume = PlayerPrefs.GetFloat(ppref_const, 1f);
     EngineManager em = GameObject.FindObjectOfType<EngineManager>();
     if (em == null) return;
     if (em.mixer == null) {

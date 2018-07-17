@@ -58,6 +58,12 @@ public class UnityHelpers {
     var method = type.GetMethod("Clear");
     method.Invoke(new object(), null);
   }
+  [MenuItem("Tools/Clear PlayerPrefs")]
+  public static void ClearPlayerPrefs()
+  {
+    PlayerPrefs.DeleteAll();
+    PlayerPrefs.Save();
+  }
 #endif
 
 }
