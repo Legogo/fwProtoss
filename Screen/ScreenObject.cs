@@ -200,6 +200,12 @@ public class ScreenObject : EngineObject
     return base.toString() + "\nisVisible ? " + isVisible() + "\ncanvas count ? " + _canvas.Length;
   }
   
+  public string extractName()
+  {
+    string[] split = name.Split('_'); // (screen_xxx)
+    return split[1].Substring(0, split[1].Length - 1); // remove ')'
+  }
+
   static public Canvas getCanvas(string screenName, string canvasName) {
     ScreenObject screen = ScreensManager.get().getScreen(screenName);
     return screen.getCanvas(canvasName);

@@ -10,20 +10,35 @@ using UnityEngine;
 abstract public class GameStartup : EngineObject {
 
   public string openingScreen;
+
+  protected float timer = 0f;
   
   /* this is called after eveything is done reacting to loading end */
   protected override void setup()
   {
     base.setup();
-    Debug.Log("~Startup~ starting ... opening screen : <b>" + openingScreen + "</b>");
-
+    
     StopAllCoroutines();
     StartCoroutine(processStartup());
   }
-
+  
   IEnumerator processStartup()
   {
-    
+
+    setup_preloading();
+
+    //Debug.Log(timer);
+
+    while (timer > 0f)
+    {
+      timer -= Time.deltaTime;
+      yield return null;
+    }
+
+    yield return null;
+
+    Debug.Log("~Startup~ starting ... opening screen : <b>" + openingScreen + "</b>");
+
     ScreensManager.get().call(openingScreen);
 
     yield return null;
@@ -38,5 +53,6 @@ abstract public class GameStartup : EngineObject {
     setup_startup();
   }
 
+  abstract protected void setup_preloading();
   abstract protected void setup_startup();
 }

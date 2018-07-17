@@ -6,6 +6,10 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
+/// <summary>
+/// sound need a mixer setup on EngineManager with 3 group with exposed volume params (master, fx, music)
+/// </summary>
+
 public class SettingsManager : EngineObject {
 
   public DataSettings data_settings;
@@ -177,25 +181,33 @@ public class SettingsManager : EngineObject {
     applyMasterVolume();
     applyMusicVolume();
     applyFxVolume();
-    Debug.Log("~SettingsManager~ setup volumes");
+    //Debug.Log("~SettingsManager~ setup volumes");
 
     PlayerPrefs.Save();
   }
   
-  static protected void applyMasterVolume() { applyVolume("master", ppref_sound_master_volume, PlayerPrefs.GetInt(ppref_sound_muted, 0)); }
+  static protected void applyMasterVolume() { applyVolume("global", ppref_sound_master_volume, PlayerPrefs.GetInt(ppref_sound_muted, 0) == 0 ? 0f : -80f); }
   static protected void applyFxVolume() { applyVolume("fx", ppref_sound_fx_volume); }
   static protected void applyMusicVolume() { applyVolume("music", ppref_sound_music_volume); }
 
-  static protected void applyVolume(string category, string ppref_const, float ratio = 1f)
+  static protected AnimationCurve volumeCurve = AnimationCurve.EaseInOut(0f,0f,1f,1f);
+  static protected float transformVolumeSliderValue(float input)
   {
-    float volume = PlayerPrefs.GetFloat(ppref_const, 1f);
+    //Debug.Log("input "+input+" => "+volumeCurve.Evaluate(input));
+    return Mathf.Lerp(-80f, 0f, volumeCurve.Evaluate(input));
+  }
+
+  static protected void applyVolume(string category, string ppref_const, float boost = 0f)
+  {
+    float volume = PlayerPrefs.GetFloat(ppref_const, 0f); // 0 == no variation
     EngineManager em = GameObject.FindObjectOfType<EngineManager>();
     if (em == null) return;
     if (em.mixer == null) {
       Debug.LogWarning("no mixer ?");
       return;
     }
-    em.mixer.SetFloat("master", volume * ratio);
+    volume = transformVolumeSliderValue(volume);
+    em.mixer.SetFloat(category, volume + boost);
   }
   
 }

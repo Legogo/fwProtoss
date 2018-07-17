@@ -9,6 +9,7 @@ public class SoundManager
   
   static public AudioSource call(string name, float offset = 0f, bool fx = false)
   {
+    Debug.Log("<color=yellow>~SoundManager~</color> call(<b>" + name + "</b>)");
     if (sources == null) sources = GameObject.FindObjectsOfType<AudioSource>();
 
     for (int i = 0; i < sources.Length; i++)
@@ -50,6 +51,18 @@ public class SoundManager
     return null;
   }
 
+  static public bool isPlaying(string name)
+  {
+    if (sources == null) sources = GameObject.FindObjectsOfType<AudioSource>();
+    for (int i = 0; i < sources.Length; i++)
+    {
+      if (sources[i].clip.name.Contains(name))
+      {
+        return sources[i].isPlaying;
+      }
+    }
+    return false;
+  }
   static public void stop(string name)
   {
     if (sources == null) sources = GameObject.FindObjectsOfType<AudioSource>();
@@ -62,7 +75,7 @@ public class SoundManager
     }
   }
 
-  static public void stop()
+  static public void stopAllSources()
   {
     if (sources == null) sources = GameObject.FindObjectsOfType<AudioSource>();
     for (int i = 0; i < sources.Length; i++)
