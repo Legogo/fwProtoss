@@ -263,6 +263,9 @@ abstract public class CapacityMovement : LogicCapacity {
   
   public override void clean()
   {
+    killHorizontalSpeed();
+    killVerticalSpeed();
+    killInstantSpeed();
     lastDirection.x = 0f;
     lastDirection.y = 0f;
     _lock = false;
@@ -305,6 +308,12 @@ abstract public class CapacityMovement : LogicCapacity {
   virtual public bool hasMoved()
   {
     return _moved;
+  }
+
+  public void teleportTo(Vector3 position)
+  {
+    clean();
+    transform.position = position;
   }
 
   public bool isGrounded() { return (_collision != null) ? _collision.isGrounded() : true; }
