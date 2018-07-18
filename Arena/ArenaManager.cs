@@ -41,7 +41,7 @@ abstract public class ArenaManager : EngineObject {
 
   virtual protected void onPause(bool state)
   {
-    Debug.Log("pause ! " + state);
+    //Debug.Log("pause ! " + state);
     setFreeze(state);
   }
 
