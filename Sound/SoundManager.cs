@@ -9,7 +9,7 @@ public class SoundManager
   
   static public AudioSource call(string name, float offset = 0f, bool fx = false)
   {
-    Debug.Log("<color=yellow>~SoundManager~</color> call(<b>" + name + "</b>)");
+    //Debug.Log("<color=yellow>~SoundManager~</color> call(<b>" + name + "</b>)");
     if (sources == null) sources = GameObject.FindObjectsOfType<AudioSource>();
 
     for (int i = 0; i < sources.Length; i++)
