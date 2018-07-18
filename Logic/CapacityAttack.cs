@@ -83,9 +83,12 @@ abstract public class CapacityAttack : LogicCapacity
 
   public void Attack()
   {
-    //Debug.Log(name+" attack");
-
     if (coProcessAttack != null) return; // already attacking
+    onAttackStart();
+  }
+
+  virtual protected void onAttackStart()
+  {
     coProcessAttack = StartCoroutine(ProcessAttack());
   }
 
