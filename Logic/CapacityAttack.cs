@@ -86,6 +86,7 @@ abstract public class CapacityAttack : LogicCapacity
 
   public void Attack()
   {
+    refreshHittables();
     if (coProcessAttack != null) return; // already attacking
     onAttackStart();
   }

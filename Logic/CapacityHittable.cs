@@ -1,28 +1,21 @@
 ﻿using UnityEngine;
 using System;
 
-abstract public class CapacityHittable : LogicCapacity
+public class CapacityHittable : LogicCapacity
 {
+  // arg: attacker
+  public event Action<LogicCapacity> HitEvent;
+
   protected Collider2D[] _colliders;
 
   public float hitTimer = 0f;
   public float invincibleTimer = 0f;
-  
-  protected CapacityAttack _attack;
-  protected CapacityMovement _move;
-  protected CapacityHitpoints _hp;
 
   public Action<LogicItem, LogicItem> onHit;
 
   public override void setupCapacity()
   {
     _colliders = UnityHelpers.getColliders2D(transform);
-    
-    _move = _owner.GetComponent<CapacityMovement>();
-
-    _attack = _owner.GetComponent<CapacityAttack>();
-    
-    _hp = _owner.GetComponent<CapacityHitpoints>();
   }
 
   public override void updateCapacity()
@@ -44,17 +37,24 @@ abstract public class CapacityHittable : LogicCapacity
 
   protected bool overlap(BoxCollider2D boxa, BoxCollider2D boxb)
   {
-    if(boxa.OverlapPoint(boxb.bounds.center)) return true;
+    if(boxa.bounds.Intersects(boxb.bounds)) return true;
     //if (boxa.OverlapPoint(boxb.bounds.center)) return true;
     return false;
   }
 
-  public CapacityHittable checkHitSomething(CapacityAttack attackerCapa)
+  protected bool overlap(BoxCollider2D box, Vector3 bounds)
   {
-    if (checkHitSword(attackerCapa)) return null;
+    if (box.OverlapPoint(bounds)) return true;
+    return false;
+  }
 
+  public virtual CapacityHittable checkHitSomething(CapacityAttack attackerCapa)
+  {
     //faire le hit player APRES toutes les armes
-    if (checkHitPlayer(attackerCapa)) return this;
+    if (checkHitPlayer(attackerCapa))
+    {
+      return this;
+    }
 
     return null;
   }
@@ -69,34 +69,19 @@ abstract public class CapacityHittable : LogicCapacity
     return true;
   }
 
-  private bool checkHitSword(CapacityAttack attackerCapa)
-  {
-    //si le collider de l'épée de l'adversaire overlap pas avec la mienne
-    if (!overlap(_attack.getWeapon().getMainCollider(), attackerCapa.getWeapon().getMainCollider())) return false;
-    
-    Debug.Log(_owner.name + " <--WEAPONS--> " + attackerCapa.getOwner().name);
-
-    //balance l'event sur l'attacker qu'il a tapé une épée
-    attackerCapa.HitBySomething(_attack);
-    _attack.HitBySomething(attackerCapa);
-    return true;
-  }
-
-  public void doKnockBack(Vector2 knockbackPower, float hitDirection)
-  {
-    //Debug.Log(name + " knockback");
-    _move.addVelocity(hitDirection * knockbackPower.x, knockbackPower.y);
-  }
-
   public bool Hittable()
   {
+    if (this == null) return false;
     if (getOwner().isFreezed()) return false;
     if (invincibleTimer > 0f) return false;
-    if (!getCollider().enabled) return false;
+    if (getCollider() != null && !getCollider().enabled) return false;
     return true;
   }
 
-  abstract public void HitBySomething(CapacityAttack attacker);
+  public virtual void HitBySomething(CapacityAttack attacker)
+  {
+    RaiseHitEvent(attacker);
+  }
   
   public bool Stuned
   {
@@ -112,7 +97,19 @@ abstract public class CapacityHittable : LogicCapacity
     return _colliders[0] as BoxCollider2D;
   }
 
+  public Vector3 getBounds()
+  {
+    return getCollider().bounds.center;
+  }
+
   public override void clean()
   {
+  }
+
+  protected virtual void RaiseHitEvent(LogicCapacity item)
+  {
+    Action<LogicCapacity> handler = HitEvent;
+    if (handler != null)
+      handler(item);
   }
 }
