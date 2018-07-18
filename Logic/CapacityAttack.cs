@@ -114,10 +114,7 @@ abstract public class CapacityAttack : LogicCapacity
     
     //wait for anim to start in <animator>
     yield return null;
-
-    _move.lockHorizontal.addLock(gameObject);
-    _move.addVelocity(getHorizontalSpeedOnLock(), 0f);
-
+    
     //lock anim at frame 1 when keeping attack pressed
     //wait for release
     if (!releasedAttack())
@@ -158,12 +155,10 @@ abstract public class CapacityAttack : LogicCapacity
     endOfAttack();
   }
 
-  protected void endOfAttack() {
+  virtual protected void endOfAttack() {
 
     StopAllCoroutines();
-
-    _move.lockHorizontal.removeLock(gameObject);
-
+    
     //_character.animController.onAnimEnd -= ownerAnimationDone;
     
     _character.releaseAnim();
