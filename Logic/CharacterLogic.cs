@@ -15,7 +15,8 @@ public class CharacterLogic : LogicItem {
   [Tooltip("to know how to compute orientation (top view or side view)")]
   public LogicGameType gameType;
 
-  protected Animator _anim;
+  //protected Animator _animator;
+  public AnimatorPlayer animController;
 
   protected CapacityCollision _collision;
   protected CapacityMovement _move;
@@ -35,8 +36,10 @@ public class CharacterLogic : LogicItem {
     //if (_collision == null) Debug.LogError("no collision capacity for : " + name, gameObject);
 
     _move = GetComponent<CapacityMovement>();
-    if (_move == null) Debug.LogError(name + " has no <b>move module</b> for character logic ?", gameObject);
+    //if (_move == null) Debug.LogError(name + " has no <b>move module</b> for character logic ?", gameObject);
 
+    animController = new AnimatorPlayer(transform);
+    animController.onAnimEnd += onAnimationDone;
   }
 
   protected override void setup()
@@ -44,8 +47,6 @@ public class CharacterLogic : LogicItem {
     base.setup();
 
     //Debug.Log(name + " <b>fetch</b> global", gameObject);
-
-    _anim = gameObject.GetComponentInChildren<Animator>();
     
     _hitPoints = gameObject.GetComponent<CapacityHitpoints>();
   }
@@ -70,50 +71,59 @@ public class CharacterLogic : LogicItem {
 
     update_animation();
 
-    ComputeOrientation(_move.getHorizontalDirection());
+    if(_move != null) ComputeOrientation(_move.getHorizontalDirection());
   }
-
+  
   virtual protected void update_animation()
   {
+    animController.update_check(); // to activate event of progression
+    //_controller.update(); // make animation go foward
+
+    string animToPlay = "idle";
+    
     if(overrideNameAnimation.Length > 0)
     {
-      PlayAnimOfName(overrideNameAnimation);
-      return;
+      animToPlay = overrideNameAnimation;
     }
+    else if(_move != null)
+    {
 
-    if (!_move.isGrounded())
-    {
-      PlayAnimOfName("fall");
-    }
-    else
-    {
-      if (_move.hasMoved())
+      if (!_move.isGrounded())
       {
-        PlayAnimOfName("walk");
+        animToPlay = "fall";
       }
       else
       {
-        PlayAnimOfName("idle");
+        if (_move.hasMoved())
+        {
+          animToPlay = "walk";
+        }
       }
+      
+    }
+    
+    PlayAnimOfName(animToPlay);
+  }
+
+  protected void onAnimationDone()
+  {
+    //Debug.Log("end of character animation");
+    if (overrideNameAnimation.Length > 0) overrideNameAnimation = "";
+  }
+  
+  protected void PlayAnimOfName(string stateName)
+  {
+    //already playing this anim ?
+    if (animController.isPlaying(stateName))
+    {
+      //Debug.LogWarning("already playing : " + animName);
+      return;
     }
 
+    //Debug.Log("playing : " + animName);
+    animController.launch(stateName);
   }
-
-  public void PlayAnimOfName(string animName)
-  {
-    if (_anim == null) return;
-    //Debug.Log(animName);
-    _anim.Play(animName);
-  }
-
-  public bool isPlaying(string animName)
-  {
-    if (_anim == null) return false;
-    AnimatorStateInfo state = _anim.GetCurrentAnimatorStateInfo(0);
-    if (state.IsName(animName)) return true;
-    return false;
-  }
-
+  
   virtual public void Respawn(Transform spawn = null)
   {
     if (_hitPoints != null) _hitPoints.setupCapacity();
@@ -164,6 +174,7 @@ public class CharacterLogic : LogicItem {
       case LogicGameType.PLATFORMER:
         //GetComponentInChildren<SpriteRenderer>().flipX = sign == 1f;
         visibility.flipHorizontal(hDirection);
+        //Debug.Log(hDirection);
         break;
     }
     
@@ -172,6 +183,7 @@ public class CharacterLogic : LogicItem {
   /* it's interesting to have a hub that avoid to get the Movement capa every time */
   public int getDirection()
   {
+    if (_move == null) return 0;
     return _move.getHorizontalDirection();
   }
 

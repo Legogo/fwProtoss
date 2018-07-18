@@ -13,7 +13,7 @@ abstract public class CapacityMovement : LogicCapacity {
   protected Vector2 lastFullMovement; // debug
 
   protected Vector2 solvedVelocity;
-  protected Vector2 additionnalVelocity; // remit a 0 a la fin de la frame
+  protected Vector2 instantVelocity; // remit a 0 a la fin de la frame
   protected Vector2 velocity;
   
   public CapacityPropertyLocker lockHorizontal;
@@ -78,8 +78,8 @@ abstract public class CapacityMovement : LogicCapacity {
   //public void addInstant(Vector2 stepForce){ addInstant(stepForce.x, stepForce.y);}
   public void addInstant(float x, float y)
   {
-    additionnalVelocity.x += x;
-    additionnalVelocity.y += y;
+    instantVelocity.x += x;
+    instantVelocity.y += y;
   }
   
   //public void addVelocity(Vector2 force){velocity += force;}
@@ -132,22 +132,20 @@ abstract public class CapacityMovement : LogicCapacity {
 
     //if someone is locking this direction
     int? lockDirection = lockHorizontal.getLockDirection();
-
-    //Debug.Log(lockDirection);
-
+    
     if(lockDirection != null)
     {
       if(lockDirection.Value == 0f) // all direction
       {
         killInstantSpeed();
       }
-      else if (Mathf.Sign(additionnalVelocity.x) == lockDirection.Value) // specific direction
+      else if (Mathf.Sign(instantVelocity.x) == lockDirection.Value) // specific direction
       {
-        additionnalVelocity.x = 0f;
+        instantVelocity.x = 0f;
       }
     }
 
-    solvedVelocity = additionnalVelocity + velocity;
+    solvedVelocity = instantVelocity + velocity;
 
     //clampSolvedVelocity();
     
@@ -168,13 +166,13 @@ abstract public class CapacityMovement : LogicCapacity {
 
     lastFullMovement = transform.position - position;
 
-    lastStep = additionnalVelocity;
+    lastStep = instantVelocity;
 
     //direction
-    if (additionnalVelocity.x != 0f) lastDirection.x = Mathf.Sign(additionnalVelocity.x);
-    if (additionnalVelocity.y != 0f) lastDirection.y = Mathf.Sign(additionnalVelocity.y);
+    if (instantVelocity.x != 0f) lastDirection.x = Mathf.Sign(instantVelocity.x);
+    if (instantVelocity.y != 0f) lastDirection.y = Mathf.Sign(instantVelocity.y);
     
-    additionnalVelocity.x = additionnalVelocity.y = 0f;
+    instantVelocity.x = instantVelocity.y = 0f;
     
     /*
     Debug.Log(Time.frameCount + " end of movement for " + name, gameObject);
@@ -204,16 +202,16 @@ abstract public class CapacityMovement : LogicCapacity {
 
   public void killHorizontalSpeed()
   {
-    additionnalVelocity.x = velocity.x = 0f;
+    instantVelocity.x = velocity.x = 0f;
   }
   public void killVerticalSpeed()
   {
     //Debug.Log(Time.frameCount+" kill vertical");
-    additionnalVelocity.y = velocity.y = 0f;
+    instantVelocity.y = velocity.y = 0f;
   }
   public void killInstantSpeed()
   {
-    additionnalVelocity = Vector2.zero;
+    instantVelocity = Vector2.zero;
   }
 
   public bool isGoingUp() { return lastDirection.y > 0f; }
@@ -221,13 +219,13 @@ abstract public class CapacityMovement : LogicCapacity {
   public float getVerticalSpeed() { return lastFullMovement.y; }
   public float getHorizontalSpeed() { return lastFullMovement.x; }
   public float getHorizontalVelocity() { return velocity.x; }
-
+  
   protected void moveStep(Vector2 step)
   {
     Vector2 originOfMovement = _t.position;
 
     //store for direction
-    if (step.x != 0f) lastDirection = step;
+    //if (step.x != 0f) lastDirection = step;
     
     //cannot collide
     if (_collision != null && _collision.isCollidable())
@@ -259,7 +257,7 @@ abstract public class CapacityMovement : LogicCapacity {
   {
     Vector2 diff = (position - transform.position);
     Vector2 speedVector = diff.normalized * speed;
-    additionnalVelocity += speedVector;
+    instantVelocity += speedVector;
     return speedVector;
   }
   
@@ -279,7 +277,7 @@ abstract public class CapacityMovement : LogicCapacity {
     }
     return null;
   }
-
+  
   public bool hasForceOfName(string name)
   {
     for (int i = 0; i < forces.Count; i++)
@@ -327,7 +325,7 @@ abstract public class CapacityMovement : LogicCapacity {
 
     ct += "\n~solved step data~";
     ct += "\n └ velocity : " + velocity.x + " x " + velocity.y;
-    ct += "\n └ instant : " + additionnalVelocity.x + " x " + additionnalVelocity.y;
+    ct += "\n └ instant : " + instantVelocity.x + " x " + instantVelocity.y;
     ct += "\n └ instant : " + lastStep.x + " x " + lastStep.y;
     ct += "\n └ last direction : " + lastDirection.x + " x " + lastDirection.y;
 

@@ -2,34 +2,40 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+/// <summary>
+/// to use animator player you need to have a "speed" parameter on each state that can multiply speed of animation reading
+/// </summary>
+
 public class AnimatorPlayer
 {
   public const string noneState = "none";
+
   protected Transform owner;
   protected Animator animator;
+
   protected AnimatorStateInfo animInfo;
-
-  //dans le cas ou l'animation est controlée par un EngineRange faut pas que la timeline continue quand on arrive a 1
-  //utilisé par PropAnimatorInteractor
-  public bool neverEnd = false;
-
   protected AnimationClip state_clip;
-  protected bool anim_has = false;
-  protected bool anim_at_end = false;
+
+  protected bool _paused = false;
+  protected bool _playing = false;
   protected int layer_active_index = 0;
   
+  private float animStartTimeRatio = 0f; // [0,1]
+
+  //ms
   private float animTimeLength = 0f;
   private float animCurrentTime = 0f;
   private float animTimePrevious = 0f;
 
-  public Action onAnimEnd;
-  
-  protected AnimatorPlayer[] others; // la liste des autres AnimatorPlayer qui pointent sur le même Animator
+  private string animStateName = "";
+  private float animSpeed = 1f;
 
+  public event Action onAnimEnd;
+  
   public AnimatorPlayer(Transform parent)
   {
     owner = parent;
-
+    
     //trop tot (prop copy)
     //animator = owner.animator;
 
@@ -42,62 +48,48 @@ public class AnimatorPlayer
       Debug.LogError("this player should have an animator at this point", parent.gameObject);
     }
   }
-
-  public void reset()
-  {
-    anim_has = false;
-    anim_at_end = false;
-    animTimePrevious = -1f; // pour que ça réagisse même quand la valeur de start == end
-  }
-
-  public void setup() {
-    
-    if (animator == null)
-    {
-      Debug.LogError("~AnimatorPlayer~ no animator for " + owner.name+" (was destroyed ?)", owner.gameObject);
-      return;
-    }
-    
-    //remettre la speed a 0 au cas ou
-    stop();
-  }
   
-  public void launch(string stateName, float startTimeRatio = 0f)
+  public AnimatorPlayer launch(string stateName, float startOffset = 0f)
   {
-    
-    //dans le cas de la scène de la main il faut pouvoir desactiver l'animator pour éviter de bloquer les transforms
-    //il faut GARDER cette fonction
-    if (!animator.enabled) animator.enabled = true;
-    
-    reset();
+    stop();
     
     state_clip = getClipByName(stateName);
     
     if (state_clip != null)
     {
       animTimeLength = 1f * state_clip.length;
-      animCurrentTime = (animTimeLength * startTimeRatio) * 1f;
+      animStartTimeRatio = startOffset / animTimeLength;
 
-      //setup start value into anim
-      //Debug.Log(getStateName());
+      _paused = false;
+      _playing = true;
+      animStateName = stateName;
 
-      animator.Play(stateName, layer_active_index, startTimeRatio);
-      //animator.Play(getStateName(), 0, startTimeRatio);
-      
+      //Debug.Log("playing " + stateName);
+
+      animator.Play(animStateName, layer_active_index, animStartTimeRatio);
     }
+    else
+    {
+      Debug.LogWarning("no clip returned by state "+stateName);
+    }
+
+    return this;
   }
-  
-  /* must be called by parent to make the animation fo forward */
-  public void update_animation_setFrame(float aimTime, float speed)
+
+  /// <summary>
+  /// must be called by parent to make the animation fo forward
+  /// </summary>
+  public void update()
   {
+    if (_playing || _paused) return;
+
     animInfo = animator.GetCurrentAnimatorStateInfo(layer_active_index);
     animTimeLength = animInfo.length;
-
-    float target = (animTimeLength * aimTime);
-    float stepSpeed = GameTime.deltaTime * speed;
+    
+    float stepSpeed = GameTime.deltaTime * animSpeed;
     
     //Debug.Log("  current "+animCurrentTime+" / "+target+" ("+stepSpeed+")");
-    animCurrentTime = Mathf.MoveTowards(animCurrentTime, target, stepSpeed);
+    animCurrentTime = Mathf.MoveTowards(animCurrentTime, animTimeLength, stepSpeed);
     
     float timeNorm = animCurrentTime / animTimeLength;
     //Debug.Log("  result " + animCurrentTime + " / " + animTimeLength + " = " +timeNorm);
@@ -105,61 +97,118 @@ public class AnimatorPlayer
     setAtTime(timeNorm);
   }
 
-  protected void forceAtTimeByRatio(float timeRatio) {
-    animCurrentTime = timeRatio * animTimeLength;
-    setAtTime(timeRatio);
+  /// <summary>
+  /// updated by parent
+  /// </summary>
+  public void update_check()
+  {
+    if (isClipLooping()) return;
+
+    animInfo = animator.GetCurrentAnimatorStateInfo(layer_active_index);
+
+    //on launch
+    //animTimeLength = animInfo.length;
+
+    animCurrentTime = animInfo.normalizedTime * animTimeLength;
+    //Debug.Log(">>time " + animCurrentTime + " , name " + animStateName);
+    //Debug.Log("speed "+animInfo.speed + " , length " + animInfo.length);
+
+
+    //float mod = animTimeLength % animCurrentTime;
+
+    if (!isPlaying(animStateName))
+    {
+      //Debug.Log("done playing " + animStateName);
+      stop();
+      if (onAnimEnd != null) onAnimEnd();
+    }
+  }
+  
+  /// <summary>
+  /// remet la timeline a 0
+  /// </summary>
+  public void reset()
+  {
+    animCurrentTime = animStartTimeRatio * animTimeLength;
+    setAtTime(0f);
   }
 
-  public void setAtTime(float timeRatio) {
+  protected void forceAtTimeByRatio(float timeRatio)
+  {
+    setAtTime(timeRatio * animTimeLength);
+  }
 
-    //Debug.Log(timeRatio);
-
+  public void setAtTime(float timeRatio)
+  {
     animator.Play(animInfo.fullPathHash, -1, timeRatio);
-    //Debug.Log(animInfo.fullPathHash + " -> " + endTimeRatio);
+    Debug.Log("set at time : "+animInfo.fullPathHash + " -> " + timeRatio);
   }
 
-  public bool isClipLooping() {
+  public bool isClipLooping()
+  {
+    if (state_clip == null) return false;
     return state_clip.isLooping;
   }
 
   public bool checkAnimAtEnd(float endTime)
   {
-    if (neverEnd) return false;
-    //return Mathf.Approximately(Mathf.Clamp01(animInfo.normalizedTime), endTime);
     return Mathf.Approximately(Mathf.Clamp01(getTimeRatio()), endTime);
   }
 
-  public bool isDone()
+  public bool isPlaying()
   {
-    return anim_at_end;
+    return _playing;
   }
 
-  /* stop le player mais ne touche pas la vitesse du controller */
-  public void killPlayer() {
-    
-    if (anim_at_end)
+  public bool isPlaying(string stateName)
+  {
+    if (!isPlaying()) return false;
+
+    animInfo = animator.GetCurrentAnimatorStateInfo(layer_active_index);
+
+    return animInfo.IsName(stateName);
+
+    /*
+    if (animStateName.Length <= 0)
     {
-      Debug.LogWarning(owner.name+" already setup as at end");
-      return;
+      //Debug.LogWarning("animator player is playing nothing");
+      return false;
     }
-
-    anim_at_end = true;
+    //Debug.Log(stateName + " , " + animStateName);
+    return stateName == animStateName;
+    */
   }
-
-  public void stop()
+  
+  /// <summary>
+  /// freeze l'anim où elle est
+  /// </summary>
+  public void pause()
   {
-    //Debug.Log("stop " + owner.GetInstanceID());
-    anim_at_end = true; // force finish
+    _paused = true;
+    //Debug.Log(animStateName + " , " + _paused);
     setAnimatorSpeed(0f);
   }
-
-  public void playNone()
+  public void resume()
   {
-    animator.Play("none", layer_active_index);
+    _paused = false;
+    setAnimatorSpeed(animSpeed);
+  }
+
+  /// <summary>
+  /// arrête l'animation et relache le controle de l'animator
+  /// </summary>
+  public void stop()
+  {
+    //animator.Play("none");
+    animStateName = "";
+    animTimeLength = -1f;
+    _playing = false;
+    _paused = false;
   }
   
   /* la layer qui a un normTime en cours ]0,1[ */
-  protected int getActiveLayerIndex() {
+  protected int getActiveLayerIndex()
+  {
     for (int i = 0; i < animator.layerCount; i++)
     {
       AnimatorStateInfo info = animator.GetCurrentAnimatorStateInfo(i);
@@ -176,11 +225,17 @@ public class AnimatorPlayer
 
   public float getTimeRatio() { return animInfo.normalizedTime; }
 
+  public void setAnimationSpeed(float newSpeed)
+  {
+    animSpeed = newSpeed;
+    setAnimatorSpeed(newSpeed);
+  }
+
   protected void setAnimatorSpeed(float newSpeed = 1f)
   {
-    if (animator == null) Debug.LogError("no animator ?", owner.gameObject);
     animator.SetFloat("speed", newSpeed);
-    //Debug.Log(animator.name+" , animator speed to " + newSpeed, animator.gameObject);
+
+    //Debug.Log("animator speed " + newSpeed);
   }
 
   protected AnimationClip getClipByName(string nm)
@@ -189,7 +244,8 @@ public class AnimatorPlayer
 
     for (int i = 0; i < animationClips.Length; i++)
     {
-      if (nm == animationClips[i].name) return animationClips[i];
+      //if (nm == animationClips[i].name) return animationClips[i];
+      if (animationClips[i].name.EndsWith(nm)) return animationClips[i];
     }
 
     //si l'animator a pas le clip ça veut dire qu'on veut jouer a partir d'où il en est
@@ -211,8 +267,7 @@ public class AnimatorPlayer
   public string toString()
   {
     string ct = "\n[AnimatorPlayer]";
-
-    ct += "\n anim_at_end ? " + anim_at_end + " , anim_has ? " + anim_has + " , anim loop ? " + animInfo.loop;
+    
     ct += "\n time ratio : " + getTimeRatio() + " / 1";
     ct += "\n time (sec) : " + (animInfo.normalizedTime * animTimeLength) + " / " + animTimeLength;
     ct += "\n speed : " + animator.GetFloat("speed");

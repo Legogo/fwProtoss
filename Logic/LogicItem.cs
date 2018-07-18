@@ -73,6 +73,25 @@ public class LogicItem : ArenaObject
     capacities.Add(capa);
   }
 
+  public T getCapacity<T>() where T : LogicCapacity
+  {
+    return (T)capacities.FirstOrDefault(x => x != null && typeof(T).IsAssignableFrom(x.GetType()));
+  }
+  public void lockCapacity<T>(bool flag) where T : LogicCapacity
+  {
+    //LogicCapacity lc = capacities.FirstOrDefault(x => x != null && x.GetType().IsAssignableFrom(typeof(T)));
+    LogicCapacity lc = getCapacity<T>();
+    if (lc != null)
+    {
+      lc.lockCapacity(flag);
+    }
+    else
+    {
+      Debug.Log(typeof(T) + " NOT FOUND , " + flag+" , "+name);
+    }
+
+  }
+  
   public void forceWithinBounds(Rect boundsClamp)
   {
     if (visibility == null) Debug.LogWarning("asking for bounds clamping but no visible module");

@@ -47,9 +47,12 @@ abstract public class CapacityAttack : LogicCapacity
   }
 
   abstract public float getInterruptTime();
-  abstract protected bool pressAttack();
-  abstract protected string getAttackDirectionName(); // up,down,stand
 
+  abstract protected bool pressedAttack();
+  abstract protected bool releasedAttack();
+
+  abstract protected string getAttackDirectionName(); // up,down,stand
+  
   protected void refreshHittables()
   {
     //filter own hittable from list
@@ -73,12 +76,12 @@ abstract public class CapacityAttack : LogicCapacity
     }
 
     //Debug.Log("attack ? "+inputAttack);
-    if (pressAttack()) Attack();
+    if (pressedAttack()) Attack();
   }
   
   internal void CancelAttack()
   {
-    processEndOfAttach();
+    endOfAttack();
   }
 
   public void Attack()
@@ -87,6 +90,9 @@ abstract public class CapacityAttack : LogicCapacity
     onAttackStart();
   }
 
+  /// <summary>
+  /// allow children to do more stuff when attack starts
+  /// </summary>
   virtual protected void onAttackStart()
   {
     coProcessAttack = StartCoroutine(ProcessAttack());
@@ -101,33 +107,64 @@ abstract public class CapacityAttack : LogicCapacity
     
     string animToPlay = "player_attack_";
 
-    animToPlay += getAttackDirectionName();
+    animToPlay += getAttackDirectionName(); //composition du nom de l'anim
     
-    _character.captureAnim(animToPlay);
+    _character.captureAnim(animToPlay); // tell character to play something else (attack anim)
     
     //wait for anim to start in <animator>
     yield return null;
-    
-    // check if the anim is still playing and if the attack has not hit
-    while (_character.isPlaying(animToPlay))
+
+    _move.lockHorizontal.addLock(gameObject);
+    _move.addVelocity(getHorizontalSpeedOnLock(), 0f);
+
+    //lock anim at frame 1 when keeping attack pressed
+    //wait for release
+    if (!releasedAttack())
     {
-      //Debug.Log(name + " is playing animation");
+      _character.animController.pause(); // pause
+        
+      while (!releasedAttack())
+      {
+        //_character.stop
+        yield return null;
+      }
+      
+      _character.animController.resume();
+
+    }
+
+    //Debug.Log("start of animation attack "+animToPlay);
+
+    //_character.animController.onAnimEnd += ownerAnimationDone;
+
+    //this will be cancelled when character parent will finish it's animation
+    while (_character.animController.isPlaying(animToPlay))
+    {
       checksDuringAnimation();
       yield return null;
     }
 
-    processEndOfAttach();
+    endOfAttack();
   }
 
-  virtual protected void checksDuringAnimation()
+  virtual protected float getHorizontalSpeedOnLock()
   {
-    checkForAttackEvent();
+    return 0f;
   }
 
-  protected void processEndOfAttach()
+  protected void ownerAnimationDone()
   {
-    if (coProcessAttack != null) StopCoroutine(coProcessAttack);
+    endOfAttack();
+  }
 
+  protected void endOfAttack() {
+
+    StopAllCoroutines();
+
+    _move.lockHorizontal.removeLock(gameObject);
+
+    //_character.animController.onAnimEnd -= ownerAnimationDone;
+    
     _character.releaseAnim();
 
     coProcessAttack = null;
@@ -136,6 +173,11 @@ abstract public class CapacityAttack : LogicCapacity
     //_weapon.toggleCollider(false);
   }
 
+  virtual protected void checksDuringAnimation()
+  {
+    checkForAttackEvent();
+  }
+  
   /* called each frame while attacking coroutine is running */
   private void checkForAttackEvent()
   {

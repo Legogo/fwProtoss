@@ -29,6 +29,11 @@ abstract public class LogicCapacity : EngineObject {
     _character = gameObject.GetComponent<CharacterLogic>();
   }
 
+  sealed public override void updateEngine()
+  {
+    base.updateEngine();
+  }
+
   /* called by LogicItem, on scene loading */
   virtual public void earlySetupCapacity() { }
   virtual public void setupCapacity() { }

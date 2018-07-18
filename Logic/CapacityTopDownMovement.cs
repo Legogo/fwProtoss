@@ -65,7 +65,7 @@ public class CapacityTopDownMovement : CapacityMovement {
 
     if (direction.sqrMagnitude > 0f) lastDirection = direction;
 
-    additionnalVelocity += solvedDirection * moveSpeed;
+    instantVelocity += solvedDirection * moveSpeed;
 
     //clamp in screen
     if (_gameSpace != null) _owner.forceWithinBounds(_gameSpace.offsetSpace);
