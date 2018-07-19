@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 using Random = UnityEngine.Random;
 
-[CreateAssetMenu(menuName = "data/DataTimer", order = 100)]
+[CreateAssetMenu(menuName = "protoss/create DataTimer", order = 100)]
 public class DataTimer : ScriptableObject
 {
   public float timer = 1f;

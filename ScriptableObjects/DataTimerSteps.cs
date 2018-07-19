@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-[CreateAssetMenu(menuName = "data/DataTimerSteps", order = 100)]
+[CreateAssetMenu(menuName = "protoss/create DataTimerSteps", order = 100)]
 public class DataTimerSteps : DataTimer
 {
   //public TimerParams[] timedParams;

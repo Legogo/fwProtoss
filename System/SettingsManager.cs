@@ -12,7 +12,7 @@ using UnityEditor;
 
 public class SettingsManager : EngineObject {
 
-  public DataSettings data_settings;
+  public DataBuildSettings data_settings;
 
   public const string ppref_sound_master_volume = "ppref_sound_volume_master";
   public const string ppref_sound_music_volume = "ppref_sound_volume_music";
@@ -130,13 +130,20 @@ public class SettingsManager : EngineObject {
 #if UNITY_EDITOR
   [ContextMenu("apply build settings")]
   public void apply() {
-    PlayerSettings.productName = data_settings.product_name;
-    PlayerSettings.companyName = data_settings.compagny_name;
+    applySettings(data_settings);
+  }
+
+  static public void applySettings(DataBuildSettings data)
+  {
+    Debug.Log("applying DataBuildSettings ...");
+
+    PlayerSettings.productName = data.product_name;
+    PlayerSettings.companyName = data.compagny_name;
     
-    PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, data_settings.package_name);
-    PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.iOS, data_settings.package_name);
+    PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, data.package_name);
+    PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.iOS, data.package_name);
     
-    PlayerSettings.defaultInterfaceOrientation = data_settings.orientation_default;
+    PlayerSettings.defaultInterfaceOrientation = data.orientation_default;
   }
 #endif
 
