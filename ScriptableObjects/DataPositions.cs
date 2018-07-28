@@ -32,7 +32,8 @@ public class DataPositionsEditor : Editor
 
     EditorGUILayout.LabelField(obj.positions.Length + " positions");
 
-    for (int i = 0; i < 20; i++)
+    int qty = Math.Min(20, obj.positions.Length);
+    for (int i = 0; i < qty; i++)
     {
       EditorGUILayout.Vector3Field("#" + i, obj.positions[i]);
     }

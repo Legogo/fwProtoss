@@ -201,6 +201,8 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
     //Debug.Log(name + " destroy() ", gameObject);
     //if (eos.IndexOf(this) > -1) eos.Remove(this);
     EngineManager.unsubscribe(this);
+
+    EngineManager.get().onLoadingDone -= onEngineLoadingDone;
   }
 
   public bool isFreezed() { return !_unfreeze; }

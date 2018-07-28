@@ -70,6 +70,9 @@ public class EngineLoader : MonoBehaviour
     //NEEDED
     EngineManager.create();
 
+    Scene sc = SceneManager.GetActiveScene();
+    cleanScene(sc);
+
     ///// feeder, additionnal scenes (from feeder script)
     EngineLoaderFeeder feeder = EngineLoaderFeeder.get();
     List<string> all = new List<string>();
@@ -135,9 +138,44 @@ public class EngineLoader : MonoBehaviour
 
     _asyncs.Remove(async);
 
+    Scene sc = SceneManager.GetSceneByName(sceneLoad);
+    while (!sc.isLoaded) yield return null;
+
+    cleanScene(sc);
+
     if (SHOW_DEBUG) Debug.Log("  package '<b>" + sceneLoad + "</b>' | done loading (" + _asyncs.Count + " left)");
   }
   
+  static protected void cleanScene(Scene sc)
+  {
+
+    GameObject[] roots = sc.GetRootGameObjects();
+    Debug.Log(sc.name + " has " + roots.Length + " roots");
+    for (int i = 0; i < roots.Length; i++)
+    {
+      removeGuides(roots[i].transform);
+    }
+    
+  }
+
+  static protected bool removeGuides(Transform obj)
+  {
+    if(obj.name.StartsWith("~"))
+    {
+      Debug.Log("removing guide object : " + obj.name);
+      GameObject.DestroyImmediate(obj.gameObject);
+      return true;
+    }
+
+    int i = 0;
+    while(i < obj.childCount)
+    {
+      if (!removeGuides(obj.GetChild(i))) i++;
+    }
+
+    return false;
+  }
+
   static protected string getLevelName() {
     return SceneManager.GetActiveScene().name;
   }
