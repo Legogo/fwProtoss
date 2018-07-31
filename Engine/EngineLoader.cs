@@ -150,7 +150,7 @@ public class EngineLoader : MonoBehaviour
   {
 
     GameObject[] roots = sc.GetRootGameObjects();
-    Debug.Log(sc.name + " has " + roots.Length + " roots");
+    Debug.Log("   "+sc.name + " has " + roots.Length + " roots");
     for (int i = 0; i < roots.Length; i++)
     {
       removeGuides(roots[i].transform);
@@ -162,7 +162,7 @@ public class EngineLoader : MonoBehaviour
   {
     if(obj.name.StartsWith("~"))
     {
-      Debug.Log("removing guide object : " + obj.name);
+      Debug.Log("   removing guide object : " + obj.name);
       GameObject.DestroyImmediate(obj.gameObject);
       return true;
     }

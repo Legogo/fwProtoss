@@ -4,6 +4,8 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEditor.SceneManagement;
+using System;
+using Object = UnityEngine.Object;
 
 /// <summary>
 /// 
@@ -53,7 +55,7 @@ abstract public class BuildHelper
     {
       EditorApplication.update -= update_check_process;
 
-      Debug.Log("pre build process done, start building");
+      Debug.Log("BuildHelper, pre build process done, start building");
 
       build_android();
     }
@@ -74,14 +76,26 @@ abstract public class BuildHelper
     if (BuildPipeline.isBuildingPlayer) return;
 
     buildPlayerOptions = new BuildPlayerOptions();
-    
+
+    VersionManager.incrementFix(); // change version
+
     //buildPlayerOptions.scenes = new[] { "Assets/Scene1.unity", "Assets/Scene2.unity" };
     buildPlayerOptions.scenes = getScenePaths();
 
+    
     string path = getBuildPathFolder();
     if (!path.EndsWith("/")) path += "/";
+
     path += getBuildName();
+    path += "_" + VersionManager.getFormatedVersion('-');
+    path += "_" + PlayerSettings.Android.bundleVersionCode;
+    path += "_" + getFullDate();
+
+    // [project]/build_path/build-name_version_build-number_fulldatetime
+
     if (!path.EndsWith(".apk")) path += ".apk";
+
+    Debug.Log("BuildHelper, saving build at : " + path);
 
     buildPlayerOptions.locationPathName = path;
     buildPlayerOptions.target = BuildTarget.Android;
@@ -89,10 +103,16 @@ abstract public class BuildHelper
     buildPlayerOptions.options |= BuildOptions.Development;
     if(auto_run) buildPlayerOptions.options |= BuildOptions.AutoRunPlayer;
     
-    VersionManager.incrementFix(); // change version
-
-    //new BuildHelper();
     BuildPipeline.BuildPlayer(buildPlayerOptions);
+  }
+
+  /// <summary>
+  /// yyyy-mm-dd_hh:mm
+  /// </summary>
+  static protected string getFullDate()
+  {
+    DateTime dt = DateTime.Now;
+    return dt.Year + "-" + dt.Month + "-" + dt.Day + "_" + dt.Hour + "-" + dt.Minute;
   }
 
   static protected string[] getScenePaths()
@@ -101,7 +121,7 @@ abstract public class BuildHelper
     List<string> sceneNames = new List<string>();
     int count = SceneManager.sceneCountInBuildSettings;
 
-    Debug.Log("scenes count : " + count);
+    Debug.Log("BuildHelper, scenes count : " + count);
 
     EditorBuildSettingsScene[] scenes = EditorBuildSettings.scenes;
 

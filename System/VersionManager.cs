@@ -27,12 +27,15 @@ public class VersionManager : MonoBehaviour
     Debug.Log("<color=teal>v" + getFormatedVersion() + "</color>");
   }
 
-  static public string getFormatedVersion(int[] data = null)
+  /// <summary>
+  /// major.minor.inc
+  /// </summary>
+  static public string getFormatedVersion(char separator = '.', int[] data = null)
   {
     if (data == null) data = getVersion();
-    return data[0] + "." + data[1] + "." + data[2];
+    return ""+ data[0] + separator + data[1] + separator + data[2];
   }
-
+  
   static private int[] getVersion()
   {
     string v = "";
@@ -126,7 +129,7 @@ public class VersionManager : MonoBehaviour
   {
     PlayerSettings.Android.bundleVersionCode++;
 
-    PlayerSettings.bundleVersion = getFormatedVersion(data);
+    PlayerSettings.bundleVersion = getFormatedVersion('.', data);
     PlayerSettings.iOS.buildNumber = PlayerSettings.bundleVersion;
 
     logVersion();

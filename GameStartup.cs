@@ -45,7 +45,7 @@ abstract public class GameStartup : EngineObject {
 
     ScreenLoading sl = ScreenLoading.get();
     if (sl != null) {
-      sl.hideLoadingScreen();
+      sl.hide();
     }
 
     yield return null;

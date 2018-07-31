@@ -50,7 +50,7 @@ public class UnityHelpers {
 
 
 #if UNITY_EDITOR
-  [MenuItem("Tools/Clear console #c")]
+  [MenuItem("Tools/Clear console #&c")]
   public static void ClearConsole()
   {
     var assembly = Assembly.GetAssembly(typeof(SceneView));

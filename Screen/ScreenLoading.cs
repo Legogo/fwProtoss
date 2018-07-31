@@ -9,20 +9,24 @@ public class ScreenLoading : ScreenObject {
   protected override void build()
   {
     base.build();
+
+    sticky = true;
     
     cam = GetComponent<Camera>();
+    if (cam == null) cam = GetComponentInChildren<Camera>();
+
     show();
   }
-  
+
   /// <summary>
-  /// needs to be called by game loading end event
+  /// specific call for hide to avoid 'sticky' logic
   /// </summary>
-  public void hideLoadingScreen()
+  public void hideScreen()
   {
     toggleVisible(false);
     cam.enabled = false;
   }
-
+  
   static protected ScreenLoading instance;
   static public ScreenLoading get()
   {

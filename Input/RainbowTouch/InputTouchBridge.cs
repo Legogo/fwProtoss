@@ -1,11 +1,18 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using System;
+
+/// <summary>
+/// Best setup is to put the input target camera on the input layer (_layer)
+/// </summary>
 
 public class InputTouchBridge : MonoBehaviour
 {
   //TWEAKABLE
   public float deltaPinch = 0f;
+
+  public bool useMainCamera = false;
   public Camera _camera;
   
   protected List<InputTouchFinger> _fingers = new List<InputTouchFinger>();
@@ -18,53 +25,74 @@ public class InputTouchBridge : MonoBehaviour
 
   //TOOLS
   public LayerMask _layer;
-  
-  void Awake(){
+
+  void Awake() {
 
     DontDestroyOnLoad(gameObject);
 
-    //debugOverlays = GameObject.FindObjectsOfType<DebugWindowSettings>();
+    enabled = false;
+    StartCoroutine(processSetup());
+  }
 
-    if (_camera == null) {
-      //camera child of this manager
-      _camera = transform.GetComponentInChildren<Camera>();
-
-      //camera tagged as 'input'
-      if (_camera == null)
+  IEnumerator processSetup()
+  {
+    if(_camera == null)
+    {
+      while (_camera == null)
       {
-        Camera[] cams = GameObject.FindObjectsOfType<Camera>();
-        for (int i = 0; i < cams.Length; i++)
-        {
-          if (_camera != null) continue;
-          if(UnityHelpers.isInLayerMask(cams[i].gameObject, _layer))
-          {
-            _camera = cams[i];
-            Debug.LogWarning("{InputTouchBridge} found a camera on 'input' layer");
-          }
-        }
+        fetchCamera();
+        yield return null;
       }
-
-      //main camera
-      if(_camera == null)
-      {
-        Debug.LogWarning("{RainbowInputManager} input will use main camera");
-        _camera = Camera.main;
-      }
+      Debug.Log(GetType()+" camera "+_camera.name+" is setup", _camera.gameObject);
     }
 
-    //_layer = 1 << LayerMask.NameToLayer("input");
-
     int qtyFingers = 10;
-		if(!isMobile()) qtyFingers = 2;
-    
-		//create all 11 touches
-		for(int i = 0; i < qtyFingers; i++){
-			_fingers.Add(new InputTouchFinger());
-		}
+    if (!isMobile()) qtyFingers = 2;
+
+    //create all 11 touches
+    for (int i = 0; i < qtyFingers; i++)
+    {
+      _fingers.Add(new InputTouchFinger());
+    }
 
 #if UNITY_EDITOR
     if (drawDebug) Debug.LogWarning("debug drawing for " + GetType() + " is active");
 #endif
+
+    Debug.Log(GetType() + " setup is done, enabling update");
+
+    enabled = true;
+  }
+
+  protected void fetchCamera() {
+    //debugOverlays = GameObject.FindObjectsOfType<DebugWindowSettings>();
+
+    if (useMainCamera && _camera == null)
+    {
+      _camera = Camera.main;
+      return;
+    }
+
+    if (_camera == null)
+    {
+      _camera = transform.GetComponentInChildren<Camera>();
+    }
+
+    //camera tagged as 'input'
+    if (_camera == null)
+    {
+      Camera[] cams = GameObject.FindObjectsOfType<Camera>();
+      for (int i = 0; i < cams.Length; i++)
+      {
+        if (_camera != null) continue;
+        if(UnityHelpers.isInLayerMask(cams[i].gameObject, _layer))
+        {
+          _camera = cams[i];
+          Debug.LogWarning("{InputTouchBridge} found a camera on 'input' layer");
+        }
+      }
+    }
+    
   }
 	
 	public void reset(){
@@ -77,6 +105,9 @@ public class InputTouchBridge : MonoBehaviour
     }
 	}
 	
+  /// <summary>
+  /// will only update when the setup is done
+  /// </summary>
 	void Update () {
     
     if (isMobile()) update_touch();
