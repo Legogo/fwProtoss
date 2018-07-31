@@ -180,6 +180,8 @@ public class ScreenObject : EngineObject
   [ContextMenu("hide")]
   public void forceHide()
   {
+    //dans le cas où y a pas que des canvas
+    //ou qu'il y a une seule camera ppale et qu'il faut aligner les choses à 0f
     transform.position = Vector3.down * 3000f;
 
     toggleVisible(false);
