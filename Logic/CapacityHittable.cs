@@ -15,7 +15,7 @@ public class CapacityHittable : LogicCapacity
 
   public override void setupCapacity()
   {
-    _colliders = UnityHelpers.getColliders2D(transform);
+    _colliders = HalperPhysic.getColliders2D(transform);
   }
 
   public override void updateCapacity()

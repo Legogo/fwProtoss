@@ -1,6 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// 2018-10-05
+/// This is meant to facilitate de capture / release of the mouse cursor
+/// Just call lockMouse everyframe (or whenever useful) by giving the current state of locking you need
+/// </summary>
+
 public class InputFreeMouse
 {
 

@@ -21,7 +21,7 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
   //[Serializable]public enum InputMode { NONE, MOUSE };
   //public InputMode inputMode;
 
-  private InputObject inputObject;
+  private HelperInputObject inputObject;
 
   //constructor
   void Awake()
@@ -108,36 +108,37 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
   /// subscribe touch() & release() callbacks to <InputObject>, carryName can be empty to use/create attached <InputObject>
   /// </summary>
   protected void subscribeToInput(Action<InputTouchFinger> touch, Action<InputTouchFinger> release = null, string carryName = "") {
+
+    HelperInputObject hio = null;
+
     if(carryName.Length > 0)
     {
       GameObject carry = GameObject.Find(carryName);
       if (carry != null)
       {
-        InputObject io = carry.GetComponent<InputObject>();
-        if (io != null)
-        {
-          subscribeToInput(io, touch, release);
-          return;
-        }
+        EngineObject eo = carry.GetComponent<EngineObject>();
+        hio = eo.inputObject;
       }
-
-      Debug.LogWarning("asking for inputobject carry " + carryName + " but couldn't find it");
+      else
+      {
+        Debug.LogWarning("asking for inputobject carry " + carryName + " but couldn't find it");
+      }
     }
 
-    subscribeToInput(null, touch, release);
+    subscribeToInput(hio, touch, release);
   }
 
-  private void subscribeToInput(InputObject io, Action<InputTouchFinger> touch, Action<InputTouchFinger> release)
+  private void subscribeToInput(HelperInputObject io, Action<InputTouchFinger> touch, Action<InputTouchFinger> release)
   {
-    if (io != null) {
-      inputObject = io;
-    }
-    else {
-      inputObject = GetComponent<InputObject>();
-      if (inputObject == null) inputObject = gameObject.AddComponent<InputObject>();
-    }
+    if(io == null && inputObject != null) io = inputObject;
 
-    //Debug.Log(input.name, input.gameObject);
+    if(io == null)
+    {
+      Debug.LogError("no HelperInputObject given ?");
+      return;
+    }
+    
+    inputObject = io;
 
     inputObject.cbTouch += touch;
     inputObject.cbRelease += release;
