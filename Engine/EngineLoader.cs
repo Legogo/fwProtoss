@@ -80,7 +80,7 @@ public class EngineLoader : MonoBehaviour
 
     string debugContent = "~EngineLoader~ now loading <b>" + all.Count + " scenes</b> ... ";
     for (int i = 0; i < all.Count; i++) debugContent += "\n  " + all[i];
-    Debug.Log(debugContent);
+    //Debug.Log(debugContent);
 
     ///// now wait for feeder scenes to load
     for (int i = 0; i < all.Count; i++) loadScene(all[i]);
@@ -150,7 +150,7 @@ public class EngineLoader : MonoBehaviour
   {
 
     GameObject[] roots = sc.GetRootGameObjects();
-    Debug.Log("   "+sc.name + " has " + roots.Length + " roots");
+    Debug.Log("  L cleaning scene <b>" + sc.name + "</b> from guides objects (" + roots.Length + " roots)");
     for (int i = 0; i < roots.Length; i++)
     {
       removeGuides(roots[i].transform);

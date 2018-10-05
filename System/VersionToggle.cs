@@ -4,15 +4,30 @@ using UnityEngine.UI;
 public class VersionToggle : EngineObject
 {
   protected int count = 0;
+  protected HelperScreenTouchSequenceSolver sequence;
 
+  protected HelperVisibleUi vui;
+  
   protected override void setup()
   {
     base.setup();
 
     HelperVisibleUi h = (HelperVisibleUi)visibility;
     h.setTextLabel(VersionManager.getFormatedVersion());
+    
+    subscribeToTouchRelease(touch);
 
-    subscribeToInput(touch);
+    sequence = new HelperScreenTouchSequenceSolver(transform, new Rect[]
+    {
+      new Rect(0.9f, 0.1f, 0.1f, 0.1f),
+      new Rect(0.9f, 0.1f, 0.1f, 0.1f)
+    }, true);
+
+    vui = visibility as HelperVisibleUi;
+    if(vui == null)
+    {
+      Debug.LogError(name + " need to be setup as VisibilityUI");
+    }
 
     visibility.hide();
   }

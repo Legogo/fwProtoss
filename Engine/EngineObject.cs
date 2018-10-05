@@ -15,16 +15,15 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
   protected bool _ready = false;
   
   [Serializable]public enum VisibilityMode { NONE, SPRITE, UI, MESH, SKINNED };
-  public VisibilityMode visibilityMode;
   public HelperVisible visibility;
   
   //[Serializable]public enum InputMode { NONE, MOUSE };
   //public InputMode inputMode;
 
-  private HelperInputObject inputObject;
+  protected HelperInputObject inputObject = null;
 
   //constructor
-  void Awake()
+  private void Awake()
   {
     _tr = transform;
 
@@ -36,17 +35,7 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
     build();
   }
 
-  protected void overrideLayer(int newLayer)
-  {
-    if (_ready)
-    {
-      Debug.LogError("you can't switch layer after constructor");
-      return;
-    }
-    engineLayer = newLayer;
-  }
-
-  IEnumerator Start() {
+  private IEnumerator Start() {
 
     //si le manager recoit l'event de fin de loading après que Start soit exec
     //yield return null;
@@ -73,6 +62,16 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
     onEngineLoadingDone();
   }
 
+  protected void overrideEngineLayer(int newLayer)
+  {
+    if (_ready)
+    {
+      Debug.LogError("you can't switch layer after constructor");
+      return;
+    }
+    engineLayer = newLayer;
+  }
+
   protected void onEngineLoadingDone()
   {
 
@@ -93,25 +92,32 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
   {
     //Debug.Log(name + " build visib");
 
-    switch (visibilityMode)
+    VisibilityMode mode = getVisibilityType();
+    
+    switch (mode)
     {
       case VisibilityMode.SPRITE: visibility = new HelperVisibleSprite(this);break;
       case VisibilityMode.MESH: visibility = new HelperVisibleMesh(this); break;
       case VisibilityMode.UI: visibility = new HelperVisibleUi(this); break;
       case VisibilityMode.SKINNED: visibility = new HelperVisibleSkinned(this); break;
       case VisibilityMode.NONE: break;
-      default: Debug.LogError("this visibilty mode ("+visibilityMode.ToString()+") is not implem yet"); break;
+      default: Debug.LogError("this visibilty mode ("+ mode.ToString()+") is not implem yet"); break;
     }
   }
-
+  
   /// <summary>
-  /// subscribe touch() & release() callbacks to <InputObject>, carryName can be empty to use/create attached <InputObject>
+  /// to override if need a specific visibility helper mode
   /// </summary>
-  protected void subscribeToInput(Action<InputTouchFinger> touch, Action<InputTouchFinger> release = null, string carryName = "") {
+  /// <returns></returns>
+  virtual protected VisibilityMode getVisibilityType() { return VisibilityMode.NONE; }
+
+  protected HelperInputObject subscribeToInput(string carryName = "")
+  {
+    if (inputObject != null) return inputObject;
 
     HelperInputObject hio = null;
 
-    if(carryName.Length > 0)
+    if (carryName.Length > 0)
     {
       GameObject carry = GameObject.Find(carryName);
       if (carry != null)
@@ -125,23 +131,29 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
       }
     }
 
-    subscribeToInput(hio, touch, release);
+    if (hio == null)
+    {
+      hio = inputObject;
+    }
+
+    if(hio == null)
+    {
+      hio = new HelperInputObject(this);
+    }
+
+    inputObject = hio;
+
+    return inputObject;
   }
 
-  private void subscribeToInput(HelperInputObject io, Action<InputTouchFinger> touch, Action<InputTouchFinger> release)
-  {
-    if(io == null && inputObject != null) io = inputObject;
-
-    if(io == null)
-    {
-      Debug.LogError("no HelperInputObject given ?");
-      return;
-    }
-    
-    inputObject = io;
-
+  /// <summary>
+  /// subscribe touch() & release() callbacks to <InputObject>, carryName can be empty to use/create attached <InputObject>
+  /// </summary>
+  protected HelperInputObject subscribeToTouchRelease(Action<InputTouchFinger> touch = null, Action<InputTouchFinger> release = null) {
+    HelperInputObject hio = subscribeToInput();
     inputObject.cbTouch += touch;
     inputObject.cbRelease += release;
+    return hio;
   }
   
   //called by loader (twice for early and setup)

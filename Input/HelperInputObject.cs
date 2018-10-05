@@ -6,12 +6,16 @@ using System;
 /// <summary>
 /// 2018-10-05
 ///   now a class that can be used by any Mono
+///   you'll need to call the subscribe AFTER touch input exists
 /// 2018-07-14
 ///   now parent need to call the setup() for that behavior to subscribe to input manager
 /// </summary>
 
 public class HelperInputObject
 {
+
+  public InputTouchFinger finger;
+  public EngineObject owner;
 
   protected bool _overring = true; // est-ce que l'objet réagit a la callback d'un doigt qui passe au dessus de lui (après touch event)
   protected bool _interactive = true; // réagit aux touch/release/overring
@@ -29,14 +33,17 @@ public class HelperInputObject
   public Action<InputTouchFinger> cbRelease;
   public Action<InputTouchFinger, RaycastHit2D> cbReleaseOver;
   public Action<InputTouchFinger> cbOver;
-
-  protected EngineObject _owner;
-
+  
   public HelperInputObject(EngineObject owner)
   {
-    _owner = owner;
+    this.owner = owner;
 
-    InputTouchBridge.get();
+    _input = InputTouchBridge.get();
+    if(_input == null)
+    {
+      Debug.LogError("can't subscribe to input if InputTouchBridge doesn't exist at this point");
+      return;
+    }
 
     _inputLayerAtStart = (owner.gameObject.layer == LayerMask.NameToLayer("input"));
 
@@ -44,30 +51,13 @@ public class HelperInputObject
     list.AddRange(owner.transform.GetComponents<Collider2D>());
     list.AddRange(owner.transform.GetComponentsInChildren<Collider2D>());
     _colliders = list.ToArray();
+    
+    //subscribe to manager
+    _input.onTouch += eventOnTouch;
+    _input.onRelease += eventOnRelease;
+    _input.onOverring += eventOnOverring;
   }
-
-  void setup()
-  {
-
-    //input est dispo QUE après le loading de common
-    //only once
-    if (_input == null)
-    {
-      _input = InputTouchBridge.get();
-      if (_input == null)
-      {
-        Debug.LogWarning(_owner.name + " is trying to subscribe to input framework but no manager found in scene ??", _owner.gameObject);
-        return;
-      }
-
-      //subscribe to manager
-      _input.onTouch += eventOnTouch;
-      _input.onRelease += eventOnRelease;
-      _input.onOverring += eventOnOverring;
-    }
-
-  }
-
+  
   public void setupCollider(Collider2D[] newColliders)
   {
     _colliders = newColliders;
@@ -185,12 +175,15 @@ public class HelperInputObject
 
   virtual protected void onTouch(InputTouchFinger finger)
   {
-    //Debug.Log(name + " onTouch");Debug.Log(cbTouch);
+    this.finger = finger;
     if (cbTouch != null) cbTouch(finger);
   }
   virtual protected void onRelease(InputTouchFinger finger)
   {
-    //Debug.Log(name + " release scene"); 
+    if (finger != this.finger) return;
+
+    this.finger = null;
+
     if (cbRelease != null) cbRelease(finger);
   }
   virtual protected void onOverring(InputTouchFinger finger)
@@ -239,11 +232,11 @@ public class HelperInputObject
   {
     _interactive = flag;
 
-    if (!_interactive) _owner.gameObject.layer = 0;
+    if (!_interactive) owner.gameObject.layer = 0;
     else
     {
       //reinjecte la layer input si besoin
-      if (_inputLayerAtStart) _owner.gameObject.layer = LayerMask.NameToLayer("input");
+      if (_inputLayerAtStart) owner.gameObject.layer = LayerMask.NameToLayer("input");
     }
 
     //Debug.Log(name + " swap to layer " + gameObject.layer, gameObject);

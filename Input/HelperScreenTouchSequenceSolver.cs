@@ -13,24 +13,26 @@ public class HelperScreenTouchSequenceSolver {
   Rect[] zones;
   int step = 0;
 
+  bool _proportional = false;
   bool _state = false;
 
   public Action onToggle; // callback where to subscribe to react to sequence solving
 
-  public HelperScreenTouchSequenceSolver(Transform owner, Rect[] screenZones)
+  public HelperScreenTouchSequenceSolver(Transform owner, Rect[] screenZones, bool useProportional = false)
   {
     parent = owner;
     zones = screenZones;
+
+    _proportional = useProportional;
 
     InputTouchBridge.get().onTouch += onBridgeInput;
   }
 
   protected void onBridgeInput(InputTouchFinger finger)
   {
-    onInput(finger.screenPosition);
+    onInput(_proportional ? finger.screenProportional : (Vector2)finger.screenPosition);
   }
   
-  /// <param name="screenPosition">in pixels</param>
   protected void onInput(Vector2 screenPosition)
   {
     if (!parent.gameObject.activeSelf) return;

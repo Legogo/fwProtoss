@@ -34,11 +34,11 @@ public class CapacityInput : LogicCapacity {
 
     if (useTouching)
     {
-      subscribeToInput(inputTouch);
+      subscribeToTouchRelease(onTouch);
     }
   }
 
-  protected void inputTouch(InputTouchFinger finger)
+  protected void onTouch(InputTouchFinger finger)
   {
     if (isFreezed()) return;
     if (touch != null) touch(finger);

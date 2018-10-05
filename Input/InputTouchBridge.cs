@@ -3,47 +3,42 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-/// <summary>
-/// Best setup is to put the input target camera on the input layer (_layer)
-/// </summary>
-
 public class InputTouchBridge : MonoBehaviour
 {
   //TWEAKABLE
   public float deltaPinch = 0f;
+  public bool useMainCamera = true;
+  public Camera inputCamera;
+  public LayerMask _layer;
 
-  public bool useMainCamera = false;
-  public Camera _camera;
-  
   protected List<InputTouchFinger> _fingers = new List<InputTouchFinger>();
 
   public Action<InputTouchFinger> onTouch; // int is finger ID
   public Action<InputTouchFinger> onRelease;
   public Action<InputTouchFinger> onOverring;
 
-  protected int touchCount = 0; // read only
-
-  //TOOLS
-  public LayerMask _layer;
+  private int touchCount = 0; // read only
 
   void Awake() {
+    manager = this;
 
     DontDestroyOnLoad(gameObject);
 
     enabled = false;
+
     StartCoroutine(processSetup());
   }
 
   IEnumerator processSetup()
   {
-    if(_camera == null)
+    if(inputCamera == null)
     {
-      while (_camera == null)
+      while (inputCamera == null)
       {
         fetchCamera();
         yield return null;
       }
-      Debug.Log(GetType()+" camera "+_camera.name+" is setup", _camera.gameObject);
+      Debug.Log(GetType()+" camera "+inputCamera.name+" is setup", inputCamera.gameObject);
     }
 
     int qtyFingers = 10;
@@ -67,27 +62,27 @@ public class InputTouchBridge : MonoBehaviour
   protected void fetchCamera() {
     //debugOverlays = GameObject.FindObjectsOfType<DebugWindowSettings>();
 
-    if (useMainCamera && _camera == null)
+    if (useMainCamera && inputCamera == null)
     {
-      _camera = Camera.main;
+      inputCamera = Camera.main;
       return;
     }
 
-    if (_camera == null)
+    if (inputCamera == null)
     {
-      _camera = transform.GetComponentInChildren<Camera>();
+      inputCamera = transform.GetComponentInChildren<Camera>();
     }
 
     //camera tagged as 'input'
-    if (_camera == null)
+    if (inputCamera == null)
     {
       Camera[] cams = GameObject.FindObjectsOfType<Camera>();
       for (int i = 0; i < cams.Length; i++)
       {
-        if (_camera != null) continue;
+        if (inputCamera != null) continue;
         if(HalperLayers.isInLayerMask(cams[i].gameObject, _layer))
         {
-          _camera = cams[i];
+          inputCamera = cams[i];
           Debug.LogWarning("{InputTouchBridge} found a camera on 'input' layer");
         }
       }
@@ -248,7 +243,7 @@ public class InputTouchBridge : MonoBehaviour
     return false;
   }
 
-  public Camera getInputCamera() { return _camera; }
+  public Camera getInputCamera() { return inputCamera; }
 
   /* permet de récup un finger pas utilisé */
   protected InputTouchFinger getFirstAvailableFinger() {
@@ -369,10 +364,23 @@ public class InputTouchBridge : MonoBehaviour
 
 #endif
   
+  static public InputTouchFinger getDefaultFinger()
+  {
+    if (manager.countFingers() <= 0) return null;
+    return get()._fingers[0];
+  }
+
+  static public Vector2 getDefaultFingerScreenPosition()
+  {
+    InputTouchFinger f = getDefaultFinger();
+    if (f != null) return f.screenPosition;
+    return Vector2.zero;
+  }
+
   static protected InputTouchBridge manager;
   static public InputTouchBridge get() {
     if (manager != null) return manager;
-    if (manager == null) manager = GameObject.FindObjectOfType<InputTouchBridge>();
+    if (manager == null) manager = HalperComponentsGenerics.getManager<InputTouchBridge>("[input]");
     return manager;
   }
 
