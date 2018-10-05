@@ -11,7 +11,6 @@ using UnityEngine.UI;
 public class HelperVisibleUi : HelperVisible
 {
   CanvasGroup _group;
-
   MaskableGraphic _render;
   Text _label;
 
@@ -72,9 +71,9 @@ public class HelperVisibleUi : HelperVisible
   public override float getAlpha()
   {
     if(_group != null) return _group.alpha;
-    return base.getAlpha();
+    return _render.color.a;
   }
-
+  
   public override Color getColor()
   {
     return _render.color;

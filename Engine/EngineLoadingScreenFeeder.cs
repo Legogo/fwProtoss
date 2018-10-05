@@ -1,7 +1,7 @@
 ﻿using UnityEngine.SceneManagement;
 using UnityEngine;
 
-public class EngineLoadingFeeder : MonoBehaviour {
+public class EngineLoadingScreenFeeder : MonoBehaviour {
 
   public string loadingScreenSceneName = "screen-loading";
 

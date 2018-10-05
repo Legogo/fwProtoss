@@ -19,6 +19,8 @@ abstract public class HelperVisible
   protected Transform _t;
   protected Transform _symbolCarry;
 
+  protected Coroutine coFade;
+
   public HelperVisible(EngineObject parent)
   {
     _owner = parent;
@@ -77,27 +79,23 @@ abstract public class HelperVisible
   /// </summary>
   public void fadeByDuration(float targetAlpha, float duration, Action<float> onFadingDone = null, float? startingAlpha = null)
   {
-    if (_owner == null)
+    if(coFade != null)
     {
-      Debug.LogWarning("can't fade, no owner given ?");
-      return;
+      _owner.StopCoroutine(coFade);
+      Debug.Log("cancelling old fading routine");
     }
-
-    _owner.StartCoroutine(processFading(targetAlpha, duration, onFadingDone, startingAlpha));
+    
+    coFade = _owner.StartCoroutine(processFadingDuration(targetAlpha, duration, onFadingDone, startingAlpha));
   }
 
-  protected IEnumerator processFading(float target, float duration, Action<float> onFadingDone = null, float? startingAlpha = null)
+  protected IEnumerator processFadingDuration(float target, float duration, Action<float> onFadingDone = null, float? startingAlpha = null)
   {
     float timer = 0f;
     
-    if(startingAlpha != null)
-    {
-      setAlpha(startingAlpha.Value);
-    }
-    else
-    {
-      startingAlpha = getAlpha();
-    }
+    if (startingAlpha != null) setAlpha(startingAlpha.Value);
+    else startingAlpha = getAlpha();
+
+    Debug.Log("starting alpha : " + startingAlpha+" , duration ? "+duration);
 
     if(duration > 0f)
     {
@@ -105,7 +103,9 @@ abstract public class HelperVisible
       {
         timer += GameTime.deltaTime;
 
-        setAlpha(Mathf.InverseLerp(startingAlpha.Value, target, timer / duration));
+        float lerp = timer / duration;
+        Debug.Log("  L fading progress : "+lerp+" to "+target);
+        setAlpha(Mathf.InverseLerp(startingAlpha.Value, target, lerp));
 
         yield return null;
       }
@@ -113,6 +113,37 @@ abstract public class HelperVisible
     }
 
     if (onFadingDone != null) onFadingDone(target);
+
+    coFade = null;
+  }
+
+  public void fadeBySpeed(float targetAlpha, float speed, Action<float> onFadingDone = null, float? startingAlpha = null)
+  {
+    if (coFade != null)
+    {
+      _owner.StopCoroutine(coFade);
+      Debug.Log("cancelling old fading routine");
+    }
+
+    coFade = _owner.StartCoroutine(processFadingSpeed(targetAlpha, speed, onFadingDone, startingAlpha));
+  }
+
+  protected IEnumerator processFadingSpeed(float target, float speed, Action<float> onFadingDone = null, float? startingAlpha = null)
+  {
+    if(startingAlpha != null)
+    {
+      setAlpha(startingAlpha.Value);
+    }
+
+    while (getAlpha() != target)
+    {
+      setAlpha(Mathf.MoveTowards(getAlpha(), target, (speed * Time.deltaTime)));
+      yield return null;
+    }
+
+    if (onFadingDone != null) onFadingDone(target);
+
+    coFade = null;
   }
 
   /* ABSTRACTS, specific case based on nature of visual element */
