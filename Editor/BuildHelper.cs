@@ -27,8 +27,9 @@ abstract public class BuildHelper
 
   DataBuildSettings data;
   bool auto_run = false;
+  bool version_increment = false;
 
-  public BuildHelper(bool autorun = false, DataBuildSettings data = null)
+  public BuildHelper(bool autorun = false, bool incVersion = true, DataBuildSettings data = null)
   {
     //update data
     if (data == null) data = getScriptableDataBuildSettings();
@@ -39,6 +40,7 @@ abstract public class BuildHelper
     start_build();
 
     auto_run = autorun;
+    version_increment = incVersion;
   }
 
   void start_build()
@@ -57,7 +59,7 @@ abstract public class BuildHelper
 
       Debug.Log("BuildHelper, pre build process done, start building");
 
-      build_android();
+      build_android(version_increment);
     }
 
   }
@@ -68,16 +70,13 @@ abstract public class BuildHelper
     //...
   }
 
-  abstract public string getBuildPathFolder();
-  abstract public string getBuildName();
-
-  protected void build_android()
+  protected void build_android(bool incVersion)
   {
     if (BuildPipeline.isBuildingPlayer) return;
 
     buildPlayerOptions = new BuildPlayerOptions();
 
-    VersionManager.incrementFix(); // change version
+    if (incVersion) VersionManager.incrementFix();
 
     //buildPlayerOptions.scenes = new[] { "Assets/Scene1.unity", "Assets/Scene2.unity" };
     buildPlayerOptions.scenes = getScenePaths();
@@ -145,6 +144,9 @@ abstract public class BuildHelper
     }
     return null;
   }
+
+  abstract public string getBuildPathFolder();
+  abstract public string getBuildName();
 
   /*
   [MenuItem("Build/Build Android #&b")]

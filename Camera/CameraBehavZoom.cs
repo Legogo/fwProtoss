@@ -5,76 +5,88 @@ using System;
 
 public class CameraBehavZoom : MonoBehaviour {
 
-  float originalOrtho = 0f;
   Camera cam;
 
-  float pinchProgression = 0f; // [0,1] progression
+  [Header("zoom param")]
+  public float dezoomFactor = 4f; // what to add to original ortho based on pinchProgression
 
-  [Serializable]
-  public struct CamBehavZoomData
-  {
-    public float deltaLerpOrthoSize; // what to add to original ortho based on pinchProgression
-    public float zoomFollowSpeed;
-    public bool zoomFollowSpeedByDistance;
-    public float zoomInputStepSpeed;
-  }
-
-  public CamBehavZoomData mobile;
-  public CamBehavZoomData desktop;
-
+  [Header("camera zoom")]
+  public float zoomFollowSpeed = 1f;
+  public bool dampingZoomSpeed = false; // amortie de la vitesse de camera follow ortho target
+  public float dampingSpeed = 10f; // distance max d'écart pour atteindre la valeur max de lerp
+  public float dampingDistMax = 10f; // distance max d'écart pour atteindre la valeur max de lerp
+  
+  [Header("read only")]
+  public float pinchMaxLimit = 0f;
+  public float pinchProgression = 0f;
+  public float originalOrtho = 0f;
+    
   IEnumerator Start()
   {
     enabled = false;
-    
-    while(InputTouchBridge.get() == null) yield return null;
+
+    InputTouchBridge itb = InputTouchBridge.get();
+
+    while (itb == null)
+    {
+      itb = InputTouchBridge.get();
+      if(itb == null) yield return null;
+    }
 
     cam = GetComponent<Camera>();
     originalOrtho = cam.orthographicSize;
 
+    
+    itb.subscribeToScroll(onScroll);
+    pinchMaxLimit = itb.scrollClampMagnitude.y;
+
     enabled = true;
 	}
-
-  protected CamBehavZoomData getDeviceData()
+  
+  void onScroll(float delta, float magnitude)
   {
+    //Debug.Log(GetType() + " | " + delta + " , " + magnitude);
 
-    if (!InputTouchBridge.isMobile()) return desktop;
-    else return mobile;
+    //store previous pinch for comparison
+    float previousPinch = pinchProgression;
 
+    //apply current delta
+    if (delta != 0f)
+    {
+      pinchProgression = magnitude;
+      pinchProgression = Mathf.Clamp(pinchProgression, 0f, pinchMaxLimit);
+    }
+    
+    updateZoom();
+    updateMapToggle(previousPinch);
   }
 
-  private void Update()
+  void updateZoom()
   {
-    CamBehavZoomData data = getDeviceData();
+    float targetOrtho = Mathf.InverseLerp(0f, pinchMaxLimit, pinchProgression) * dezoomFactor;
 
-    float pinch = pinchProgression;
+    float zoomSpeed = zoomFollowSpeed; // default
 
-    float pinchDelta = InputTouchBridge.get().deltaPinch;
-    if (pinchDelta != 0f) onPinch(pinchDelta);
-
-    float lerp = Mathf.Lerp(0f, data.deltaLerpOrthoSize, pinchProgression);
-    float zoomSpeed = data.zoomFollowSpeed;
-    if (data.zoomFollowSpeedByDistance)
+    if (dampingZoomSpeed)
     {
-      zoomSpeed = Mathf.Lerp(0.1f, data.zoomFollowSpeed, Mathf.InverseLerp(0f, 10f, Mathf.Abs(lerp - cam.orthographicSize)));
+      float lerpDistance = Mathf.InverseLerp(0f, dampingDistMax, Mathf.Abs(targetOrtho - cam.orthographicSize));
+      zoomSpeed = Mathf.Lerp(0.1f, dampingSpeed, lerpDistance);
     }
 
-    cam.orthographicSize = Mathf.MoveTowards(cam.orthographicSize, originalOrtho + lerp, Time.deltaTime * zoomSpeed);
-    
-
-
-
-    if (pinch < data.deltaLerpOrthoSize && pinchProgression == data.deltaLerpOrthoSize)
+    cam.orthographicSize = Mathf.MoveTowards(cam.orthographicSize, originalOrtho + targetOrtho, Time.deltaTime * zoomSpeed);
+  }
+  
+  void updateMapToggle(float previousPinch)
+  {
+    if (previousPinch < pinchMaxLimit && pinchProgression >= pinchMaxLimit)
     {
       displayMap(true);
     }
-    else if (pinch > 0.95f && pinchProgression <= 0.95f)
+    else if (previousPinch >= pinchMaxLimit && pinchProgression < pinchMaxLimit)
     {
       displayMap(false);
     }
-
-
   }
-
 
   protected void displayMap(bool flag)
   {
@@ -85,28 +97,6 @@ public class CameraBehavZoom : MonoBehaviour {
 
     if (flag) map.show();
     else map.hide();
-  }
-
-  /// <summary>
-  /// Sur mobile on recoit BEAUCOUP plus d'input que sur desktop avec une molette classique
-  /// </summary>
-  /// <param name="delta"></param>
-  protected void onPinch(float delta)
-  {
-    CamBehavZoomData data = getDeviceData();
-
-    if (!InputTouchBridge.isMobile()) // desktop
-    {
-      float target = Mathf.Sign(delta) > 0 ? 0f : 1f;
-      pinchProgression = Mathf.MoveTowards(pinchProgression, target, Time.deltaTime * data.zoomInputStepSpeed);
-    }
-    else
-    {
-      pinchProgression += delta * data.zoomInputStepSpeed;
-      pinchProgression = Mathf.Clamp01(pinchProgression);
-    }
-
-    //Debug.Log(pinchProgression);
   }
 
 }

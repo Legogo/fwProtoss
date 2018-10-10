@@ -5,17 +5,22 @@ using System;
 
 public class InputTouchBridge : MonoBehaviour
 {
-  //TWEAKABLE
-  public float deltaPinch = 0f;
+  InputTouchPinch pinchBridge;
+
   public bool useMainCamera = true;
   public Camera inputCamera;
   public LayerMask _layer;
+
+  [Header("scroll")]
+  public float mouseScrollMulFactor = 1f;
+  public Vector2 scrollClampMagnitude = Vector2.zero;
 
   protected List<InputTouchFinger> _fingers = new List<InputTouchFinger>();
 
   public Action<InputTouchFinger> onTouch; // int is finger ID
   public Action<InputTouchFinger> onRelease;
   public Action<InputTouchFinger> onOverring;
+  public Action onTouching;
 
   private int touchCount = 0; // read only
 
@@ -27,6 +32,8 @@ public class InputTouchBridge : MonoBehaviour
     enabled = false;
 
     StartCoroutine(processSetup());
+
+    pinchBridge = new InputTouchPinch(this);
   }
 
   IEnumerator processSetup()
@@ -57,6 +64,11 @@ public class InputTouchBridge : MonoBehaviour
     Debug.Log(GetType() + " setup is done, enabling update");
 
     enabled = true;
+  }
+
+  public void subscribeToScroll(Action<float,float> onScroll)
+  {
+    pinchBridge.onScroll += onScroll;
   }
 
   protected void fetchCamera() {
@@ -91,8 +103,11 @@ public class InputTouchBridge : MonoBehaviour
     
   }
 	
+  /// <summary>
+  /// never called by logic, meant to give dev something to reset all touch data
+  /// </summary>
 	public void reset(){
-    deltaPinch = 0f;
+    pinchBridge.reset();
 
     for (int i = 0; i < _fingers.Count; i++)
     {
@@ -108,11 +123,16 @@ public class InputTouchBridge : MonoBehaviour
     
     if (isMobile()) update_touch();
     else update_desktop();
-    
+
     //on vire les infos des doigts en trop
     update_callbacksAndClean();
+
+    if(countFingers() > 0)
+    {
+      if (onTouching != null) onTouching();
+    }
   }
-  
+
   void update_callbacksAndClean() {
     
     for (int i = 0; i < _fingers.Count; i++)
@@ -180,7 +200,6 @@ public class InputTouchBridge : MonoBehaviour
       _finger.update(touches[i]);
     }
     
-    updatePinch();
   }
 
   //ON PC
@@ -200,30 +219,8 @@ public class InputTouchBridge : MonoBehaviour
       //les doigts qui sont encore là (ou nouveaux)
       else if(i < touchCount) _finger.update(i, Input.mousePosition);
     }
-    
-    deltaPinch = Input.mouseScrollDelta.y;
-  }
 
-  void updatePinch() {
-    if (touchCount == 2)
-    {
-      // Store both touches.
-      InputTouchFinger touchZero = getFingerByIndex(0);
-      InputTouchFinger touchOne = getFingerByIndex(1);
-
-      // Find the position in the previous frame of each touch.
-      Vector2 touchZeroPrevPos = touchZero.screenPosition - touchZero.screenDeltaPosition;
-      Vector2 touchOnePrevPos = touchOne.screenPosition - touchOne.screenDeltaPosition;
-
-      // Find the magnitude of the vector (the distance) between the touches in each frame.
-      float prevTouchDeltaMag = (touchZeroPrevPos - touchOnePrevPos).magnitude;
-      float touchDeltaMag = (touchZero.screenPosition - touchOne.screenPosition).magnitude;
-
-      // Find the difference in the distances between each frame.
-      deltaPinch = prevTouchDeltaMag - touchDeltaMag;
-    }
-    else
-      deltaPinch = 0f;
+    pinchBridge.updateDesktop();
   }
   
   public bool hasTouchedCollider(Collider[] list) {
@@ -295,8 +292,8 @@ public class InputTouchBridge : MonoBehaviour
     string content = "<color=red>[BRIDGE INPUT MANAGER]</color>";
     content += "\nisMobile() ? " + isMobile();
     
-    content += "\ntouchCount : " + touchCount;
-    content += "\nmax fingers ? " + _fingers.Count;
+    content += "\ntouchCount   : " + touchCount;
+    content += "\nmax fingers  : " + _fingers.Count;
     for (int i = 0; i < _fingers.Count; i++)
     {
       if(_fingers[i].isFingerUsed()) {
@@ -338,9 +335,8 @@ public class InputTouchBridge : MonoBehaviour
     else if (Application.platform == RuntimePlatform.IPhonePlayer) return true;
     return false;
   }
-  
-#if UNITY_EDITOR
 
+#if UNITY_EDITOR
   Color gizmoColor = Color.red;
   void OnDrawGizmos() {
     Gizmos.color = gizmoColor;
@@ -350,20 +346,43 @@ public class InputTouchBridge : MonoBehaviour
       Gizmos.DrawSphere(_fingers[i].worldPosition, 0.1f);
     }
   }
+#endif
 
   public bool drawDebug = false;
-  protected GUIStyle style = new GUIStyle();
+  protected GUIStyle style;
   void OnGUI() {
     if (!drawDebug) return;
 
     string ctx = toString();
 
+    if (style == null)
+    {
+      style = new GUIStyle(GUI.skin.textArea);
+      style.richText = true;
+      style.normal.background = Texture2D.whiteTexture;
+    }
     style.fontSize = Mathf.FloorToInt((Screen.width / Screen.height) * 30f);
+    //style.normal.background
 
-    GUI.Label(new Rect(10, 10, 500, 500), ctx, style);
+    Color black = Color.black;
+    black.a = 0.8f;
+    GUI.backgroundColor = black;
+
+    guiDrawDebugInfo(0, ctx);
+    
+    if (pinchBridge != null)
+    {
+      guiDrawDebugInfo(1, pinchBridge.toString());
+    }
+    
   }
 
-#endif
+  protected void guiDrawDebugInfo(int windowIndex, string ctx)
+  {
+    //GUI.color = Color.red;
+    float width = 600f;
+    GUI.Label(new Rect((10 * windowIndex) + (windowIndex * width), 10, width, 500), ctx, style);
+  }
   
   static public InputTouchFinger getDefaultFinger()
   {
