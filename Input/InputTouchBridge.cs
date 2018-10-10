@@ -65,6 +65,7 @@ public class InputTouchBridge : MonoBehaviour
     if (useMainCamera && inputCamera == null)
     {
       inputCamera = Camera.main;
+      if (inputCamera == null) Debug.LogWarning("no MainCamera tagged in context");
       return;
     }
 
@@ -379,9 +380,12 @@ public class InputTouchBridge : MonoBehaviour
 
   static protected InputTouchBridge manager;
   static public InputTouchBridge get() {
-    if (manager != null) return manager;
-    if (manager == null) manager = HalperComponentsGenerics.getManager<InputTouchBridge>("[input]");
+
+    //will create double if exist in later scenes (loading)
+    //if (manager == null) manager = HalperComponentsGenerics.getManager<InputTouchBridge>("[input]");
+
     return manager;
+
   }
 
 }
