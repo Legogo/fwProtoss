@@ -19,7 +19,7 @@ public class UiTextSlide : UiAnimation
 
   [Header("slide data")]
   public float spreadAngle = 0f;
-  public float distancePx = 1f;
+  public float distancePx = 100f;
 
   [Header("display")]
   public string[] possibleText;
