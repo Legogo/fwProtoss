@@ -20,7 +20,9 @@ public class CameraBehavZoom : MonoBehaviour {
   public float pinchMaxLimit = 0f;
   public float pinchProgression = 0f;
   public float originalOrtho = 0f;
-    
+
+  float previousPinch = 0f;
+
   IEnumerator Start()
   {
     enabled = false;
@@ -48,7 +50,7 @@ public class CameraBehavZoom : MonoBehaviour {
     //Debug.Log(GetType() + " | " + delta + " , " + magnitude);
 
     //store previous pinch for comparison
-    float previousPinch = pinchProgression;
+    previousPinch = pinchProgression;
 
     //apply current delta
     if (delta != 0f)
@@ -58,8 +60,12 @@ public class CameraBehavZoom : MonoBehaviour {
     }
     
     updateZoom();
-    updateMapToggle(previousPinch);
+
+    onZoomVariation(previousPinch, delta, magnitude);
   }
+  
+  virtual protected void onZoomVariation(float prevPinch, float pinchDelta, float pinchMagnitude)
+  {}
 
   void updateZoom()
   {
@@ -76,27 +82,4 @@ public class CameraBehavZoom : MonoBehaviour {
     cam.orthographicSize = Mathf.MoveTowards(cam.orthographicSize, originalOrtho + targetOrtho, Time.deltaTime * zoomSpeed);
   }
   
-  void updateMapToggle(float previousPinch)
-  {
-    if (previousPinch < pinchMaxLimit && pinchProgression >= pinchMaxLimit)
-    {
-      displayMap(true);
-    }
-    else if (previousPinch >= pinchMaxLimit && pinchProgression < pinchMaxLimit)
-    {
-      displayMap(false);
-    }
-  }
-
-  protected void displayMap(bool flag)
-  {
-    LabyMap map = GameObject.FindObjectOfType<LabyMap>();
-    if (map == null) return;
-
-    //Debug.Log("map display : " + flag);
-
-    if (flag) map.show();
-    else map.hide();
-  }
-
 }
