@@ -7,7 +7,12 @@ public class VersionToggle : EngineObject
   protected HelperScreenTouchSequenceSolver sequence;
 
   protected HelperVisibleUi vui;
-  
+
+  protected override VisibilityMode getVisibilityType()
+  {
+    return VisibilityMode.UI;
+  }
+
   protected override void setup()
   {
     base.setup();

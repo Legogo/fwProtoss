@@ -65,6 +65,8 @@ public class EngineLoader : MonoBehaviour
     loadScene(prefix+"engine");
     while (!allAsyncDone()) yield return null;
 
+    yield return null;
+
     Debug.Log("<color=gray>~EngineLoader~ engine scene is done loading</color>");
 
     //NEEDED

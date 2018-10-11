@@ -10,8 +10,29 @@ using System.Reflection;
 public class HalperEditor {
 
 #if UNITY_EDITOR
-  
 
+  static public T editor_draw_selectObject<T>(T instance = null, string overrideSelectLabel = "") where T : Component
+  {
+    if (instance == null)
+    {
+      instance = GameObject.FindObjectOfType<T>();
+    }
+
+    if (instance == null)
+    {
+      GUILayout.Label("can't find " + typeof(T) + " in scene");
+      return null;
+    }
+
+    EditorGUILayout.ObjectField(typeof(T).ToString(), instance, typeof(T), true);
+    if (GUILayout.Button(overrideSelectLabel + " " + typeof(T)))
+    {
+      Selection.activeGameObject = instance.gameObject;
+    }
+
+    return instance;
+  }
+  
   static public void editorCenterCameraToObject(GameObject obj)
   {
     GameObject tmp = Selection.activeGameObject;

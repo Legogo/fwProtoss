@@ -51,7 +51,7 @@ public class EngineManager : MonoBehaviour {
 
     if(application_targetFramerate > 0)
     {
-      Debug.LogWarning("~EngineManager~ overriding target framerate to " + application_targetFramerate);
+      Debug.LogWarning("~EngineManager~ overriding target <b>framerate to " + application_targetFramerate+"</b>");
       Application.targetFrameRate = application_targetFramerate;
     }
     

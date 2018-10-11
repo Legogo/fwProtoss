@@ -4,6 +4,20 @@ using UnityEngine;
 
 static public class HalperTransform {
 
+  static public Transform getTransform<T>() where T : Component
+  {
+    T t = GameObject.FindObjectOfType<T>();
+    if (t != null) return t.transform;
+    return null;
+  }
+
+  static public Transform getTransform<T>(Component comp) where T : Component
+  {
+    T t = HalperComponentsGenerics.getComponent<T>(comp);
+    if (t != null) return t.transform;
+    return null;
+  }
+
   static public string getFullTransformHierarchyPathToString(this Transform tr)
   {
     string path = "";
@@ -187,13 +201,10 @@ static public class HalperTransform {
   }
 
   /// <summary>
-  /// Renvoit le premier Transform parent qui contient <paramref name="name"/> dedant.
+  /// returns first child containing param name
   /// </summary>
-  /// <param name="transform">Le Transform de départ de la recherche</param>
-  /// <param name="name">Le nom à chercher.</param>
   /// <param name="warning">Génère-t-on un warning si on ne trouve rien ?</param>
-  /// <returns>La référence du Transform parent trouvé.</returns>
-  static public Transform looselyFindParent(this Transform transform, string name, bool warning = true)
+  static public Transform looselyFindParent(this Transform transform, string name, bool strict = false, bool warning = true)
   {
     Transform parent = transform.parent;
 
@@ -201,7 +212,8 @@ static public class HalperTransform {
     {
       while (parent != null)
       {
-        if (parent.name.Contains(name))
+        if (strict && parent.name == name) return parent;
+        else if (parent.name.Contains(name))
         {
           return parent;
         }
@@ -236,5 +248,20 @@ static public class HalperTransform {
 
   }// findSameChildren()
 
+  static public Transform findChild(Transform parent, string endName)
+  {
+    if (parent.name.EndsWith(endName)) return parent;
+
+    if (parent.childCount > 0)
+    {
+      for (int i = 0; i < parent.childCount; i++)
+      {
+        Transform child = findChild(parent.GetChild(i), endName);
+        if (child != null) return child;
+      }
+    }
+
+    return null;
+  }
 
 }

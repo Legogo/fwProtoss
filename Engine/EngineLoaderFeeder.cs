@@ -17,8 +17,8 @@ public class EngineLoaderFeeder : MonoBehaviour {
   [Header("prefix resource-")]
   public string[] resource_names;
 
-  [Header("prefix screen-")]
-  public string[] screen_names;
+  [Header("prefix ui-")]
+  public string[] ui_names;
 
   [Header("prefix graphics-")]
   public string[] graphics_names;
@@ -31,7 +31,7 @@ public class EngineLoaderFeeder : MonoBehaviour {
     if (scene_names == null) scene_names = new List<string>();
 
     addWithPrefix("resource-", resource_names);
-    addWithPrefix("screen-", screen_names);
+    addWithPrefix("ui-", ui_names);
     addWithPrefix("graphics-", graphics_names);
 
     addWithPrefix("", other_names);
@@ -64,14 +64,14 @@ public class EngineLoaderFeeder : MonoBehaviour {
   }
 
 #if UNITY_EDITOR
-  [ContextMenu("fetch screens")]
+  [ContextMenu("fetch uis")]
   protected void fetchScreensRefs()
   {
     List<string> screens = new List<string>();
     for (int i = 0; i < EditorBuildSettings.scenes.Length; i++)
     {
       EditorBuildSettingsScene data = EditorBuildSettings.scenes[i];
-      if (data.path.Contains("screen-"))
+      if (data.path.Contains("ui-"))
       {
         string[] split = data.path.Split('-'); // screen-xxx
         split = split[split.Length - 1].Split('.'); // remove .asset
@@ -80,7 +80,7 @@ public class EngineLoaderFeeder : MonoBehaviour {
       }
     }
 
-    this.screen_names = screens.ToArray();
+    this.ui_names = screens.ToArray();
 
     UnityEditor.SceneManagement.EditorSceneManager.MarkAllScenesDirty();
   }
