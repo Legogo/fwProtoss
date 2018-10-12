@@ -1,5 +1,11 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
+/// <summary>
+/// show,hide
+/// updateVisible,updateNotVisible
+/// </summary>
 
 public class ScreenObject : EngineObject
 {
@@ -130,7 +136,7 @@ public class ScreenObject : EngineObject
       }
     }
   }
-
+  
   protected void toggleVisible(bool flag)
   {
     //si le scriptorder fait que le ScreenObject arrive après le Screenmanager ...
@@ -157,10 +163,6 @@ public class ScreenObject : EngineObject
   [ContextMenu("show")]
   virtual public void show()
   {
-    //Debug.Log("~Screen~ <color=green>show()</color> <b>"+name + "</b>");
-
-    //if(ScreensManager.get() != null) ScreensManager.get().killAll();
-
     notInteractiveTimer = 0.2f; // to kill interactive frame offset
 
     transform.position = Vector3.zero;
@@ -212,4 +214,5 @@ public class ScreenObject : EngineObject
     ScreenObject screen = ScreensManager.get().getScreen(screenName);
     return screen.getCanvas(canvasName);
   }
+
 }

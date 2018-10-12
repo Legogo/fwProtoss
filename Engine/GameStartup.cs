@@ -39,7 +39,7 @@ abstract public class GameStartup : EngineObject {
 
     Debug.Log("~Startup~ starting ... opening screen : <b>" + openingScreen + "</b>");
 
-    ScreensManager.get().call(openingScreen);
+    ScreensManager.get().open(openingScreen);
 
     yield return null;
 

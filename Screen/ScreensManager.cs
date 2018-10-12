@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using UnityEngine.SceneManagement;
 
 public class ScreensManager : EngineObject {
   
@@ -49,36 +51,53 @@ public class ScreensManager : EngineObject {
   /// best practice : should never call a screen by name but create a contextual enum
   /// </summary>
   /// <returns>first screen found</returns>
-  public ScreenObject call(string nm, string filterName = "")
+  public void open(string nm, string filterName = "")
   {
     Debug.Log("ScreensManager | opening screen of name : <b>" + nm + "</b> , filter ? "+filterName);
 
-    ScreenObject target = null;
+    ScreenObject target = getScreen(nm);
 
-    killAll(nm);
+    if(target != null)
+    {
+      openByFilter(nm, filterName);
+      return;
+    }
+
+    if (target == null) openLoadScreen(nm, delegate(ScreenObject screen)
+    {
+      openByFilter(nm, filterName);
+    });
+    
+  }
+
+  protected void openByFilter(string nm, string filter = "")
+  {
+    fetchScreens();
 
     for (int i = 0; i < screens.Length; i++)
     {
-      if(filterName.Length > 0)
+      if (filter.Length > 0)
       {
-        if (screens[i].name.Contains(filterName)) continue;
+        if (screens[i].name.Contains(filter)) continue;
       }
-      
+
       if (screens[i].name.Contains(nm))
       {
-        target = screens[i];
         screens[i].show();
+      }
+      else
+      {
+        screens[i].hide();
       }
     }
 
-    return target;
   }
 
-  static public ScreenObject openByEnum(ScreenNames nm)
+  static public void openByEnum(ScreenNames nm)
   {
     ScreensManager sm = get();
-    if (sm == null) { Debug.LogWarning("asking to open " + nm.ToString() + " but manager doesn't exist"); return null; }
-    return sm.call(nm.ToString());
+    if (sm == null) Debug.LogWarning("asking to open " + nm.ToString() + " but manager doesn't exist");
+    sm.open(nm.ToString());
   }
 
   [ContextMenu("kill all")]
@@ -109,6 +128,34 @@ public class ScreensManager : EngineObject {
     }
 
   }
+
+  
+  static public void openLoadScreen(string screenNameCont, Action<ScreenObject> onLoaded)
+  {
+    string fullName = screenNameCont;
+    if (!fullName.StartsWith("screen-")) fullName = "screen-" + fullName;
+
+    if (!HalperScene.isSceneOpened(fullName))
+    {
+      EngineLoader.queryScene(fullName, delegate ()
+      {
+        ScreenObject so = ScreensManager.get().getScreen(screenNameCont);
+        if (so == null) Debug.LogError("end of screen loading but no ScreenObject");
+        else
+        {
+          onLoaded(so);
+        }
+      });
+    }
+    else
+    {
+      ScreenObject so = ScreensManager.get().getScreen(screenNameCont);
+      onLoaded(so);
+    }
+
+
+  }
+
 
   static protected ScreensManager manager;
   static public ScreensManager get() { 
