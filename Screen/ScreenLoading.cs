@@ -10,7 +10,7 @@ public class ScreenLoading : ScreenObject {
   {
     base.build();
 
-    sticky = true;
+    if(!sticky) sticky = true;
     
     cam = GetComponent<Camera>();
     if (cam == null) cam = GetComponentInChildren<Camera>();

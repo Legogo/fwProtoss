@@ -172,7 +172,11 @@ public class ScreenObject : EngineObject
 
   virtual public void hide()
   {
-    if (sticky) return;
+    if (sticky)
+    {
+      Debug.Log("can't hide " + name + " because is setup as sticky");
+      return;
+    }
 
     //Debug.Log("~Screen~ <color=white>hide()</color> <b>" + name + "</b>");
 
@@ -187,6 +191,8 @@ public class ScreenObject : EngineObject
     transform.position = Vector3.down * 3000f;
 
     toggleVisible(false);
+
+    //Debug.Log(name + " forceHide");
   }
 
   public bool isVisible()

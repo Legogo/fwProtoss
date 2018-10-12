@@ -13,7 +13,8 @@ public class ScreensManager : EngineObject {
     home, // home menu
     ingame, // ingame interface (ui)
     pause, // pause screen
-    result // end of round screen, result of round
+    result, // end of round screen, result of round
+    loading
   };
 
   protected void fetchScreens()
@@ -43,6 +44,7 @@ public class ScreensManager : EngineObject {
     {
       if (screens[i].name.Contains(nm)) return screens[i];
     }
+    
     //Debug.LogWarning("~Screens~ getScreen("+nm+") no screen that CONTAINS this name");
     return null;
   }
@@ -50,29 +52,34 @@ public class ScreensManager : EngineObject {
   /// <summary>
   /// best practice : should never call a screen by name but create a contextual enum
   /// </summary>
-  /// <returns>first screen found</returns>
   public void open(string nm, string filterName = "")
   {
     Debug.Log("ScreensManager | opening screen of name : <b>" + nm + "</b> , filter ? "+filterName);
 
-    ScreenObject target = getScreen(nm);
-
-    if(target != null)
+    ScreenObject so = getScreen(nm);
+    if(so == null)
     {
-      openByFilter(nm, filterName);
+      loadMissingScreen(nm, delegate (ScreenObject loadedScreen)
+      {
+        Debug.Log("  ... missing screen is now loaded, opening");
+        openByFilter(nm, filterName);
+      });
       return;
     }
 
-    if (target == null) openLoadScreen(nm, delegate(ScreenObject screen)
-    {
-      openByFilter(nm, filterName);
-    });
-    
+    openByFilter(nm, filterName);
   }
 
+  /// <summary>
+  /// this will open a screen and close other non-sticky screens
+  /// </summary>
+  /// <param name="nm"></param>
+  /// <param name="filter"></param>
   protected void openByFilter(string nm, string filter = "")
   {
     fetchScreens();
+
+    Debug.Log("opening " + nm+" (filter ? "+filter+")");
 
     for (int i = 0; i < screens.Length; i++)
     {
@@ -81,23 +88,35 @@ public class ScreensManager : EngineObject {
         if (screens[i].name.Contains(filter)) continue;
       }
 
+      Debug.Log("  L " +screens[i].name);
       if (screens[i].name.Contains(nm))
       {
         screens[i].show();
       }
       else
       {
-        screens[i].hide();
+        screens[i].hide(); // stickies won't hide
       }
     }
 
   }
 
-  static public void openByEnum(ScreenNames nm)
+  public void close(string nameEnd, bool force)
   {
-    ScreensManager sm = get();
-    if (sm == null) Debug.LogWarning("asking to open " + nm.ToString() + " but manager doesn't exist");
-    sm.open(nm.ToString());
+    fetchScreens();
+
+    Debug.Log("closing " + nameEnd);
+
+    for (int i = 0; i < screens.Length; i++)
+    {
+      Debug.Log("  L " + screens[i].name);
+
+      if (screens[i].name.EndsWith(nameEnd))
+      {
+        if (force) screens[i].forceHide();
+        else screens[i].hide();
+      }
+    }
   }
 
   [ContextMenu("kill all")]
@@ -130,30 +149,45 @@ public class ScreensManager : EngineObject {
   }
 
   
-  static public void openLoadScreen(string screenNameCont, Action<ScreenObject> onLoaded)
+  protected void loadMissingScreen(string screenNameCont, Action<ScreenObject> onComplete)
   {
     string fullName = screenNameCont;
     if (!fullName.StartsWith("screen-")) fullName = "screen-" + fullName;
 
-    if (!HalperScene.isSceneOpened(fullName))
-    {
-      EngineLoader.queryScene(fullName, delegate ()
-      {
-        ScreenObject so = ScreensManager.get().getScreen(screenNameCont);
-        if (so == null) Debug.LogError("end of screen loading but no ScreenObject");
-        else
-        {
-          onLoaded(so);
-        }
-      });
-    }
-    else
-    {
-      ScreenObject so = ScreensManager.get().getScreen(screenNameCont);
-      onLoaded(so);
-    }
+    ScreenObject so = ScreensManager.get().getScreen(screenNameCont);
 
+    if(so != null)
+    {
+      onComplete(so);
+      return;
+    }
+    
+    Debug.Log("screen to open : <b>" + fullName + "</b> is not loaded");
 
+    EngineLoader.queryScene(fullName, delegate ()
+    {
+      so = ScreensManager.get().getScreen(screenNameCont);
+      if (so == null) Debug.LogError("end of screen loading but no ScreenObject");
+      onComplete(so);
+    });
+    
+  }
+
+  static public void closeByName(string nm, bool force)
+  {
+    ScreensManager sm = get();
+    sm.close(nm, force);
+  }
+
+  static public void openByName(string nm)
+  {
+    ScreensManager sm = get();
+    if (sm == null) Debug.LogWarning("asking to open " + nm.ToString() + " but manager doesn't exist");
+    sm.open(nm.ToString());
+  }
+  static public void openByEnum(ScreenNames nm)
+  {
+    openByName(nm.ToString());
   }
 
 
