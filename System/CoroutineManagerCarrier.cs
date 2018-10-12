@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CoroutineManagerCarrier : MonoBehaviour, Interfaces.IDebugSelection
+public class CoroutineManagerCarrier : MonoBehaviour, DebugSelection.iDebugSelection
 {
-  string Interfaces.IDebugSelection.iString() { return toString(); }
+  string DebugSelection.iDebugSelection.toDebug() { return toString(); }
 
   protected string toString() { return CoroutineManager.get().toString(); }
 }

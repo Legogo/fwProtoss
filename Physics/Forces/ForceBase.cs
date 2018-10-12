@@ -1,75 +1,79 @@
 ﻿using System;
 using UnityEngine;
 
-public abstract class ForceBase
+namespace fwp
 {
-  private string _name;
-  private bool _isActive = true;
-
-  protected GameObject _owner;
-  protected CapacityMovement _movement;
-
-  protected bool _once = false; // only one frame
-  protected bool _applied = false; // already applied ? (one frame)
-
-  protected Vector2 _force = Vector2.zero;
-
-  protected ForceBase(string name, bool appliedOnce)
+  public abstract class ForceBase
   {
-    _name = name;
-    _once = appliedOnce;
-  }
+    private string _name;
+    private bool _isActive = true;
 
-  public bool IsActive
-  {
-    get { return _isActive; }
-    set { _isActive = value; }
-  }
+    protected GameObject _owner;
+    protected CapacityMovement _movement;
 
-  public void assignOwner(GameObject newOwner)
-  {
-    _owner = newOwner;
-    _movement = _owner.GetComponent<CapacityMovement>();
-  }
+    protected bool _once = false; // only one frame
+    protected bool _applied = false; // already applied ? (one frame)
 
-  public string Name
-  {
-    get { return _name; }
-  }
+    protected Vector2 _force = Vector2.zero;
 
-  bool canApply()
-  {
-    if (_once && _applied) return false;
-    return true;
-  }
-
-  public void update()
-  {
-    if (!canApply())
+    protected ForceBase(string name, bool appliedOnce)
     {
-      _force.x = _force.y = 0f;
-      return;
+      _name = name;
+      _once = appliedOnce;
     }
 
-    if (_once)
+    public bool IsActive
     {
-      if (!_applied)
+      get { return _isActive; }
+      set { _isActive = value; }
+    }
+
+    public void assignOwner(GameObject newOwner)
+    {
+      _owner = newOwner;
+      _movement = _owner.GetComponent<CapacityMovement>();
+    }
+
+    public string Name
+    {
+      get { return _name; }
+    }
+
+    bool canApply()
+    {
+      if (_once && _applied) return false;
+      return true;
+    }
+
+    public void update()
+    {
+      if (!canApply())
       {
-        _applied = true;
-        //Debug.Log(Name + " is done applying");
+        _force.x = _force.y = 0f;
+        return;
       }
+
+      if (_once)
+      {
+        if (!_applied)
+        {
+          _applied = true;
+          //Debug.Log(Name + " is done applying");
+        }
+      }
+
+      compute();
     }
 
-    compute();
+    public Vector2 getValue() { return IsActive ? _force : Vector2.zero; }
+
+    /* descibe what to do when updating */
+    abstract protected void compute();
+
+    virtual public bool needToBeRemoved()
+    {
+      return _once && _applied;
+    }
   }
 
-  public Vector2 getValue() { return IsActive ? _force : Vector2.zero; }
-
-  /* descibe what to do when updating */
-  abstract protected void compute();
-  
-  virtual public bool needToBeRemoved()
-  {
-    return _once && _applied;
-  }
 }

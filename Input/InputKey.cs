@@ -6,6 +6,10 @@ using UnityEngine;
 /// Common base class for all InputKeyManager bridge logic
 /// </summary>
 
-abstract public class InputKey {
-  
+namespace fwp.input
+{
+  abstract public class InputKey
+  {
+
+  }
 }

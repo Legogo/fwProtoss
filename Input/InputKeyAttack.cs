@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InputKeyAttack : InputKey
+namespace fwp.input
 {
-  public bool pressed_attack()
+  public class InputKeyAttack : InputKey
   {
-    return Input.GetKeyDown(KeyCode.LeftShift);
-  }
+    public bool pressed_attack()
+    {
+      return Input.GetKeyDown(KeyCode.LeftShift);
+    }
 
+  }
 }

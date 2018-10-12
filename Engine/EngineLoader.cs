@@ -14,9 +14,10 @@ using System;
 
 public class EngineLoader : MonoBehaviour
 {
+  static protected bool loading = true;
   static protected EngineLoader loader;
   protected List<AsyncOperation> _asyncs = new List<AsyncOperation>();
-
+  
   public Action onLoadingDone;
   
   protected bool SHOW_DEBUG = false;
@@ -56,14 +57,19 @@ public class EngineLoader : MonoBehaviour
     }
     return true;
   }
-  
+
+  private void Awake()
+  {
+    loading = true;
+  }
+
   IEnumerator Start()
   {
     if (SHOW_DEBUG) Debug.Log("start of <color=green>system loading</color> ...");
 
     ///// then we load engine, to get the feeder script
     loadScene(prefix+"engine");
-    while (!allAsyncDone()) yield return null;
+    while (!isAllAsyncDone()) yield return null;
 
     yield return null;
 
@@ -86,23 +92,25 @@ public class EngineLoader : MonoBehaviour
 
     ///// now wait for feeder scenes to load
     for (int i = 0; i < all.Count; i++) loadScene(all[i]);
-    while (!allAsyncDone()) yield return null;
+    while (!isAllAsyncDone()) yield return null;
     
-    doneLoading();
+    evtDoneLoading();
   }
 
-  bool allAsyncDone()
+  bool isAllAsyncDone()
   {
     if (_asyncs.Count > 0) return false;
     return true;
   }
 
-  void doneLoading() {
+  void evtDoneLoading() {
 
     Debug.Log("~EngineLoader~ ... done loading!");
 
     if (onLoadingDone != null) onLoadingDone();
-    
+
+    loading = false;
+
     GameObject.DestroyImmediate(gameObject);
   }
   
@@ -199,6 +207,11 @@ public class EngineLoader : MonoBehaviour
   static public EngineLoader get() {
     if (loader == null) init();
     return loader;
+  }
+
+  static public bool isLoading()
+  {
+    return loader != null || loading;
   }
 
   static public bool isSceneInBuildSettingsList(string scName)

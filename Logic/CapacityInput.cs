@@ -2,46 +2,51 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using fwp.input;
 
-public class CapacityInput : LogicCapacity {
-
-  public InputKeyBridge keys;
-  
-  public enum InputKeyboardMode { NONE, TOPDOWN };
-  public InputKeyboardMode inputKeyboardMode;
-
-  public Action<InputTouchFinger> touch;
-  //public Action<InputTouchFinger> release;
-
-  public bool useTouching = false;
-  
-  protected override void build()
+namespace fwp
+{
+  public class CapacityInput : LogicCapacity
   {
-    base.build();
 
-    keys = new InputKeyBridge();
-  }
+    public InputKeyBridge keys;
 
-  public override void earlySetupCapacity()
-  {
-    base.earlySetupCapacity();
+    public enum InputKeyboardMode { NONE, TOPDOWN };
+    public InputKeyboardMode inputKeyboardMode;
 
-    switch (inputKeyboardMode)
+    public Action<InputTouchFinger> touch;
+    //public Action<InputTouchFinger> release;
+
+    public bool useTouching = false;
+
+    protected override void build()
     {
-      case InputKeyboardMode.TOPDOWN: keys.get<InputKeyTopDown>(); break;
-      default: break;
+      base.build();
+
+      keys = new InputKeyBridge();
     }
 
-    if (useTouching)
+    public override void earlySetupCapacity()
     {
-      subscribeToTouchRelease(onTouch);
-    }
-  }
+      base.earlySetupCapacity();
 
-  protected void onTouch(InputTouchFinger finger)
-  {
-    if (isFreezed()) return;
-    if (touch != null) touch(finger);
+      switch (inputKeyboardMode)
+      {
+        case InputKeyboardMode.TOPDOWN: keys.get<InputKeyTopDown>(); break;
+        default: break;
+      }
+
+      if (useTouching)
+      {
+        subscribeToTouchRelease(onTouch);
+      }
+    }
+
+    protected void onTouch(InputTouchFinger finger)
+    {
+      if (isFreezed()) return;
+      if (touch != null) touch(finger);
+    }
+
   }
-  
 }

@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CapacityMovementPlatformer : CapacityMovement
+namespace fwp
 {
+  public class CapacityMovementPlatformer : CapacityMovement
+  {
+  }
 }

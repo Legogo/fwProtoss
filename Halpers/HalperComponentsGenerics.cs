@@ -26,6 +26,12 @@ static public class HalperComponentsGenerics
     if (t == null) t = obj.GetComponentInChildren<T>();
     return null;
   }
+  
+  public static T getComponentContext<T>(Transform tr, string endName)
+  {
+    tr = HalperTransform.findChild(tr, endName);
+    return tr.GetComponent<T>();
+  }
 
   public static T getComponentByCarryName<T>(string carryName)
   {

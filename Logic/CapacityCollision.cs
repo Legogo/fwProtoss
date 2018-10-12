@@ -11,6 +11,9 @@ using UnityEngine;
 ///             xmax,ymax
 /// </summary>
 
+namespace fwp
+{
+
 public class CapacityCollision : LogicCapacity
 {
   [HideInInspector] public CapacityCollision[] all; // all other objects in scenes
@@ -387,76 +390,78 @@ public struct CollisionInfo
 }
 
 
-/*
-
-  
-  public Rect solveDestinationBounds(Vector2 step)
-  {
-    //solve bounds based on collider and position
-    solveBounds();
-
-    //copy
-    destinationBounds.xMin = recBound.xMin;
-    destinationBounds.xMax = recBound.xMax;
-    destinationBounds.yMin = recBound.yMin;
-    destinationBounds.yMax = recBound.yMax;
-
-    //displace to have bounds at destination of next movement
-    destinationBounds.center += step;
-
-    return destinationBounds;
-  }
+  /*
 
 
-
-
-  public Vector2 checkCollisionRectangle(Vector2 position)
-  {
-    //mine
-    solveBounds();
-
-    resetCollisionInfo();
-
-    var collidedObjects = new List<GameObject>();
-
-    for (int i = 0; i < all.Length; i++)
+    public Rect solveDestinationBounds(Vector2 step)
     {
-      CapacityCollision other = all[i];
+      //solve bounds based on collider and position
+      solveBounds();
 
-      if (other != this && other.isCollidable())
+      //copy
+      destinationBounds.xMin = recBound.xMin;
+      destinationBounds.xMax = recBound.xMax;
+      destinationBounds.yMin = recBound.yMin;
+      destinationBounds.yMax = recBound.yMax;
+
+      //displace to have bounds at destination of next movement
+      destinationBounds.center += step;
+
+      return destinationBounds;
+    }
+
+
+
+
+    public Vector2 checkCollisionRectangle(Vector2 position)
+    {
+      //mine
+      solveBounds();
+
+      resetCollisionInfo();
+
+      var collidedObjects = new List<GameObject>();
+
+      for (int i = 0; i < all.Length; i++)
       {
-        other.solveBounds();
-        
-        float gapX = CollisionTools.rayX(recBound, other.recBound);
-        float gapY = CollisionTools.rayY(recBound, other.recBound);
-        
-        //touched something if x & y are inside the rectangle
-        if (gapX != 0f && gapY != 0f)
+        CapacityCollision other = all[i];
+
+        if (other != this && other.isCollidable())
         {
+          other.solveBounds();
 
-          //on prend comme ref le gap le plus grand des deux
-          if (Mathf.Abs(gapX) < Mathf.Abs(gapY))
+          float gapX = CollisionTools.rayX(recBound, other.recBound);
+          float gapY = CollisionTools.rayY(recBound, other.recBound);
+
+          //touched something if x & y are inside the rectangle
+          if (gapX != 0f && gapY != 0f)
           {
-            position.x = _t.position.x + gapX;
 
-            info.touching_left = gapX < 0;
-            info.touching_right = gapX > 0;
+            //on prend comme ref le gap le plus grand des deux
+            if (Mathf.Abs(gapX) < Mathf.Abs(gapY))
+            {
+              position.x = _t.position.x + gapX;
+
+              info.touching_left = gapX < 0;
+              info.touching_right = gapX > 0;
+            }
+            else
+            {
+              position.y = _t.position.y + gapY;
+
+              //a inverser ?
+              info.touching_ceiling = gapY < 0;
+              info.touching_ground = gapY > 0;
+            }
+
+            collidedObjects.Add(other.gameObject);
           }
-          else
-          {
-            position.y = _t.position.y + gapY;
-
-            //a inverser ?
-            info.touching_ceiling = gapY < 0;
-            info.touching_ground = gapY > 0;
-          }
-
-          collidedObjects.Add(other.gameObject);
         }
       }
-    }
-    _collidedObjects = collidedObjects;
+      _collidedObjects = collidedObjects;
 
-    return position;
-  }
-*/
+      return position;
+    }
+  */
+
+}

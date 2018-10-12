@@ -1,115 +1,121 @@
 ﻿using UnityEngine;
 using System;
+using fwp;
 
-public class CapacityHittable : LogicCapacity
+namespace fwp
 {
-  // arg: attacker
-  public event Action<LogicCapacity> HitEvent;
 
-  protected Collider2D[] _colliders;
-
-  public float hitTimer = 0f;
-  public float invincibleTimer = 0f;
-
-  public Action<LogicItem, LogicItem> onHit;
-
-  public override void setupCapacity()
+  public class CapacityHittable : LogicCapacity
   {
-    _colliders = HalperPhysic.getColliders2D(transform);
-  }
+    // arg: attacker
+    public event Action<LogicCapacity> HitEvent;
 
-  public override void updateCapacity()
-  {
+    protected Collider2D[] _colliders;
+
+    public float hitTimer = 0f;
+    public float invincibleTimer = 0f;
+
+    public Action<LogicItem, LogicItem> onHit;
+
+    public override void setupCapacity()
+    {
+      _colliders = HalperPhysic.getColliders2D(transform);
+    }
+
+    public override void updateCapacity()
+    {
     
-    // transform.localScale = new Vector3(1f, hitTimer > 0f ? 0.5f : 1f);
+      // transform.localScale = new Vector3(1f, hitTimer > 0f ? 0.5f : 1f);
 
-    if(hitTimer > 0f)
-    {
-      hitTimer -= Time.deltaTime;
+      if(hitTimer > 0f)
+      {
+        hitTimer -= Time.deltaTime;
+      }
+
+      if (invincibleTimer > 0f)
+      {
+        invincibleTimer -= Time.deltaTime;
+      }
+
     }
 
-    if (invincibleTimer > 0f)
+    protected bool overlap(BoxCollider2D boxa, BoxCollider2D boxb)
     {
-      invincibleTimer -= Time.deltaTime;
+      if(boxa.bounds.Intersects(boxb.bounds)) return true;
+      //if (boxa.OverlapPoint(boxb.bounds.center)) return true;
+      return false;
     }
 
-  }
-
-  protected bool overlap(BoxCollider2D boxa, BoxCollider2D boxb)
-  {
-    if(boxa.bounds.Intersects(boxb.bounds)) return true;
-    //if (boxa.OverlapPoint(boxb.bounds.center)) return true;
-    return false;
-  }
-
-  protected bool overlap(BoxCollider2D box, Vector3 bounds)
-  {
-    if (box.OverlapPoint(bounds)) return true;
-    return false;
-  }
-
-  public virtual CapacityHittable checkHitSomething(CapacityAttack attackerCapa)
-  {
-    //faire le hit player APRES toutes les armes
-    if (checkHitPlayer(attackerCapa))
+    protected bool overlap(BoxCollider2D box, Vector3 bounds)
     {
-      return this;
+      if (box.OverlapPoint(bounds)) return true;
+      return false;
     }
 
-    return null;
-  }
+    public virtual CapacityHittable checkHitSomething(CapacityAttack attackerCapa)
+    {
+      //faire le hit player APRES toutes les armes
+      if (checkHitPlayer(attackerCapa))
+      {
+        return this;
+      }
+
+      return null;
+    }
   
-  private bool checkHitPlayer(CapacityAttack attackerCapa)
-  {
-    //si le collider de l'épée de l'attacker overlap pas avec mon collider (corps)
-    if (!overlap(getCollider(), attackerCapa.getWeapon().getMainCollider())) return false;
+    private bool checkHitPlayer(CapacityAttack attackerCapa)
+    {
+      //si le collider de l'épée de l'attacker overlap pas avec mon collider (corps)
+      if (!overlap(getCollider(), attackerCapa.getWeapon().getMainCollider())) return false;
 
-    Debug.Log(attackerCapa.getOwner().name + " --ATTACK--> " + _owner.name);
+      Debug.Log(attackerCapa.getOwner().name + " --ATTACK--> " + _owner.name);
     
-    return true;
-  }
+      return true;
+    }
 
-  public bool Hittable()
-  {
-    if (this == null) return false;
-    if (getOwner().isFreezed()) return false;
-    if (invincibleTimer > 0f) return false;
-    if (getCollider() != null && !getCollider().enabled) return false;
-    return true;
-  }
-
-  public virtual void HitBySomething(CapacityAttack attacker)
-  {
-    RaiseHitEvent(attacker);
-  }
-  
-  public bool Stuned
-  {
-    get
+    public bool Hittable()
     {
-      return hitTimer > 0f;
+      if (this == null) return false;
+      if (getOwner().isFreezed()) return false;
+      if (invincibleTimer > 0f) return false;
+      if (getCollider() != null && !getCollider().enabled) return false;
+      return true;
+    }
+
+    public virtual void HitBySomething(CapacityAttack attacker)
+    {
+      RaiseHitEvent(attacker);
+    }
+  
+    public bool Stuned
+    {
+      get
+      {
+        return hitTimer > 0f;
+      }
+    }
+  
+    /* main collider if multiple ones */
+    public BoxCollider2D getCollider()
+    {
+      return _colliders[0] as BoxCollider2D;
+    }
+
+    public Vector3 getBounds()
+    {
+      return getCollider().bounds.center;
+    }
+
+    public override void clean()
+    {
+    }
+
+    protected virtual void RaiseHitEvent(LogicCapacity item)
+    {
+      Action<LogicCapacity> handler = HitEvent;
+      if (handler != null)
+        handler(item);
     }
   }
   
-  /* main collider if multiple ones */
-  public BoxCollider2D getCollider()
-  {
-    return _colliders[0] as BoxCollider2D;
-  }
-
-  public Vector3 getBounds()
-  {
-    return getCollider().bounds.center;
-  }
-
-  public override void clean()
-  {
-  }
-
-  protected virtual void RaiseHitEvent(LogicCapacity item)
-  {
-    Action<LogicCapacity> handler = HitEvent;
-    if (handler != null)
-      handler(item);
-  }
 }

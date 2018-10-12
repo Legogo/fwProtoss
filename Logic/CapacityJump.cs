@@ -3,75 +3,82 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using fwp.input;
 
-abstract public class CapacityJump : LogicCapacity
+namespace fwp
 {
-  protected CapacityCollision _collision;
-  protected CapacityMovement _move;
 
-  bool grounded = false;
-  bool jumping = false;
-
-  public Action onJump;
-
-  public override void setupCapacity()
+  abstract public class CapacityJump : LogicCapacity
   {
-    _collision = _owner.GetComponent<CapacityCollision>();
-    _move = _owner.GetComponent<CapacityMovement>();
-    
-    _owner.input.touch += touch; // mouse input
-  }
+    protected CapacityCollision _collision;
+    protected CapacityMovement _move;
 
-  abstract protected bool pressJump();
+    bool grounded = false;
+    bool jumping = false;
 
-  protected void touch(InputTouchFinger finger)
-  {
-    solveJump();
-  }
+    public Action onJump;
 
-  public override void updateCapacity()
-  {
-    base.updateCapacity();
-
-    grounded = _collision.isGrounded();
-
-    if (jumping && grounded)
+    public override void setupCapacity()
     {
-      //Debug.Log("-------------------------- <b>LAND</b> "+Time.frameCount);
-      jumping = false;
-    }
+      _collision = _owner.GetComponent<CapacityCollision>();
+      _move = _owner.GetComponent<CapacityMovement>();
     
-    if(pressJump()) solveJump();
-  }
+      _owner.input.touch += touch; // mouse input
+    }
 
-  [ContextMenu("jump!")]
-  public void solveJump()
-  {
-    bool isGrounded = _collision.isGrounded();
+    abstract protected bool pressJump();
 
-    //Debug.Log("<color=red>================================================</color>");
-    //Debug.Log(Time.frameCount+" , <b>JUMP !</b> grounded ? "+isGrounded + " , jump pwr ? " + getJumpPower());
-
-    if (onJump != null) onJump();
-
-    if (isGrounded)
+    protected void touch(InputTouchFinger finger)
     {
-      jumping = true;
-      //Debug.Log(" ------------------------ <b>JUMP</b> "+Time.frameCount);
-      _move.addVelocity(0f, getJumpPower());
-
-      soundPlayJump();
+      solveJump();
     }
+
+    public override void updateCapacity()
+    {
+      base.updateCapacity();
+
+      grounded = _collision.isGrounded();
+
+      if (jumping && grounded)
+      {
+        //Debug.Log("-------------------------- <b>LAND</b> "+Time.frameCount);
+        jumping = false;
+      }
     
-  }
+      if(pressJump()) solveJump();
+    }
+
+    [ContextMenu("jump!")]
+    public void solveJump()
+    {
+      bool isGrounded = _collision.isGrounded();
+
+      //Debug.Log("<color=red>================================================</color>");
+      //Debug.Log(Time.frameCount+" , <b>JUMP !</b> grounded ? "+isGrounded + " , jump pwr ? " + getJumpPower());
+
+      if (onJump != null) onJump();
+
+      if (isGrounded)
+      {
+        jumping = true;
+        //Debug.Log(" ------------------------ <b>JUMP</b> "+Time.frameCount);
+        _move.addVelocity(0f, getJumpPower());
+
+        soundPlayJump();
+      }
+    
+    }
   
-  virtual public float getJumpPower()
-  {
-    return 1f;
+    virtual public float getJumpPower()
+    {
+      return 1f;
+    }
+
+    virtual public void soundPlayJump()
+    {
+      SoundManager.call("PlayerJump");
+    }
   }
 
-  virtual public void soundPlayJump()
-  {
-    SoundManager.call("PlayerJump");
-  }
+
 }

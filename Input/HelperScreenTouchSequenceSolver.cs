@@ -6,70 +6,74 @@ using System;
 /// this is meant to simplify making a sequence of click on screen
 /// </summary>
 
-public class HelperScreenTouchSequenceSolver {
-
-  Transform parent;
-
-  Rect[] zones;
-  int step = 0;
-
-  bool _proportional = false;
-  bool _state = false;
-
-  public Action onToggle; // callback where to subscribe to react to sequence solving
-
-  public HelperScreenTouchSequenceSolver(Transform owner, Rect[] screenZones, bool useProportional = false)
+namespace fwp.input
+{
+  public class HelperScreenTouchSequenceSolver
   {
-    parent = owner;
-    zones = screenZones;
 
-    _proportional = useProportional;
+    Transform parent;
 
-    InputTouchBridge.get().onTouch += onBridgeInput;
-  }
+    Rect[] zones;
+    int step = 0;
 
-  protected void onBridgeInput(InputTouchFinger finger)
-  {
-    onInput(_proportional ? finger.screenProportional : (Vector2)finger.screenPosition);
-  }
-  
-  protected void onInput(Vector2 screenPosition)
-  {
-    if (!parent.gameObject.activeSelf) return;
+    bool _proportional = false;
+    bool _state = false;
 
-    Rect z = zones[step];
+    public Action onToggle; // callback where to subscribe to react to sequence solving
 
-    if (screenPosition.x > z.x && screenPosition.x < z.x + z.width)
+    public HelperScreenTouchSequenceSolver(Transform owner, Rect[] screenZones, bool useProportional = false)
     {
-      if (screenPosition.y > z.y && screenPosition.y < z.y + z.height)
-      {
-        step++;
+      parent = owner;
+      zones = screenZones;
 
-        //Debug.Log(step);
+      _proportional = useProportional;
 
-        if(step >= zones.Length)
-        {
-          toggle();
-        }
-        return;
-      }
+      InputTouchBridge.get().onTouch += onBridgeInput;
     }
 
-    step = 0;
-  }
+    protected void onBridgeInput(InputTouchFinger finger)
+    {
+      onInput(_proportional ? finger.screenProportional : (Vector2)finger.screenPosition);
+    }
 
-  protected void toggle()
-  {
-    _state = !_state;
-    step = 0;
+    protected void onInput(Vector2 screenPosition)
+    {
+      if (!parent.gameObject.activeSelf) return;
 
-    if(onToggle != null) onToggle();
+      Rect z = zones[step];
 
-    //Debug.Log(parent.name + " toggle");
-  }
+      if (screenPosition.x > z.x && screenPosition.x < z.x + z.width)
+      {
+        if (screenPosition.y > z.y && screenPosition.y < z.y + z.height)
+        {
+          step++;
 
-  public bool isToggled()
-  {
-    return _state;
+          //Debug.Log(step);
+
+          if (step >= zones.Length)
+          {
+            toggle();
+          }
+          return;
+        }
+      }
+
+      step = 0;
+    }
+
+    protected void toggle()
+    {
+      _state = !_state;
+      step = 0;
+
+      if (onToggle != null) onToggle();
+
+      //Debug.Log(parent.name + " toggle");
+    }
+
+    public bool isToggled()
+    {
+      return _state;
+    }
   }
 }

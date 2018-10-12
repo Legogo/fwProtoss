@@ -2,17 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InputKeyAim : InputKey {
+namespace fwp.input
+{
+  public class InputKeyAim : InputKey
+  {
 
-  public bool pressed_aim()
-  {
-    return Input.GetKeyDown(KeyCode.A);
+    public bool pressed_aim()
+    {
+      return Input.GetKeyDown(KeyCode.A);
+    }
+    public bool released_aim()
+    {
+      return Input.GetKeyUp(KeyCode.A);
+    }
+
+    /* to implem with arrow keys ?*/
+    public Vector2 getDirectionVector() { return Vector2.zero; }
   }
-  public bool released_aim()
-  {
-    return Input.GetKeyUp(KeyCode.A);
-  }
-  
-  /* to implem with arrow keys ?*/
-  public Vector2 getDirectionVector() { return Vector2.zero; }
 }

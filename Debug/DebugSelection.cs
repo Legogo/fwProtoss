@@ -4,23 +4,18 @@
 using UnityEditor;
 #endif
 
-using Interfaces;
 /*
   Seulement dans l'editeur
   Permet d'avoir de l'info sur un objet qu'on clique (qui hérite de l'interface IDebugSelection)
 */
 
-namespace Interfaces
-{
-  public interface IDebugSelection
-  {
-    string iString();
-  }
-}
-
 public class DebugSelection : MonoBehaviour
 {
 
+  public interface iDebugSelection
+  {
+    string toDebug();
+  }
   public GameObject target;
   
 #if UNITY_EDITOR
@@ -57,8 +52,9 @@ public class DebugSelection : MonoBehaviour
 
   /* dessin dans la scene view en debug */
   GUIStyle style;
+
   void guiHandleLabel(GameObject obj) {
-    IDebugSelection info = obj.GetComponent<IDebugSelection>();
+    iDebugSelection info = obj.GetComponent<iDebugSelection>();
     //Debug.Log(info.toStringDebug());
     Handles.color = Color.white;
 
@@ -70,7 +66,7 @@ public class DebugSelection : MonoBehaviour
     }
 
     if (info != null) {
-      Handles.Label(obj.transform.position + Vector3.right, info.iString(), style);
+      Handles.Label(obj.transform.position + Vector3.right, info.toDebug(), style);
     }
   }
 
@@ -91,10 +87,10 @@ public class DebugSelection : MonoBehaviour
     guiRec.x = 0;
     guiRec.y = lineHeight;
 
-    IDebugSelection[] infos = obj.GetComponents<IDebugSelection>();
+    iDebugSelection[] infos = obj.GetComponents<iDebugSelection>();
     for (int i = 0; i < infos.Length; i++)
     {
-      info = "{"+infos[i].GetType()+"}\n"+infos[i].iString();
+      info = "{"+infos[i].GetType()+"}\n"+infos[i].toDebug();
       
       //if (i > 0) guiRec.y += 30;
       GUI.Label(guiRec, info, style);

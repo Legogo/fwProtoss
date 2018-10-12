@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
+using fwp.input;
+
+abstract public class EngineObject : MonoBehaviour, DebugSelection.iDebugSelection
 {
   protected EngineManager _eManager;
 
@@ -227,7 +229,7 @@ abstract public class EngineObject : MonoBehaviour, Interfaces.IDebugSelection
     return label + " ? " + (val ? "<color=green>true</color>" : "<color=red><b>false</b></color>");
   }
 
-  public string iString()
+  public string toDebug()
   {
     return toString();
   }
