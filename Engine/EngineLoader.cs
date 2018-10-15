@@ -125,7 +125,7 @@ public class EngineLoader : MonoBehaviour
   {
     queries.Remove(co);
 
-    Debug.Log(queries.Count + " queries left");
+    //Debug.Log(queries.Count + " queries left");
 
     evtSceneIsDoneLoading();
   }
