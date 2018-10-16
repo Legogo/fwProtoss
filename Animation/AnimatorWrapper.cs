@@ -16,7 +16,7 @@ public class AnimatorWrapper
 
   Action<string> onPlay;
   Action<string> onEnd;
-
+  
   AnimatorStateInfo state; // default layer (0)
   AnimatorClipInfo[] infos;
 
@@ -45,7 +45,7 @@ public class AnimatorWrapper
 
     if (delay <= 0f) play(stateName);
     else {
-      Debug.Log(animator.gameObject.name + " will play " + playStateName + " delayed " + delay);
+      //Debug.Log(animator.gameObject.name + " will play " + playStateName + " delayed " + delay);
       pDelay = processDelay(stateName, delay);
     }
     
