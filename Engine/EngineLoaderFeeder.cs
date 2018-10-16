@@ -43,6 +43,12 @@ public class EngineLoaderFeeder : MonoBehaviour {
 
   protected void addWithPrefix(string prefix, string[] names)
   {
+    if (names == null)
+    {
+      Debug.LogWarning("names is null for prefix " + prefix);
+      return;
+    }
+
     if (names.Length <= 0) return;
 
     //Debug.Log(prefix + " count ? " + names.Length);
