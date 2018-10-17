@@ -144,6 +144,8 @@ public class SettingsManager : EngineObject {
     PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.iOS, data.package_name);
     
     PlayerSettings.defaultInterfaceOrientation = data.orientation_default;
+    
+    EditorUserBuildSettings.development = data.developementBuild;
   }
 #endif
 

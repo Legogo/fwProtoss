@@ -125,9 +125,14 @@ public class VersionManager : MonoBehaviour
     apply(v);
   }
   
-  static private void apply(int[] data)
+  static public void incrementBuildNumber()
   {
-    PlayerSettings.Android.bundleVersionCode++;
+    PlayerSettings.Android.bundleVersionCode++; // shared with ios ?
+  }
+
+  static private void apply(int[] data, bool incBuildVersion = true)
+  {
+    if(incBuildVersion) incrementBuildNumber();
 
     PlayerSettings.bundleVersion = getFormatedVersion('.', data);
     PlayerSettings.iOS.buildNumber = PlayerSettings.bundleVersion;

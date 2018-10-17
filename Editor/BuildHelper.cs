@@ -77,6 +77,7 @@ abstract public class BuildHelper
     buildPlayerOptions = new BuildPlayerOptions();
 
     if (incVersion) VersionManager.incrementFix();
+    else VersionManager.incrementBuildNumber();
 
     //buildPlayerOptions.scenes = new[] { "Assets/Scene1.unity", "Assets/Scene2.unity" };
     buildPlayerOptions.scenes = getScenePaths();
@@ -148,19 +149,30 @@ abstract public class BuildHelper
   abstract public string getBuildPathFolder();
   abstract public string getBuildName();
 
-  /*
-  [MenuItem("Build/Build Android #&b")]
-  public static void menu_build_android()
-  {
-    build_android(false);
-  }
-
-  [MenuItem("Build/Build&Run Android #b")]
-  public static void menu_build_run_android()
-  {
-    new BuildHelper();
-    build_android(true);
-  }
-  */
-
 }
+
+
+
+
+/*
+[MenuItem("Build/Build Android #&b")]
+public static void menu_build_android()
+{
+  build_android(false);
+}
+
+[MenuItem("Build/Build&Run Android #b")]
+public static void menu_build_run_android()
+{
+  new BuildHelper();
+  build_android(true);
+}
+
+
+[MenuItem("Build/Build&Run (no-increment) %&x")]
+public static void menu_build_android() { new BuildHalper(true, false); }
+
+[MenuItem("Build/Build&Run (increment) %&c")]
+public static void menu_build_run_android() { new BuildHalper(true, true); }
+
+*/

@@ -57,7 +57,7 @@ public class HelperVisibleUi : HelperVisible
     return _render.enabled;
   }
 
-  protected override void setVisibility(bool flag)
+  override public void setVisibility(bool flag)
   {
     if(_group != null)
     {

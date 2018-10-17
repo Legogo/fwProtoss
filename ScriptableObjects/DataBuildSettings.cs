@@ -17,7 +17,7 @@ public class DataBuildSettings : ScriptableObject
   public UIOrientation orientation_default = UIOrientation.Portrait;
 #endif
 
-  //public bool use_ingame_coin_rwd_video = true;
+  public bool developementBuild = false;
   public bool use_joystick_visualisation = true;
   
 }

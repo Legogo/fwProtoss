@@ -54,7 +54,7 @@ public class HelperVisibleSprite : HelperVisible
     _renderSprite.color = col;
   }
   
-  override protected void setVisibility(bool flag)
+  override public void setVisibility(bool flag)
   {
     if (_renderSprite == null) Debug.LogError("no render sprite for " + _owner.name, _owner.gameObject);
     _renderSprite.enabled = flag;

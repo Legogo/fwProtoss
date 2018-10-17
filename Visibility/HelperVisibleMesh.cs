@@ -118,7 +118,7 @@ public class HelperVisibleMesh : HelperVisible
     if (_label != null) _label.text = content;
   }
   
-  override protected void setVisibility(bool flag)
+  override public void setVisibility(bool flag)
   {
     if (_render != null)
     {

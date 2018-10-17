@@ -5,8 +5,9 @@ using UnityEngine.UI;
 
 public class UiProgressBar : EngineObject {
 
-  protected RectTransform pivot;
-  protected Image render;
+  protected HelperVisibleUi render;
+  protected Image renderImg;
+  protected RectTransform renderRectTr;
 
   [Header("progressive logic")]
   public float progressiveSpeed = 999f;
@@ -20,24 +21,40 @@ public class UiProgressBar : EngineObject {
   {
     base.build();
 
-    pivot = transform.GetChild(0).GetComponent<RectTransform>();
-
-    //search for filled image
-    Image[] imgs = GetComponentsInChildren<Image>();
-    for (int i = 0; i < imgs.Length; i++)
-    {
-      if(imgs[i].type == Image.Type.Filled)
-      {
-        render = imgs[i];
-      }
-    }
-
-    if (render == null) Debug.LogError("no filled image found for progress bar", gameObject);
-
     progressiveStep = 1f;
     progressiveTarget = 1f;
+    
+  }
+
+  protected override void setup()
+  {
+    base.setup();
+
+    render = visibility as HelperVisibleUi;
+    renderImg = render.getImage();
+    renderRectTr = renderImg.GetComponent<RectTransform>();
+
+    if(renderImg.type != Image.Type.Filled)
+    {
+      Debug.LogError("asking to modify some ui element as progress bar but target ui element is not setup as fill ?");
+    }
   }
   
+  protected override VisibilityMode getVisibilityType()
+  {
+    return VisibilityMode.UI;
+  }
+  
+  private void OnValidate()
+  {
+    if (Application.isPlaying) return;
+    
+    renderImg = transform.GetComponent<Image>();
+    renderRectTr = renderImg.GetComponent<RectTransform>();
+
+    applyProgress();
+  }
+
   public override void updateEngine()
   {
     base.updateEngine();
@@ -56,15 +73,9 @@ public class UiProgressBar : EngineObject {
       applyProgress();
     }
   }
-
-  public void follow(Vector2 targetPosition)
-  {
-    pivot.position = Camera.main.WorldToScreenPoint(targetPosition);
-    //Debug.Log(pivot.position);
-  }
-
-  public bool isFull() { return render.fillAmount >= 1f; }
-  public bool isEmpty() { return render.fillAmount <= 0f; }
+  
+  public bool isFull() { return renderImg.fillAmount >= 1f; }
+  public bool isEmpty() { return renderImg.fillAmount <= 0f; }
 
   public void addProgress(float step)
   {
@@ -83,11 +94,17 @@ public class UiProgressBar : EngineObject {
 
   virtual public void applyProgress()
   {
-    render.fillAmount = progressiveStep;
+    renderImg.fillAmount = progressiveStep;
   }
 
   public float getProgress()
   {
     return progressiveStep;
+  }
+  
+  public void follow(Vector2 targetPosition)
+  {
+    renderRectTr.position = Camera.main.WorldToScreenPoint(targetPosition);
+    //Debug.Log(pivot.position);
   }
 }
