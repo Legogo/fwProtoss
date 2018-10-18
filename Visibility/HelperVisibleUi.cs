@@ -79,10 +79,10 @@ public class HelperVisibleUi : HelperVisible
     return _render.color;
   }
 
-  public void setSprite(Sprite spr)
+  public void setSymbol(Sprite newFrame)
   {
     Image img = _render as Image;
-    if (img != null) img.sprite = spr;
+    if (img != null) img.sprite = newFrame;
   }
 
   public Image getImage() { return _render as Image; }

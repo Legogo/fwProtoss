@@ -70,7 +70,7 @@ namespace fwp.input
       if (drawDebug) Debug.LogWarning("debug drawing for " + GetType() + " is active");
 #endif
 
-      Debug.Log(GetType() + " setup is done, enabling update");
+      //Debug.Log(GetType() + " setup is done, enabling update");
 
       enabled = true;
     }

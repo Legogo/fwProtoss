@@ -29,17 +29,33 @@ public class EditorContextMenu : MonoBehaviour {
     }
     
   }
+
+  [MenuItem("Assets/readme")]
+  static protected void openReadme()
+  {
+    //string fullPath = Path.Combine(Environment.CurrentDirectory, "/YourSubDirectory/yourprogram.exe");
+    string fullPath = Environment.CurrentDirectory+"/README.md";
+
+    //Debug.Log(fullPath);
+    
+    if (!File.Exists(fullPath))
+    {
+      File.Create(fullPath);
+    }
+
+    startCmd(fullPath);
+  }
   
-  static protected void startCmd(string fullPath, string args)
+  static protected void startCmd(string fullPath, string args = "")
   {
     ProcessStartInfo startInfo = new ProcessStartInfo(fullPath);
     startInfo.WindowStyle = ProcessWindowStyle.Normal;
-    startInfo.Arguments = args;
+    if(args.Length > 0) startInfo.Arguments = args;
 
     //Debug.Log(Environment.CurrentDirectory);
 
     Process.Start(startInfo);
 
   }
-
+  
 }

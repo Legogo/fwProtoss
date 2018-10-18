@@ -21,7 +21,7 @@ public class UiSocketSelection : EngineObject {
     idx = Mathf.Clamp(idx, 0, sprites.Length-1);
 
     ui.getImage().enabled = sprites[idx] != null;
-    ui.setSprite(sprites[idx]);
+    ui.setSymbol(sprites[idx]);
   }
 
   [ContextMenu("apply default")]

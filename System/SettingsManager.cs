@@ -165,7 +165,7 @@ public class SettingsManager : EngineObject {
     string[] sizes = res.Split('x');
     Vector2 outputRes = new Vector2(int.Parse(sizes[0]), int.Parse(sizes[1]));
 
-    Debug.Log("~SettingsManager~ setup reoslution to " + outputRes + " (ppref ? " + res + ") , fullscreen ? " + fs);
+    Debug.Log("~SettingsManager~ setup resolution to " + outputRes + " (ppref ? " + res + ") , fullscreen ? " + fs);
     Screen.SetResolution((int)outputRes.x, (int)outputRes.y, fs);
 
     PlayerPrefs.Save();

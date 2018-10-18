@@ -79,7 +79,7 @@ public class ScreensManager : EngineObject {
   {
     fetchScreens();
 
-    Debug.Log("opening " + nm+" (filter ? "+filter+")");
+    //Debug.Log("opening " + nm+" (filter ? "+filter+")");
 
     for (int i = 0; i < screens.Length; i++)
     {
@@ -88,7 +88,7 @@ public class ScreensManager : EngineObject {
         if (screens[i].name.Contains(filter)) continue;
       }
 
-      Debug.Log("  L " +screens[i].name);
+      //Debug.Log("  L " +screens[i].name);
       if (screens[i].name.Contains(nm))
       {
         screens[i].show();
