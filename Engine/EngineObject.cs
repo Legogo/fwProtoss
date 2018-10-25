@@ -16,7 +16,8 @@ abstract public class EngineObject : MonoBehaviour, DebugSelection.iDebugSelecti
   protected bool _unfreeze = true;
   protected bool _ready = false;
   
-  [Serializable]public enum VisibilityMode { NONE, SPRITE, UI, MESH, SKINNED };
+  [Serializable]
+  public enum VisibilityMode { NONE, SPRITE, UI, MESH, SKINNED };
   public HelperVisible visibility;
   
   //[Serializable]public enum InputMode { NONE, MOUSE };

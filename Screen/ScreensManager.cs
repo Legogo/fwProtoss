@@ -105,11 +105,11 @@ public class ScreensManager : EngineObject {
   {
     fetchScreens();
 
-    Debug.Log("closing " + nameEnd);
+    //Debug.Log("closing " + nameEnd);
 
     for (int i = 0; i < screens.Length; i++)
     {
-      Debug.Log("  L " + screens[i].name);
+      //Debug.Log("  L " + screens[i].name);
 
       if (screens[i].name.EndsWith(nameEnd))
       {

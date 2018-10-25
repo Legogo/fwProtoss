@@ -174,7 +174,7 @@ public class ScreenObject : EngineObject
   {
     if (sticky)
     {
-      Debug.Log("can't hide " + name + " because is setup as sticky");
+      Debug.LogWarning("can't hide " + name + " because is setup as sticky");
       return;
     }
 

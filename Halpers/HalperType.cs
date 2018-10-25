@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using Object = UnityEngine.Object;
 
 static public class HalperType {
 
@@ -16,4 +18,14 @@ static public class HalperType {
 
   }// isTypeOf()
 
+  /// <summary>
+  /// https://stackoverflow.com/questions/708205/c-sharp-object-type-comparison
+  /// </summary>
+  /// <param name="a"></param>
+  /// <param name="b"></param>
+  /// <returns></returns>
+  static public bool compareType(Type a, Type b)
+  {
+    return a.IsAssignableFrom(b) || b.IsAssignableFrom(a);
+  }
 }
