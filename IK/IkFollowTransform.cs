@@ -4,8 +4,10 @@ using UnityEngine;
 
 //https://docs.unity3d.com/Manual/InverseKinematics.html
 
+public enum IkFollowGroup { Hand, Foot };
+
 [RequireComponent(typeof(Animator))]
-public class IkFollowTransform : MonoBehaviour
+public class IkFollowTransform : MonoBehaviour, FthHumanControllerSub
 {
   protected Animator animator;
 
@@ -13,13 +15,9 @@ public class IkFollowTransform : MonoBehaviour
   float weight = 1f;
 
   public AvatarIKGoal ikGoal;
+  public HumanPart humanPart;
   public Transform followObject = null;
-
-  void Start()
-  {
-    animator = GetComponent<Animator>();
-  }
-
+  
   protected void moveWeight(float speed)
   {
     weight += Time.deltaTime * speed;
@@ -30,6 +28,7 @@ public class IkFollowTransform : MonoBehaviour
   {
     if (!enabled) return;
     if (followObject == null) return;
+    if (animator == null) return;
 
     moveWeight(ikActive ? 1f : -1f);
     
@@ -38,5 +37,13 @@ public class IkFollowTransform : MonoBehaviour
     animator.SetIKPosition(ikGoal, followObject.position);
     animator.SetIKRotation(ikGoal, followObject.rotation);
   }
-  
+
+  public void eventChangedSkin(Transform skinRoot)
+  {
+    animator = skinRoot.GetComponentInChildren<Animator>();
+    followObject = HalperTransform.findChild(skinRoot, humanPart.ToString());
+
+    if (animator == null) Debug.LogError("no animator ??");
+    if (followObject == null) Debug.LogError("no follow ??");
+  }
 }

@@ -26,6 +26,10 @@ public class EngineLoaderFeeder : MonoBehaviour {
   [Header("no prefix")]
   public string[] other_names;
   
+  /// <summary>
+  /// generate list of scenes with exact names
+  /// </summary>
+  /// <returns></returns>
   virtual public string[] feed()
   {
     if (scene_names == null) scene_names = new List<string>();
@@ -63,12 +67,7 @@ public class EngineLoaderFeeder : MonoBehaviour {
   {
     return scene_names.ToArray();
   }
-
-  static public EngineLoaderFeeder get()
-  {
-    return GameObject.FindObjectOfType<EngineLoaderFeeder>();
-  }
-
+  
 #if UNITY_EDITOR
   [ContextMenu("fetch uis")]
   protected void fetchScreensRefs()

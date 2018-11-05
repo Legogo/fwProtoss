@@ -108,9 +108,13 @@ public class EngineLoader : MonoBehaviour
     cleanScene(sc);
 
     ///// feeder, additionnal scenes (from feeder script)
-    EngineLoaderFeeder feeder = EngineLoaderFeeder.get();
+    EngineLoaderFeeder[] feeders = GameObject.FindObjectsOfType<EngineLoaderFeeder>();
+
     List<string> all = new List<string>();
-    if (feeder != null) all.AddRange(feeder.feed());
+    for (int i = 0; i < feeders.Length; i++)
+    {
+      if (feeders[i] != null) all.AddRange(feeders[i].feed());
+    }
 
     //string debugContent = "~EngineLoader~ now loading <b>" + all.Count + " scenes</b> ... ";
     //for (int i = 0; i < all.Count; i++) debugContent += "\n  " + all[i];
