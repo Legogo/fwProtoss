@@ -15,9 +15,9 @@ public class FpsWarning : DebugDisplayContent
   public Color valid;
   public Color invalid;
 
-  protected override void Awake()
+  protected override void build()
   {
-    base.Awake();
+    base.build();
     avg = new int[frameAvgCount];
   }
 
@@ -30,8 +30,6 @@ public class FpsWarning : DebugDisplayContent
 
   protected override void process()
   {
-    base.process();
-
     fps = Mathf.FloorToInt(1.0f / Time.deltaTime);
 
     average = fps;

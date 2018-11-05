@@ -12,9 +12,7 @@ public class DebugDeviceInfo : DebugDisplayContent {
 
   protected override void process()
   {
-    base.process();
     ct = Screen.width + " x " + Screen.height;
-    //ct += "\nv" + Version.getVersion();
   }
 
 }

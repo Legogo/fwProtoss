@@ -189,7 +189,7 @@ public class EngineLoader : MonoBehaviour
       //don't double load same scene
       if (SceneManager.GetSceneByName(sceneName).isLoaded)
       {
-        Debug.LogWarning(sceneName + " is concidered as already loaded");
+        Debug.LogWarning("<b>"+sceneName + "</b> is concidered as already loaded");
         continue;
       }
       
