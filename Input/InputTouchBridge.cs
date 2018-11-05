@@ -92,7 +92,7 @@ namespace fwp.input
       if (useMainCamera && inputCamera == null)
       {
         inputCamera = Camera.main;
-        if (inputCamera == null) Debug.LogWarning("no MainCamera tagged in context");
+        if (inputCamera == null) Debug.LogWarning("ITB, no MainCamera tagged in context");
         return;
       }
 
