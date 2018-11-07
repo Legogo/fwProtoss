@@ -76,7 +76,7 @@ public class EngineLoader : MonoBehaviour
     //don't load engine on guide scenes (starting with ~)
     if (SceneManager.GetActiveScene().name.StartsWith("~"))
     {
-      Debug.LogWarning("<b>guide scene</b> not loading engine here");
+      Debug.LogWarning("<color=red><b>guide scene</b> not loading engine here</color>");
       return;
     }
 
