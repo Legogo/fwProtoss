@@ -7,6 +7,11 @@ using UnityEngine;
 /// </summary>
 public class qh
 {
+  /// <summary>
+  /// gc == getcomponent
+  /// </summary>
+  /// <typeparam name="T"></typeparam>
+  /// <returns></returns>
   static public T gc<T>() where T : UnityEngine.Object
   {
     return GameObject.FindObjectOfType<T>();

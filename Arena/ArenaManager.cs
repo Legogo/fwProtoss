@@ -197,7 +197,7 @@ abstract public class ArenaManager : EngineObject {
   /// launch round end process
   /// called by specific game arena manager
   /// </summary>
-  protected void event_round_end()
+  private void event_round_end()
   {
     Debug.Log("~Arena~ <color=orange>event_round_end</color>");
 
