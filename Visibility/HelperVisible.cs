@@ -15,15 +15,23 @@ abstract public class HelperVisible
   protected Rect _wbounds; // bounds expressed in world position
   protected BoxCollider2D _collider;
 
-  protected EngineObject _owner;
+  protected MonoBehaviour _owner;
   protected Transform _t;
   protected Transform _symbolCarry;
 
   protected Coroutine coFade;
 
-  public HelperVisible(EngineObject parent)
+  public HelperVisible(MonoBehaviour parent)
   {
+    if (parent == null) Debug.LogError("no parent given ...");
+
     _owner = parent;
+
+    if(_owner.transform == null)
+    {
+      Debug.LogError(" ? no transform for " + _owner.name);
+    }
+
     _t = _owner.transform;
 
     _collider = _owner.GetComponent<BoxCollider2D>();
@@ -53,7 +61,7 @@ abstract public class HelperVisible
     _wbounds.height = _bounds.height;
   }
 
-  public void setAlpha(float newAlpha)
+  virtual public void setAlpha(float newAlpha)
   {
     Color col = getColor();
     col.a = newAlpha;
@@ -130,6 +138,8 @@ abstract public class HelperVisible
 
   protected IEnumerator processFadingSpeed(float target, float speed, Action<float> onFadingDone = null, float? startingAlpha = null)
   {
+    Debug.Log("start fading " + _owner.name+" to "+target+" at speed "+speed);
+    
     if(startingAlpha != null)
     {
       setAlpha(startingAlpha.Value);
