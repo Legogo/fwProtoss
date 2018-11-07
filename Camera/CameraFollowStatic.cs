@@ -19,8 +19,15 @@ public class CameraFollowStatic : MonoBehaviour {
     offsetRot = transform.rotation;
   }
 
+  public void setup(Transform newTarget)
+  {
+    target = newTarget;
+    Update();
+  }
+
   private void Update()
   {
+    if (target == null) return;
 
     //transform.position = target.TransformPoint(offsetPos);
     transform.position = target.position + offsetPos;

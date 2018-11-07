@@ -13,13 +13,12 @@ public class DebugView : DebugDisplayContent {
   {
     base.setup();
 
-    solver = new HelperScreenTouchSequenceSolver(transform, zones, true);
+    solver = new HelperScreenTouchSequenceSolver(zones);
 
-    solver.onToggle += toggle;
+    solver.onToggle += delegate()
+    {
+      enabled = !enabled;
+    };
   }
-
-  protected void toggle()
-  {
-    enabled = !enabled;
-  }
+  
 }

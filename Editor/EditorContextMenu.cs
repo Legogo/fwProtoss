@@ -40,7 +40,7 @@ public class EditorContextMenu : MonoBehaviour {
     
     if (!File.Exists(fullPath))
     {
-      File.Create(fullPath);
+      File.Create(fullPath).Close();
     }
 
     startCmd(fullPath);

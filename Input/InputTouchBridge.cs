@@ -9,6 +9,8 @@ namespace fwp.input
   {
     InputTouchPinch pinchBridge;
     InputTouchSwipe swipeBridge;
+    InputSelectionManager selectionBridge;
+    HelperScreenTouchSequenceSolver sequencer;
 
     public bool useMainCamera = true;
     public Camera inputCamera;
@@ -24,7 +26,7 @@ namespace fwp.input
 
     protected List<InputTouchFinger> _fingers = new List<InputTouchFinger>();
 
-    public Action<InputTouchFinger> onTouch; // int is finger ID
+    public Action<InputTouchFinger> onTouch;
     public Action<InputTouchFinger> onRelease;
     public Action<InputTouchFinger> onOverring;
     public Action onTouching;
@@ -43,6 +45,19 @@ namespace fwp.input
 
       pinchBridge = new InputTouchPinch(this);
       swipeBridge = new InputTouchSwipe(this);
+      selectionBridge = new InputSelectionManager();
+
+      sequencer = new HelperScreenTouchSequenceSolver(new Rect[]{
+        new Rect(0.9f, 0.9f, 0.1f, 0.1f),
+        new Rect(0.9f, 0.9f, 0.1f, 0.1f)
+      });
+
+      sequencer.onToggle += delegate ()
+      {
+        Debug.Log(getStamp() + "toggling drawDebug : " + drawDebug);
+        drawDebug = !drawDebug;
+      };
+
     }
 
     IEnumerator processSetup()
@@ -92,7 +107,7 @@ namespace fwp.input
       if (useMainCamera && inputCamera == null)
       {
         inputCamera = Camera.main;
-        if (inputCamera == null) Debug.LogWarning("ITB, no MainCamera tagged in context");
+        if (inputCamera == null) Debug.LogWarning(getStamp()+"no MainCamera tagged in context (frame : "+Time.frameCount+")");
         return;
       }
 
@@ -377,6 +392,7 @@ namespace fwp.input
 #endif
 
     public bool drawDebug = false;
+
     protected GUIStyle style;
     void OnGUI()
     {
@@ -404,6 +420,7 @@ namespace fwp.input
         guiDrawDebugInfo(1, pinchBridge.toString());
       }
 
+      guiDrawDebugInfo(2, selectionBridge.toString());
     }
 
     protected void guiDrawDebugInfo(int windowIndex, string ctx)
@@ -424,6 +441,11 @@ namespace fwp.input
       InputTouchFinger f = getDefaultFinger();
       if (f != null) return f.screenPosition;
       return Vector2.zero;
+    }
+
+    static private string getStamp()
+    {
+      return "<color=lightblue>InputTB</color> | ";
     }
 
     static protected InputTouchBridge manager;

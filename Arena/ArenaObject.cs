@@ -20,7 +20,7 @@ abstract public class ArenaObject : EngineObject {
     //if(name.Contains("timer_")) Debug.Log("<b>" + name + "." + GetType() + "</b> fetchData");
     
     _arena = ArenaManager.get();
-
+    
     //resource ref must NOT be updated by arena
     if (gameObject.CompareTag("resource")) return;
 
@@ -29,7 +29,7 @@ abstract public class ArenaObject : EngineObject {
       if (_arena.arenaObjects.IndexOf(this) < 0) _arena.arenaObjects.Add(this);
     }
     else Debug.LogWarning(name + " no arena ?", gameObject);
-
+    
   }
 
   protected void subscribeToCollectable()

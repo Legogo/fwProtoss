@@ -90,6 +90,7 @@ public class EngineLoader : MonoBehaviour
     {
       evtQueryDone(co);
     }));
+
     queries.Add(co);
   }
   
@@ -267,7 +268,7 @@ public class EngineLoader : MonoBehaviour
   {
     if(obj.name.StartsWith("~"))
     {
-      Debug.Log("   removing guide object : " + obj.name);
+      Debug.Log("   <b>removing guide</b> of name : " + obj.name);
       GameObject.DestroyImmediate(obj.gameObject);
       return true;
     }

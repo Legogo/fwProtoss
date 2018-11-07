@@ -52,12 +52,22 @@ abstract public class EngineObject : MonoBehaviour, DebugSelection.iDebugSelecti
     //qui doit etre contenu dans resource-engine.scene
     while (EngineManager.get() == null) yield return null;
     while (EngineManager.isLoading()) yield return null;
-    
+
     //si le manager recoit l'event de fin de loading après que Start soit exec
     //il y aura un UPDATE de l'engine avant de repasser par ici et de setup l'objet
     //while (EngineManager.isLoading()) yield return null;
 
-    onEngineLoadingDone();
+    setupEarly();
+    
+    yield return null;
+
+    setup();
+
+    yield return null;
+
+    setupLate();
+    
+    _ready = true; // can now update
   }
 
   protected void overrideEngineLayer(int newLayer)
@@ -69,21 +79,10 @@ abstract public class EngineObject : MonoBehaviour, DebugSelection.iDebugSelecti
     }
     engineLayer = newLayer;
   }
-
-  protected void onEngineLoadingDone()
-  {
-
-    onEngineSceneLoaded(); // setupEarly
-
-    //yield return null; // nope --> ce yield fait qu'il y a un premier update avant setup()
-
-    onEngineSceneLoaded(); // setup
-  }
   
   virtual protected void build()
   {
     buildVisibilty();
-    EngineManager.subscribe(this); // to have updates functions working
   }
 
   protected void buildVisibilty()
@@ -147,32 +146,24 @@ abstract public class EngineObject : MonoBehaviour, DebugSelection.iDebugSelecti
   /// <summary>
   /// subscribe touch() & release() callbacks to <InputObject>, carryName can be empty to use/create attached <InputObject>
   /// </summary>
-  protected HelperInputObject subscribeToTouchRelease(Action<InputTouchFinger> touch = null, Action<InputTouchFinger> release = null) {
+  protected HelperInputObject subscribeToTouchRelease(Action<InputTouchFinger> touch, Action<InputTouchFinger> release = null) {
     HelperInputObject hio = subscribeToInput();
     inputObject.cbTouch += touch;
     inputObject.cbRelease += release;
     return hio;
   }
-  
-  //called by loader (twice for early and setup)
-  public void onEngineSceneLoaded()
-  {
-    //Debug.Log(GetType()+" , <b>"+name+ "</b> <color=gray>onEngineSceneLoaded</color> , ready ? "+_ready, gameObject);
 
-    if (!_ready)
-    {
-      setupEarly();
-      _ready = true;
-      return;
-    }
-
-    setup();
+  protected HelperInputObject subscribeToTouchReleaseOver(Action<InputTouchFinger, RaycastHit2D> touchOver, Action<InputTouchFinger, RaycastHit2D> releaseOver = null) {
+    HelperInputObject hio = subscribeToInput();
+    inputObject.cbTouchOver += touchOver;
+    inputObject.cbReleaseOver += releaseOver;
+    return hio;
   }
-
+  
   /* how this object will create some stuff before setup-ing (ie : symbols) */
   virtual protected void setupEarly()
   {
-
+    _ready = true;
   }
 
   /* called by onEngineSceneLoaded, fetch something in dependencies that are now ready to be fetched */
@@ -180,6 +171,14 @@ abstract public class EngineObject : MonoBehaviour, DebugSelection.iDebugSelecti
   {
     //Debug.Log("fetching global <b>" + name + "</b> (layer " + engineLayer + ") | visibility ? "+visibility, gameObject);
     if (visibility != null) visibility.setup();
+
+    //link to engine to be updated
+    EngineManager.subscribe(this); // to have updates functions working
+  }
+
+  virtual protected void setupLate()
+  {
+
   }
 
   /* called by EngineManager */
@@ -212,8 +211,20 @@ abstract public class EngineObject : MonoBehaviour, DebugSelection.iDebugSelecti
     //Debug.Log(name + " destroy() ", gameObject);
     //if (eos.IndexOf(this) > -1) eos.Remove(this);
     EngineManager.unsubscribe(this);
+  }
 
-    EngineManager.get().onLoadingDone -= onEngineLoadingDone;
+  /// <summary>
+  /// This function is meant to keep Z order
+  /// </summary>
+  /// <param name="newPosition"></param>
+  /// <returns></returns>
+  public Vector3 setXYPosition(Vector2 newPosition)
+  {
+    Vector3 pos = transform.position;
+    pos.x = newPosition.x;
+    pos.y = newPosition.y;
+    transform.position = pos;
+    return pos;
   }
 
   public bool isFreezed() { return !_unfreeze; }
@@ -228,6 +239,11 @@ abstract public class EngineObject : MonoBehaviour, DebugSelection.iDebugSelecti
   protected string iStringFormatBool(string label, bool val)
   {
     return label + " ? " + (val ? "<color=green>true</color>" : "<color=red><b>false</b></color>");
+  }
+
+  public HelperInputObject getIO()
+  {
+    return inputObject;
   }
 
   public string toDebug()

@@ -30,11 +30,16 @@ namespace fwp.input
     protected InputTouchBridge _input;
     protected Collider2D[] _colliders;
 
+    //globals
     public Action<InputTouchFinger> cbTouch;
-    public Action<InputTouchFinger, RaycastHit2D> cbTouchOver;
     public Action<InputTouchFinger> cbRelease;
-    public Action<InputTouchFinger, RaycastHit2D> cbReleaseOver;
-    public Action<InputTouchFinger> cbOver;
+
+
+    //specifics
+    public Action<InputTouchFinger> cbStayOver; // each frame
+    public Action<InputTouchFinger, RaycastHit2D> cbTouchOver; // touch
+    public Action<InputTouchFinger, RaycastHit2D> cbReleaseOver; // release
+    
 
     public HelperInputObject(EngineObject owner)
     {
@@ -186,16 +191,19 @@ namespace fwp.input
 
       this.finger = null;
 
+      InputSelectionManager.manager.remove(owner);
+
       if (cbRelease != null) cbRelease(finger);
     }
     virtual protected void onOverring(InputTouchFinger finger)
     {
       //Debug.Log(name + " overring");
-      if (cbOver != null) cbOver(finger);
+      if (cbStayOver != null) cbStayOver(finger);
     }
     virtual protected void onTouchOver(InputTouchFinger finger, RaycastHit2D hit)
     {
       //Debug.Log(name + " touch over");Debug.Log(cbTouchOver);
+      InputSelectionManager.manager.add(owner);
       if (cbTouchOver != null) cbTouchOver(finger, hit);
     }
     virtual protected void onReleaseOver(InputTouchFinger finger, RaycastHit2D hit)

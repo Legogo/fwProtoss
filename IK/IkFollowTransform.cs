@@ -7,7 +7,7 @@ using UnityEngine;
 public enum IkFollowGroup { Hand, Foot };
 
 [RequireComponent(typeof(Animator))]
-public class IkFollowTransform : MonoBehaviour, FthHumanControllerSub
+public class IkFollowTransform : MonoBehaviour
 {
   protected Animator animator;
 
@@ -15,7 +15,6 @@ public class IkFollowTransform : MonoBehaviour, FthHumanControllerSub
   float weight = 1f;
 
   public AvatarIKGoal ikGoal;
-  public HumanPart humanPart;
   public Transform followObject = null;
   
   protected void moveWeight(float speed)
@@ -37,13 +36,5 @@ public class IkFollowTransform : MonoBehaviour, FthHumanControllerSub
     animator.SetIKPosition(ikGoal, followObject.position);
     animator.SetIKRotation(ikGoal, followObject.rotation);
   }
-
-  public void eventChangedSkin(Transform skinRoot)
-  {
-    animator = skinRoot.GetComponentInChildren<Animator>();
-    followObject = HalperTransform.findChild(skinRoot, humanPart.ToString());
-
-    if (animator == null) Debug.LogError("no animator ??");
-    if (followObject == null) Debug.LogError("no follow ??");
-  }
+  
 }

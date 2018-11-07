@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 /// <summary>
 /// 
-/// onLoadingFinished()
+/// onLoadingFinished() need to be override by context !
 /// restart_normal()
 /// 
 /// update_round()
@@ -34,8 +34,7 @@ abstract public class ArenaManager : EngineObject {
   protected override void build()
   {
     base.build();
-    EngineManager.get().onLoadingDone += onLoadingFinished;
-
+    
     EngineEventSystem.onPause += onPause;
   }
 
@@ -44,18 +43,29 @@ abstract public class ArenaManager : EngineObject {
     //Debug.Log("pause ! " + state);
     setFreeze(state);
   }
-
-  /* this is default behavior for arena manager, it needs to be overrided if need to delay startup of arena */
-  virtual protected void onLoadingFinished()
-  {
-    Debug.Log("~ArenaManager~ loading is finished, calling restart_normal() <- this should be overriten by context");
-    restart_normal();
-  }
-
+  
   protected override void setup()
   {
     base.setup();
+
     fetchPauseCanvasScreen();
+  }
+
+  protected override void setupLate()
+  {
+    base.setupLate();
+
+    startup();
+  }
+
+  /// <summary>
+  /// by default called on setup(), can be overrided to not start round by default
+  /// </summary>
+  virtual protected void startup()
+  {
+    Debug.Log(getStamp() + "DEFAULT BEHAVIOR | starting round right away");
+
+    restart_normal();
   }
 
   /* how the arena can get the pause screen */
@@ -73,7 +83,7 @@ abstract public class ArenaManager : EngineObject {
   /// normal path to restart a round
   /// </summary>
   virtual public void restart_normal() {
-    Debug.Log("~<b>Arena</b>~ restart_normal");
+    Debug.Log(getStamp()+"restart_normal (objects count ? "+arenaObjects.Count+")");
     round_time = 0f;
     restart_setup();
   }
@@ -271,6 +281,11 @@ abstract public class ArenaManager : EngineObject {
     ct += "\n" + iStringFormatBool("end", isArenaStateEnd());
     
     return ct;
+  }
+
+  static public string getStamp()
+  {
+    return "<color=lime>ArenaManager</color> | ";
   }
 
   static protected ArenaManager _manager;

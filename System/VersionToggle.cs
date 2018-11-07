@@ -23,11 +23,11 @@ public class VersionToggle : EngineObject
     
     subscribeToTouchRelease(touch);
 
-    sequence = new HelperScreenTouchSequenceSolver(transform, new Rect[]
+    sequence = new HelperScreenTouchSequenceSolver(new Rect[]
     {
       new Rect(0.9f, 0.1f, 0.1f, 0.1f),
       new Rect(0.9f, 0.1f, 0.1f, 0.1f)
-    }, true);
+    });
 
     vui = visibility as HelperVisibleUi;
     if(vui == null)

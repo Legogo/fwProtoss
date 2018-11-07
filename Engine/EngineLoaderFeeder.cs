@@ -23,6 +23,9 @@ public class EngineLoaderFeeder : MonoBehaviour {
   [Header("prefix graphics-")]
   public string[] graphics_names;
 
+  [Header("prefix screen-")]
+  public string[] screens_names;
+
   [Header("no prefix")]
   public string[] other_names;
   
@@ -37,6 +40,7 @@ public class EngineLoaderFeeder : MonoBehaviour {
     addWithPrefix("resource-", resource_names);
     addWithPrefix("ui-", ui_names);
     addWithPrefix("graphics-", graphics_names);
+    addWithPrefix("screen-", graphics_names);
 
     addWithPrefix("", other_names);
 

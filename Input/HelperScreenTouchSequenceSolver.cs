@@ -10,36 +10,32 @@ namespace fwp.input
 {
   public class HelperScreenTouchSequenceSolver
   {
-
-    Transform parent;
+    public enum ScreenDimensionMode { PIXEL, PROPORTIONNAL };
 
     Rect[] zones;
     int step = 0;
 
-    bool _proportional = false;
+    ScreenDimensionMode screenDimMode = ScreenDimensionMode.PIXEL;
     bool _state = false;
 
     public Action onToggle; // callback where to subscribe to react to sequence solving
 
-    public HelperScreenTouchSequenceSolver(Transform owner, Rect[] screenZones, bool useProportional = false)
+    public HelperScreenTouchSequenceSolver(Rect[] screenZones, ScreenDimensionMode screenDimMode = ScreenDimensionMode.PROPORTIONNAL)
     {
-      parent = owner;
       zones = screenZones;
 
-      _proportional = useProportional;
+      this.screenDimMode = screenDimMode;
 
       InputTouchBridge.get().onTouch += onBridgeInput;
     }
 
     protected void onBridgeInput(InputTouchFinger finger)
     {
-      onInput(_proportional ? finger.screenProportional : (Vector2)finger.screenPosition);
+      onInput(screenDimMode == ScreenDimensionMode.PROPORTIONNAL ? finger.screenProportional : (Vector2)finger.screenPosition);
     }
 
     protected void onInput(Vector2 screenPosition)
     {
-      if (!parent.gameObject.activeSelf) return;
-
       Rect z = zones[step];
 
       if (screenPosition.x > z.x && screenPosition.x < z.x + z.width)

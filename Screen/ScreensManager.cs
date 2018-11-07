@@ -149,12 +149,12 @@ public class ScreensManager : EngineObject {
   }
 
   
-  protected void loadMissingScreen(string screenNameCont, Action<ScreenObject> onComplete)
+  protected void loadMissingScreen(string screeName, Action<ScreenObject> onComplete)
   {
-    string fullName = screenNameCont;
+    string fullName = screeName;
     if (!fullName.StartsWith("screen-")) fullName = "screen-" + fullName;
 
-    ScreenObject so = ScreensManager.get().getScreen(screenNameCont);
+    ScreenObject so = ScreensManager.get().getScreen(screeName);
 
     if(so != null)
     {
@@ -166,8 +166,8 @@ public class ScreensManager : EngineObject {
 
     EngineLoader.queryScene(fullName, delegate ()
     {
-      so = ScreensManager.get().getScreen(screenNameCont);
-      if (so == null) Debug.LogError("end of screen loading but no ScreenObject");
+      so = ScreensManager.get().getScreen(screeName);
+      if (so == null) Debug.LogError("ScreensManager ~~ end of screen loading but no ScreenObject of name :"+ screeName+")");
       onComplete(so);
     });
     
