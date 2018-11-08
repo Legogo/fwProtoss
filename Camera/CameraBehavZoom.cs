@@ -49,7 +49,7 @@ public class CameraBehavZoom : MonoBehaviour {
   void onScroll(float delta, float magnitude)
   {
     //Debug.Log(GetType() + " | " + delta + " , " + magnitude);
-
+    
     //store previous pinch for comparison
     previousPinch = pinchProgression;
 
@@ -57,6 +57,7 @@ public class CameraBehavZoom : MonoBehaviour {
     if (delta != 0f)
     {
       pinchProgression = magnitude;
+      
       pinchProgression = Mathf.Clamp(pinchProgression, 0f, pinchMaxLimit);
     }
     

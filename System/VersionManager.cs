@@ -17,7 +17,7 @@ using UnityEditor;
 ///PlayerSettings.iOS.buildNumber = PlayerSettings.bundleVersion;
 /// </summary>
 
-public class VersionManager : MonoBehaviour
+static public class VersionManager
 {
 
   [RuntimeInitializeOnLoadMethod]
@@ -72,13 +72,13 @@ public class VersionManager : MonoBehaviour
 #if UNITY_EDITOR
 
   [MenuItem("Version/log current")]
-  static protected void menuLogVersion()
+  static public void menuLogVersion()
   {
     logVersion();
   }
 
   [MenuItem("Version/Increment X.minor.build")]
-  static protected void incrementMajor()
+  static public void incrementMajor()
   {
     int[] v = getVersion();
 

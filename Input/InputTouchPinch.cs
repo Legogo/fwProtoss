@@ -9,11 +9,9 @@ namespace fwp.input
 
     float delta; // last move spread delta
     float magnitude; // spread done by user (relative to original spread)
-
-    float total;
-
-    float rawSpread; // actual spread on screen btw the 2 fingers (absolute)
-    float originalMagnitude; // local var to solve magnitude
+    
+    float lastRawSpread; // actual spread on screen btw the 2 fingers (absolute)
+    float onPressSpread; // local var to solve magnitude
 
     InputTouchFinger _fingerA;
     InputTouchFinger _fingerB;
@@ -38,17 +36,18 @@ namespace fwp.input
 
     public void onRelease(InputTouchFinger finger)
     {
-      bool pinching = isPinching();
-
+      
       if (finger == _fingerA) _fingerA = null;
       if (finger == _fingerB) _fingerB = null;
 
+      /*
+      bool pinching = isPinching();
+
       if (pinching && !isPinching())
       {
-        total = getMagnitude();
-
         reset();
       }
+      */
     }
 
     public void onPress(InputTouchFinger finger)
@@ -59,47 +58,60 @@ namespace fwp.input
         return;
       }
 
+      if (finger == _fingerA) return;
+
       if (_fingerB == null)
       {
         _fingerB = finger;
       }
-
-      rawSpread = getDistanceBetweenFingers();
-      originalMagnitude = rawSpread;
-      magnitude = 0f;
-      delta = 0f;
+      
+      lastRawSpread = getDistanceBetweenFingers(); //current spread is neutral
     }
-
+    
     public void reset()
     {
-      magnitude = 0f;
+      lastRawSpread = 0f;
       delta = 0f;
-      rawSpread = 0f;
     }
 
-    public void updateDesktop()
+    protected float getDelta(BehaviorTargetPlatform platform)
     {
-      delta = Input.mouseScrollDelta.y * iBridge.mouseScrollMulFactor;
-      magnitude += delta;
+      float output = 0f;
 
+      if (!isPinching()) return output;
+
+      if (platform == BehaviorTargetPlatform.DESKTOP)
+      {
+        output = Input.mouseScrollDelta.y * iBridge.mouseScrollMulFactor;
+      }
+      else
+      {
+        float newSpread = getDistanceBetweenFingers();
+        output = newSpread - lastRawSpread;
+        lastRawSpread = newSpread;
+      }
+      
+      return output;
+    }
+
+    public void updateMobile() { update(BehaviorTargetPlatform.MOBILE); }
+
+    public void update(BehaviorTargetPlatform platform)
+    {
+      if (!isPinching()) return;
+
+      delta = getDelta(platform);
+
+      //Debug.Log(delta);
+
+      if (delta == 0f) return;
+
+      magnitude += delta;
       magnitude = Mathf.Clamp(magnitude, iBridge.scrollClampMagnitude.x, iBridge.scrollClampMagnitude.y);
 
       if (onScroll != null) onScroll(delta, magnitude);
     }
-
-    void updateMobile()
-    {
-      if (!isPinching()) return;
-
-      float newSpread = getDistanceBetweenFingers();
-      delta = newSpread - rawSpread;
-
-      magnitude = rawSpread - originalMagnitude;
-      rawSpread = newSpread;
-
-      if (onScroll != null) onScroll(-delta, getMagnitude());
-    }
-
+    
     /// <summary>
     /// distance btw the 2 fingers (screen positions)
     /// </summary>
@@ -122,21 +134,13 @@ namespace fwp.input
 
     public float getMagnitude()
     {
-      float output = total + magnitude;
-
-      Vector2 clamp = iBridge.scrollClampMagnitude;
-      if (clamp.sqrMagnitude != 0f)
-      {
-        output = Mathf.Clamp(output, clamp.x, clamp.y);
-      }
-
-      if (!InputTouchBridge.isMobile()) output = Math.Max(output, 0f);
-
-      return output;
+      return magnitude;
     }
 
     public bool isPinching()
     {
+      if (!InputTouchBridge.isMobile()) return true;
+
       if (_fingerA == null || _fingerB == null) return false;
       return true;
     }
@@ -147,11 +151,10 @@ namespace fwp.input
 
       ct += "\n A : " + ((_fingerA != null) ? _fingerA.fingerId.ToString() : "none");
       ct += "\n B : " + ((_fingerB != null) ? _fingerB.fingerId.ToString() : "none");
-
-      ct += "\n dlta   : " + delta;
-      ct += "\n magn   : " + magnitude;
-      ct += "\n tota   : " + total;
-      ct += "\n orig   : " + originalMagnitude;
+      
+      ct += "\n dlta      : " + delta;
+      ct += "\n magn      : " + magnitude;
+      ct += "\n getMagn() : " + getMagnitude();
       return ct;
     }
   }

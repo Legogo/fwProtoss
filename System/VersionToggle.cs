@@ -35,11 +35,9 @@ public class VersionToggle : EngineObject
       Debug.LogError(name + " need to be setup as VisibilityUI");
     }
 
-    if (!Debug.isDebugBuild)
-    {
-      visibility.hide();
-    }
-    
+    visibility.hide();
+
+    //if (!Debug.isDebugBuild) visibility.hide();
   }
 
   [ContextMenu("apply current version")]

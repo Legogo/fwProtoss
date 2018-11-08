@@ -5,6 +5,8 @@ using System;
 
 namespace fwp.input
 {
+  public enum BehaviorTargetPlatform { DESKTOP, MOBILE };
+
   public class InputTouchBridge : MonoBehaviour
   {
     InputTouchPinch pinchBridge;
@@ -256,7 +258,7 @@ namespace fwp.input
         else if (i < touchCount) _finger.update(i, Input.mousePosition);
       }
 
-      pinchBridge.updateDesktop();
+      pinchBridge.update(BehaviorTargetPlatform.DESKTOP);
     }
 
     public bool hasTouchedCollider(Collider[] list)
@@ -391,7 +393,10 @@ namespace fwp.input
     }
 #endif
 
+    [Header("debug stuff")]
     public bool drawDebug = false;
+    public Vector2 viewDimensions = new Vector2(Screen.width, Screen.height);
+    public float viewScaleFactor = 1f;
 
     protected GUIStyle style;
     void OnGUI()
@@ -406,9 +411,21 @@ namespace fwp.input
         style.richText = true;
         style.normal.background = Texture2D.whiteTexture;
       }
-      style.fontSize = Mathf.FloorToInt((Screen.width / Screen.height) * 30f);
+      style.fontSize = 40;
       //style.normal.background
 
+      //solve scaling
+
+      //viewDimensions.x = Screen.width;
+      //viewDimensions.y = Screen.height;
+
+      Vector2 dimensions = viewDimensions;
+      dimensions.y = dimensions.x / (Screen.width * 1f / Screen.height * 1f);
+
+      viewScaleFactor = Mathf.Max(viewScaleFactor, 0.1f);
+      Vector3 dim = new Vector3(Screen.width / (dimensions.x * viewScaleFactor), Screen.height / (dimensions.y * viewScaleFactor), 1);
+      GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, dim);
+      
       Color black = Color.black;
       black.a = 0.8f;
       GUI.backgroundColor = black;
@@ -426,8 +443,10 @@ namespace fwp.input
     protected void guiDrawDebugInfo(int windowIndex, string ctx)
     {
       //GUI.color = Color.red;
-      float width = 600f;
-      GUI.Label(new Rect((10 * windowIndex) + (windowIndex * width), 10, width, 500), ctx, style);
+      float width = viewDimensions.x / (3f * 1.05f);
+      float gap = 10f;
+
+      GUI.Label(new Rect((gap * windowIndex) + (windowIndex * width), 10, width, Screen.height * 0.5f), ctx, style);
     }
 
     static public InputTouchFinger getDefaultFinger()

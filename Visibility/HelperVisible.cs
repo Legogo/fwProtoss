@@ -130,7 +130,7 @@ abstract public class HelperVisible
     if (coFade != null)
     {
       _owner.StopCoroutine(coFade);
-      Debug.Log("cancelling old fading routine");
+      //Debug.Log("cancelling old fading routine");
     }
 
     coFade = _owner.StartCoroutine(processFadingSpeed(targetAlpha, speed, onFadingDone, startingAlpha));
@@ -138,7 +138,7 @@ abstract public class HelperVisible
 
   protected IEnumerator processFadingSpeed(float target, float speed, Action<float> onFadingDone = null, float? startingAlpha = null)
   {
-    Debug.Log("start fading " + _owner.name+" to "+target+" at speed "+speed);
+    //Debug.Log("start fading " + _owner.name+" to "+target+" at speed "+speed);
     
     if(startingAlpha != null)
     {
