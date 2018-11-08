@@ -97,7 +97,7 @@ namespace fwp.input
       magnitude = rawSpread - originalMagnitude;
       rawSpread = newSpread;
 
-      if (onScroll != null) onScroll(delta, getMagnitude());
+      if (onScroll != null) onScroll(-delta, getMagnitude());
     }
 
     /// <summary>
