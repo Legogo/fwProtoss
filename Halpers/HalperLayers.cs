@@ -22,7 +22,11 @@ public class HalperLayers {
   {
     return ((layerMask.value & (1 << obj.layer)) > 0);
   }
-  
+  static public bool isInLayerMask(GameObject obj, int layerMask)
+  {
+    return obj.layer == layerMask;
+  }
+
   static public bool hasLayerMask(GameObject obj, string layerName)
   {
     //Debug.Log(obj.layer);
