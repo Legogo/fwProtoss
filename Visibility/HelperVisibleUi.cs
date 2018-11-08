@@ -111,4 +111,9 @@ public class HelperVisibleUi : HelperVisible
   {
     return _img.sprite.bounds;
   }
+
+  public Rect getSymbolDimensions()
+  {
+    return _img.sprite.rect;
+  }
 }
