@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HalperString
+static public class HalperString
 {
   static public string addZeros(int val, int digit = 2)
   {
@@ -10,5 +10,10 @@ public class HalperString
     if (digit >= 2 && val < 10) output = "0" + output;
     if (digit >= 3 && val < 100) output = "0" + output;
     return output;
+  }
+
+  static public string lowerFirstLetter(this string v)
+  {
+    return v.Substring(0, 1).ToLower() + v.Substring(1, v.Length - 1);
   }
 }

@@ -40,7 +40,7 @@ public class EngineLoaderFeeder : MonoBehaviour {
     addWithPrefix("resource-", resource_names);
     addWithPrefix("ui-", ui_names);
     addWithPrefix("graphics-", graphics_names);
-    addWithPrefix("screen-", graphics_names);
+    addWithPrefix("screen-", screens_names);
 
     addWithPrefix("", other_names);
 

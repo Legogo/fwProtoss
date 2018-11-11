@@ -9,6 +9,15 @@ using System.Reflection;
 
 public class HalperEditor {
 
+  [MenuItem("Tools/Clear console #&c")]
+  public static void ClearConsole()
+  {
+    var assembly = Assembly.GetAssembly(typeof(SceneView));
+    var type = assembly.GetType("UnityEditor.LogEntries");
+    var method = type.GetMethod("Clear");
+    method.Invoke(new object(), null);
+  }
+
 #if UNITY_EDITOR
 
   static public T editor_draw_selectObject<T>(T instance = null, string overrideSelectLabel = "") where T : Component

@@ -9,11 +9,6 @@ using Debug = UnityEngine.Debug;
 
 public class EditorContextMenu : MonoBehaviour {
 
-  [MenuItem("Assets/clear console")]
-  static protected void clear_console() {
-    HalperEditorContextMenu.ClearConsole();
-  }
-  
   [MenuItem("Assets/git")]
   static protected void openGit()
   {
