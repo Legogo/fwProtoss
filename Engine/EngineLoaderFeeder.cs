@@ -73,14 +73,16 @@ public class EngineLoaderFeeder : MonoBehaviour {
   }
   
 #if UNITY_EDITOR
-  [ContextMenu("fetch uis")]
-  protected void fetchScreensRefs()
+
+  protected string[] fetchScenesRefs(string type)
   {
+    UnityEditor.SceneManagement.EditorSceneManager.MarkAllScenesDirty();
+
     List<string> screens = new List<string>();
     for (int i = 0; i < EditorBuildSettings.scenes.Length; i++)
     {
       EditorBuildSettingsScene data = EditorBuildSettings.scenes[i];
-      if (data.path.Contains("ui-"))
+      if (data.path.Contains(type+"-"))
       {
         string[] split = data.path.Split('-'); // screen-xxx
         split = split[split.Length - 1].Split('.'); // remove .asset
@@ -89,9 +91,26 @@ public class EngineLoaderFeeder : MonoBehaviour {
       }
     }
 
-    this.ui_names = screens.ToArray();
-
-    UnityEditor.SceneManagement.EditorSceneManager.MarkAllScenesDirty();
+    return screens.ToArray();
   }
+
+  [ContextMenu("fetch graphics")]
+  protected void fetchGraphics()
+  {
+    this.graphics_names = fetchScenesRefs("graphics");
+  }
+
+  [ContextMenu("fetch uis")]
+  protected void fetchUis()
+  {
+    this.ui_names = fetchScenesRefs("ui");
+  }
+
+  [ContextMenu("fetch screens")]
+  protected void fetchScreens()
+  {
+    this.screens_names = fetchScenesRefs("screen");
+  }
+
 #endif
 }

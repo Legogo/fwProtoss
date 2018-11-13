@@ -21,4 +21,27 @@ public class qh
   {
     return GameObject.Instantiate(refObject).GetComponent<T>();
   }
+
+  /// <summary>
+  /// 
+  /// </summary>
+  /// <typeparam name="T"></typeparam>
+  /// <param name="gameObjectName"></param>
+  /// <param name="uniq">there can be only one instance of T, nomater the given name</param>
+  /// <returns></returns>
+  static public T cr<T>(string gameObjectName, bool uniq = false) where T : UnityEngine.MonoBehaviour
+  {
+    T tmp = gc<T>();
+
+    if (tmp != null && uniq) return tmp;
+    if (tmp != null && tmp.gameObject.name == gameObjectName) return tmp;
+    
+    GameObject obj = GameObject.Find(gameObjectName);
+    if (obj == null) obj = new GameObject(gameObjectName);
+    else tmp = obj.GetComponent<T>();
+
+    if (tmp == null) tmp = obj.AddComponent<T>();
+
+    return tmp;
+  }
 }

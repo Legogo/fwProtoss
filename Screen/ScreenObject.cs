@@ -34,6 +34,7 @@ public class ScreenObject : EngineObject
 
     //if (_canvas == null) Debug.LogError("wat ?");
 
+    //generic behavior, won't work for non sticky screens
     hide();
   }
 
@@ -115,6 +116,10 @@ public class ScreenObject : EngineObject
 
   virtual protected void action_back() {}
 
+  public Canvas getCanvas()
+  {
+    return _canvas[0];
+  }
   public Canvas getCanvas(string nm)
   {
     for (int i = 0; i < _canvas.Length; i++)
@@ -163,6 +168,8 @@ public class ScreenObject : EngineObject
   [ContextMenu("show")]
   virtual public void show()
   {
+    Debug.Log(name + " show");
+
     notInteractiveTimer = 0.2f; // to kill interactive frame offset
 
     transform.position = Vector3.zero;
@@ -192,7 +199,7 @@ public class ScreenObject : EngineObject
 
     toggleVisible(false);
 
-    //Debug.Log(name + " forceHide");
+    //Debug.Log(name + " -> forceHide");
   }
 
   public bool isVisible()
@@ -202,7 +209,7 @@ public class ScreenObject : EngineObject
 
   virtual public void act_call_home()
   {
-    ScreensManager.openByEnum(ScreensManager.ScreenNames.home);
+    ScreensManager.open(ScreensManager.ScreenNames.home);
   }
 
   public override string toString()
@@ -217,7 +224,7 @@ public class ScreenObject : EngineObject
   }
 
   static public Canvas getCanvas(string screenName, string canvasName) {
-    ScreenObject screen = ScreensManager.get().getScreen(screenName);
+    ScreenObject screen = ScreensManager.getScreen(screenName);
     return screen.getCanvas(canvasName);
   }
 

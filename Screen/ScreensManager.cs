@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using UnityEngine.SceneManagement;
+using System.Linq;
 
-public class ScreensManager : EngineObject {
+public class ScreensManager {
   
-  protected ScreenObject[] screens;
+  static protected List<ScreenObject> screens;
 
   //usual screen names
   public enum ScreenNames {
@@ -17,106 +17,130 @@ public class ScreensManager : EngineObject {
     loading
   };
 
-  protected void fetchScreens()
+  [RuntimeInitializeOnLoadMethod]
+  static public void init()
   {
-    screens = GameObject.FindObjectsOfType<ScreenObject>();
+    EngineEventSystem.onPause += onPause;
   }
   
-  public ScreenObject getOpenedScreen()
+  static protected void onPause(bool state)
   {
-    for (int i = 0; i < screens.Length; i++)
-    {
-      if (screens[i].sticky) continue;
-      if (screens[i].isVisible()) return screens[i];
-    }
-    return null;
+
+    if (state) open(ScreenNames.pause);
+    else close(ScreenNames.pause);
+
   }
 
-  public ScreenObject getScreen(ScreenNames nm)
+  static protected void fetchScreens()
   {
-    return getScreen(nm.ToString());
-  }
-  public ScreenObject getScreen(string nm)
-  {
-    fetchScreens();
-
-    for (int i = 0; i < screens.Length; i++)
-    {
-      if (screens[i].name.Contains(nm)) return screens[i];
-    }
-    
-    //Debug.LogWarning("~Screens~ getScreen("+nm+") no screen that CONTAINS this name");
-    return null;
+    if (screens == null) screens = new List<ScreenObject>();
+    screens.Clear();
+    screens.AddRange(GameObject.FindObjectsOfType<ScreenObject>());
   }
   
   /// <summary>
+  /// returns NON-STICKY visible screen
+  /// </summary>
+  /// <returns></returns>
+  static public ScreenObject getOpenedScreen()
+  {
+    return screens.Select(x => x).Where(x => !x.sticky && x.isVisible()).FirstOrDefault();
+  }
+
+  static public ScreenObject getScreen(ScreenNames nm)
+  {
+    return getScreen(nm.ToString());
+  }
+  static public ScreenObject getScreen(string nm)
+  {
+    fetchScreens();
+
+    ScreenObject so = screens.Select(x => x).Where(x => x.name.EndsWith(nm)).FirstOrDefault();
+
+    if (so != null) return so;
+    
+    //no warning because it's called before loading to check if screen already exists
+
+    /*
+    Debug.LogWarning("~Screens~ getScreen("+nm+") <color=red>no screen that ENDWITH that name</color> (screens count : "+screens.Count+")");
+    for (int i = 0; i < screens.Count; i++)
+    {
+      Debug.Log("  L " + screens[i].name);
+    }
+    */
+
+    return null;
+  }
+  
+  static public void open(ScreenNames nm) { open(nm.ToString()); }
+
+  /// <summary>
   /// best practice : should never call a screen by name but create a contextual enum
   /// </summary>
-  public void open(string nm, string filterName = "")
+  static public void open(string nm, string filterName = "")
   {
     Debug.Log("ScreensManager | opening screen of name : <b>" + nm + "</b> , filter ? "+filterName);
 
     ScreenObject so = getScreen(nm);
-    if(so == null)
+
+    if(so != null)
     {
-      loadMissingScreen(nm, delegate (ScreenObject loadedScreen)
-      {
-        Debug.Log("  ... missing screen is now loaded, opening");
-        openByFilter(nm, filterName);
-      });
+      changeScreenVisibleState(nm, true, filterName);
       return;
     }
-
-    openByFilter(nm, filterName);
+    
+    //si le screen existe pas on essaye de le load
+    loadMissingScreen(nm, delegate (ScreenObject loadedScreen)
+    {
+      Debug.Log("  ... missing screen is now loaded, opening");
+      changeScreenVisibleState(nm, true, filterName);
+    });
   }
-
-  /// <summary>
-  /// this will open a screen and close other non-sticky screens
-  /// </summary>
-  /// <param name="nm"></param>
-  /// <param name="filter"></param>
-  protected void openByFilter(string nm, string filter = "")
+  
+  static protected void changeScreenVisibleState(string scName, bool state, string filter = "", bool force = false)
   {
     fetchScreens();
 
-    //Debug.Log("opening " + nm+" (filter ? "+filter+")");
+    //Debug.Log("opening " + scName + " (filter ? " + filter + ")");
 
-    for (int i = 0; i < screens.Length; i++)
+    for (int i = 0; i < screens.Count; i++)
     {
+      //do nothing with filtered screen
       if (filter.Length > 0)
       {
-        if (screens[i].name.Contains(filter)) continue;
+        if (screens[i].name.EndsWith(filter)) continue;
       }
 
       //Debug.Log("  L " +screens[i].name);
-      if (screens[i].name.Contains(nm))
+      if (screens[i].name.EndsWith(scName))
       {
-        screens[i].show();
+        if (state) screens[i].show();
+        else
+        {
+          if (force) screens[i].forceHide();
+          else screens[i].hide(); // stickies won't hide
+        }
       }
       else
       {
-        screens[i].hide(); // stickies won't hide
+        if (state) //on opening a specific screen we close all other non sticky screens
+        {
+          screens[i].hide();
+        }
       }
     }
 
   }
 
-  public void close(string nameEnd, bool force)
+  static public void close(ScreenNames scName, bool force = false) { close(scName.ToString(), force); }
+
+  /// <summary>
+  /// </summary>
+  /// <param name="nameEnd"></param>
+  /// <param name="force">if screen is sticky</param>
+  static public void close(string nameEnd, bool force = false, string filter = "")
   {
-    fetchScreens();
-
-    //Debug.Log("closing " + nameEnd);
-
-    for (int i = 0; i < screens.Length; i++)
-    {
-      //Debug.Log("  L " + screens[i].name);
-
-      if (screens[i].name.EndsWith(nameEnd))
-      {
-        if (force) screens[i].forceHide();
-        else screens[i].hide();
-      }
-    }
+    changeScreenVisibleState(nameEnd, false, filter, force);
   }
 
   [ContextMenu("kill all")]
@@ -124,11 +148,11 @@ public class ScreensManager : EngineObject {
   {
     fetchScreens();
 
-    for (int i = 0; i < screens.Length; i++)
+    for (int i = 0; i < screens.Count; i++)
     {
       if (filterName.Length > 0)
       {
-        if (screens[i].name.Contains(filterName)) continue;
+        if (screens[i].name.EndsWith(filterName)) continue;
       }
       
       screens[i].hide();
@@ -141,7 +165,7 @@ public class ScreensManager : EngineObject {
   {
     fetchScreens();
 
-    for (int i = 0; i < screens.Length; i++)
+    for (int i = 0; i < screens.Count; i++)
     {
       screens[i].show();
     }
@@ -149,12 +173,12 @@ public class ScreensManager : EngineObject {
   }
 
   
-  protected void loadMissingScreen(string screeName, Action<ScreenObject> onComplete)
+  static protected void loadMissingScreen(string screeName, Action<ScreenObject> onComplete)
   {
     string fullName = screeName;
     if (!fullName.StartsWith("screen-")) fullName = "screen-" + fullName;
 
-    ScreenObject so = ScreensManager.get().getScreen(screeName);
+    ScreenObject so = getScreen(screeName);
 
     if(so != null)
     {
@@ -166,39 +190,11 @@ public class ScreensManager : EngineObject {
 
     EngineLoader.queryScene(fullName, delegate ()
     {
-      so = ScreensManager.get().getScreen(screeName);
-      if (so == null) Debug.LogError("ScreensManager ~~ end of screen loading but no ScreenObject of name :"+ screeName+")");
+      so = getScreen(screeName);
+      if (so == null) Debug.LogError("ScreensManager ~~ end of screen loading but no ScreenObject of name : <b>"+ screeName+"</b>");
       onComplete(so);
     });
     
-  }
-
-  static public void closeByName(string nm, bool force)
-  {
-    ScreensManager sm = get();
-    sm.close(nm, force);
-  }
-
-  static public void openByName(string nm)
-  {
-    ScreensManager sm = get();
-    if (sm == null) Debug.LogWarning("asking to open " + nm.ToString() + " but manager doesn't exist");
-    sm.open(nm.ToString());
-  }
-  static public void openByEnum(ScreenNames nm)
-  {
-    openByName(nm.ToString());
-  }
-
-
-  static protected ScreensManager manager;
-  static public ScreensManager get() { 
-    if(manager == null)manager=GameObject.FindObjectOfType<ScreensManager>();
-    if(manager == null) {
-      GameObject obj = new GameObject("(screens)");
-      manager = obj.AddComponent<ScreensManager>();
-    }
-    return manager;
   }
   
 }

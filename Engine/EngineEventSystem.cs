@@ -14,7 +14,21 @@ public class EngineEventSystem {
   static protected bool isPaused = false;
   
   static public void event_toggle_pause() {
-    isPaused = !isPaused;
+    set_pause_state(!isPaused);
+  }
+
+  static public void set_pause_state(bool flag)
+  {
+    if (isPaused == flag) return;
+
+    Debug.Log(getStamp()+"changed paused state to : " + flag);
+
+    isPaused = flag;
     if (onPause != null) onPause(isPaused);
+  }
+
+  static public string getStamp()
+  {
+    return "<color=navy>EngineEventSystem</color> | ";
   }
 }

@@ -26,8 +26,6 @@ abstract public class ArenaManager : EngineObject {
   protected ArenaState _state = ArenaState.IDLE;
 
   protected Coroutine coProcessEnd;
-
-  protected Canvas pauseCanvas;
   
   public List<ArenaObject> arenaObjects = new List<ArenaObject>();
 
@@ -40,17 +38,9 @@ abstract public class ArenaManager : EngineObject {
 
   virtual protected void onPause(bool state)
   {
-    //Debug.Log("pause ! " + state);
     setFreeze(state);
   }
   
-  protected override void setup()
-  {
-    base.setup();
-
-    fetchPauseCanvasScreen();
-  }
-
   protected override void setupLate()
   {
     base.setupLate();
@@ -67,18 +57,7 @@ abstract public class ArenaManager : EngineObject {
 
     restart_normal();
   }
-
-  /* how the arena can get the pause screen */
-  virtual protected void fetchPauseCanvasScreen()
-  {
-    if (ScreensManager.get() != null)
-    {
-      ScreenObject obj = ScreensManager.get().getScreen("ingame");
-      if (obj != null) pauseCanvas = obj.getCanvas("pause");
-    }
-  }
-
-
+  
   /// <summary>
   /// normal path to restart a round
   /// </summary>
@@ -255,11 +234,8 @@ abstract public class ArenaManager : EngineObject {
   public void setArenaMenu() { setAtState(ArenaState.MENU); }
   
   public bool isArenaStateLive() {
-
-    //pause modale kill gameplay
-    if (pauseCanvas != null && pauseCanvas.enabled) return false;
-
-    //Debug.Log(_state);
+    
+    //pause will freeze this EO, is managed by onPause() linked to EngineEventSystem
 
     return liveFreezeTimer <= 0f && isAtState(ArenaState.LIVE);
   }
