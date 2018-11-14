@@ -50,8 +50,9 @@ public class DebugDisplayContent : EngineObject {
   /// <summary>
   /// draw gui stuff
   /// </summary>
-  virtual protected void process()
+  virtual protected void processGui()
   {
+    ct = "";
   }
 
   private void OnGUI()
@@ -66,7 +67,7 @@ public class DebugDisplayContent : EngineObject {
     GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, dim);
 
     setupFont();
-    process();
+    processGui();
 
     GUI.Label(view, ct, style);
   }

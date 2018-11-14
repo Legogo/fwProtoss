@@ -28,7 +28,7 @@ public class FpsWarning : DebugDisplayContent
     style.normal.textColor = (average > warningLimit) ? valid : invalid;
   }
 
-  protected override void process()
+  protected override void processGui()
   {
     fps = Mathf.FloorToInt(1.0f / Time.deltaTime);
 

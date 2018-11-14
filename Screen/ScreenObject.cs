@@ -166,9 +166,20 @@ public class ScreenObject : EngineObject
   }
   
   [ContextMenu("show")]
+  protected void ctxm_show()
+  {
+    show();
+  }
+
+  [ContextMenu("hide")]
+  protected void ctxm_hide()
+  {
+    forceHide();
+  }
+
   virtual public void show()
   {
-    Debug.Log(name + " show");
+    //Debug.Log(name + " show");
 
     notInteractiveTimer = 0.2f; // to kill interactive frame offset
 

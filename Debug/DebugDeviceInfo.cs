@@ -10,7 +10,7 @@ public class DebugDeviceInfo : DebugDisplayContent {
     style.normal.textColor = Color.red;
   }
 
-  protected override void process()
+  protected override void processGui()
   {
     ct = Screen.width + " x " + Screen.height;
   }

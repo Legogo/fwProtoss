@@ -8,7 +8,7 @@ public class DebugView : DebugDisplayContent {
   HelperScreenTouchSequenceSolver solver;
 
   public Rect[] zones;
-
+  
   protected override void setup()
   {
     base.setup();
