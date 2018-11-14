@@ -114,6 +114,9 @@ public class SettingsManager : EngineObject {
     str += "\n[graphic shader level]" + SystemInfo.graphicsShaderLevel;
     str += "\n[support compute shader]" + SystemInfo.supportsComputeShaders;
 
+    str += "\n[support gyro]" + SystemInfo.supportsGyroscope;
+    str += "\n[support accelero]" + SystemInfo.supportsAccelerometer;
+
     str += "\n[processor count]" + SystemInfo.processorCount;
     str += "\n[processor type]" + SystemInfo.processorType;
     str += "\n[support 3d texture]" + SystemInfo.supports3DTextures;

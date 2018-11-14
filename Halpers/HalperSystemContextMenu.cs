@@ -9,12 +9,12 @@ using System.Reflection;
 
 static public class HalperSystemContextMenu
 {
-
+#if UNITY_EDITOR
   [MenuItem("Tools/Clear PlayerPrefs")]
   public static void ClearPlayerPrefs()
   {
     PlayerPrefs.DeleteAll();
     PlayerPrefs.Save();
   }
-
+#endif
 }
