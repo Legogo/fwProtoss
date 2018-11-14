@@ -8,6 +8,9 @@ using UnityEditor;
 
 /// <summary>
 /// sound need a mixer setup on EngineManager with 3 group with exposed volume params (master, fx, music)
+/// 
+/// https://docs.unity3d.com/Manual/PlatformDependentCompilation.html
+/// https://docs.unity3d.com/ScriptReference/PlayerSettings.SetPlatformIcons.html
 /// </summary>
 
 public class SettingsManager : EngineObject {
@@ -131,11 +134,26 @@ public class SettingsManager : EngineObject {
 
 
 #if UNITY_EDITOR
-  [ContextMenu("apply build settings")]
-  public void apply() {
-    applySettings(data_settings);
+
+  static public DataBuildSettings getScriptableDataBuildSettings()
+  {
+    string[] all = AssetDatabase.FindAssets("t:DataBuildSettings");
+    for (int i = 0; i < all.Length; i++)
+    {
+      Object obj = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(all[i]), typeof(DataBuildSettings));
+      DataBuildSettings data = obj as DataBuildSettings;
+      if (data != null) return data;
+    }
+    return null;
   }
 
+
+  [MenuItem("Build/Apply settings")]
+  static protected void apply() {
+    DataBuildSettings data =  getScriptableDataBuildSettings();
+    applySettings(data);
+  }
+  
   static public void applySettings(DataBuildSettings data)
   {
     Debug.Log("applying DataBuildSettings ...");
@@ -147,12 +165,22 @@ public class SettingsManager : EngineObject {
     PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.iOS, data.package_name);
     
     PlayerSettings.defaultInterfaceOrientation = data.orientation_default;
-    
+
+    Texture2D[] icons = new Texture2D[1];
+
+#if UNITY_IPHONE
+    icons[0] = data.icon_ios;
+#elif UNITY_ANDROID
+    icons[0] = data.icon_android;
+#endif
+
+    PlayerSettings.SetIconsForTargetGroup(BuildTargetGroup.Unknown, icons);
+
     EditorUserBuildSettings.development = data.developementBuild;
   }
 #endif
 
-  static public void setupResolution()
+    static public void setupResolution()
   {
     
     bool fs = PlayerPrefs.GetInt(ppref_fullscreen, 1) == 1;
@@ -221,5 +249,5 @@ public class SettingsManager : EngineObject {
     volume = transformVolumeSliderValue(volume);
     em.mixer.SetFloat(category, volume + boost);
   }
-  
+
 }

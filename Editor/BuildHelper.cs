@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using UnityEditor.SceneManagement;
 using System;
 using Object = UnityEngine.Object;
+using UnityEditor.Build.Reporting;
 
 /// <summary>
 /// 
@@ -32,7 +33,7 @@ abstract public class BuildHelper
   public BuildHelper(bool autorun = false, bool incVersion = true, DataBuildSettings data = null)
   {
     //update data
-    if (data == null) data = getScriptableDataBuildSettings();
+    if (data == null) data = SettingsManager.getScriptableDataBuildSettings();
     if (data != null) SettingsManager.applySettings(data);
 
     Debug.Log("starting build process");
@@ -103,7 +104,20 @@ abstract public class BuildHelper
     buildPlayerOptions.options |= BuildOptions.Development;
     if(auto_run) buildPlayerOptions.options |= BuildOptions.AutoRunPlayer;
     
-    BuildPipeline.BuildPlayer(buildPlayerOptions);
+    //BuildPipeline.BuildPlayer(buildPlayerOptions);
+
+    BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
+    BuildSummary summary = report.summary;
+
+    if (summary.result == BuildResult.Succeeded)
+    {
+      Debug.Log("Build succeeded: " + summary.totalSize + " bytes");
+    }
+
+    if (summary.result == BuildResult.Failed)
+    {
+      Debug.Log("Build failed");
+    }
   }
 
   /// <summary>
@@ -132,18 +146,6 @@ abstract public class BuildHelper
     }
 
     return sceneNames.ToArray();
-  }
-
-  static public DataBuildSettings getScriptableDataBuildSettings()
-  {
-    string[] all = AssetDatabase.FindAssets("t:DataBuildSettings");
-    for (int i = 0; i < all.Length; i++)
-    {
-      Object obj = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(all[i]), typeof(DataBuildSettings));
-      DataBuildSettings data = obj as DataBuildSettings;
-      if(data != null) return data;
-    }
-    return null;
   }
 
   abstract public string getBuildPathFolder();

@@ -19,5 +19,8 @@ public class DataBuildSettings : ScriptableObject
 
   public bool developementBuild = false;
   public bool use_joystick_visualisation = true;
-  
+
+  public Texture2D icon_ios;
+  public Texture2D icon_android;
+
 }
