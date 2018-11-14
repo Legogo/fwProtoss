@@ -19,11 +19,16 @@ public class EngineEventSystem {
 
   static public void set_pause_state(bool flag)
   {
-    if (isPaused == flag) return;
+    if (isPaused == flag)
+    {
+      Debug.LogWarning("trying to swap pause state to " + flag + " but it's already at that state");
+      return;
+    }
 
     Debug.Log(getStamp()+"changed paused state to : " + flag);
 
     isPaused = flag;
+
     if (onPause != null) onPause(isPaused);
   }
 

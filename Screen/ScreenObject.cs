@@ -12,7 +12,8 @@ public class ScreenObject : EngineObject
   protected ArenaManager _arena;
 
   public bool sticky = false; // can't be hidden
-  
+
+  protected Canvas mainCanvas;
   protected Canvas[] _canvas;
 
   protected float notInteractiveTimer = 0f;
@@ -31,6 +32,8 @@ public class ScreenObject : EngineObject
 
     _canvas = transform.GetComponentsInChildren<Canvas>();
     if (_canvas == null) Debug.LogError("no canvas ?");
+
+    mainCanvas = getCanvas();
 
     //if (_canvas == null) Debug.LogError("wat ?");
 
@@ -73,7 +76,7 @@ public class ScreenObject : EngineObject
       return;
     }
     
-    //Debug.Log(name + " update " + canUpdate());
+    //Debug.Log(name + " update " + canUpdate()+" and is visible ? "+isVisible());
 
     if (isVisible()) updateVisible();
     else updateNotVisible();
@@ -215,11 +218,14 @@ public class ScreenObject : EngineObject
 
   public bool isVisible()
   {
-    return transform.position.sqrMagnitude == 0f;
+    return mainCanvas.enabled;
+    //return transform.position.sqrMagnitude == 0f;
   }
 
   virtual public void act_call_home()
   {
+    EngineEventSystem.set_pause_state(false);
+
     ScreensManager.open(ScreensManager.ScreenNames.home);
   }
 
