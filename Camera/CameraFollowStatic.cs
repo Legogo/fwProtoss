@@ -9,29 +9,27 @@ using UnityEngine;
 public class CameraFollowStatic : MonoBehaviour {
 
   public Transform target;
-
-  protected Vector3 offsetPos;
-  protected Quaternion offsetRot;
-
-  private void Start()
-  {
-    offsetPos = transform.position;
-    offsetRot = transform.rotation;
-  }
-
-  public void setup(Transform newTarget)
+  public Vector3 offsetPos;
+  
+  public void setTarget(Transform newTarget)
   {
     target = newTarget;
-    Update();
+    
+    LateUpdate();
   }
 
-  private void Update()
+  private void LateUpdate()
   {
     if (target == null) return;
 
     //transform.position = target.TransformPoint(offsetPos);
     transform.position = target.position + offsetPos;
     transform.LookAt(target);
+  }
 
+  [ContextMenu("align to camlook anchor")]
+  protected void ctxm_align()
+  {
+    setTarget(HalperFramework.findAnchor("camlook"));
   }
 }
