@@ -55,22 +55,30 @@ abstract public class ArenaManager : EngineObject {
   {
     Debug.Log(getStamp() + "DEFAULT BEHAVIOR | starting round right away");
 
-    restart_normal();
+    arena_startup();
   }
   
   /// <summary>
-  /// normal path to restart a round
+  /// what must be called by a menu to start the first round
+  /// some object need to create/regenerate stuff when coming back to arena (if ld data changed)
   /// </summary>
-  virtual public void restart_normal() {
-    Debug.Log(getStamp()+"restart_normal (objects count ? "+arenaObjects.Count+")");
-    round_time = 0f;
-    restart_setup();
+  virtual public void arena_startup()
+  {
+
+    for (int i = 0; i < arenaObjects.Count; i++)
+    {
+      arenaObjects[i].arena_startup();
+    }
+
+    round_restart();
   }
 
   /// <summary>
   /// describe how to setup a restart
   /// </summary>
-  virtual protected void restart_setup() {
+  virtual protected void round_restart() {
+
+    round_time = 0f;
 
     for (int i = 0; i < arenaObjects.Count; i++)
     {
@@ -207,8 +215,8 @@ abstract public class ArenaManager : EngineObject {
     while (ie.MoveNext()) yield return null;
 
     Debug.Log("... pre-restart process is <b>done</b> !");
-    
-    restart_normal();
+
+    round_restart();
   }
 
   /// <summary>

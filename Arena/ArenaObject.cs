@@ -51,6 +51,14 @@ abstract public class ArenaObject : EngineObject {
   }
 
   /// <summary>
+  /// called before restart
+  /// </summary>
+  virtual public void arena_startup()
+  {
+
+  }
+
+  /// <summary>
   /// called by ArenaManager on round restart
   /// </summary>
   virtual public void arena_round_restart()

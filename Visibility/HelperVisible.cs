@@ -13,7 +13,7 @@ abstract public class HelperVisible
 {
   protected Rect _bounds; // bounds expressed in local position
   protected Rect _wbounds; // bounds expressed in world position
-  protected BoxCollider2D _collider;
+  protected Collider _collider;
 
   protected MonoBehaviour _owner;
   protected Transform _t;
@@ -34,8 +34,8 @@ abstract public class HelperVisible
 
     _t = _owner.transform;
 
-    _collider = _owner.GetComponent<BoxCollider2D>();
-    if (_collider == null) _collider = _owner.GetComponentInChildren<BoxCollider2D>();
+    _collider = _owner.GetComponent<Collider>();
+    if (_collider == null) _collider = _owner.GetComponentInChildren<Collider>();
     
     setup();
   }
