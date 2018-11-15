@@ -33,7 +33,7 @@ public class HelperVisibleMesh : HelperVisible
   {
     base.setup();
 
-    Debug.Log(_owner.name + " fetching ...");
+    //Debug.Log(_owner.name + " fetching ...");
 
     _collider = _t.GetComponent<Collider>();
     if (_collider == null) _collider = _t.GetComponentInChildren<Collider>();

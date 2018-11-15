@@ -32,7 +32,7 @@ public class SettingsManager : EngineObject {
   [RuntimeInitializeOnLoadMethod]
   static protected void setupStartupSettings()
   {
-    setupResolution();
+    //setupResolution();
   }
 
   protected override void build()
@@ -189,7 +189,6 @@ public class SettingsManager : EngineObject {
 
   static public void setupResolution()
   {
-    
     bool fs = PlayerPrefs.GetInt(ppref_fullscreen, 1) == 1;
 
     string res = PlayerPrefs.GetString(ppref_resolution, "none");
