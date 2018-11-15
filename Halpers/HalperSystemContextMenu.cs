@@ -15,6 +15,8 @@ static public class HalperSystemContextMenu
   {
     PlayerPrefs.DeleteAll();
     PlayerPrefs.Save();
+
+    Debug.Log("all pprefs deleted");
   }
 #endif
 }
