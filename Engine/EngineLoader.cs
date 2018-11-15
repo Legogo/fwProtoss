@@ -22,13 +22,30 @@ public class EngineLoader : MonoBehaviour
   
   string prefix = "resource-";
   
+  static public bool isContextEngineCompatible()
+  {
+
+    if (getActiveSceneName().StartsWith("debug"))
+    {
+      return false;
+    }
+
+    return true;
+  }
+
   [RuntimeInitializeOnLoadMethod]
   static protected void init()
   {
 #if UNITY_EDITOR
     Debug.Log("<color=gray><b>~EngineLoader~</b> | app entry point</color>");
 #endif
-    
+
+    if (!isContextEngineCompatible())
+    {
+      Debug.LogWarning("won't load engine here");
+      return;
+    }
+
     loader = create();
 
     loader.startupProcess();
@@ -282,12 +299,12 @@ public class EngineLoader : MonoBehaviour
     return false;
   }
 
-  static protected string getLevelName() {
+  static protected string getActiveSceneName() {
     return SceneManager.GetActiveScene().name;
   }
   
   static public bool isActiveSceneName(string nm) {
-    return getLevelName().Contains(nm);
+    return getActiveSceneName().Contains(nm);
   }
 
   static protected bool isResourceScene()

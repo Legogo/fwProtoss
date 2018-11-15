@@ -174,13 +174,20 @@ public class SettingsManager : EngineObject {
     icons[0] = data.icon_android;
 #endif
 
+    PlayerSettings.SplashScreen.show = false; 
     PlayerSettings.SetIconsForTargetGroup(BuildTargetGroup.Unknown, icons);
-
     EditorUserBuildSettings.development = data.developementBuild;
+
+    //android specific
+    PlayerSettings.Android.minSdkVersion = data.minSdk;
+
+    //ios specific
+    PlayerSettings.iOS.targetDevice = data.target_device;
+    PlayerSettings.iOS.targetOSVersionString = data.iOSVersion;
   }
 #endif
 
-    static public void setupResolution()
+  static public void setupResolution()
   {
     
     bool fs = PlayerPrefs.GetInt(ppref_fullscreen, 1) == 1;
