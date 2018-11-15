@@ -28,6 +28,7 @@ public class UiTextSlide : UiAnimation
   {
     base.build();
     txt = GetComponent<Text>();
+    if (txt == null) txt = GetComponentInChildren<Text>();
   }
   
   protected override void animStart()
@@ -55,28 +56,47 @@ public class UiTextSlide : UiAnimation
     rec.SetParent(GameObject.FindObjectOfType<Canvas>().transform);
     rec.position = Camera.main.WorldToScreenPoint(position);
 
-    if(txt != null)
+    if(overrideText != null)
     {
-      if (overrideText != null && overrideText.Length > 0)
-      {
-        possibleText = overrideText;
-      }
-
-      if (possibleText != null && possibleText.Length > 0)
-      {
-        txt.text = possibleText[Random.Range(0, possibleText.Length)];
-      }
-      else
-      {
-        txt.text = "";
-      }
+      setupText(overrideText);
     }
-
-    //Debug.Log(origin.position);
 
     transform.Rotate(Vector3.forward, Random.Range(-spreadAngle, spreadAngle));
 
     play();
   }
   
+  public void setupText(string singleText)
+  {
+    setupText(new string[] { singleText });
+  }
+  public void setupText(string[] overrideText = null)
+  {
+    if (txt == null) return;
+
+    if (overrideText != null && overrideText.Length > 0)
+    {
+      possibleText = overrideText;
+    }
+
+    if (possibleText != null && possibleText.Length > 0)
+    {
+      txt.text = possibleText[Random.Range(0, possibleText.Length)];
+    }
+    else
+    {
+      txt.text = "";
+    }
+    
+  }
+
+  public string getCurrentText()
+  {
+    if (txt == null) {
+      Debug.LogWarning("asking for text but UI Text doesn't exists");
+      return "";
+    }
+    
+    return txt.text;
+  }
 }
