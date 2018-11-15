@@ -169,20 +169,14 @@ public class ScreenObject : EngineObject
   }
   
   [ContextMenu("show")]
-  protected void ctxm_show()
-  {
-    show();
-  }
+  protected void ctxm_show(){ show(); }
 
   [ContextMenu("hide")]
-  protected void ctxm_hide()
-  {
-    forceHide();
-  }
+  protected void ctxm_hide() { forceHide(); }
 
   virtual public void show()
   {
-    //Debug.Log(name + " show");
+    Debug.Log(name + " show");
 
     notInteractiveTimer = 0.2f; // to kill interactive frame offset
 
@@ -193,20 +187,21 @@ public class ScreenObject : EngineObject
 
   virtual public void hide()
   {
+    Debug.Log("  <color=white>hide()</color> <b>" + name + "</b>");
+
     if (sticky)
     {
-      Debug.LogWarning("can't hide " + name + " because is setup as sticky");
+      Debug.LogWarning("    can't hide " + name + " because is setup as sticky");
       return;
     }
 
-    //Debug.Log("~Screen~ <color=white>hide()</color> <b>" + name + "</b>");
-
     forceHide();
   }
-
-  [ContextMenu("hide")]
+  
   public void forceHide()
   {
+    Debug.Log("  <color=white>forceHide()</color> <b>" + name + "</b>");
+
     //dans le cas où y a pas que des canvas
     //ou qu'il y a une seule camera ppale et qu'il faut aligner les choses à 0f
     transform.position = Vector3.down * 3000f;

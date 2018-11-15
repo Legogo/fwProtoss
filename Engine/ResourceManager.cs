@@ -64,12 +64,20 @@ public class ResourceManager {
     
     T comp = obj.GetComponent<T>();
 
+    //get canvas of origin resource
     GameObject go = getResourceByName(nm);
     Canvas cs = go.GetComponentInParent<Canvas>();
 
+    //setup new generated object child of canvas
     if(cs != null)
     {
       obj.transform.SetParent(go.transform.parent);
+
+      Debug.Log(obj.name + " is child of " + go.name + " parent : " + go.transform.parent.name, obj.transform);
+    }
+    else
+    {
+      Debug.LogWarning("no canvas for " + nm, obj.transform);
     }
 
     if (comp == null) comp = obj.GetComponentInChildren<T>();

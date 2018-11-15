@@ -92,7 +92,7 @@ public class ScreensManager {
     //si le screen existe pas on essaye de le load
     loadMissingScreen(nm, delegate (ScreenObject loadedScreen)
     {
-      Debug.Log("  ... missing screen is now loaded, opening");
+      Debug.Log("  ... missing screen '"+nm+"' is now loaded, opening");
       changeScreenVisibleState(nm, true, filterName);
     });
 
@@ -156,24 +156,10 @@ public class ScreensManager {
       {
         if (screens[i].name.EndsWith(filterName)) continue;
       }
-      
+
       screens[i].hide();
     }
-
   }
-
-  [ContextMenu("show all")]
-  public void showAll()
-  {
-    fetchScreens();
-
-    for (int i = 0; i < screens.Count; i++)
-    {
-      screens[i].show();
-    }
-
-  }
-
   
   static protected void loadMissingScreen(string screeName, Action<ScreenObject> onComplete)
   {

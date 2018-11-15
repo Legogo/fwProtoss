@@ -30,7 +30,17 @@ public class UiTextSlide : UiAnimation
     txt = GetComponent<Text>();
     if (txt == null) txt = GetComponentInChildren<Text>();
   }
-  
+
+  protected override void setupLate()
+  {
+    base.setupLate();
+
+    if(canvas == null)
+    {
+      Debug.LogError("not assigned to a canvas ?");
+    }
+  }
+
   protected override void animStart()
   {
     base.animStart();
@@ -53,7 +63,7 @@ public class UiTextSlide : UiAnimation
 
   public void callSlide(Vector3 position, string[] overrideText = null)
   {
-    rec.SetParent(GameObject.FindObjectOfType<Canvas>().transform);
+    //rec.SetParent(GameObject.FindObjectOfType<Canvas>().transform);
     rec.position = Camera.main.WorldToScreenPoint(position);
 
     if(overrideText != null)

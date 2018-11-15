@@ -15,31 +15,31 @@ public class ScreenLoading : ScreenObject {
     qh.cr<EngineLoadingScreenFeeder>("?loading", true);
   }
 
+  static protected ScreenLoading _instance;
+
   Camera cam;
 
   protected override void build()
   {
     base.build();
 
+    _instance = this;
+
     //loading must be sticky to not be closed by maanger open/close logic
     //of other screens
-    if(!sticky) sticky = true;
+    if (!sticky) sticky = true;
     
     cam = GetComponent<Camera>();
     if (cam == null) cam = GetComponentInChildren<Camera>();
 
+    //Debug.Log("hiding loading screen through static call");
     show();
   }
   
   static public void hideLoadingScreen()
   {
-    get().forceHide();
+    Debug.Log("hiding loading screen through static call");
+    _instance.forceHide();
   }
-
-  static protected ScreenLoading instance;
-  static public ScreenLoading get()
-  {
-    if (instance == null) instance = GameObject.FindObjectOfType<ScreenLoading>();
-    return instance;
-  }
+  
 }

@@ -38,11 +38,24 @@ abstract public class UiAnimation : EngineObject
     base.build();
     rec = GetComponent<RectTransform>();
     
+    setFreeze(true);
+  }
+
+  protected override void setupEarly()
+  {
+    base.setupEarly();
+
+    //canvas doit etre choppé après le build
+    //dans le cas de l'utilisation de ResourceManager un element d'UI va etre mit enfant du canvas de l'objet qui est dupliqué
+    //il est donc pas déjà enfant au build()
     canvas = GetComponent<Canvas>();
     if (canvas == null) canvas = GetComponentInParent<Canvas>();
-    if (canvas == null) canvas = GameObject.FindObjectOfType<Canvas>();
 
-    setFreeze(true);
+    if (canvas == null)
+    {
+      Debug.LogError("no canvas for UiAnimation object " + name, transform);
+    }
+
   }
 
   public UiAnimation play()
