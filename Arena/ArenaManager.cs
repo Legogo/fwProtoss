@@ -64,6 +64,14 @@ abstract public class ArenaManager : EngineObject {
   /// </summary>
   virtual public void arena_startup()
   {
+    //if something calls the restart but the process is doing end stuff
+    if (coProcessEnd != null)
+    {
+      Debug.LogWarning("process end of arena was active, stopping it ...");
+      StopCoroutine(coProcessEnd);
+    }
+
+    Debug.Log(getStamp() + "arena startup");
 
     for (int i = 0; i < arenaObjects.Count; i++)
     {
@@ -77,6 +85,8 @@ abstract public class ArenaManager : EngineObject {
   /// describe how to setup a restart
   /// </summary>
   virtual protected void round_restart() {
+
+    Debug.Log(getStamp() + "round restart");
 
     round_time = 0f;
 
