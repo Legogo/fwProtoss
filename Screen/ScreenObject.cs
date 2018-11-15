@@ -224,7 +224,10 @@ public class ScreenObject : EngineObject
 
   virtual public void act_call_home()
   {
-    EngineEventSystem.set_pause_state(false);
+    Debug.Log("ScreenObject :: calling <b>home screen</b>");
+
+    ArenaManager.get().cancelEndProcess(); // if arena was showing an ending screen, kill this process
+    EngineEventSystem.set_pause_state(false); // game might be on paused state (pause menu)
 
     ScreensManager.open(ScreensManager.ScreenNames.home);
   }

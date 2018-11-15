@@ -65,11 +65,7 @@ abstract public class ArenaManager : EngineObject {
   virtual public void arena_startup()
   {
     //if something calls the restart but the process is doing end stuff
-    if (coProcessEnd != null)
-    {
-      Debug.LogWarning("process end of arena was active, stopping it ...");
-      StopCoroutine(coProcessEnd);
-    }
+    cancelEndProcess();
 
     Debug.Log(getStamp() + "arena startup");
 
@@ -246,6 +242,15 @@ abstract public class ArenaManager : EngineObject {
   }
   protected ArenaState getState() { return _state; }
   protected bool isAtState(ArenaState st) { return _state == st; }
+
+  public void cancelEndProcess()
+  {
+    if (coProcessEnd != null)
+    {
+      Debug.LogWarning("process end of arena was active, stopping it ...");
+      StopCoroutine(coProcessEnd);
+    }
+  }
 
   public void setArenaIdle() { setAtState(ArenaState.IDLE); }
   public void setArenaLive(){ setAtState(ArenaState.LIVE); }

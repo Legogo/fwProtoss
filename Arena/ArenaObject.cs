@@ -13,13 +13,21 @@ abstract public class ArenaObject : EngineObject {
   protected ArenaManager _arena;
   protected ArenaObjectSettings ao_settings;
 
+  protected override void build()
+  {
+    base.build();
+    _arena = ArenaManager.get();
+  }
+
+  protected override void setupEarly()
+  {
+    base.setupEarly();
+    _arena = ArenaManager.get();
+  }
+
   protected override void setup()
   {
     base.setup();
-
-    //if(name.Contains("timer_")) Debug.Log("<b>" + name + "." + GetType() + "</b> fetchData");
-    
-    _arena = ArenaManager.get();
     
     //resource ref must NOT be updated by arena
     if (gameObject.CompareTag("resource")) return;
