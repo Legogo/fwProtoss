@@ -23,8 +23,10 @@ abstract public class ArenaObject : EngineObject {
   {
     base.setupEarly();
     _arena = ArenaManager.get();
-  }
 
+    subscribeToPauseEvent(); // freeze update during pause
+  }
+  
   protected override void setup()
   {
     base.setup();
@@ -140,6 +142,8 @@ abstract public class ArenaObject : EngineObject {
   /// </summary>
   public void updateArena()
   {
+    if (EngineEventSystem.isPaused()) return;
+
     if (_arena.isArenaStateLive()) updateArenaLive(_arena.getElapsedTime());
     else if (_arena.isArenaStateEnd()) updateArenaEnd();
     else updateArenaMenu();

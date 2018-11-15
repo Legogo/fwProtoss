@@ -18,10 +18,10 @@ public class EngineLoaderFeeder : MonoBehaviour {
   public string[] resource_names;
 
   [Header("prefix ui-")]
-  public string[] ui_names;
+  public string[] ui_names; // ui element (overlay)
 
   [Header("prefix graphics-")]
-  public string[] graphics_names;
+  public string[] graphics_names; // objects (3d, sprite) ingame
 
   [Header("prefix screen-")]
   public string[] screens_names;

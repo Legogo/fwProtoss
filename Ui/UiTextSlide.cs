@@ -55,13 +55,23 @@ public class UiTextSlide : UiAnimation
     rec.SetParent(GameObject.FindObjectOfType<Canvas>().transform);
     rec.position = Camera.main.WorldToScreenPoint(position);
 
-    if(overrideText != null && overrideText.Length > 0)
+    if(txt != null)
     {
-      possibleText = overrideText;
+      if (overrideText != null && overrideText.Length > 0)
+      {
+        possibleText = overrideText;
+      }
+
+      if (possibleText != null && possibleText.Length > 0)
+      {
+        txt.text = possibleText[Random.Range(0, possibleText.Length)];
+      }
+      else
+      {
+        txt.text = "";
+      }
     }
 
-    txt.text = possibleText[Random.Range(0, possibleText.Length)];
-    
     //Debug.Log(origin.position);
 
     transform.Rotate(Vector3.forward, Random.Range(-spreadAngle, spreadAngle));

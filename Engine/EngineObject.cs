@@ -108,6 +108,16 @@ abstract public class EngineObject : MonoBehaviour, DebugSelection.iDebugSelecti
   /// <returns></returns>
   virtual protected VisibilityMode getVisibilityType() { return VisibilityMode.NONE; }
 
+  private void onPause(bool pauseState) { setFreeze(pauseState); }
+
+  /// <summary>
+  /// will freeze object (no updates) on pause event
+  /// </summary>
+  protected void subscribeToPauseEvent()
+  {
+    EngineEventSystem.onPause += onPause;
+  }
+
   protected HelperInputObject subscribeToInput(string carryName = "")
   {
     if (inputObject != null) return inputObject;
