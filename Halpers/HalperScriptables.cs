@@ -18,7 +18,7 @@ static public class HalperScriptables {
 #if UNITY_EDITOR
   static public T getScriptableObjectInEditor<T>(string nameEnd = "") where T : ScriptableObject
   {
-    string[] all = AssetDatabase.FindAssets("t:"+typeof(T).ToString());
+    string[] all = AssetDatabase.FindAssets("t:"+typeof(T).Name);
     for (int i = 0; i < all.Length; i++)
     {
       Object obj = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(all[i]), typeof(T));
@@ -32,7 +32,7 @@ static public class HalperScriptables {
 
       return data;
     }
-    Debug.LogWarning("can't locate scriptable of type " + typeof(T).ToString() + " (filter name ? " + nameEnd + ")");
+    Debug.LogWarning("can't locate scriptable of type " + typeof(T).Name + " (filter name ? " + nameEnd + ")");
     return null;
   }
 #endif
