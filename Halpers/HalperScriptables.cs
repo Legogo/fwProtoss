@@ -16,7 +16,7 @@ public class DataClass : ScriptableObject
 static public class HalperScriptables {
 
 #if UNITY_EDITOR
-  static public T getScriptableDataBuildSettings<T>(string nameEnd = "") where T : ScriptableObject
+  static public T getScriptableObjectInEditor<T>(string nameEnd = "") where T : ScriptableObject
   {
     string[] all = AssetDatabase.FindAssets("t:"+typeof(T).ToString());
     for (int i = 0; i < all.Length; i++)
