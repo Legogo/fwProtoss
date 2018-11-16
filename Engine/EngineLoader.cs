@@ -22,17 +22,6 @@ public class EngineLoader : MonoBehaviour
   
   string prefix = "resource-";
   
-  static public bool isContextEngineCompatible()
-  {
-
-    if (getActiveSceneName().StartsWith("debug"))
-    {
-      return false;
-    }
-
-    return true;
-  }
-
   [RuntimeInitializeOnLoadMethod]
   static protected void init()
   {
@@ -114,6 +103,11 @@ public class EngineLoader : MonoBehaviour
   IEnumerator processStartup(Action onComplete = null)
   {
     Coroutine co = null;
+
+    //leave a few frame for loading screen to be created and displayed
+    yield return null;
+    yield return null;
+    yield return null;
     
     ///// then we load engine, to get the feeder script
     co = loadScenes(new string[] { prefix + "engine" });
@@ -346,4 +340,17 @@ public class EngineLoader : MonoBehaviour
 
     return found;
   }
+
+
+  static public bool isContextEngineCompatible()
+  {
+
+    if (getActiveSceneName().StartsWith("debug"))
+    {
+      return false;
+    }
+
+    return true;
+  }
+
 }

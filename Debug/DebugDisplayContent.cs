@@ -5,6 +5,7 @@ using UnityEngine;
 public class DebugDisplayContent : EngineObject {
 
   public bool startVisible = true;
+  protected bool visible = false;
 
   protected string ct = "";
   protected GUIStyle style;
@@ -24,14 +25,10 @@ public class DebugDisplayContent : EngineObject {
     {
       style = new GUIStyle();
     }
-  }
 
-  protected override void setup()
-  {
-    base.setup();
-    enabled = startVisible;
+    visible = startVisible;
   }
-
+  
   protected void setupViewSize(int x, int y, int width, int height)
   {
     view.x = x;
@@ -57,7 +54,7 @@ public class DebugDisplayContent : EngineObject {
 
   private void OnGUI()
   {
-    if (!enabled) return;
+    if (!visible) return;
 
     viewDimensions.x = Screen.width;
     viewDimensions.y = Screen.height;
