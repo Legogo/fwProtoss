@@ -11,19 +11,23 @@ namespace fwp.input
 {
   public class InputFreeMouse
   {
+    static public bool isLocked()
+    {
+      return !Cursor.visible;
+    }
 
     static public void lockMouse(bool lockState)
     {
       bool changed = false;
 
-      if (!Cursor.visible && !lockState)
+      if (isLocked() && !lockState)
       {
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         changed = true;
         //Debug.Log("<InputFreeMouse>\tswitched to none");
       }
-      else if (Cursor.visible && lockState)
+      else if (!isLocked() && lockState)
       {
         //Cursor.lockState = CursorLockMode.Confined;
         Cursor.lockState = CursorLockMode.Locked;
