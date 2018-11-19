@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using fwp.input;
 
 public class InputGyroBridge : MonoBehaviour {
 
@@ -25,7 +26,8 @@ public class InputGyroBridge : MonoBehaviour {
 
   public float getLateralSlantValue()
   {
-    return gyro.gravity.x;
+    if (InputTouchBridge.isMobile()) return gyro.gravity.x;
+    return -gyro.gravity.x;
   }
 
   private void OnGUI()
