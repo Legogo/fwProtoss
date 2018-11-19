@@ -105,31 +105,29 @@ public class ScreensManager {
 
     //Debug.Log("opening " + scName + " (filter ? " + filter + ")");
 
-    for (int i = 0; i < screens.Count; i++)
+    ScreenObject selected = getScreen(scName);
+    bool hideOthers = !selected.dontHideOtherOnShow;
+
+    //on opening a specific screen we close all other non sticky screens
+    if (hideOthers && state)
     {
-      //do nothing with filtered screen
-      if (filter.Length > 0)
+      for (int i = 0; i < screens.Count; i++)
       {
-        if (screens[i].name.EndsWith(filter)) continue;
+        //do nothing with filtered screen
+        if (filter.Length > 0 && screens[i].name.EndsWith(filter)) continue;
+
+        if (screens[i] == selected) continue;
+        
+        screens[i].hide();
       }
 
-      //Debug.Log("  L " +screens[i].name);
-      if (screens[i].name.EndsWith(scName))
-      {
-        if (state) screens[i].show();
-        else
-        {
-          if (force) screens[i].forceHide();
-          else screens[i].hide(); // stickies won't hide
-        }
-      }
-      else
-      {
-        if (state) //on opening a specific screen we close all other non sticky screens
-        {
-          screens[i].hide();
-        }
-      }
+    }
+
+    if (state) selected.show();
+    else
+    {
+      if (force) selected.forceHide();
+      else selected.hide(); // stickies won't hide
     }
 
   }

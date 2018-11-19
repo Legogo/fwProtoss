@@ -146,28 +146,27 @@ abstract public class ArenaManager : EngineObject {
 
   virtual protected void update_round()
   {
-    //update all aobs
-    //Debug.Log("update_round (" + arenaObjects.Count + ")");
-    for (int i = 0; i < arenaObjects.Count; i++)
-    {
-      if (arenaObjects[i].isFreezed()) continue;
-      arenaObjects[i].updateArena();
-    }
-
+    updateArenaObjects(false);
   }
 
   virtual protected void update_round_late()
   {
-    for (int i = 0; i < arenaObjects.Count; i++)
-    {
-      if (arenaObjects[i].isFreezed()) continue;
-      arenaObjects[i].updateArenaLate();
-    }
+    updateArenaObjects(true);
   }
 
   virtual protected void update_round_end()
   {
+    updateArenaObjects(false);
+  }
 
+  protected void updateArenaObjects(bool late = false)
+  {
+    for (int i = 0; i < arenaObjects.Count; i++)
+    {
+      if (arenaObjects[i].isFreezed()) continue;
+      if (late) arenaObjects[i].updateArenaLate();
+      else arenaObjects[i].updateArena();
+    }
   }
   
   /// <summary>
@@ -188,7 +187,7 @@ abstract public class ArenaManager : EngineObject {
 
   /// <summary>
   /// launch round end process
-  /// called by specific game arena manager
+  /// called when checkRoundEnd returns true
   /// </summary>
   private void event_round_end()
   {
@@ -237,7 +236,7 @@ abstract public class ArenaManager : EngineObject {
 
   protected void setAtState(ArenaState st)
   {
-    Debug.Log("~Arena~ switched state to <b>" + st.ToString()+"</b>");
+    Debug.Log(getStamp()+" switched state to <b>" + st.ToString()+"</b>");
     _state = st;
   }
   protected ArenaState getState() { return _state; }

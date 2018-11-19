@@ -75,10 +75,7 @@ public class ResourceManager {
 
       Debug.Log(obj.name + " is child of " + go.name + " parent : " + go.transform.parent.name, obj.transform);
     }
-    else
-    {
-      Debug.LogWarning("no canvas for " + nm, obj.transform);
-    }
+    //else Debug.LogWarning("no canvas for " + nm, obj.transform);
 
     if (comp == null) comp = obj.GetComponentInChildren<T>();
     return comp;

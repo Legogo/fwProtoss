@@ -54,11 +54,12 @@ public class VersionToggle : EngineObject
     if(pos.x > 0.9f && pos.y < 0.1f)
     {
       count++;
+      //Debug.Log(name + " count at " + count);
     }
 
     if(count > 1)
     {
-      //Debug.Log("toggle !");
+      //Debug.Log(name+" toggle !");
       if (visibility.isVisible()) visibility.hide();
       else visibility.show();
 

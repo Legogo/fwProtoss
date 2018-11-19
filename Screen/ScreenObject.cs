@@ -12,6 +12,7 @@ public class ScreenObject : EngineObject
   protected ArenaManager _arena;
 
   public bool sticky = false; // can't be hidden
+  public bool dontHideOtherOnShow = false; // won't close other non sticky screen when showing
 
   protected Canvas mainCanvas;
   protected Canvas[] _canvas;
@@ -176,7 +177,7 @@ public class ScreenObject : EngineObject
 
   virtual public void show()
   {
-    Debug.Log(name + " show");
+    Debug.Log(getStamp()+" show "+name);
 
     notInteractiveTimer = 0.2f; // to kill interactive frame offset
 
@@ -187,11 +188,11 @@ public class ScreenObject : EngineObject
 
   virtual public void hide()
   {
-    Debug.Log("  <color=white>hide()</color> <b>" + name + "</b>");
+    //Debug.Log("  <color=white>hide()</color> <b>" + name + "</b>");
 
     if (sticky)
     {
-      Debug.LogWarning("    can't hide " + name + " because is setup as sticky");
+      //Debug.LogWarning("    can't hide " + name + " because is setup as sticky");
       return;
     }
 
@@ -241,6 +242,11 @@ public class ScreenObject : EngineObject
   static public Canvas getCanvas(string screenName, string canvasName) {
     ScreenObject screen = ScreensManager.getScreen(screenName);
     return screen.getCanvas(canvasName);
+  }
+
+  static public string getStamp()
+  {
+    return "<color=white>ScreenObject</color> | ";
   }
 
 }
