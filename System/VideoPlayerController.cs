@@ -42,6 +42,11 @@ public class VideoPlayerController : EngineObject {
     //onPlay();
   }
 
+  public void stop()
+  {
+    _vp.Stop();
+  }
+
   public void play(int startAtFrame = 0)
   {
     _state = VideoState.IDLE;
