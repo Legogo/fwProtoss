@@ -16,21 +16,7 @@ public class ScreensManager {
     result, // end of round screen, result of round
     loading
   };
-
-  [RuntimeInitializeOnLoadMethod]
-  static public void init()
-  {
-    EngineEventSystem.onPause += onPause;
-  }
   
-  static protected void onPause(bool state)
-  {
-
-    if (state) open(ScreenNames.pause);
-    else close(ScreenNames.pause);
-
-  }
-
   static protected void fetchScreens()
   {
     if (screens == null) screens = new List<ScreenObject>();
@@ -182,5 +168,17 @@ public class ScreensManager {
     });
     
   }
-  
+
+  /// <summary>
+  /// just display, no state change
+  /// </summary>
+  /// <param name="state"></param>
+  static public void callPauseScreen(bool state)
+  {
+
+    if (state) ScreensManager.open(ScreensManager.ScreenNames.pause);
+    else ScreensManager.close(ScreensManager.ScreenNames.pause);
+
+  }
+
 }

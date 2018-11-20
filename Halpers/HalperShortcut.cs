@@ -17,6 +17,16 @@ public class qh
     return GameObject.FindObjectOfType<T>();
   }
 
+  static public T gc<T>(string containtName) where T : UnityEngine.Object
+  {
+    T[] list = GameObject.FindObjectsOfType<T>();
+    for (int i = 0; i < list.Length; i++)
+    {
+      if (list[i].name.Contains(containtName)) return list[i];
+    }
+    return null;
+  }
+
   static public T dupl<T>(GameObject refObject) where T : UnityEngine.Object
   {
     return GameObject.Instantiate(refObject).GetComponent<T>();

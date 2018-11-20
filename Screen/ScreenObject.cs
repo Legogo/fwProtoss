@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 /// <summary>
 /// show,hide
@@ -11,6 +12,7 @@ public class ScreenObject : EngineObject
 {
   protected ArenaManager _arena;
 
+  public bool useUiCamera = false;
   public bool sticky = false; // can't be hidden
   public bool dontHideOtherOnShow = false; // won't close other non sticky screen when showing
 
@@ -40,6 +42,22 @@ public class ScreenObject : EngineObject
 
     //generic behavior, won't work for non sticky screens
     hide();
+  }
+
+  protected override void setupEarly()
+  {
+    base.setupEarly();
+    
+    if (useUiCamera)
+    {
+      Camera uiCam = qh.gc<Camera>("camera-ui");
+      if(mainCanvas.renderMode == RenderMode.ScreenSpaceOverlay)
+      {
+        mainCanvas.renderMode = RenderMode.ScreenSpaceCamera;
+        mainCanvas.worldCamera = uiCam;
+      }
+    }
+
   }
 
   public void subscribeToPressedEvents(Action down, Action up, Action left, Action right)
@@ -220,11 +238,10 @@ public class ScreenObject : EngineObject
 
   virtual public void act_call_home()
   {
-    Debug.Log("ScreenObject :: calling <b>home screen</b>");
+    Debug.Log(getStamp()+" calling <b>home screen</b>");
 
     ArenaManager.get().cancelEndProcess(); // if arena was showing an ending screen, kill this process
-    EngineEventSystem.set_pause_state(false); // game might be on paused state (pause menu)
-
+    
     ScreensManager.open(ScreensManager.ScreenNames.home);
   }
 

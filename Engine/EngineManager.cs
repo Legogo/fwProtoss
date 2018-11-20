@@ -29,7 +29,6 @@ public class EngineManager : MonoBehaviour {
 
   //something need to subscribe to this to get end of loading callback
   public Action onLoadingDone;
-  public Action<bool> onPause;
 
   [Header("system")]
   public int application_targetFramerate = -1;
@@ -98,7 +97,7 @@ public class EngineManager : MonoBehaviour {
 
     if (Input.GetKeyUp(KeyCode.P)) // pause
     {
-      callPause(state_live);
+      setPause(!state_live);
     }
 
     //exit app
@@ -193,18 +192,9 @@ public class EngineManager : MonoBehaviour {
     }
     
   }
-
-  static public void callPause(bool pauseState)
-  {
-    Debug.Log("##system## callPause(" + pauseState + ")");
-    state_live = !pauseState;
-
-    if(_manager != null)
-    {
-      if (_manager.onPause != null) _manager.onPause(!state_live);
-    }
-    
-  }
+  
+  static public void setPause(bool flag) { state_live = flag; }
+  static public bool isPaused() { return !state_live; }
 
   static public bool isLoading(){ return state_loading; }
   static public bool isLive(){return state_live && !state_loading;}

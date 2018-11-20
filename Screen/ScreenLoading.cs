@@ -10,7 +10,7 @@ public class ScreenLoading : ScreenObject {
   [RuntimeInitializeOnLoadMethod]
   static public void riolm_loading()
   {
-    if (!EngineLoader.isContextEngineCompatible()) return;
+    if (EngineLoader.isContextEngineCompatible().Length > 0) return;
 
     qh.cr<EngineLoadingScreenFeeder>("?loading", true);
   }

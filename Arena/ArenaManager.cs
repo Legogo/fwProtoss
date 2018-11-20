@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,24 +23,12 @@ abstract public class ArenaManager : EngineObject {
 
   protected float liveFreezeTimer = 0f;
 
-  public enum ArenaState { IDLE, MENU, LIVE, END }
+  public enum ArenaState { IDLE, MENU, LIVE, ROUND_PAUSE, END }
   protected ArenaState _state = ArenaState.IDLE;
 
   protected Coroutine coProcessEnd;
   
   public List<ArenaObject> arenaObjects = new List<ArenaObject>();
-
-  protected override void build()
-  {
-    base.build();
-    
-    EngineEventSystem.onPause += onPause;
-  }
-
-  virtual protected void onPause(bool state)
-  {
-    setFreeze(state);
-  }
   
   protected override void setupLate()
   {
@@ -58,6 +47,22 @@ abstract public class ArenaManager : EngineObject {
     arena_startup();
   }
   
+  /// <summary>
+  /// permet de dire a tout les AO qu'on appelle une pause spécifique a l'arene
+  /// </summary>
+  /// <param name="state"></param>
+  virtual public void onRoundPause(bool state)
+  {
+    if (state) _state = ArenaState.ROUND_PAUSE; // a menu poped and is iterruting gameplay ?
+    else _state = ArenaState.LIVE; // come back to live gameplay
+
+    for (int i = 0; i < arenaObjects.Count; i++)
+    {
+      arenaObjects[i].round_pause(state);
+    }
+
+  }
+
   /// <summary>
   /// what must be called by a menu to start the first round
   /// some object need to create/regenerate stuff when coming back to arena (if ld data changed)
@@ -174,7 +179,7 @@ abstract public class ArenaManager : EngineObject {
   /// </summary>
   virtual public void round_stop()
   {
-    setArenaIdle();
+    _state = ArenaState.IDLE;
     
     //send info to all arena objects
     ArenaObject[] aobjs = GameObject.FindObjectsOfType<ArenaObject>();
@@ -250,10 +255,6 @@ abstract public class ArenaManager : EngineObject {
       StopCoroutine(coProcessEnd);
     }
   }
-
-  public void setArenaIdle() { setAtState(ArenaState.IDLE); }
-  public void setArenaLive(){ setAtState(ArenaState.LIVE); }
-  public void setArenaMenu() { setAtState(ArenaState.MENU); }
   
   public bool isArenaStateLive() {
     
@@ -264,6 +265,8 @@ abstract public class ArenaManager : EngineObject {
 
   public bool isArenaStateEnd() { return isAtState(ArenaState.END); }
   public bool isArenaStateMenu() { return isAtState(ArenaState.MENU); }
+
+  public void setArenaToMenuState() { _state = ArenaState.MENU; }
 
   override public string toString()
   {

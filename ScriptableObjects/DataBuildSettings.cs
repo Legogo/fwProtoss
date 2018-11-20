@@ -9,22 +9,29 @@ using UnityEditor;
 [CreateAssetMenu(menuName = "protoss/create DataBuildSettings", order = 100)]
 public class DataBuildSettings : ScriptableObject
 {
+  [Header("identification")]
   public string compagny_name = "*";
   public string product_name = "*";
   public string package_name = "com.*.*";
 
+#if UNITY_EDITOR
+  [Header("SDK")]
+  public iOSTargetDevice target_device;
+  public string iOSVersion = "9.0";
+  public AndroidSdkVersions minSdk = AndroidSdkVersions.AndroidApiLevel21; // android 5.0
+#endif
+
+  [Header("misc")]
   public bool developementBuild = false;
   public bool use_joystick_visualisation = true;
-
-  public Texture2D icon_ios;
-  public Texture2D icon_android;
+  public bool openFolderOnBuildSuccess = false;
 
 #if UNITY_EDITOR
   public UIOrientation orientation_default = UIOrientation.Portrait;
-
-  public iOSTargetDevice target_device;
-  public string iOSVersion = "9.0";
-  
-  public AndroidSdkVersions minSdk = AndroidSdkVersions.AndroidApiLevel21; // android 5.0
 #endif
+
+  [Header("icons")]
+  public Texture2D icon_ios;
+  public Texture2D icon_android;
+  
 }

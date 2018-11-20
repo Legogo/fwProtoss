@@ -26,14 +26,16 @@ abstract public class BuildHelper
 
   IEnumerator process;
 
-  DataBuildSettings data;
+  DataBuildSettings data = null;
   bool auto_run = false;
   bool version_increment = false;
 
-  public BuildHelper(bool autorun = false, bool incVersion = true, DataBuildSettings data = null)
+  public BuildHelper(bool autorun = false, bool incVersion = true, DataBuildSettings paramData = null)
   {
     //update data
-    if (data == null) data = SettingsManager.getScriptableDataBuildSettings();
+    if (paramData != null) data = paramData;
+    else data = SettingsManager.getScriptableDataBuildSettings();
+
     if (data != null) SettingsManager.applySettings(data);
 
     Debug.Log("starting build process");
@@ -103,21 +105,43 @@ abstract public class BuildHelper
 
     buildPlayerOptions.options |= BuildOptions.Development;
     if(auto_run) buildPlayerOptions.options |= BuildOptions.AutoRunPlayer;
-    
-    //BuildPipeline.BuildPlayer(buildPlayerOptions);
 
+    //BuildPipeline.BuildPlayer(buildPlayerOptions);
+    
     BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
     BuildSummary summary = report.summary;
 
     if (summary.result == BuildResult.Succeeded)
     {
-      Debug.Log("Build succeeded: " + summary.totalSize + " bytes");
+      onSuccess(summary);
     }
 
     if (summary.result == BuildResult.Failed)
     {
       Debug.Log("Build failed");
     }
+  }
+
+  protected void onSuccess(BuildSummary summary) {
+
+    Debug.Log("Build succeeded: " + summary.totalSize + " bytes");
+
+    //DataBuildSettings data = SettingsManager.getScriptableDataBuildSettings();
+
+    if (data.openFolderOnBuildSuccess)
+    {
+      Debug.Log("opening build folder ...");
+      openBuildFolder();
+    }
+  }
+
+  protected void openBuildFolder()
+  {
+    string path = getBuildPathFolder();
+
+    path = path.Replace(@"/", @"\");   // explorer doesn't like front slashes
+
+    System.Diagnostics.Process.Start("explorer.exe", "/select," + path);
   }
 
   /// <summary>

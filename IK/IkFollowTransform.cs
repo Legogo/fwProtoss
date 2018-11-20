@@ -16,7 +16,12 @@ public class IkFollowTransform : MonoBehaviour
 
   public AvatarIKGoal ikGoal;
   public Transform followObject = null;
-  
+
+  private void Awake()
+  {
+    animator = GetComponent<Animator>();
+  }
+
   protected void moveWeight(float speed)
   {
     weight += Time.deltaTime * speed;

@@ -29,9 +29,9 @@ public class EngineLoader : MonoBehaviour
     Debug.Log("<color=gray><b>~EngineLoader~</b> | app entry point</color>");
 #endif
 
-    if (!isContextEngineCompatible())
-    {
-      Debug.LogWarning("won't load engine here");
+    string filter = isContextEngineCompatible();
+    if(filter.Length > 0) { 
+      Debug.LogWarning("won't load engine here : scene starts with prefix "+filter);
       return;
     }
 
@@ -342,15 +342,19 @@ public class EngineLoader : MonoBehaviour
   }
 
 
-  static public bool isContextEngineCompatible()
+  static public string isContextEngineCompatible()
   {
+    string[] filters = new string[] { "debug", "test" };
 
-    if (getActiveSceneName().StartsWith("debug"))
+    for (int i = 0; i < filters.Length; i++)
     {
-      return false;
+      if (getActiveSceneName().StartsWith(filters[i]))
+      {
+        return filters[i];
+      }
     }
 
-    return true;
+    return "";
   }
 
 }

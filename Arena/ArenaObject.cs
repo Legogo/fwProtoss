@@ -23,8 +23,6 @@ abstract public class ArenaObject : EngineObject {
   {
     base.setupEarly();
     _arena = ArenaManager.get();
-
-    subscribeToPauseEvent(); // freeze update during pause
   }
   
   protected override void setup()
@@ -64,6 +62,11 @@ abstract public class ArenaObject : EngineObject {
   /// called before restart
   /// </summary>
   virtual public void arena_startup()
+  {
+
+  }
+
+  virtual public void round_pause(bool pauseState)
   {
 
   }
@@ -142,7 +145,7 @@ abstract public class ArenaObject : EngineObject {
   /// </summary>
   public void updateArena()
   {
-    if (EngineEventSystem.isPaused()) return;
+    if (EngineManager.isPaused()) return;
 
     if (_arena.isArenaStateLive()) updateArenaLive(_arena.getElapsedTime());
     else if (_arena.isArenaStateEnd()) updateArenaEnd();
