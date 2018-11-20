@@ -6,6 +6,12 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
+/// <summary>
+/// (ratio iphone)
+/// 562x1000 
+/// 506x900
+/// </summary>
+
 [CreateAssetMenu(menuName = "protoss/create DataBuildSettings", order = 100)]
 public class DataBuildSettings : ScriptableObject
 {
