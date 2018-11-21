@@ -12,6 +12,11 @@ static public class HalperString
     return output;
   }
 
+  static public string upperFirstLetter(this string v)
+  {
+    return v.Substring(0, 1).ToUpper() + v.Substring(1, v.Length - 1);
+  }
+
   static public string lowerFirstLetter(this string v)
   {
     return v.Substring(0, 1).ToLower() + v.Substring(1, v.Length - 1);

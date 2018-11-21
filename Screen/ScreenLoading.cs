@@ -2,19 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// to call loading screen before everything else put <EngineLoadingScreenFeeder> in startup scene
+/// </summary>
+
 public class ScreenLoading : ScreenObject {
-
-  /// <summary>
-  /// force the instance creation of loading screen (if setup)
-  /// </summary>
-  [RuntimeInitializeOnLoadMethod]
-  static public void riolm_loading()
-  {
-    if (EngineLoader.isContextEngineCompatible().Length > 0) return;
-
-    qh.cr<EngineLoadingScreenFeeder>("?loading", true);
-  }
-
+  
   static protected ScreenLoading _instance;
 
   Camera cam;
@@ -39,6 +32,13 @@ public class ScreenLoading : ScreenObject {
   static public void hideLoadingScreen()
   {
     Debug.Log("hiding loading screen through static call");
+
+    if(_instance == null)
+    {
+      Debug.LogWarning("asking to hide loading but instance is null ?");
+      return;
+    }
+
     _instance.forceHide();
   }
   

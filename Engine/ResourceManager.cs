@@ -50,6 +50,15 @@ public class ResourceManager {
     return null;
   }
 
+  static public bool hasResourceByName(string nm)
+  {
+    for (int i = 0; i < resources.Count; i++)
+    {
+      if (resources[i].name.StartsWith(nm)) return true;
+    }
+    return false;
+  }
+
   /// <summary>
   /// will create a duplicate of resource element of given name, remove parent if parent is canvas. Object is deactivated by default !
   /// </summary>
