@@ -44,6 +44,7 @@ abstract public class ArenaManager : EngineObject {
   {
     Debug.Log(getStamp() + "DEFAULT BEHAVIOR | starting round right away");
 
+    //launch startup then round
     arena_startup();
   }
   
@@ -290,9 +291,10 @@ abstract public class ArenaManager : EngineObject {
   }
 
   static protected ArenaManager _manager;
-  static public ArenaManager get()
+  static public ArenaManager get() { return get<ArenaManager>(); }
+  static public T get<T>() where T : ArenaManager
   {
-    if (_manager == null) _manager = GameObject.FindObjectOfType<ArenaManager>();
-    return _manager;
+    if (_manager == null) _manager = GameObject.FindObjectOfType<T>();
+    return (T)_manager;
   }
 }

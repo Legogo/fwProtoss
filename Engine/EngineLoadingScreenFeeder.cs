@@ -21,15 +21,28 @@ public class EngineLoadingScreenFeeder : MonoBehaviour {
 
     for (int i = 0; i < SceneManager.sceneCount; i++)
     {
-      if (SceneManager.GetSceneAt(i).name.Contains(scName))
+      Scene sc = SceneManager.GetSceneAt(i);
+      if (sc.IsValid()) // check exists
       {
-        found = true;
+        if (sc.name.Contains(scName))
+        {
+          found = true;
+        }
       }
+
     }
 
     if (!found)
     {
-      SceneManager.LoadSceneAsync(scName, LoadSceneMode.Additive);
+      try
+      {
+        SceneManager.LoadSceneAsync(scName, LoadSceneMode.Additive);
+      }
+      catch
+      {
+        Debug.LogError("can't load scene " + scName + " but was found in SceneManager.GetSceneAt ?");
+      }
+      
     }
     
     DestroyImmediate(gameObject);
