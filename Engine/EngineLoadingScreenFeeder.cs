@@ -12,7 +12,7 @@ public class EngineLoadingScreenFeeder : MonoBehaviour {
 
   private void Awake()
   {
-    bool found = false;
+    Scene? foundScene = null;
 
     string scName = "loading";
     if (overrideLoadingScreenName.Length > 0) scName = overrideLoadingScreenName;
@@ -21,28 +21,28 @@ public class EngineLoadingScreenFeeder : MonoBehaviour {
 
     for (int i = 0; i < SceneManager.sceneCount; i++)
     {
+      if (foundScene != null) continue;
+
       Scene sc = SceneManager.GetSceneAt(i);
       if (sc.IsValid()) // check exists
       {
         if (sc.name.Contains(scName))
         {
-          found = true;
+          //Debug.Log("found " + sc.name);
+          foundScene = sc;
         }
       }
 
     }
 
-    if (!found)
+    if (foundScene != null)
     {
-      try
-      {
-        SceneManager.LoadSceneAsync(scName, LoadSceneMode.Additive);
-      }
-      catch
-      {
-        Debug.LogError("can't load scene " + scName + " but was found in SceneManager.GetSceneAt ?");
-      }
-      
+      Debug.Log("found " + foundScene.Value.name);
+      SceneManager.LoadSceneAsync(foundScene.Value.name, LoadSceneMode.Additive);
+    }
+    else
+    {
+      Debug.LogWarning("no loading screen setup ?");
     }
     
     DestroyImmediate(gameObject);
