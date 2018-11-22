@@ -34,6 +34,9 @@ abstract public class ArenaManager : EngineObject {
   {
     base.setupLate();
 
+    EngineEventSystem.onPauseEvent += onSystemPause;
+    EngineEventSystem.onFocusEvent += onSystemPause;
+    
     startup();
   }
 
@@ -47,6 +50,23 @@ abstract public class ArenaManager : EngineObject {
     arena_startup();
   }
   
+  virtual protected void onSystemPause(bool state)
+  {
+    Debug.Log("system pause ! "+state);
+
+    if (Application.isEditor)
+    {
+      Debug.LogWarning("do nothing with pause in editor");
+      return;
+    }
+
+    if(!state && isArenaStateLive())
+    {
+      onRoundPause(true);
+    }
+
+  }
+
   /// <summary>
   /// permet de dire a tout les AO qu'on appelle une pause spécifique a l'arene
   /// </summary>
@@ -218,7 +238,7 @@ abstract public class ArenaManager : EngineObject {
 
   IEnumerator processEnd()
   {
-    IEnumerator ie = process_before_restart();
+    IEnumerator ie = process_round_end();
 
     Debug.Log("waiting for pre-restart process to be finished ...");
 
@@ -232,7 +252,7 @@ abstract public class ArenaManager : EngineObject {
   /// <summary>
   /// use to describe what to do after round ended, will lead to restart_normal()
   /// </summary>
-  virtual protected IEnumerator process_before_restart()
+  virtual protected IEnumerator process_round_end()
   {
     yield return null;
   }

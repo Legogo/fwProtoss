@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEditor.SceneManagement;
 using System;
 using Object = UnityEngine.Object;
 using UnityEditor.Build.Reporting;
@@ -92,7 +91,7 @@ abstract public class BuildHelper
     path += getBuildName();
     path += "_" + VersionManager.getFormatedVersion('-');
     path += "_" + PlayerSettings.Android.bundleVersionCode;
-    path += "_" + getFullDate();
+    path += "_" + HalperNatives.getFullDate();
 
     // [project]/build_path/build-name_version_build-number_fulldatetime
 
@@ -143,16 +142,7 @@ abstract public class BuildHelper
 
     System.Diagnostics.Process.Start("explorer.exe", "/select," + path);
   }
-
-  /// <summary>
-  /// yyyy-mm-dd_hh:mm
-  /// </summary>
-  static protected string getFullDate()
-  {
-    DateTime dt = DateTime.Now;
-    return dt.Year + "-" + dt.Month + "-" + dt.Day + "_" + dt.Hour + "-" + dt.Minute;
-  }
-
+  
   static protected string[] getScenePaths()
   {
     

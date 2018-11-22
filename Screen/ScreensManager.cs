@@ -58,7 +58,7 @@ public class ScreensManager {
     return null;
   }
   
-  static public void open(ScreenNames nm) { open(nm.ToString()); }
+  static public void open(ScreenNames nm, string filter = "") { open(nm.ToString(), filter); }
 
   /// <summary>
   /// best practice : should never call a screen by name but create a contextual enum
@@ -85,7 +85,7 @@ public class ScreensManager {
     return null;
   }
   
-  static protected void changeScreenVisibleState(string scName, bool state, string filter = "", bool force = false)
+  static protected void changeScreenVisibleState(string scName, bool state, string containsFilter = "", bool force = false)
   {
     fetchScreens();
 
@@ -94,21 +94,24 @@ public class ScreensManager {
     ScreenObject selected = getScreen(scName);
     bool hideOthers = !selected.dontHideOtherOnShow;
 
+    Debug.Log(selected.name + " visibilty to " + state+" (filter ? "+containsFilter+" | dont hide other ? "+selected.dontHideOtherOnShow+" => hide others ? "+hideOthers+")");
+
     //on opening a specific screen we close all other non sticky screens
     if (hideOthers && state)
     {
       for (int i = 0; i < screens.Count; i++)
       {
-        //do nothing with filtered screen
-        if (filter.Length > 0 && screens[i].name.EndsWith(filter)) continue;
-
         if (screens[i] == selected) continue;
+
+        //do nothing with filtered screen
+        if (containsFilter.Length > 0 && screens[i].name.Contains(containsFilter)) continue;
         
         screens[i].hide();
+        Debug.Log("  L "+screens[i].name + " hidden");
       }
 
     }
-
+    
     if (state) selected.show();
     else
     {
@@ -118,13 +121,13 @@ public class ScreensManager {
 
   }
 
-  static public void close(ScreenNames scName, bool force = false) { close(scName.ToString(), force); }
+  static public void close(ScreenNames scName, string filter = "", bool force = false) { close(scName.ToString(), filter, force); }
 
   /// <summary>
   /// </summary>
   /// <param name="nameEnd"></param>
   /// <param name="force">if screen is sticky</param>
-  static public void close(string nameEnd, bool force = false, string filter = "")
+  static public void close(string nameEnd, string filter = "", bool force = false)
   {
     changeScreenVisibleState(nameEnd, false, filter, force);
   }
@@ -173,11 +176,11 @@ public class ScreensManager {
   /// just display, no state change
   /// </summary>
   /// <param name="state"></param>
-  static public void callPauseScreen(bool state)
+  static public void callPauseScreen(bool state, string filter = "")
   {
 
-    if (state) ScreensManager.open(ScreensManager.ScreenNames.pause);
-    else ScreensManager.close(ScreensManager.ScreenNames.pause);
+    if (state) ScreensManager.open(ScreensManager.ScreenNames.pause, filter);
+    else ScreensManager.close(ScreensManager.ScreenNames.pause, filter);
 
   }
 
