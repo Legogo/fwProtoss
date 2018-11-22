@@ -27,6 +27,8 @@ public class ArenaMonitoring : EditorWindow
     ArenaManager am = ArenaManager.get();
 
     GUILayout.Label("status");
+    if (am == null) return;
+    
     GUILayout.Label("  menu ? " + am.isArenaStateMenu());
     GUILayout.Label("  live ? " + am.isArenaStateLive());
     GUILayout.Label("  end ? " + am.isArenaStateEnd());
