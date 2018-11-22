@@ -321,11 +321,31 @@ public class EngineLoader : MonoBehaviour
     return loader != null;
   }
 
+  /// <summary>
+  /// loaded or loading (but called to be loaded at least)
+  /// </summary>
+  /// <param name="endName"></param>
+  /// <returns></returns>
+  static public bool isSceneAdded(string endName)
+  {
+    for (int i = 0; i < SceneManager.sceneCount; i++)
+    {
+      Scene sc = SceneManager.GetSceneAt(i);
+      //Debug.Log(sc.name + " , valid ? " + sc.IsValid() + " , loaded ? " + sc.isLoaded);
+      if (sc.name.Contains(endName))
+      {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+#if UNITY_EDITOR
+
   static public bool isSceneInBuildSettingsList(string scName)
   {
     bool found = true;
-
-#if UNITY_EDITOR
 
     found = false;
 
@@ -336,10 +356,10 @@ public class EngineLoader : MonoBehaviour
       if (scenes[i].path.Contains(scName)) found = true;
     }
     
-#endif
-
     return found;
   }
+
+#endif
 
 
   static public string isContextEngineCompatible()

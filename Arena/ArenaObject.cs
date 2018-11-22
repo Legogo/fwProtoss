@@ -68,7 +68,7 @@ abstract public class ArenaObject : EngineObject {
 
   virtual public void round_pause(bool pauseState)
   {
-
+    setFreeze(pauseState);
   }
 
   /// <summary>

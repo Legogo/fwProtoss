@@ -32,6 +32,8 @@ public class SpriteOrientation : MonoBehaviour {
 
   protected SpriteRenderer spr;
 
+  public bool debug_always_use_first_frame = false;
+
   private void Awake()
   {
     spr = GetComponent<SpriteRenderer>();
@@ -41,16 +43,26 @@ public class SpriteOrientation : MonoBehaviour {
   public void update(Vector2 dir)
   {
     if (spr == null) return;
-    
+
+    if (debug_always_use_first_frame)
+    {
+      spr.sprite = defaultFrame;
+      return;
+    }
+
     spr.sprite = getMatchingAngleFrame(dir);
   }
 
   public Sprite getMatchingAngleFrame(Vector2 dir)
   {
+    if (debug_always_use_first_frame) return defaultFrame;
+
     return getMatchingAngleFrame(getPositiveAngle(dir));
   }
   public Sprite getMatchingAngleFrame(float angle)
   {
+    if (debug_always_use_first_frame) return defaultFrame;
+
     for (int i = 0; i < frames.Length; i++)
     {
       if (frames[i].degreRange.x < angle && frames[i].degreRange.y > angle) return frames[i].frame;

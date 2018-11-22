@@ -33,9 +33,9 @@ abstract public class BuildHelper
   {
     //update data
     if (paramData != null) data = paramData;
-    else data = SettingsManager.getScriptableDataBuildSettings();
+    else data = GlobalSettingsBuild.getScriptableDataBuildSettings();
 
-    if (data != null) SettingsManager.applySettings(data);
+    if (data != null) GlobalSettingsBuild.applySettings(data);
 
     Debug.Log("starting build process");
 

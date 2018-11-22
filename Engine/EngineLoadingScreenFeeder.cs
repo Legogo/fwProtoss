@@ -12,27 +12,17 @@ public class EngineLoadingScreenFeeder : MonoBehaviour {
 
   private void Awake()
   {
-    bool found = false;
-
     string scName = "loading";
     if (overrideLoadingScreenName.Length > 0) scName = overrideLoadingScreenName;
 
-    if(!scName.StartsWith("screen")) scName = "screen-" + scName;
+    if (!scName.StartsWith("screen")) scName = "screen-" + scName;
 
-    for (int i = 0; i < SceneManager.sceneCount; i++)
-    {
-      if (SceneManager.GetSceneAt(i).name.Contains(scName))
-      {
-        found = true;
-      }
-    }
-
-    if (!found)
+    if (!EngineLoader.isSceneAdded(scName))
     {
       SceneManager.LoadSceneAsync(scName, LoadSceneMode.Additive);
     }
-    
-    DestroyImmediate(gameObject);
+
+    HalperGameObject.checkDestroyOnSoloMono(this);
   }
   
 }

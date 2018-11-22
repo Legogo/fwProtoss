@@ -16,4 +16,21 @@ static public class HalperGameObject {
     return obj;
   }
 
+  /// <summary>
+  /// this will destroy gameobject of mono if go only contains that mono and no other
+  /// </summary>
+  /// <param name="mono"></param>
+  static public void checkDestroyOnSoloMono(MonoBehaviour mono)
+  {
+    MonoBehaviour[] monos = mono.gameObject.GetComponents<MonoBehaviour>();
+    if(monos.Length == 1)
+    {
+      GameObject.DestroyImmediate(mono.gameObject);
+    }
+    else
+    {
+      //Debug.LogWarning("gameobject has " + monos.Length + " other monos, won't destroy");
+      GameObject.DestroyImmediate(mono);
+    }
+  }
 }
