@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
@@ -13,6 +13,12 @@ public class VideoPlayerController : EngineObject {
   protected VideoPlayer _vp;
   protected VideoState _state;
 
+  public Action onVideoEnd;
+
+  public Dictionary<int, Action<int>> frameSubs;
+
+  protected long previousFrame = 0;
+
   public bool debugLogs = false;
 
   protected override void build()
@@ -26,6 +32,18 @@ public class VideoPlayerController : EngineObject {
   {
     base.setup();
     visibility.hide();
+  }
+
+  public void subscribeAtFrame(int frame, Action<int> callback)
+  {
+    if (frameSubs == null) frameSubs = new Dictionary<int, Action<int>>();
+
+    if (!frameSubs.ContainsKey(frame))
+    {
+      frameSubs.Add(frame, null);
+    }
+
+    frameSubs[frame] += callback;
   }
 
   protected override VisibilityMode getVisibilityType()
@@ -73,6 +91,22 @@ public class VideoPlayerController : EngineObject {
         break;
       case VideoState.PLAY:
         
+        //sometimes the player stay at the same video frame for multiple engine frame
+        if(previousFrame != _vp.frame)
+        {
+
+          foreach (KeyValuePair<int, Action<int>> kp in frameSubs)
+          {
+            //Debug.Log(Time.frameCount + " , " + kp.Key + " ? " + _vp.frame);
+
+            if (_vp.frame == kp.Key)
+            {
+              kp.Value((int)_vp.frame);
+            }
+          }
+
+          previousFrame = _vp.frame;
+        }
         //Debug.Log(_vp.frame + " / " + _vp.frameCount);
 
         if ((int)_vp.frame >= (int)_vp.frameCount) // at last frame of video
@@ -121,7 +155,9 @@ public class VideoPlayerController : EngineObject {
       _state = VideoState.END;
     }
 
-    Debug.Log(_vp.clip.name + " | end | loop ? "+_vp.isLooping);
+    if(debugLogs) Debug.Log(_vp.clip.name + " | end | loop ? "+_vp.isLooping);
+
+    if (onVideoEnd != null) onVideoEnd();
   }
   
 }

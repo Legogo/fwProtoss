@@ -107,7 +107,7 @@ public class ScreensManager {
         if (containsFilter.Length > 0 && screens[i].name.Contains(containsFilter)) continue;
         
         screens[i].hide();
-        Debug.Log("  L "+screens[i].name + " hidden");
+        //Debug.Log("  L "+screens[i].name + " hidden");
       }
 
     }
