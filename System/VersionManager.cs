@@ -42,6 +42,8 @@ static public class VersionManager
 
     v = Application.version;
 
+    //Debug.Log(v);
+
     if(v.Length < 1 || v.IndexOf(".") < 0)
     {
       v = "0.0.1";

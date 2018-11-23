@@ -171,24 +171,31 @@ abstract public class BuildHelper
 
 
 /*
-[MenuItem("Build/Build Android #&b")]
-public static void menu_build_android()
-{
-  build_android(false);
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEditor;
+
+public class Builder : BuildHelper {
+
+  public Builder(bool run, bool inc) : base(run, inc)
+  { }
+
+  [MenuItem("Build/Build&Run (no-increment) %&x")]
+  public static void menu_build_android() { new Builder(true, false); }
+
+  [MenuItem("Build/Build&Run (increment) %&c")]
+  public static void menu_build_run_android() { new Builder(true, true); }
+
+  public override string getBuildName()
+  {
+    return "workingTitle";
+  }
+
+  public override string getBuildPathFolder()
+  {
+    return "Build/";
+  }
+
 }
-
-[MenuItem("Build/Build&Run Android #b")]
-public static void menu_build_run_android()
-{
-  new BuildHelper();
-  build_android(true);
-}
-
-
-[MenuItem("Build/Build&Run (no-increment) %&x")]
-public static void menu_build_android() { new BuildHalper(true, false); }
-
-[MenuItem("Build/Build&Run (increment) %&c")]
-public static void menu_build_run_android() { new BuildHalper(true, true); }
-
 */

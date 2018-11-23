@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HalperUi {
+static public class HalperUi {
   
   static public Image setupImage(Transform tr, Sprite spr, Color tint, bool visibility = true)
   {
@@ -19,4 +19,17 @@ public class HalperUi {
     return img;
   }
   
+  static public Vector2 getBottomCenterPosition(this RectTransform elmt)
+  {
+    return elmt.anchoredPosition + (Vector2.down * elmt.sizeDelta.y) + (Vector2.right * elmt.sizeDelta.x * 0.5f);
+  }
+
+  static public float getHeight(this RectTransform elmt)
+  {
+    return elmt.sizeDelta.y;
+  }
+  static public float getWidth(this RectTransform elmt)
+  {
+    return elmt.sizeDelta.y;
+  }
 }

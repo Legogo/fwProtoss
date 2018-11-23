@@ -21,4 +21,10 @@ static public class HalperNatives {
     return dt.Day + "-" + dt.Month + "-" + dt.Year;
   }
 
+  static public string getNowHourMin(char separator = ':')
+  {
+    DateTime dt = DateTime.Now;
+    return dt.Hour + "" + separator + dt.Minute;
+  }
+
 }
