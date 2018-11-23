@@ -14,13 +14,19 @@ public class VersionToggle : EngineObject
     return VisibilityMode.UI;
   }
 
+  protected override void build()
+  {
+    base.build();
+
+    HelperVisibleUi h = (HelperVisibleUi)visibility;
+    h.setTextLabel(VersionManager.getFormatedVersion());
+
+  }
+
   protected override void setup()
   {
     base.setup();
 
-    HelperVisibleUi h = (HelperVisibleUi)visibility;
-    h.setTextLabel(VersionManager.getFormatedVersion());
-    
     subscribeToTouchRelease(touch);
 
     sequence = new HelperScreenTouchSequenceSolver(new Rect[]

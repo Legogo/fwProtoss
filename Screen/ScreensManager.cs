@@ -121,6 +121,7 @@ public class ScreensManager {
 
   }
 
+  static public void close(ScreenNames scName) { close(scName.ToString(), "", false); }
   static public void close(ScreenNames scName, bool force = false) { close(scName.ToString(), "", force); }
   static public void close(ScreenNames scName, string filter = "", bool force = false) { close(scName.ToString(), filter, force); }
 
@@ -128,7 +129,7 @@ public class ScreensManager {
   /// </summary>
   /// <param name="nameEnd"></param>
   /// <param name="force">if screen is sticky</param>
-  static public void close(string nameEnd, string filter = "", bool force = false)
+  static protected void close(string nameEnd, string filter = "", bool force = false)
   {
     changeScreenVisibleState(nameEnd, false, filter, force);
   }
