@@ -134,11 +134,6 @@ abstract public class ArenaObject : EngineObject {
     setFreeze(true);
     //Debug.Log(Time.time+" , "+name + " killed", gameObject);
   }
-
-  public sealed override void updateEngine()
-  {
-    base.updateEngine();
-  }
   
   /// <summary>
   /// called by arena manager
