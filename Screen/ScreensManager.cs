@@ -121,6 +121,7 @@ public class ScreensManager {
 
   }
 
+  static public void close(ScreenNames scName, bool force = false) { close(scName.ToString(), "", force); }
   static public void close(ScreenNames scName, string filter = "", bool force = false) { close(scName.ToString(), filter, force); }
 
   /// <summary>
