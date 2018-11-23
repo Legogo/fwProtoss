@@ -69,7 +69,7 @@ public class EngineLoader : MonoBehaviour
 
     if (SceneManager.sceneCountInBuildSettings <= 1)
     {
-      Debug.LogWarning("could not launch loading because build settings scenes list is <b>empty</b>");
+      Debug.LogWarning("could not launch loading because <b>build settings scenes list count <= 1</b>");
       return false;
     }
 
@@ -224,7 +224,13 @@ public class EngineLoader : MonoBehaviour
     //can't reload same scene
     //if (isSceneOfName(sceneLoad)) yield break;
 
-    Debug.Log(getStamp() + "  L <b>"+sceneLoad+"</b> loading ... ");
+    if (!checkIfCanBeLoaded(sceneLoad))
+    {
+      Debug.LogWarning("asked to load <b>" + sceneLoad + "</b> but this scene is <b>not added to BuildSettings</b>");
+      yield break;
+    }
+
+    Debug.Log(getStamp() + "  L <b>" + sceneLoad + "</b> loading ... ");
 
     AsyncOperation async = SceneManager.LoadSceneAsync(sceneLoad, LoadSceneMode.Additive);
     while (!async.isDone)
@@ -376,5 +382,17 @@ public class EngineLoader : MonoBehaviour
 
     return "";
   }
+  
+  static public bool checkIfCanBeLoaded(string sceneLoad)
+  {
+    bool checkIfExists = false;
 
+    for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
+    {
+      Scene buildScene = SceneManager.GetSceneByBuildIndex(i);
+      if (buildScene.name.Contains(sceneLoad)) checkIfExists = true;
+    }
+
+    return checkIfExists;
+  }
 }

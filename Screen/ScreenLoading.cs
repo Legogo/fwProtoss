@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 
 /// <summary>
@@ -11,6 +11,22 @@ public class ScreenLoading : ScreenObject {
   static protected ScreenLoading _instance;
 
   Camera cam;
+
+  [RuntimeInitializeOnLoadMethod]
+  static public void runetimeInit()
+  {
+    string scName = "loading";
+    //if (overrideLoadingScreenName.Length > 0) scName = overrideLoadingScreenName;
+
+    if (!scName.StartsWith("screen")) scName = "screen-" + scName;
+
+    if (!EngineLoader.isSceneAdded(scName) && EngineLoader.checkIfCanBeLoaded(scName))
+    {
+      SceneManager.LoadSceneAsync(scName, LoadSceneMode.Additive);
+    }
+
+    //HalperGameObject.checkDestroyOnSoloMono(this);
+  }
 
   protected override void build()
   {
