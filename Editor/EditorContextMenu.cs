@@ -53,4 +53,10 @@ public class EditorContextMenu : MonoBehaviour {
 
   }
   
+  [MenuItem("Tools/open persistant data path")]
+  static public void osOpenDataPathFolder()
+  {
+    HalperNatives.os_openFolder(HalperNatives.getDataPath());
+  }
+
 }

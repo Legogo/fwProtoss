@@ -137,10 +137,7 @@ abstract public class BuildHelper
   protected void openBuildFolder()
   {
     string path = getBuildPathFolder();
-
-    path = path.Replace(@"/", @"\");   // explorer doesn't like front slashes
-
-    System.Diagnostics.Process.Start("explorer.exe", "/select," + path);
+    HalperNatives.os_openFolder(path);
   }
   
   static protected string[] getScenePaths()
