@@ -10,8 +10,6 @@ public class HelperVisibleMesh : HelperVisible
   MeshRenderer _render;
   TextMesh _label;
   
-  public float scaleSize = 1f;
-
   public HelperVisibleMesh(EngineObject parent) : base(parent)
   {
   }
@@ -51,9 +49,7 @@ public class HelperVisibleMesh : HelperVisible
       _mat = _render.material;
       _render.material = _mat;
     }
-
-    rescale(scaleSize);
-
+    
     ///// text
 
     _label = _t.GetComponent<TextMesh>();
@@ -63,33 +59,8 @@ public class HelperVisibleMesh : HelperVisible
     }
   }
   
-  public void rescale(float newScale)
-  {
-    scaleSize = newScale;
-
-    _t.localScale = Vector3.one * scaleSize;
-
-    //use the collider to solve bounds
-    if (_collider != null)
-    {
-      _bounds.center = _collider.bounds.center;
-      _bounds.size = _collider.bounds.size;
-    }
-    else
-    {
-      //bounds is based on scaleSize (square)
-      _bounds.x = -scaleSize * 0.5f;
-      _bounds.y = -scaleSize * 0.5f;
-      _bounds.width = scaleSize;
-      _bounds.height = scaleSize;
-    }
-
-    _wbounds.width = _bounds.width;
-    _wbounds.height = _bounds.height;
-  }
-
   // on peut pas utiliser transform.localScale a cause de la valeur qui varie quand on change de parent
-  public float getRadius() { return scaleSize * 0.5f; }
+  public float getRadius() { return _render.bounds.extents.x; }
   
   override public Color getColor()
   {
@@ -153,16 +124,8 @@ public class HelperVisibleMesh : HelperVisible
   private void OnDrawGizmosSelected()
   {
     if (Application.isPlaying) return;
-
-    _t.localScale = Vector3.one;
-
-    //draw symbol
-    if (_t.childCount > 0)
-    {
-      Transform tr = _t.GetChild(0);
-      tr.localScale = Vector3.one * scaleSize;
-    }
-
+  
+    //...
   }
 
 #endif

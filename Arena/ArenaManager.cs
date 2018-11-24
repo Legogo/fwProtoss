@@ -152,7 +152,7 @@ abstract public class ArenaManager : EngineObject {
   }
 
   abstract protected bool checkRoundEnd();
-
+  
   virtual protected void update_menu(){}
   
   protected void update_time()
@@ -168,26 +168,25 @@ abstract public class ArenaManager : EngineObject {
 
   virtual protected void update_round()
   {
-    updateArenaObjects(false);
+    for (int i = 0; i < arenaObjects.Count; i++)
+    {
+      if (!arenaObjects[i].isFreezed()) arenaObjects[i].updateArena();
+    }
   }
 
   virtual protected void update_round_late()
   {
-    updateArenaObjects(true);
+    for (int i = 0; i < arenaObjects.Count; i++)
+    {
+      if (!arenaObjects[i].isFreezed()) arenaObjects[i].updateArenaLate();
+    }
   }
 
   virtual protected void update_round_end()
   {
-    updateArenaObjects(false);
-  }
-
-  protected void updateArenaObjects(bool late = false)
-  {
     for (int i = 0; i < arenaObjects.Count; i++)
     {
-      if (arenaObjects[i].isFreezed()) continue;
-      if (late) arenaObjects[i].updateArenaLate();
-      else arenaObjects[i].updateArena();
+      if (!arenaObjects[i].isFreezed()) arenaObjects[i].updateArena();
     }
   }
   

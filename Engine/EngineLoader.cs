@@ -387,10 +387,15 @@ public class EngineLoader : MonoBehaviour
   {
     bool checkIfExists = false;
 
+    //Debug.Log("count ? "+ SceneManager.sceneCountInBuildSettings);
+    
     for (int i = 0; i < SceneManager.sceneCountInBuildSettings; i++)
     {
-      Scene buildScene = SceneManager.GetSceneByBuildIndex(i);
-      if (buildScene.name.Contains(sceneLoad)) checkIfExists = true;
+      string path = SceneUtility.GetScenePathByBuildIndex(i);
+    
+      //Debug.Log(path);
+      
+      if (path.Contains(sceneLoad)) checkIfExists = true;
     }
 
     return checkIfExists;

@@ -26,6 +26,8 @@ public class VideoPlayerController : EngineObject {
     base.build();
     _vp = GetComponent<VideoPlayer>();
     if(clip != null) _vp.clip = clip;
+
+    canvas = HalperComponentsGenerics.getComponentContext<MeshRenderer>(transform, "canvas");
   }
 
   protected override void setup()
@@ -57,6 +59,8 @@ public class VideoPlayerController : EngineObject {
 
     _vp.frame = 0; // at start
     _vp.Play();
+
+    canvas.enabled = false;
     //onPlay();
   }
 
@@ -85,6 +89,7 @@ public class VideoPlayerController : EngineObject {
 
         if(_vp.isPlaying)
         {
+          canvas.enabled = true;
           onPlay();
         }
 

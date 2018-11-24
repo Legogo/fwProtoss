@@ -10,10 +10,23 @@ static public class HalperComponentsGenerics
     return GameObject.FindObjectOfType<T>();
   }
 
+  /// <summary>
+  /// on itself or in any children
+  /// </summary>
+  /// <typeparam name="T"></typeparam>
+  /// <param name="comp"></param>
+  /// <returns></returns>
   static public T getComponent<T>(Component comp) where T : Component
   {
     T t = comp.GetComponent<T>();
     if (t == null) t = comp.GetComponentInChildren<T>();
+    return t;
+  }
+
+  static public T getComponent<T>(GameObject elmt) where T : Component
+  {
+    T t = elmt.GetComponent<T>();
+    if (t == null) t = elmt.GetComponentInChildren<T>();
     return t;
   }
 
@@ -33,17 +46,17 @@ static public class HalperComponentsGenerics
     return tr.GetComponent<T>();
   }
 
-  public static T getComponentByCarryName<T>(string carryName)
+  public static T getComponentByCarryName<T>(string carryName) where T : Component
   {
     GameObject obj = GameObject.Find(carryName);
 
     if (obj == null)
     {
-      Debug.LogWarning("couldn't find " + carryName);
-      return default(T);
+      //Debug.LogWarning("couldn't find " + carryName);
+      return null;
     }
 
-    return obj.GetComponent<T>();
+    return getComponent<T>(obj);
   }
 
 
