@@ -95,6 +95,7 @@ public class ScreensManager {
     if(selected == null)
     {
       Debug.LogError("no selected for " + scName);
+      return;
     }
 
     bool hideOthers = !selected.dontHideOtherOnShow;
