@@ -7,7 +7,7 @@ public class VideoPlayerController : EngineObject {
 
   public enum VideoState { IDLE, PLAY, STOP, END };
 
-  public VideoClip clip;
+  public VideoClip[] clips;
 
   protected MeshRenderer canvas;
   protected VideoPlayer _vp;
@@ -25,7 +25,7 @@ public class VideoPlayerController : EngineObject {
   {
     base.build();
     _vp = GetComponent<VideoPlayer>();
-    if(clip != null) _vp.clip = clip;
+    if(clips != null && clips.Length > 9) _vp.clip = clips[0];
 
     canvas = HalperComponentsGenerics.getComponentContext<MeshRenderer>(transform, "canvas");
   }
@@ -34,6 +34,13 @@ public class VideoPlayerController : EngineObject {
   {
     base.setup();
     visibility.hide();
+  }
+
+  public void setupClipAndPlay(int index)
+  {
+    stop();
+    _vp.clip = clips[index];
+    play();
   }
 
   public void subscribeAtFrame(int frame, Action<int> callback)
@@ -99,14 +106,16 @@ public class VideoPlayerController : EngineObject {
         //sometimes the player stay at the same video frame for multiple engine frame
         if(previousFrame != _vp.frame)
         {
-
-          foreach (KeyValuePair<int, Action<int>> kp in frameSubs)
+          if(frameSubs != null)
           {
-            //Debug.Log(Time.frameCount + " , " + kp.Key + " ? " + _vp.frame);
-
-            if (_vp.frame == kp.Key)
+            foreach (KeyValuePair<int, Action<int>> kp in frameSubs)
             {
-              kp.Value((int)_vp.frame);
+              //Debug.Log(Time.frameCount + " , " + kp.Key + " ? " + _vp.frame);
+
+              if (_vp.frame == kp.Key)
+              {
+                kp.Value((int)_vp.frame);
+              }
             }
           }
 
