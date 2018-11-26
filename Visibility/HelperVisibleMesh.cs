@@ -10,9 +10,8 @@ public class HelperVisibleMesh : HelperVisible
   MeshRenderer _render;
   TextMesh _label;
   
-  public HelperVisibleMesh(EngineObject parent) : base(parent)
-  {
-  }
+  public HelperVisibleMesh(EngineObject parent) : base(parent.transform, parent)
+  { }
 
   protected override Transform fetchCarrySymbol()
   {
@@ -39,7 +38,7 @@ public class HelperVisibleMesh : HelperVisible
     //no use of module visible if there is nothing to show
     if (_render == null)
     {
-      Debug.LogWarning("no render for <b>" + _owner.name+"</b>", _owner.gameObject);
+      Debug.LogWarning("no render for <b>" + _coroutineCarrier.name+"</b>", _coroutineCarrier.gameObject);
       return;
     }
 
@@ -76,7 +75,7 @@ public class HelperVisibleMesh : HelperVisible
   override protected void swapColor(Color col)
   {
     if (_mat == null) {
-      Debug.LogWarning("asking to swap color on null material for "+_owner.name, _owner.gameObject);
+      Debug.LogWarning("asking to swap color on null material for "+_coroutineCarrier.name, _coroutineCarrier.gameObject);
       return;
     }
 

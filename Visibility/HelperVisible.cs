@@ -15,27 +15,23 @@ abstract public class HelperVisible
   protected Rect _wbounds; // bounds expressed in world position
   protected Collider _collider;
 
-  protected MonoBehaviour _owner;
+  protected MonoBehaviour _coroutineCarrier; // needs to be able to call coroutines
   protected Transform _t;
   protected Transform _symbolCarry;
 
   protected Coroutine coFade;
 
-  public HelperVisible(MonoBehaviour parent)
+  public HelperVisible(Transform pivot, MonoBehaviour coroutineCarry)
   {
-    if (parent == null) Debug.LogError("no parent given ...");
+    _coroutineCarrier = coroutineCarry;
 
-    _owner = parent;
+    if (_coroutineCarrier == null) Debug.LogWarning("no coroutineCarry given ... won't be able to use coroutines ...");
+    
+    _t = pivot;
+    if (_t == null) Debug.LogError("no transform ?");
 
-    if(_owner.transform == null)
-    {
-      Debug.LogError(" ? no transform for " + _owner.name);
-    }
-
-    _t = _owner.transform;
-
-    _collider = _owner.GetComponent<Collider>();
-    if (_collider == null) _collider = _owner.GetComponentInChildren<Collider>();
+    _collider = _t.GetComponent<Collider>();
+    if (_collider == null) _collider = _t.GetComponentInChildren<Collider>();
     
     setup();
   }
@@ -89,11 +85,11 @@ abstract public class HelperVisible
   {
     if(coFade != null)
     {
-      _owner.StopCoroutine(coFade);
+      _coroutineCarrier.StopCoroutine(coFade);
       Debug.Log("cancelling old fading routine");
     }
     
-    coFade = _owner.StartCoroutine(processFadingDuration(targetAlpha, duration, onFadingDone, startingAlpha));
+    coFade = _coroutineCarrier.StartCoroutine(processFadingDuration(targetAlpha, duration, onFadingDone, startingAlpha));
   }
 
   protected IEnumerator processFadingDuration(float target, float duration, Action<float> onFadingDone = null, float? startingAlpha = null)
@@ -129,11 +125,11 @@ abstract public class HelperVisible
   {
     if (coFade != null)
     {
-      _owner.StopCoroutine(coFade);
+      _coroutineCarrier.StopCoroutine(coFade);
       //Debug.Log("cancelling old fading routine");
     }
 
-    coFade = _owner.StartCoroutine(processFadingSpeed(targetAlpha, speed, onFadingDone, startingAlpha));
+    coFade = _coroutineCarrier.StartCoroutine(processFadingSpeed(targetAlpha, speed, onFadingDone, startingAlpha));
   }
 
   protected IEnumerator processFadingSpeed(float target, float speed, Action<float> onFadingDone = null, float? startingAlpha = null)
@@ -177,7 +173,7 @@ abstract public class HelperVisible
   abstract public Bounds getSymbolBounds();
   
   public Bounds getColliderBounds() {
-    if(_collider == null) Debug.LogError("no collider for "+_owner.gameObject, _owner.gameObject);
+    if(_collider == null) Debug.LogError("no collider for "+_t.gameObject, _t.gameObject);
     return _collider.bounds;
   }
 

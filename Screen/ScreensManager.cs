@@ -92,6 +92,11 @@ public class ScreensManager {
     //Debug.Log("opening " + scName + " (filter ? " + filter + ")");
 
     ScreenObject selected = getScreen(scName);
+    if(selected == null)
+    {
+      Debug.LogError("no selected for " + scName);
+    }
+
     bool hideOthers = !selected.dontHideOtherOnShow;
 
     Debug.Log(selected.name + " visibilty to " + state+" (filter ? "+containsFilter+" | dont hide other ? "+selected.dontHideOtherOnShow+" => hide others ? "+hideOthers+")");

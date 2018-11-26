@@ -15,11 +15,11 @@ public class HelperVisibleUi : HelperVisible
   Image _img;
   Text _label;
 
-  public HelperVisibleUi(MonoBehaviour parent) : base(parent)
+  public HelperVisibleUi(MonoBehaviour parent) : base(parent.transform, parent)
   {
   }
 
-  public HelperVisibleUi(CanvasGroup group, MonoBehaviour carry) : base(carry)
+  public HelperVisibleUi(CanvasGroup group, MonoBehaviour carry) : base(group.transform, carry)
   {
     _group = group;
   }
@@ -33,7 +33,7 @@ public class HelperVisibleUi : HelperVisible
 
   protected override Transform fetchCarrySymbol()
   {
-    if (_render == null) Debug.LogError("no render ?", _owner.gameObject);
+    if (_render == null) Debug.LogError("no render ?", _coroutineCarrier.gameObject);
     return _render.transform;
   }
 

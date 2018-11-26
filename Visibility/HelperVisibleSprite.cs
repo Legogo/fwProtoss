@@ -10,9 +10,11 @@ public class HelperVisibleSprite : HelperVisible
   SpriteRenderer _renderSprite;
   public string sortingLayerName = "";
 
-  public HelperVisibleSprite(EngineObject parent) : base(parent)
-  {
-  }
+  public HelperVisibleSprite(EngineObject parent) : base(parent.transform, parent)
+  { }
+
+  public HelperVisibleSprite(Transform pivot) : base(pivot, null)
+  { }
 
   protected override Transform fetchCarrySymbol()
   {
@@ -56,7 +58,7 @@ public class HelperVisibleSprite : HelperVisible
   
   override public void setVisibility(bool flag)
   {
-    if (_renderSprite == null) Debug.LogError("no render sprite for " + _owner.name, _owner.gameObject);
+    if (_renderSprite == null) Debug.LogError("no render sprite for " + _coroutineCarrier.name, _coroutineCarrier.gameObject);
     _renderSprite.enabled = flag;
   }
 
@@ -79,7 +81,7 @@ public class HelperVisibleSprite : HelperVisible
 
   public override Bounds getSymbolBounds()
   {
-    if (_renderSprite == null) Debug.LogWarning("no render sprite for <b>" + _owner.name+"</b>", _owner);
+    if (_renderSprite == null) Debug.LogWarning("no render sprite for <b>" + _coroutineCarrier.name+"</b>", _coroutineCarrier);
     return _renderSprite.bounds;
   }
 }

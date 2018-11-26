@@ -8,13 +8,12 @@ public class HelperVisibleSkinned : HelperVisible {
   SkinnedMeshRenderer skinRender;
   Material mat;
 
-  public HelperVisibleSkinned(EngineObject parent) : base(parent)
-  {
-  }
+  public HelperVisibleSkinned(EngineObject parent) : base(parent.transform, parent)
+  { }
 
   protected override void fetchRenders()
   {
-    skinRender = _owner.GetComponentInChildren<SkinnedMeshRenderer>();
+    skinRender = _coroutineCarrier.GetComponentInChildren<SkinnedMeshRenderer>();
     mat = skinRender.material;
   }
 

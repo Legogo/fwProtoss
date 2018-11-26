@@ -53,7 +53,7 @@ abstract public class ArenaManager : EngineObject {
   
   virtual protected void onSystemPause(bool state)
   {
-    Debug.Log("system pause ! "+state);
+    //Debug.Log("system pause ! "+state);
 
     if (Application.isEditor)
     {
@@ -231,7 +231,7 @@ abstract public class ArenaManager : EngineObject {
     
     StartCoroutine(processEnd());
   }
-
+  
   IEnumerator processEnd()
   {
     IEnumerator ie = process_round_end();
