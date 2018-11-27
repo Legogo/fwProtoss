@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Video;
 
 /// <summary>
 /// at the end of the video it will be asked to loop at a specific frame
@@ -8,7 +9,7 @@ using UnityEngine;
 
 public class VideoPlayerLoop : VideoPlayerController {
 
-  public int loopAtFrame = 0;
+  public int[] loopAtFrame;
 
   protected bool loopedOnce = false;
 
@@ -18,11 +19,16 @@ public class VideoPlayerLoop : VideoPlayerController {
   {
     base.onPlay();
 
-    if (loopAtFrame > (int)videoPlayer.frameCount)
+    for (int i = 0; i < loopAtFrame.Length; i++)
     {
-      Debug.LogError("asking to loop at frame " + loopAtFrame + " but clip has " + videoPlayer.frameCount + " frames");
-      Debug.Log(videoPlayer.clip.name);
+      VideoClip clip = getClip(i);
+      if (loopAtFrame[i] > (int)clip.frameCount)
+      {
+        Debug.LogError("clip of index "+i+" asking to loop at frame " + loopAtFrame[i] + " but clip has " + clip.frameCount + " frames");
+        Debug.Log(clip.name);
+      }
     }
+    
   }
 
   protected override void onStop()
@@ -40,7 +46,8 @@ public class VideoPlayerLoop : VideoPlayerController {
     if (!loopedOnce) loopedOnce = true;
 
     //play(loopAtFrame);
-    setAtFrame(loopAtFrame);
+    int idx = getCurrentClipIndex();
+    setAtFrame(loopAtFrame[idx]);
   }
   
 }

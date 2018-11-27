@@ -40,8 +40,12 @@ public class ScreenObject : EngineObject
 
     //if (_canvas == null) Debug.LogError("wat ?");
 
+    // / ! \
+    //hide() will trigger modif of other component that are catched during build()
+
     //generic behavior, won't work for non sticky screens
-    hide();
+    //hide();
+
   }
 
   protected override void setupEarly()
@@ -58,6 +62,7 @@ public class ScreenObject : EngineObject
       }
     }
 
+    hide();
   }
 
   public void subscribeToPressedEvents(Action down, Action up, Action left, Action right)

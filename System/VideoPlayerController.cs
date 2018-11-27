@@ -9,11 +9,14 @@ public class VideoPlayerController : EngineObject {
 
   public VideoClip[] clips;
 
-  protected MeshRenderer canvas;
+  protected MeshRenderer meshCanvas;
   public VideoPlayer videoPlayer;
   protected VideoState _state;
 
   public bool skippable = false;
+  public bool hideOnStop = false;
+  //public bool keepLastFrameVisible = true;
+
   public Action onVideoEnd;
 
   public Dictionary<int, Action<int>> frameSubs;
@@ -23,10 +26,11 @@ public class VideoPlayerController : EngineObject {
   protected override void build()
   {
     base.build();
+
     videoPlayer = GetComponent<VideoPlayer>();
     if(clips != null && clips.Length > 9) videoPlayer.clip = clips[0];
 
-    canvas = HalperComponentsGenerics.getComponentContext<MeshRenderer>(transform, "canvas");
+    meshCanvas = HalperComponentsGenerics.getComponentContext<MeshRenderer>(transform, "canvas");
   }
 
   protected override void setup()
@@ -34,7 +38,7 @@ public class VideoPlayerController : EngineObject {
     base.setup();
     visibility.hide();
   }
-
+  
   public void setupClipAndPlay(int index)
   {
     stop();
@@ -64,6 +68,12 @@ public class VideoPlayerController : EngineObject {
     return VisibilityMode.MESH;
   }
 
+  public void playDefaultClip()
+  {
+    videoPlayer.clip = clips[0];
+    play();
+  }
+
   public void play()
   {
     play(0);
@@ -79,8 +89,10 @@ public class VideoPlayerController : EngineObject {
 
     videoPlayer.frame = frameHead;
     if(!videoPlayer.isPlaying) videoPlayer.Play();
-    
-    canvas.enabled = false;
+
+    videoPlayer.playbackSpeed = 1f;
+
+    meshCanvas.enabled = false;
 
     Debug.Log("video controller is now playing : " + videoPlayer.clip.name+" , head = "+frameHead);
 
@@ -89,6 +101,8 @@ public class VideoPlayerController : EngineObject {
 
   public void setAtFrame(int newFrame)
   {
+    if (!videoPlayer.isPlaying) videoPlayer.Play();
+
     videoPlayer.frame = newFrame;
     frameHead = newFrame;
     _state = VideoState.IDLE;
@@ -96,9 +110,30 @@ public class VideoPlayerController : EngineObject {
 
   public void stop()
   {
-    videoPlayer.Stop();
+    if(videoPlayer == null)
+    {
+      Debug.LogWarning("no video player ?");
+      return;
+    }
 
-    canvas.enabled = false;
+    /*
+    if (keepLastFrameVisible)
+    {
+      setAtFrame((int)videoPlayer.clip.frameCount);
+      
+      videoPlayer.playbackSpeed = 0f;
+
+      videoPlayer.frame = (long)videoPlayer.clip.frameCount;
+    }
+    */
+
+    if (videoPlayer != null) videoPlayer.Stop();
+
+    if (hideOnStop)
+    {
+      if (meshCanvas != null) meshCanvas.enabled = false;
+    }
+
   }
 
   public override void updateEngine()
@@ -127,9 +162,9 @@ public class VideoPlayerController : EngineObject {
           }
         }
 
-        if (videoPlayer.frame > 2 && !canvas.enabled)
+        if (videoPlayer.frame > 2 && !meshCanvas.enabled)
         {
-          canvas.enabled = true;
+          meshCanvas.enabled = true;
         }
 
         //le video player met plusieurs frame a bien se resynchro
@@ -150,8 +185,8 @@ public class VideoPlayerController : EngineObject {
         {
           checkFrame();
         }
-        
-        //Debug.Log(_vp.frame + " / " + _vp.frameCount);
+
+        //Debug.Log(videoPlayer.frame + " / " + videoPlayer.frameCount);
 
         if ((int)videoPlayer.frame >= (int)videoPlayer.frameCount) // at last frame of video
         {
@@ -176,20 +211,39 @@ public class VideoPlayerController : EngineObject {
   protected void checkFrame()
   {
     //Debug.Log("checking callbacks for frame : " + frameHead);
-
-    foreach (KeyValuePair<int, Action<int>> kp in frameSubs)
+    if (frameSubs != null)
     {
-      if (frameHead == kp.Key)
-      {
-        //Debug.Log("  L callback !");
 
-        kp.Value((int)frameHead);
+      foreach (KeyValuePair<int, Action<int>> kp in frameSubs)
+      {
+        if (frameHead == kp.Key)
+        {
+          //Debug.Log("  L callback !");
+
+          kp.Value((int)frameHead);
+        }
       }
+
     }
 
     frameHead++;
   }
+
+
+  protected VideoClip getClip(int idx)
+  {
+    return clips[idx];
+  }
   
+  protected int getCurrentClipIndex()
+  {
+    for (int i = 0; i < clips.Length; i++)
+    {
+      if (clips[i] == videoPlayer.clip) return i;
+    }
+    return -1;
+  }
+
   virtual protected void onResume()
   {
     _state = VideoState.PLAY;
@@ -214,7 +268,7 @@ public class VideoPlayerController : EngineObject {
     if(!videoPlayer.isLooping)
     {
       _state = VideoState.END;
-
+      
       stop(); // not visible
     }
 
