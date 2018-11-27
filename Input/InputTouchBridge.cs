@@ -467,6 +467,18 @@ namespace fwp.input
       return "<color=lightblue>InputTB</color> | ";
     }
 
+    static public Vector2 getCursorPosition()
+    {
+      InputTouchBridge itb = InputTouchBridge.get();
+
+      if(itb != null && itb.countFingers() > 0)
+      {
+        return getDefaultFinger().screenPosition;
+      }
+
+      return Input.mousePosition;
+    }
+
     static protected InputTouchBridge manager;
     static public InputTouchBridge get()
     {
