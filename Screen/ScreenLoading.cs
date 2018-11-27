@@ -45,6 +45,11 @@ public class ScreenLoading : ScreenObject {
     show();
   }
   
+  static public void showLoadingScreen()
+  {
+    _instance.show();
+  }
+
   static public void hideLoadingScreen()
   {
     Debug.Log("hiding loading screen through static call");

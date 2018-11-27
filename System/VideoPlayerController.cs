@@ -10,9 +10,10 @@ public class VideoPlayerController : EngineObject {
   public VideoClip[] clips;
 
   protected MeshRenderer canvas;
-  protected VideoPlayer _vp;
+  public VideoPlayer videoPlayer;
   protected VideoState _state;
 
+  public bool skippable = false;
   public Action onVideoEnd;
 
   public Dictionary<int, Action<int>> frameSubs;
@@ -24,8 +25,8 @@ public class VideoPlayerController : EngineObject {
   protected override void build()
   {
     base.build();
-    _vp = GetComponent<VideoPlayer>();
-    if(clips != null && clips.Length > 9) _vp.clip = clips[0];
+    videoPlayer = GetComponent<VideoPlayer>();
+    if(clips != null && clips.Length > 9) videoPlayer.clip = clips[0];
 
     canvas = HalperComponentsGenerics.getComponentContext<MeshRenderer>(transform, "canvas");
   }
@@ -39,7 +40,7 @@ public class VideoPlayerController : EngineObject {
   public void setupClipAndPlay(int index)
   {
     stop();
-    _vp.clip = clips[index];
+    videoPlayer.clip = clips[index];
     play();
   }
 
@@ -53,6 +54,8 @@ public class VideoPlayerController : EngineObject {
     }
 
     frameSubs[frame] += callback;
+
+    Debug.Log("    subscribed at frame " + frame + " in video " + videoPlayer.clip.name);
   }
 
   protected override VisibilityMode getVisibilityType()
@@ -64,23 +67,28 @@ public class VideoPlayerController : EngineObject {
   {
     _state = VideoState.IDLE;
 
-    _vp.frame = 0; // at start
-    _vp.Play();
+    videoPlayer.frame = 0; // at start
+    videoPlayer.Play();
 
     canvas.enabled = false;
+
+    if(debugLogs) Debug.Log("video controller is now playing : " + videoPlayer.clip.name);
+
     //onPlay();
   }
 
   public void stop()
   {
-    _vp.Stop();
+    videoPlayer.Stop();
+
+    canvas.enabled = false;
   }
 
   public void play(int startAtFrame = 0)
   {
     _state = VideoState.IDLE;
-    if (startAtFrame > 0) _vp.frame = startAtFrame;
-    _vp.Play();
+    if (startAtFrame > 0) videoPlayer.frame = startAtFrame;
+    videoPlayer.Play();
     //onPlay();
   }
 
@@ -94,47 +102,62 @@ public class VideoPlayerController : EngineObject {
 
         //Debug.Log(_vp.isPrepared+" , "+_vp.isPlaying);
 
-        if(_vp.isPlaying)
+        if(videoPlayer.isPlaying)
         {
-          canvas.enabled = true;
           onPlay();
         }
 
         break;
       case VideoState.PLAY:
-        
-        //sometimes the player stay at the same video frame for multiple engine frame
-        if(previousFrame != _vp.frame)
+
+        if (skippable)
         {
-          if(frameSubs != null)
+          if (Input.GetMouseButtonUp(0))
+          {
+            Debug.Log("skipped video : " + videoPlayer.clip.name);
+            videoPlayer.frame = (long)videoPlayer.clip.frameCount - 3;
+          }
+          
+        }
+
+        //sometimes the player stay at the same video frame for multiple engine frame
+        if (previousFrame != videoPlayer.frame)
+        {
+
+          if (videoPlayer.frame > 2 && !canvas.enabled)
+          {
+            canvas.enabled = true;
+          }
+
+          if (frameSubs != null)
           {
             foreach (KeyValuePair<int, Action<int>> kp in frameSubs)
             {
               //Debug.Log(Time.frameCount + " , " + kp.Key + " ? " + _vp.frame);
 
-              if (_vp.frame == kp.Key)
+              if (videoPlayer.frame == kp.Key)
               {
-                kp.Value((int)_vp.frame);
+                kp.Value((int)videoPlayer.frame);
               }
             }
           }
 
-          previousFrame = _vp.frame;
+          previousFrame = videoPlayer.frame;
         }
         //Debug.Log(_vp.frame + " / " + _vp.frameCount);
 
-        if ((int)_vp.frame >= (int)_vp.frameCount) // at last frame of video
+        if ((int)videoPlayer.frame >= (int)videoPlayer.frameCount) // at last frame of video
         {
           onEnd();
         }
-        else if (!_vp.isPlaying) // not at end of video and not playing
+        else if (!videoPlayer.isPlaying) // not at end of video and not playing
         {
           onStop();
         }
         
         break;
       case VideoState.STOP:
-        if(_vp.isPlaying)
+        if(videoPlayer.isPlaying)
         {
           onResume();
         }
@@ -146,30 +169,32 @@ public class VideoPlayerController : EngineObject {
   virtual protected void onResume()
   {
     _state = VideoState.PLAY;
-    if(debugLogs) Debug.Log(_vp.clip.name + " | resume | at frame : "+_vp.frame);
+    if(debugLogs) Debug.Log(videoPlayer.clip.name + " | resume | at frame : "+videoPlayer.frame);
     
   }
   virtual protected void onPlay()
   {
     _state = VideoState.PLAY;
-    if (debugLogs) Debug.Log(_vp.clip.name+" | play | at frame : "+_vp.frame+" | total frames : "+_vp.frameCount);
+    if (debugLogs) Debug.Log(videoPlayer.clip.name+" | play | at frame : "+videoPlayer.frame+" | total frames : "+videoPlayer.frameCount);
 
     visibility.show();
   }
   virtual protected void onStop()
   {
     _state = VideoState.STOP;
-    if (debugLogs) Debug.Log(_vp.clip.name + " | stop");
+    if (debugLogs) Debug.Log(videoPlayer.clip.name + " | stop");
   }
   
   virtual protected void onEnd()
   {
-    if(!_vp.isLooping)
+    if(!videoPlayer.isLooping)
     {
       _state = VideoState.END;
+
+      stop(); // not visible
     }
 
-    if(debugLogs) Debug.Log(_vp.clip.name + " | end | loop ? "+_vp.isLooping);
+    if(debugLogs) Debug.Log(videoPlayer.clip.name + " | end | loop ? "+videoPlayer.isLooping);
 
     if (onVideoEnd != null) onVideoEnd();
   }

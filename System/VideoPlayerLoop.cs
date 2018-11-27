@@ -18,10 +18,10 @@ public class VideoPlayerLoop : VideoPlayerController {
   {
     base.onPlay();
 
-    if (loopAtFrame > (int)_vp.frameCount)
+    if (loopAtFrame > (int)videoPlayer.frameCount)
     {
-      Debug.LogError("asking to loop at frame " + loopAtFrame + " but clip has " + _vp.frameCount + " frames");
-      Debug.Log(_vp.clip.name);
+      Debug.LogError("asking to loop at frame " + loopAtFrame + " but clip has " + videoPlayer.frameCount + " frames");
+      Debug.Log(videoPlayer.clip.name);
     }
   }
 
