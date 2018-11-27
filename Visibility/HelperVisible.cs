@@ -25,7 +25,7 @@ abstract public class HelperVisible
   {
     _coroutineCarrier = coroutineCarry;
 
-    if (_coroutineCarrier == null) Debug.LogWarning("no coroutineCarry given ... won't be able to use coroutines ...");
+    //if (_coroutineCarrier == null) Debug.LogWarning("no coroutineCarry given ... won't be able to use coroutines ...");
     
     _t = pivot;
     if (_t == null) Debug.LogError("no transform ?");

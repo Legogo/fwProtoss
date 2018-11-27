@@ -98,21 +98,15 @@ abstract public class ArenaObject : EngineObject {
   {
   }
 
-  public void spawn(Vector3? position)
+  public void spawn(Vector3 position)
   {
-    if (position == null)
-    {
-      Debug.LogWarning("Object "+name+" has no given position for spawn", gameObject);
-      return;
-    }
+    transform.position = position;
 
-    Vector3 pos = (Vector3)position;
-    transform.position = pos;
+    //Debug.Log(name + " spawn at "+ transform.position);
 
-    //Debug.Log(name + " spawn");
     setFreeze(false);
     
-    spawnProcess(pos);
+    spawnProcess(transform.position);
   }
 
   virtual protected void spawnProcess(Vector3 position)

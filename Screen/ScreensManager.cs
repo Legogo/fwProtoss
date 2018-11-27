@@ -94,7 +94,7 @@ public class ScreensManager {
     ScreenObject selected = getScreen(scName);
     if(selected == null)
     {
-      Debug.LogError("no selected for " + scName);
+      Debug.LogError("no 'selected' returned for " + scName);
       return;
     }
 
