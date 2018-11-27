@@ -39,7 +39,8 @@ public class VideoPlayerLoop : VideoPlayerController {
 
     if (!loopedOnce) loopedOnce = true;
 
-    play(loopAtFrame);
+    //play(loopAtFrame);
+    setAtFrame(loopAtFrame);
   }
   
 }

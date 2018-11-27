@@ -147,17 +147,13 @@ abstract public class ArenaObject : EngineObject {
   }
 
   virtual protected void updateArenaMenu()
-  {
-
-  }
-
+  { }
   virtual protected void updateArenaEnd()
-  {
-
-  }
-
-  virtual protected void updateArenaLive(float timeStamp){}
-  virtual protected void updateArenaLiveLate(float timeStamp){}
+  { }
+  virtual protected void updateArenaLive(float timeStamp)
+  { }
+  virtual protected void updateArenaLiveLate(float timeStamp)
+  { }
 
   /* déclanche le process de collect quand l'objet touche l'avatar */
   protected void update_collectable()
@@ -181,6 +177,8 @@ abstract public class ArenaObject : EngineObject {
     string ct = base.toString();
 
     ct += "\n~ArenaObject~";
+
+    ct += "\n  " + iStringFormatBool("engine paused ? ", EngineManager.isPaused());
 
     if (_arena != null)
     {

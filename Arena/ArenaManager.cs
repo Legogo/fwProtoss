@@ -115,9 +115,9 @@ abstract public class ArenaManager : EngineObject {
     {
       arenaObjects[i].arena_round_restart();
     }
-    
-    _state = ArenaState.LIVE;
-    //onRoundPause(false); // this will make state to live AND tell all AO to stop pausing
+
+    //_state = ArenaState.LIVE;
+    onRoundPause(false); // this will make state to live AND tell all AO to stop pausing
   }
 
   public override void updateEngine()

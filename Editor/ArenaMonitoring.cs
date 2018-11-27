@@ -24,6 +24,8 @@ public class ArenaMonitoring : EditorWindow
       return;
     }
 
+    GUILayout.Label("  engine paused ? " + EngineManager.isPaused());
+
     ArenaManager am = ArenaManager.get();
 
     GUILayout.Label("status");

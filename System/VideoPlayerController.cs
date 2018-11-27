@@ -18,10 +18,8 @@ public class VideoPlayerController : EngineObject {
 
   public Dictionary<int, Action<int>> frameSubs;
 
-  protected long previousFrame = 0;
-
-  public bool debugLogs = false;
-
+  protected long frameHead = 0;
+  
   protected override void build()
   {
     base.build();
@@ -41,6 +39,9 @@ public class VideoPlayerController : EngineObject {
   {
     stop();
     videoPlayer.clip = clips[index];
+
+    Debug.Log("swapped video for " + videoPlayer.clip.name);
+
     play();
   }
 
@@ -65,16 +66,32 @@ public class VideoPlayerController : EngineObject {
 
   public void play()
   {
+    play(0);
+    
+    //onPlay();
+  }
+
+  public void play(int startAtFrame = 0)
+  {
     _state = VideoState.IDLE;
 
-    videoPlayer.frame = 0; // at start
-    videoPlayer.Play();
+    frameHead = startAtFrame;
 
+    videoPlayer.frame = frameHead;
+    if(!videoPlayer.isPlaying) videoPlayer.Play();
+    
     canvas.enabled = false;
 
-    if(debugLogs) Debug.Log("video controller is now playing : " + videoPlayer.clip.name);
+    Debug.Log("video controller is now playing : " + videoPlayer.clip.name+" , head = "+frameHead);
 
     //onPlay();
+  }
+
+  public void setAtFrame(int newFrame)
+  {
+    videoPlayer.frame = newFrame;
+    frameHead = newFrame;
+    _state = VideoState.IDLE;
   }
 
   public void stop()
@@ -84,14 +101,6 @@ public class VideoPlayerController : EngineObject {
     canvas.enabled = false;
   }
 
-  public void play(int startAtFrame = 0)
-  {
-    _state = VideoState.IDLE;
-    if (startAtFrame > 0) videoPlayer.frame = startAtFrame;
-    videoPlayer.Play();
-    //onPlay();
-  }
-
   public override void updateEngine()
   {
     base.updateEngine();
@@ -99,9 +108,8 @@ public class VideoPlayerController : EngineObject {
     switch (_state)
     {
       case VideoState.IDLE:
-
-        //Debug.Log(_vp.isPrepared+" , "+_vp.isPlaying);
-
+        
+        //on att que le vp commence a jouer pour balancer l'event
         if(videoPlayer.isPlaying)
         {
           onPlay();
@@ -117,33 +125,32 @@ public class VideoPlayerController : EngineObject {
             Debug.Log("skipped video : " + videoPlayer.clip.name);
             videoPlayer.frame = (long)videoPlayer.clip.frameCount - 3;
           }
-          
         }
+
+        if (videoPlayer.frame > 2 && !canvas.enabled)
+        {
+          canvas.enabled = true;
+        }
+
+        //le video player met plusieurs frame a bien se resynchro
+        if (frameHead > videoPlayer.frame) return;
+
+        /*
+        if(frameHead > videoPlayer.frame)
+        {
+          Debug.LogWarning("frame head is after current video player frame ???");
+          Debug.Log("  L clip ? "+videoPlayer.clip.name + " | playing ? " + videoPlayer.isPlaying);
+          Debug.Log("  L state ? "+_state+" | head ? "+frameHead+" / vp frame ? "+ videoPlayer.frame, videoPlayer.transform);
+          return;
+        }
+        */
 
         //sometimes the player stay at the same video frame for multiple engine frame
-        if (previousFrame != videoPlayer.frame)
+        while (frameHead < videoPlayer.frame)
         {
-
-          if (videoPlayer.frame > 2 && !canvas.enabled)
-          {
-            canvas.enabled = true;
-          }
-
-          if (frameSubs != null)
-          {
-            foreach (KeyValuePair<int, Action<int>> kp in frameSubs)
-            {
-              //Debug.Log(Time.frameCount + " , " + kp.Key + " ? " + _vp.frame);
-
-              if (videoPlayer.frame == kp.Key)
-              {
-                kp.Value((int)videoPlayer.frame);
-              }
-            }
-          }
-
-          previousFrame = videoPlayer.frame;
+          checkFrame();
         }
+        
         //Debug.Log(_vp.frame + " / " + _vp.frameCount);
 
         if ((int)videoPlayer.frame >= (int)videoPlayer.frameCount) // at last frame of video
@@ -165,24 +172,41 @@ public class VideoPlayerController : EngineObject {
     }
     
   }
+
+  protected void checkFrame()
+  {
+    //Debug.Log("checking callbacks for frame : " + frameHead);
+
+    foreach (KeyValuePair<int, Action<int>> kp in frameSubs)
+    {
+      if (frameHead == kp.Key)
+      {
+        //Debug.Log("  L callback !");
+
+        kp.Value((int)frameHead);
+      }
+    }
+
+    frameHead++;
+  }
   
   virtual protected void onResume()
   {
     _state = VideoState.PLAY;
-    if(debugLogs) Debug.Log(videoPlayer.clip.name + " | resume | at frame : "+videoPlayer.frame);
+    Debug.Log(videoPlayer.clip.name + " | resume | at frame : "+videoPlayer.frame);
     
   }
   virtual protected void onPlay()
   {
     _state = VideoState.PLAY;
-    if (debugLogs) Debug.Log(videoPlayer.clip.name+" | play | at frame : "+videoPlayer.frame+" | total frames : "+videoPlayer.frameCount);
+    Debug.Log(videoPlayer.clip.name+" | <b>onPlay</b> | at frame : "+videoPlayer.frame+" | total frames : "+videoPlayer.frameCount);
 
     visibility.show();
   }
   virtual protected void onStop()
   {
     _state = VideoState.STOP;
-    if (debugLogs) Debug.Log(videoPlayer.clip.name + " | stop");
+    Debug.Log(videoPlayer.clip.name + " | stop");
   }
   
   virtual protected void onEnd()
@@ -194,7 +218,8 @@ public class VideoPlayerController : EngineObject {
       stop(); // not visible
     }
 
-    if(debugLogs) Debug.Log(videoPlayer.clip.name + " | end | loop ? "+videoPlayer.isLooping);
+    Debug.Log(videoPlayer.clip.name + " | end | loop ? "+videoPlayer.isLooping);
+    frameHead = 0;
 
     if (onVideoEnd != null) onVideoEnd();
   }
