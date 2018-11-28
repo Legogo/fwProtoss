@@ -15,9 +15,9 @@ public class VideoPlayerLoop : VideoPlayerController {
 
   public Action onVideoLoopFirstTime;
   
-  protected override void onPlay()
+  protected override void eventPlay()
   {
-    base.onPlay();
+    base.eventPlay();
 
     for (int i = 0; i < loopAtFrame.Length; i++)
     {
@@ -31,15 +31,15 @@ public class VideoPlayerLoop : VideoPlayerController {
     
   }
 
-  protected override void onStop()
+  protected override void eventStop()
   {
-    base.onStop();
+    base.eventStop();
     loopedOnce = false;
   }
 
-  protected override void onEnd()
+  protected override void eventEnd()
   {
-    base.onEnd();
+    base.eventEnd();
     
     if (!loopedOnce && onVideoLoopFirstTime != null) onVideoLoopFirstTime();
 

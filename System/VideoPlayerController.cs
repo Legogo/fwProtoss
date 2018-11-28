@@ -17,6 +17,7 @@ public class VideoPlayerController : EngineObject {
   public bool hideOnStop = false;
   //public bool keepLastFrameVisible = true;
 
+  public Action onPlay; // when the video started
   public Action onVideoEnd;
 
   public Dictionary<int, Action<int>> frameSubs;
@@ -145,9 +146,9 @@ public class VideoPlayerController : EngineObject {
       case VideoState.IDLE:
         
         //on att que le vp commence a jouer pour balancer l'event
-        if(videoPlayer.isPlaying)
+        if(videoPlayer.isPlaying && videoPlayer.frame > 1)
         {
-          onPlay();
+          eventPlay();
         }
 
         break;
@@ -190,18 +191,18 @@ public class VideoPlayerController : EngineObject {
 
         if ((int)videoPlayer.frame >= (int)videoPlayer.frameCount) // at last frame of video
         {
-          onEnd();
+          eventEnd();
         }
         else if (!videoPlayer.isPlaying) // not at end of video and not playing
         {
-          onStop();
+          eventStop();
         }
         
         break;
       case VideoState.STOP:
         if(videoPlayer.isPlaying)
         {
-          onResume();
+          eventResume();
         }
         break;
     }
@@ -244,26 +245,27 @@ public class VideoPlayerController : EngineObject {
     return -1;
   }
 
-  virtual protected void onResume()
+  virtual protected void eventResume()
   {
     _state = VideoState.PLAY;
-    Debug.Log(videoPlayer.clip.name + " | resume | at frame : "+videoPlayer.frame);
-    
+    Debug.Log(videoPlayer.clip.name + " | <b>eventResume</b> | at frame : " + videoPlayer.frame);
   }
-  virtual protected void onPlay()
+  virtual protected void eventPlay()
   {
     _state = VideoState.PLAY;
-    Debug.Log(videoPlayer.clip.name+" | <b>onPlay</b> | at frame : "+videoPlayer.frame+" | total frames : "+videoPlayer.frameCount);
+    Debug.Log(videoPlayer.clip.name+ " | <b>eventPlay</b> | at frame : " + videoPlayer.frame+" | total frames : "+videoPlayer.frameCount);
 
     visibility.show();
+
+    if (onPlay != null) onPlay();
   }
-  virtual protected void onStop()
+  virtual protected void eventStop()
   {
     _state = VideoState.STOP;
-    Debug.Log(videoPlayer.clip.name + " | stop");
+    Debug.Log(videoPlayer.clip.name + " | eventStop");
   }
   
-  virtual protected void onEnd()
+  virtual protected void eventEnd()
   {
     if(!videoPlayer.isLooping)
     {
@@ -272,7 +274,7 @@ public class VideoPlayerController : EngineObject {
       stop(); // not visible
     }
 
-    Debug.Log(videoPlayer.clip.name + " | end | loop ? "+videoPlayer.isLooping);
+    Debug.Log(videoPlayer.clip.name + " | eventEnd | loop ? " + videoPlayer.isLooping);
     frameHead = 0;
 
     if (onVideoEnd != null) onVideoEnd();

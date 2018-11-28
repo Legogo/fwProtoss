@@ -224,7 +224,7 @@ public class ScreenObject : EngineObject
   
   public void forceHide()
   {
-    Debug.Log("  <color=white>forceHide()</color> <b>" + name + "</b>");
+    //Debug.Log("  <color=white>forceHide()</color> <b>" + name + "</b>");
 
     //dans le cas où y a pas que des canvas
     //ou qu'il y a une seule camera ppale et qu'il faut aligner les choses à 0f
