@@ -43,6 +43,7 @@ public class HelperVisibleSprite : HelperVisible
 
   public void setSprite(Sprite newSprite)
   {
+    if (_renderSprite == null) return;
     _renderSprite.sprite = newSprite;
   }
   

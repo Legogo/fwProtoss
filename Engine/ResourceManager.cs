@@ -82,7 +82,7 @@ public class ResourceManager {
     {
       obj.transform.SetParent(go.transform.parent);
 
-      Debug.Log(obj.name + " is child of " + go.name + " parent : " + go.transform.parent.name, obj.transform);
+      Debug.Log("ResourceManager :: canvas item :: "+ obj.name + " is child of " + go.name + " parent : " + go.transform.parent.name, obj.transform);
     }
     //else Debug.LogWarning("no canvas for " + nm, obj.transform);
 

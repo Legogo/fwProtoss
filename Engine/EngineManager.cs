@@ -34,6 +34,9 @@ public class EngineManager : MonoBehaviour {
   public int application_targetFramerate = -1;
   public bool log_device_info = true;
 
+  [Header("mobile specifics")]
+  public bool mobile_never_sleep = false;
+
   [Header("sound")]
   public AudioMixer mixer;
   public DataSounds sounds;
@@ -50,11 +53,14 @@ public class EngineManager : MonoBehaviour {
 
     if(application_targetFramerate > 0)
     {
-      Debug.LogWarning("~EngineManager~ overriding target <b>framerate to " + application_targetFramerate+"</b>");
+      Debug.LogWarning(getStamp()+" overriding target <b>framerate to " + application_targetFramerate+"</b>");
       Application.targetFrameRate = application_targetFramerate;
     }
 
     Debug.Log(GlobalSettingsSystem.getSystemInfo());
+
+    Screen.sleepTimeout = (mobile_never_sleep) ? SleepTimeout.NeverSleep : SleepTimeout.SystemSetting;
+    Debug.Log(getStamp() + " sleep timeout is setup to : " + Screen.sleepTimeout);
 
     state_loading = true;
     state_live = false;
@@ -83,7 +89,7 @@ public class EngineManager : MonoBehaviour {
   {
     ResourceManager.reload();
     
-    Debug.Log("~EngineManager~ <color=orange># SCENES LOADED #</color>");
+    Debug.Log(getStamp()+ "engine_scenes_loaded()");
 
     state_loading = false;
     
@@ -141,7 +147,7 @@ public class EngineManager : MonoBehaviour {
 
   void processUpdateObjectsDebug(List<EngineObject> objects)
   {
-    Debug.Log("UBER update (" + objects.Count+")");
+    Debug.Log(getStamp()+" UBER update (" + objects.Count+")");
 
     string updateData = "";
     string updateDataFilter = "timer";
@@ -169,7 +175,7 @@ public class EngineManager : MonoBehaviour {
       count++;
     }
 
-    Debug.Log("updated " + count + " objects");
+    Debug.Log(getStamp()+"updated " + count + " objects");
     Debug.Log(updateData);
 
   }
@@ -204,6 +210,11 @@ public class EngineManager : MonoBehaviour {
   public string toStringDebug()
   {
     return name + " live ? " + isLive();
+  }
+
+  static protected string getStamp()
+  {
+    return "<color=orange>EngineManager</color> | ";
   }
   
   static protected EngineManager _manager;
