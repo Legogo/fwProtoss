@@ -83,6 +83,8 @@ public class HelperVisibleMesh : HelperVisible
   
   protected Material getSharedMaterialOfName(string containsName)
   {
+    if (_render == null) Debug.LogError("no render ? "+containsName);
+
     for (int i = 0; i < _render.sharedMaterials.Length; i++)
     {
       if (_render.sharedMaterials[i].name.Contains(containsName)) return _render.sharedMaterials[i];

@@ -15,6 +15,8 @@ public class VideoPlayerController : EngineObject {
 
   public bool skippable = false;
   public bool hideOnStop = false;
+
+  public float scale = 1f;
   //public bool keepLastFrameVisible = true;
 
   public Action onPlay; // when the video started
@@ -31,7 +33,14 @@ public class VideoPlayerController : EngineObject {
     videoPlayer = GetComponent<VideoPlayer>();
     if(clips != null && clips.Length > 9) videoPlayer.clip = clips[0];
 
-    meshCanvas = HalperComponentsGenerics.getComponentContext<MeshRenderer>(transform, "canvas");
+    meshCanvas = transform.GetComponentInChildren<MeshRenderer>();
+    videoPlayer.targetMaterialRenderer = meshCanvas;
+
+    Vector3 lScale =  meshCanvas.transform.localScale;
+    lScale *= scale;
+    meshCanvas.transform.localScale = lScale;
+
+    //meshCanvas = HalperComponentsGenerics.getComponentContext<MeshRenderer>(transform, "canvas");
   }
 
   protected override void setup()
