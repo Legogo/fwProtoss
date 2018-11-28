@@ -44,9 +44,9 @@ public class HelperVisibleMesh : HelperVisible
 
     if (_render != null)
     {
-      //isolate material
-      _mat = _render.material;
-      _render.material = _mat;
+      //default is shared material
+      _mat = _render.sharedMaterial;
+      //_render.material = _mat;
     }
     
     ///// text
@@ -56,6 +56,15 @@ public class HelperVisibleMesh : HelperVisible
     {
       _render = _label.GetComponent<MeshRenderer>();
     }
+  }
+
+  /// <summary>
+  /// make material uniq
+  /// </summary>
+  public void isolateMaterial()
+  {
+    _mat = _render.material;
+    _render.material = _mat;
   }
   
   // on peut pas utiliser transform.localScale a cause de la valeur qui varie quand on change de parent
@@ -70,6 +79,34 @@ public class HelperVisibleMesh : HelperVisible
 
     //fallback
     return Color.white;
+  }
+  
+  protected Material getSharedMaterialOfName(string containsName)
+  {
+    for (int i = 0; i < _render.sharedMaterials.Length; i++)
+    {
+      if (_render.sharedMaterials[i].name.Contains(containsName)) return _render.sharedMaterials[i];
+    }
+
+    Debug.LogWarning("no material with name " + containsName + " found on " + _render, _render.transform);
+
+    return null;
+  }
+
+  /// <summary>
+  /// if name is provided it will be applied to shared material
+  /// </summary>
+  /// <param name="tex"></param>
+  /// <param name="materialName"></param>
+  public void setMainTexture(Texture tex, string materialName = "")
+  {
+    Material targetMaterial = _mat;
+    if(materialName.Length > 0)
+    {
+      targetMaterial = getSharedMaterialOfName(materialName);
+    }
+
+    if(targetMaterial != null) targetMaterial.mainTexture = tex;
   }
   
   override protected void swapColor(Color col)

@@ -45,7 +45,7 @@ public class VideoPlayerController : EngineObject {
     stop();
     videoPlayer.clip = clips[index];
 
-    Debug.Log("swapped video for " + videoPlayer.clip.name);
+    Debug.Log(getStamp()+"swapped video (index : "+ index+") for " + videoPlayer.clip.name);
 
     play();
   }
@@ -61,7 +61,7 @@ public class VideoPlayerController : EngineObject {
 
     frameSubs[frame] += callback;
 
-    Debug.Log("    subscribed at frame " + frame + " in video " + videoPlayer.clip.name);
+    Debug.Log(getStamp()+"    subscribed at frame " + frame + " in video " + videoPlayer.clip.name);
   }
 
   protected override VisibilityMode getVisibilityType()
@@ -95,7 +95,7 @@ public class VideoPlayerController : EngineObject {
 
     meshCanvas.enabled = false;
 
-    Debug.Log("video controller is now playing : " + videoPlayer.clip.name+" , head = "+frameHead);
+    Debug.Log(getStamp() + "video controller is now playing : " + videoPlayer.clip.name+" , head = "+frameHead);
 
     //onPlay();
   }
@@ -113,7 +113,7 @@ public class VideoPlayerController : EngineObject {
   {
     if(videoPlayer == null)
     {
-      Debug.LogWarning("no video player ?");
+      Debug.LogWarning(getStamp() + "no video player ?");
       return;
     }
 
@@ -158,7 +158,7 @@ public class VideoPlayerController : EngineObject {
         {
           if (Input.GetMouseButtonUp(0))
           {
-            Debug.Log("skipped video : " + videoPlayer.clip.name);
+            Debug.Log(getStamp() + "skipped video : " + videoPlayer.clip.name);
             videoPlayer.frame = (long)videoPlayer.clip.frameCount - 3;
           }
         }
@@ -248,12 +248,12 @@ public class VideoPlayerController : EngineObject {
   virtual protected void eventResume()
   {
     _state = VideoState.PLAY;
-    Debug.Log(videoPlayer.clip.name + " | <b>eventResume</b> | at frame : " + videoPlayer.frame);
+    Debug.Log(getStamp() + videoPlayer.clip.name + " | <b>eventResume</b> | at frame : " + videoPlayer.frame);
   }
   virtual protected void eventPlay()
   {
     _state = VideoState.PLAY;
-    Debug.Log(videoPlayer.clip.name+ " | <b>eventPlay</b> | at frame : " + videoPlayer.frame+" | total frames : "+videoPlayer.frameCount);
+    Debug.Log(getStamp() + videoPlayer.clip.name+ " | <b>eventPlay</b> | at frame : " + videoPlayer.frame+" | total frames : "+videoPlayer.frameCount);
 
     visibility.show();
 
@@ -262,7 +262,7 @@ public class VideoPlayerController : EngineObject {
   virtual protected void eventStop()
   {
     _state = VideoState.STOP;
-    Debug.Log(videoPlayer.clip.name + " | eventStop");
+    Debug.Log(getStamp() + videoPlayer.clip.name + " | eventStop");
   }
   
   virtual protected void eventEnd()
@@ -274,10 +274,14 @@ public class VideoPlayerController : EngineObject {
       stop(); // not visible
     }
 
-    Debug.Log(videoPlayer.clip.name + " | eventEnd | loop ? " + videoPlayer.isLooping);
+    Debug.Log(getStamp() + videoPlayer.clip.name + " | eventEnd | loop ? " + videoPlayer.isLooping);
     frameHead = 0;
 
     if (onVideoEnd != null) onVideoEnd();
   }
   
+  static protected string getStamp()
+  {
+    return "<color=yellow>fwp VideoPlayer</color> | ";
+  }
 }
