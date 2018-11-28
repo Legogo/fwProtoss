@@ -64,10 +64,16 @@ public class ResourceManager {
   /// </summary>
   static public T getDuplicate<T>(string nm, string rename = "") where T : Component
   {
+    if(nm.Length <= 0)
+    {
+      Debug.LogError("you need to provide a name to find a ressource");
+      return null;
+    }
+
     GameObject obj = getDuplicate(nm, rename);
     if (obj == null)
     {
-      Debug.LogWarning("no object found in resources named : <b>" + nm+"</b>");
+      Debug.LogWarning("no object found in resources named : '<b>" + nm+"</b>'");
       return default(T);
     }
     
