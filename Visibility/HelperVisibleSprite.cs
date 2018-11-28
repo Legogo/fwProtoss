@@ -58,7 +58,11 @@ public class HelperVisibleSprite : HelperVisible
   
   override public void setVisibility(bool flag)
   {
-    if (_renderSprite == null) Debug.LogError("no render sprite for " + _coroutineCarrier.name, _coroutineCarrier.gameObject);
+    if (_renderSprite == null)
+    {
+      Debug.LogWarning("no render sprite for " + _coroutineCarrier.name, _coroutineCarrier.gameObject);
+      return;
+    }
     _renderSprite.enabled = flag;
   }
 

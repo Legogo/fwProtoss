@@ -246,7 +246,7 @@ public class ScreenObject : EngineObject
     Debug.Log(getStamp()+" calling <b>home screen</b>");
 
     ArenaManager.get().cancelEndProcess(); // if arena was showing an ending screen, kill this process
-    
+
     ScreensManager.open(ScreensManager.ScreenNames.home);
   }
 

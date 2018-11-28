@@ -62,9 +62,10 @@ abstract public class ArenaObject : EngineObject {
   /// called before restart
   /// </summary>
   virtual public void arena_startup()
-  {
+  { }
 
-  }
+  virtual public void arena_cleanup()
+  { }
 
   virtual public void round_pause(bool pauseState)
   {

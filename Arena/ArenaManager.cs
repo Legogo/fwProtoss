@@ -84,6 +84,17 @@ abstract public class ArenaManager : EngineObject {
   }
 
   /// <summary>
+  /// describe how to clean (destroy everything)
+  /// </summary>
+  virtual public void arena_cleanup()
+  {
+    for (int i = 0; i < arenaObjects.Count; i++)
+    {
+      arenaObjects[i].arena_cleanup();
+    }
+  }
+
+  /// <summary>
   /// what must be called by a menu to start the first round
   /// some object need to create/regenerate stuff when coming back to arena (if ld data changed)
   /// </summary>
