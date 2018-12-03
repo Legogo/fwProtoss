@@ -100,7 +100,9 @@ abstract public class BuildHelper
     Debug.Log("BuildHelper, saving build at : " + path);
 
     buildPlayerOptions.locationPathName = path;
-    buildPlayerOptions.target = BuildTarget.Android;
+    
+    //will setup android or ios based on unity build settings target platform
+    buildPlayerOptions.target = EditorUserBuildSettings.activeBuildTarget;
 
     buildPlayerOptions.options |= BuildOptions.Development;
     if(auto_run) buildPlayerOptions.options |= BuildOptions.AutoRunPlayer;
