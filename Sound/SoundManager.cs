@@ -9,9 +9,12 @@ public class SoundManager
   static public void generate(DataSounds data, AudioMixerGroup mixer = null)
   {
     GameObject carry = HalperGameObject.getGameObject("[sounds]");
-    for (int i = 0; i < data.clips.Length; i++)
+
+    List<AudioClip> clips = data.getCombinedLists();
+
+    for (int i = 0; i < clips.Count; i++)
     {
-      AudioClip clip = data.clips[i];
+      AudioClip clip = clips[i];
 
       GameObject local = new GameObject(clip.name);
       AudioSource src = local.AddComponent<AudioSource>();
