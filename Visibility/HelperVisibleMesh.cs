@@ -102,13 +102,7 @@ public class HelperVisibleMesh : HelperVisible
   /// <param name="materialName"></param>
   public void setMainTexture(Texture tex, string materialName = "")
   {
-    Material targetMaterial = _mat;
-    if(materialName.Length > 0)
-    {
-      targetMaterial = getSharedMaterialOfName(materialName);
-    }
-
-    if(targetMaterial != null) targetMaterial.mainTexture = tex;
+    setMainTexture(_render, tex, materialName);
   }
   
   override protected void swapColor(Color col)
@@ -167,5 +161,25 @@ public class HelperVisibleMesh : HelperVisible
   }
 
 #endif
+  
+  static public void setMainTexture(MeshRenderer msh, Texture newTexture, string matName)
+  {
+    Material targetMaterial = getSharedMaterialOfName(msh, matName);
+    if (targetMaterial != null) targetMaterial.mainTexture = newTexture;
+  }
+
+  static public Material getSharedMaterialOfName(MeshRenderer _render, string containsName)
+  {
+    if (_render == null) Debug.LogError("no render ? " + containsName);
+
+    for (int i = 0; i < _render.sharedMaterials.Length; i++)
+    {
+      if (_render.sharedMaterials[i].name.Contains(containsName)) return _render.sharedMaterials[i];
+    }
+
+    Debug.LogWarning("no material with name " + containsName + " found on " + _render, _render.transform);
+
+    return null;
+  }
 
 }
