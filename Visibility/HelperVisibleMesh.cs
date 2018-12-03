@@ -94,7 +94,7 @@ public class HelperVisibleMesh : HelperVisible
 
     return null;
   }
-
+  
   /// <summary>
   /// if name is provided it will be applied to shared material
   /// </summary>
@@ -177,9 +177,19 @@ public class HelperVisibleMesh : HelperVisible
       if (_render.sharedMaterials[i].name.Contains(containsName)) return _render.sharedMaterials[i];
     }
 
-    Debug.LogWarning("no material with name " + containsName + " found on " + _render, _render.transform);
+    //Debug.LogWarning("no material with name " + containsName + " found on " + _render, _render.transform);
 
     return null;
   }
 
+  static public void setMainTextures(Transform parent, Texture newTexture, string materialContainsName)
+  {
+
+    MeshRenderer[] meshs = parent.GetComponentsInChildren<MeshRenderer>();
+    for (int i = 0; i < meshs.Length; i++)
+    {
+      setMainTexture(meshs[i], newTexture, materialContainsName);
+    }
+
+  }
 }
