@@ -19,7 +19,6 @@ public class DataBuildSettings : ScriptableObject
   public string compagny_name = "*";
   public string product_name = "*";
   public string package_name = "com.*.*";
-  public BuildTarget buildTarget;
 
 #if UNITY_EDITOR
   [Header("SDK")]
