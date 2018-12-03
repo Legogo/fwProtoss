@@ -7,14 +7,27 @@ using UnityEditor;
 
 /// <summary>
 /// 
-///PlayerSettings.Android.v
-///PlayerSettings.GetApplicationIdentifier(BuildTargetGroup.Android)
+/// PlayerSettings.Android.v
+/// PlayerSettings.GetApplicationIdentifier(BuildTargetGroup.Android)
 ///
-///https://mogutan.wordpress.com/2015/03/06/confusing-unity-mobile-player-settings-for-versions/
-
-///PlayerSettings.bundleVersion = major + "." + minor + "."+increment;
-///PlayerSettings.Android.bundleVersionCode = build;
-///PlayerSettings.iOS.buildNumber = PlayerSettings.bundleVersion;
+/// https://mogutan.wordpress.com/2015/03/06/confusing-unity-mobile-player-settings-for-versions/
+/// 
+/// PlayerSettings.bundleVersion = major + "." + minor + "."+increment;
+/// PlayerSettings.Android.bundleVersionCode = build;
+/// PlayerSettings.iOS.buildNumber = PlayerSettings.bundleVersion;
+///
+/// https://stackoverflow.com/questions/21125159/which-ios-app-version-build-numbers-must-be-incremented-upon-app-store-release
+/// "Version" CFBundleShortVersionString(String - iOS, OS X) specifies the release version number of the bundle, which identifies a released iteration of the app.The release version number is a string comprised of three period-separated integers.
+/// "Build" CFBundleVersion (String - iOS, OS X) specifies the build version number of the bundle, which identifies an iteration(released or unreleased) of the bundle.The build version number should be a string comprised of three non-negative, period-separated integers with the first integer being greater than zero.The string should only contain numeric (0-9) and period(.) characters.Leading zeros are truncated from each integer and will be ignored(that is, 1.02.3 is equivalent to 1.2.3). This key is not localizable.``
+/// 
+/// guide lines
+/// https://stackoverflow.com/questions/21125159/which-ios-app-version-build-numbers-must-be-incremented-upon-app-store-release/38009895#38009895
+/// 
+/// The pair(Version, Build number) must be unique.
+///   The sequence is valid: (1.0.1, 12) -> (1.0.1, 13) -> (1.0.2, 13) -> (1.0.2, 14) ...
+///   Version(CFBundleShortVersionString) must be in ascending sequential order.
+///   Build number(CFBundleVersion) must be in ascending sequential order.
+///   
 /// </summary>
 
 static public class VersionManager
@@ -130,6 +143,7 @@ static public class VersionManager
   static public void incrementBuildNumber()
   {
     PlayerSettings.Android.bundleVersionCode++; // shared with ios ?
+    PlayerSettings.iOS.buildNumber = PlayerSettings.Android.bundleVersionCode.ToString();
   }
 
   static private void apply(int[] data, bool incBuildVersion = true)
@@ -137,7 +151,7 @@ static public class VersionManager
     if(incBuildVersion) incrementBuildNumber();
 
     PlayerSettings.bundleVersion = getFormatedVersion('.', data);
-    PlayerSettings.iOS.buildNumber = PlayerSettings.bundleVersion;
+    //PlayerSettings.iOS.buildNumber = PlayerSettings.bundleVersion;
 
     logVersion();
   }
