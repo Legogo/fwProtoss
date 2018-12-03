@@ -65,6 +65,11 @@ public class EngineManager : MonoBehaviour {
     state_loading = true;
     state_live = false;
 
+    if(sounds != null)
+    {
+      SoundManager.generate(sounds);
+    }
+
     EngineLoader.get().onLoadingDone += engine_scenes_loaded;
   }
 
