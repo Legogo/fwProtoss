@@ -7,6 +7,12 @@ using UnityEngine;
 /// </summary>
 public class qh
 {
+
+  static public T[] cgs<T>() where T : UnityEngine.Object
+  {
+    return GameObject.FindObjectsOfType<T>();
+  }
+
   /// <summary>
   /// gc == getcomponent
   /// </summary>
