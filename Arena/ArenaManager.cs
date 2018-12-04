@@ -35,7 +35,7 @@ abstract public class ArenaManager : EngineObject {
     base.setupLate();
 
     EngineEventSystem.onPauseEvent += onSystemPause;
-    EngineEventSystem.onFocusEvent += onSystemPause;
+    EngineEventSystem.onFocusEvent += onFocusPause;
     
     startup();
   }
@@ -51,15 +51,21 @@ abstract public class ArenaManager : EngineObject {
     arena_startup();
   }
   
-  virtual protected void onSystemPause(bool state)
+  protected void onFocusPause(bool state)
+  {
+    onSystemPause(state);
+  }
+
+  protected void onSystemPause(bool state)
   {
     //Debug.Log("system pause ! "+state);
-
+    /*
     if (Application.isEditor)
     {
       Debug.LogWarning("do nothing with pause in editor");
       return;
     }
+    */
 
     if(!state && isArenaStateLive())
     {
@@ -74,8 +80,13 @@ abstract public class ArenaManager : EngineObject {
   /// <param name="state"></param>
   virtual public void onRoundPause(bool state)
   {
+    if(state && _state == ArenaState.ROUND_PAUSE) Debug.LogWarning("paused called but arena is already at pause state");
+    if(!state && _state == ArenaState.LIVE) Debug.LogWarning("paused called but arena is already at pause state");
+    
     if (state) _state = ArenaState.ROUND_PAUSE; // a menu poped and is iterruting gameplay ?
     else _state = ArenaState.LIVE; // come back to live gameplay
+
+    Debug.Log(getStamp() + "round pause ("+state+") | arena state : "+_state);
 
     for (int i = 0; i < arenaObjects.Count; i++)
     {

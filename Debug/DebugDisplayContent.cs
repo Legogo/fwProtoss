@@ -44,6 +44,12 @@ public class DebugDisplayContent : EngineObject {
 
   }
 
+  protected void toggle()
+  {
+    visible = !visible;
+    enabled = visible;
+  }
+
   /// <summary>
   /// draw gui stuff
   /// </summary>
@@ -54,6 +60,8 @@ public class DebugDisplayContent : EngineObject {
 
   private void OnGUI()
   {
+    //Debug.Log(transform.name+" , "+visibility);
+
     if (!visible) return;
 
     viewDimensions.x = Screen.width;

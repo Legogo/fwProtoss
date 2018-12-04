@@ -416,16 +416,16 @@ namespace fwp.input
 
       //solve scaling
 
-      //viewDimensions.x = Screen.width;
-      //viewDimensions.y = Screen.height;
+      viewDimensions.x = Screen.width;
+      viewDimensions.y = Screen.height;
 
-      Vector2 dimensions = viewDimensions;
-      dimensions.y = dimensions.x / (Screen.width * 1f / Screen.height * 1f);
+      //Vector2 dimensions = viewDimensions;
+      //dimensions.y = dimensions.x / (Screen.width * 1f / Screen.height * 1f);
 
-      viewScaleFactor = Mathf.Max(viewScaleFactor, 0.1f);
-      Vector3 dim = new Vector3(Screen.width / (dimensions.x * viewScaleFactor), Screen.height / (dimensions.y * viewScaleFactor), 1);
-      GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, dim);
-      
+      //viewScaleFactor = Mathf.Max(viewScaleFactor, 0.1f);
+      //Vector3 dim = new Vector3(Screen.width / (dimensions.x * viewScaleFactor), Screen.height / (dimensions.y * viewScaleFactor), 1);
+      //GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, dim);
+
       Color black = Color.black;
       black.a = 0.8f;
       GUI.backgroundColor = black;
@@ -443,8 +443,10 @@ namespace fwp.input
     protected void guiDrawDebugInfo(int windowIndex, string ctx)
     {
       //GUI.color = Color.red;
-      float width = viewDimensions.x / (3f * 1.05f);
+      float width = viewDimensions.x * 1f / (3f * 1.05f);
       float gap = 10f;
+
+      //Debug.Log(viewDimensions.x+" , "+ width);
 
       GUI.Label(new Rect((gap * windowIndex) + (windowIndex * width), 10, width, Screen.height * 0.5f), ctx, style);
     }

@@ -19,9 +19,12 @@ namespace fwp.input
     bool _state = false;
 
     public Action onToggle; // callback where to subscribe to react to sequence solving
+    protected Transform parent;
 
-    public HelperScreenTouchSequenceSolver(Rect[] screenZones, ScreenDimensionMode screenDimMode = ScreenDimensionMode.PROPORTIONNAL)
+    public HelperScreenTouchSequenceSolver(Rect[] screenZones, ScreenDimensionMode screenDimMode = ScreenDimensionMode.PROPORTIONNAL, Transform parent = null)
     {
+      this.parent = parent;
+
       zones = screenZones;
 
       this.screenDimMode = screenDimMode;
@@ -37,6 +40,9 @@ namespace fwp.input
     protected void onInput(Vector2 screenPosition)
     {
       Rect z = zones[step];
+
+      //Debug.Log(screenPosition);
+      //Debug.Log(z);
 
       if (screenPosition.x > z.x && screenPosition.x < z.x + z.width)
       {
@@ -64,7 +70,11 @@ namespace fwp.input
 
       if (onToggle != null) onToggle();
 
-      //Debug.Log(parent.name + " toggle");
+      if(parent != null)
+      {
+        Debug.Log(GetType() + " "+parent.name+" toggle", parent);
+      }
+      
     }
 
     public bool isToggled()
