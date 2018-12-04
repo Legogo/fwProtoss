@@ -34,6 +34,8 @@ public class EngineManager : MonoBehaviour {
   public int application_targetFramerate = -1;
   public bool log_device_info = true;
 
+  [Header("sound")]
+  public bool useSoundFramework = false;
   public AudioMixer mixer;
 
   [Header("mobile specifics")]
@@ -64,7 +66,7 @@ public class EngineManager : MonoBehaviour {
     state_loading = true;
     state_live = false;
     
-    SoundManager.generate(this);
+    if(useSoundFramework) SoundManager.generate(this);
     
     GlobalSettingsSystem.setupTraceLog();
 
