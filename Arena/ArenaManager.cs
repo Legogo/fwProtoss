@@ -53,7 +53,8 @@ abstract public class ArenaManager : EngineObject {
   
   protected void onFocusPause(bool state)
   {
-    onSystemPause(state);
+    Debug.Log(getStamp() + " focus pause ? " + state);
+    onSystemPause(!state);
   }
 
   protected void onSystemPause(bool state)
@@ -67,18 +68,28 @@ abstract public class ArenaManager : EngineObject {
     }
     */
 
-    if(!state && isArenaStateLive())
-    {
-      onRoundPause(true);
-    }
+    Debug.Log(getStamp() + " system pause ? " + state);
 
+    if (state && canPause()) onRoundPause(true);
+    else if(!state && canUnpause()) onRoundPause(false);
+    
+  }
+
+  /// <summary>
+  /// external call for pause (not device event)
+  /// </summary>
+  /// <param name="state"></param>
+  public void callForPause(bool state)
+  {
+    Debug.Log(getStamp() + " external call for pause : "+state);
+    onSystemPause(state);
   }
 
   /// <summary>
   /// permet de dire a tout les AO qu'on appelle une pause spécifique a l'arene
   /// </summary>
   /// <param name="state"></param>
-  virtual public void onRoundPause(bool state)
+  virtual protected void onRoundPause(bool state)
   {
     if(state && _state == ArenaState.ROUND_PAUSE) Debug.LogWarning("paused called but arena is already at pause state");
     if(!state && _state == ArenaState.LIVE) Debug.LogWarning("paused called but arena is already at pause state");
@@ -88,7 +99,7 @@ abstract public class ArenaManager : EngineObject {
 
     //Debug.Log("arena onRoundPause "+state+" --> arena tat")
 
-    Debug.Log(getStamp() + "round pause ("+state+") | arena state : "+_state);
+    Debug.Log(getStamp() + "round pause ("+state+") | arena state switched to "+_state);
 
     for (int i = 0; i < arenaObjects.Count; i++)
     {
@@ -285,9 +296,6 @@ abstract public class ArenaManager : EngineObject {
     Debug.Log(getStamp()+" switched state to <b>" + st.ToString()+"</b>");
     _state = st;
   }
-  protected ArenaState getState() { return _state; }
-  protected bool isAtState(ArenaState st) { return _state == st; }
-
   public void cancelEndProcess()
   {
     if (coProcessEnd != null)
@@ -308,6 +316,13 @@ abstract public class ArenaManager : EngineObject {
   public bool isArenaStateMenu() { return isAtState(ArenaState.MENU); }
 
   public void setArenaToMenuState() { _state = ArenaState.MENU; }
+
+  public ArenaState getState() { return _state; }
+  public bool isAtState(ArenaState st) { return _state == st; }
+
+
+  virtual protected bool canPause() { return _state == ArenaState.LIVE; }
+  virtual protected bool canUnpause() { return _state == ArenaState.ROUND_PAUSE; }
 
   override public string toString()
   {

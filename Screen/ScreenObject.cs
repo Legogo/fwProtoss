@@ -207,6 +207,8 @@ public class ScreenObject : EngineObject
     transform.position = Vector3.zero;
 
     toggleVisible(true);
+
+    Debug.Log(name + " -> show");
   }
 
   virtual public void hide()
@@ -232,7 +234,7 @@ public class ScreenObject : EngineObject
 
     toggleVisible(false);
 
-    //Debug.Log(name + " -> forceHide");
+    Debug.Log(name + " -> forceHide");
   }
 
   public bool isVisible()

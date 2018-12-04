@@ -27,10 +27,11 @@ public class ArenaMonitoring : EditorWindow
     GUILayout.Label("  engine paused ? " + EngineManager.isPaused());
 
     ArenaManager am = ArenaManager.get();
-
-    GUILayout.Label("status");
-    if (am == null) return;
     
+    if (am == null) return;
+
+    GUILayout.Label("status : " + am.getState().ToString());
+
     GUILayout.Label("  menu ? " + am.isArenaStateMenu());
     GUILayout.Label("  live ? " + am.isArenaStateLive());
     GUILayout.Label("  end ? " + am.isArenaStateEnd());
