@@ -86,6 +86,8 @@ abstract public class ArenaManager : EngineObject {
     if (state) _state = ArenaState.ROUND_PAUSE; // a menu poped and is iterruting gameplay ?
     else _state = ArenaState.LIVE; // come back to live gameplay
 
+    //Debug.Log("arena onRoundPause "+state+" --> arena tat")
+
     Debug.Log(getStamp() + "round pause ("+state+") | arena state : "+_state);
 
     for (int i = 0; i < arenaObjects.Count; i++)
