@@ -2,44 +2,71 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
 
 public class SoundManager
 {
 
-  static public void generate(DataSounds data, AudioMixerGroup mixer = null)
+  static public void generate(MonoBehaviour coroutineCarry, string soundSceneName = "sounds")
   {
-    GameObject carry = HalperGameObject.getGameObject("[sounds]");
+    coroutineCarry.StartCoroutine(processLoading(soundSceneName));
+  }
 
-    List<AudioClip> clips = data.getCombinedLists();
+  static protected IEnumerator processLoading(string soundSceneName)
+  {
+    Debug.Log("process generating sounds for manager");
 
+    Debug.Log("  L loading 'sounds' scene ... ");
+    AsyncOperation async = SceneManager.LoadSceneAsync(soundSceneName, LoadSceneMode.Additive);
+    while (!async.isDone) {
+      yield return null;
+      Debug.Log(async.progress);
+    }
+    
+    Debug.Log("  L ... scene loaded");
+
+    AudioSource[] srcs = GameObject.FindObjectsOfType<AudioSource>();
+    sources = new List<AudioSource>();
+    sources.AddRange(srcs);
+
+    Debug.Log("  L ... found "+ sources.Count+" AudioSource");
+
+    /*
+    List<AudioClip> clips = new List<AudioClip>();
+    for (int i = 0; i < srcs.Length; i++)
+    {
+      if (srcs[i].clip != null && clips.IndexOf(srcs[i].clip) < 0) clips.Add(srcs[i].clip);
+    }
+
+    Debug.Log("  L ... found " + clips.Count + " AudioClip");
+    */
+
+    /*
     for (int i = 0; i < clips.Count; i++)
     {
       AudioClip clip = clips[i];
-
       GameObject local = new GameObject(clip.name);
       AudioSource src = local.AddComponent<AudioSource>();
-
       local.transform.SetParent(carry.transform);
-
       src.clip = clip;
-
       if(mixer != null) src.outputAudioMixerGroup = mixer;
     }
-    
-    if (sources == null) sources = GameObject.FindObjectsOfType<AudioSource>();
+    */
 
-    Debug.Log("SoundManager created, " + sources.Length + " sources ref");
+    //if (sources == null) sources = GameObject.FindObjectsOfType<AudioSource>();
+
+    //Debug.Log("SoundManager created, " + sources.Count + " sources ref");
   }
 
-  static protected AudioSource[] sources;
-  
+  static protected List<AudioSource> sources;
+
   static protected AudioSource getMatchingSource(string containsClipName)
   {
-    if (sources == null) sources = GameObject.FindObjectsOfType<AudioSource>();
+    //if (sources == null) sources = GameObject.FindObjectsOfType<AudioSource>();
 
     //Debug.Log("searching for clip " + containsClipName + " in " + sources.Length + " sources");
 
-    for (int i = 0; i < sources.Length; i++)
+    for (int i = 0; i < sources.Count; i++)
     {
       AudioSource src = sources[i];
 
@@ -100,17 +127,11 @@ public class SoundManager
     return src;
   }
 
-  static public bool isPlaying(string name)
+  static public bool isPlaying(string clipName)
   {
-    if (sources == null) sources = GameObject.FindObjectsOfType<AudioSource>();
-    for (int i = 0; i < sources.Length; i++)
-    {
-      if (sources[i].clip.name.Contains(name))
-      {
-        return sources[i].isPlaying;
-      }
-    }
-    return false;
+    AudioSource src = getMatchingSource(clipName);
+    if (src == null) return false;
+    return src.isPlaying;
   }
   static public void stop(string clipName)
   {
@@ -121,8 +142,7 @@ public class SoundManager
 
   static public void stopAllSources()
   {
-    if (sources == null) sources = GameObject.FindObjectsOfType<AudioSource>();
-    for (int i = 0; i < sources.Length; i++)
+    for (int i = 0; i < sources.Count; i++)
     {
       sources[i].Stop();
     }

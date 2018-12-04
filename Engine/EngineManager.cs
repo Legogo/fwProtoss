@@ -34,13 +34,11 @@ public class EngineManager : MonoBehaviour {
   public int application_targetFramerate = -1;
   public bool log_device_info = true;
 
+  public AudioMixer mixer;
+
   [Header("mobile specifics")]
   public bool mobile_never_sleep = false;
-
-  [Header("sound")]
-  public AudioMixer mixer;
-  public DataSounds sounds;
-
+  
   [Header("logs")]
   public bool mobile_logs_preset = false; // if true none,none,scriptonly on mobile
 
@@ -65,12 +63,9 @@ public class EngineManager : MonoBehaviour {
 
     state_loading = true;
     state_live = false;
-
-    if(sounds != null)
-    {
-      SoundManager.generate(sounds);
-    }
-
+    
+    SoundManager.generate(this);
+    
     GlobalSettingsSystem.setupTraceLog();
 
     EngineLoader.get().onLoadingDone += engine_scenes_loaded;
