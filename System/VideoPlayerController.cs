@@ -127,18 +127,7 @@ public class VideoPlayerController : EngineObject {
       Debug.LogWarning(getStamp() + "no video player ?");
       return;
     }
-
-    /*
-    if (keepLastFrameVisible)
-    {
-      setAtFrame((int)videoPlayer.clip.frameCount);
-      
-      videoPlayer.playbackSpeed = 0f;
-
-      videoPlayer.frame = (long)videoPlayer.clip.frameCount;
-    }
-    */
-
+    
     if (videoPlayer != null) videoPlayer.Stop();
 
     if (hideOnStop)
@@ -164,6 +153,12 @@ public class VideoPlayerController : EngineObject {
 
         break;
       case VideoState.PLAY:
+
+        if (!videoPlayer.isPlaying) // not at end of video and not playing
+        {
+          eventStop();
+          return;
+        }
 
         if (skippable)
         {
@@ -203,10 +198,6 @@ public class VideoPlayerController : EngineObject {
         if ((int)videoPlayer.frame >= (int)videoPlayer.frameCount) // at last frame of video
         {
           eventEnd();
-        }
-        else if (!videoPlayer.isPlaying) // not at end of video and not playing
-        {
-          eventStop();
         }
         
         break;

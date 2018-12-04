@@ -5,13 +5,6 @@ using UnityEngine.UI;
 
 public class UiTextSlide : UiAnimation
 {
-  static public UiTextSlide create(string typeResource)
-  {
-    return ResourceManager.getDuplicate<UiTextSlide>(typeResource);
-    //GameObject obj = GameObject.Instantiate(Resources.Load(typeResource)) as GameObject;
-    //return obj.GetComponent<UiTextSlide>();
-  }
-
   protected Vector3 origin;
   protected Vector3 destination;
   protected Vector3 dir;
@@ -55,13 +48,7 @@ public class UiTextSlide : UiAnimation
     rec.position = Vector3.Lerp(origin, destination, getProgress());
   }
 
-  protected override void animEnd()
-  {
-    base.animEnd();
-    GameObject.DestroyImmediate(gameObject);
-  }
-
-  public void callSlide(Vector3 position, string[] overrideText = null)
+  public UiTextSlide callSlide(Vector3 position, string[] overrideText = null)
   {
     //rec.SetParent(GameObject.FindObjectOfType<Canvas>().transform);
     rec.position = Camera.main.WorldToScreenPoint(position);
@@ -74,6 +61,8 @@ public class UiTextSlide : UiAnimation
     transform.Rotate(Vector3.forward, Random.Range(-spreadAngle, spreadAngle));
 
     play();
+
+    return this;
   }
   
   public void setupText(string singleText)
@@ -109,4 +98,13 @@ public class UiTextSlide : UiAnimation
     
     return txt.text;
   }
+
+
+  static public UiTextSlide create(string typeResource)
+  {
+    return ResourceManager.getDuplicate<UiTextSlide>(typeResource);
+    //GameObject obj = GameObject.Instantiate(Resources.Load(typeResource)) as GameObject;
+    //return obj.GetComponent<UiTextSlide>();
+  }
+
 }

@@ -28,6 +28,7 @@ abstract public class UiAnimation : EngineObject
 
   protected float animTimer = 0f;
   public Action onAnimationDone;
+  public bool destroyOnDone = true;
 
   [Header("basic")]
   public float animationLength = 1f;
@@ -118,6 +119,8 @@ abstract public class UiAnimation : EngineObject
     //if (ownerCanvas != null) ownerCanvas.enabled = false;
 
     if (onAnimationDone != null) onAnimationDone();
+
+    if (destroyOnDone) GameObject.DestroyImmediate(gameObject);
   }
 
   virtual public void clean() {

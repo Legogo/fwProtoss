@@ -23,26 +23,28 @@ static public class GlobalSettingsSystem {
     EngineManager em = EngineManager.get();
     if(em != null)
     {
-      //preset
-      if (em.mobile_logs_preset)
+      Application.SetStackTraceLogType(LogType.Log, em.normal);
+      Application.SetStackTraceLogType(LogType.Warning, em.warning);
+      Application.SetStackTraceLogType(LogType.Error, em.error);
+      
+      if(!Application.isEditor)
       {
+        //preset
         //do be too wordy on smartphones
-        if (Application.isMobilePlatform)
+        if (em.mobile_logs_preset && Application.isMobilePlatform)
         {
           Application.SetStackTraceLogType(LogType.Log, StackTraceLogType.None);
-          Application.SetStackTraceLogType(LogType.Warning, StackTraceLogType.None);
+          Application.SetStackTraceLogType(LogType.Warning, StackTraceLogType.ScriptOnly);
           Application.SetStackTraceLogType(LogType.Error, StackTraceLogType.ScriptOnly);
         }
       }
-      else
-      {
-        Application.SetStackTraceLogType(LogType.Log, em.normal);
-        Application.SetStackTraceLogType(LogType.Warning, em.warning);
-        Application.SetStackTraceLogType(LogType.Error, em.error);
-      }
-
     }
-    
+
+    Debug.Log("trace logs setup");
+    Debug.Log("  L log  " + Application.GetStackTraceLogType(LogType.Log));
+    Debug.Log("  L warning  " + Application.GetStackTraceLogType(LogType.Warning));
+    Debug.Log("  L error  " + Application.GetStackTraceLogType(LogType.Error));
+
     //GlobalSettingsVolume.setupVolumes();
   }
   

@@ -5,15 +5,16 @@ using UnityEngine.UI;
 
 public class UiBump : UiAnimation {
 
-  public float bumpStr = 1f;
-  protected Vector2 scaleBase;
+  public float bumpStr = 2f;
+  protected Vector3 scaleBase;
 
-  protected override void setup()
+  protected override void build()
   {
-    base.setup();
-    scaleBase = rec.localScale;
+    base.build();
+    scaleBase = rec.transform.localScale;
+    if (scaleBase.magnitude == 0f) Debug.LogError("scale is zero");
   }
-
+  
   protected override void animStart()
   {
     base.animStart();
@@ -23,7 +24,10 @@ public class UiBump : UiAnimation {
   protected override void animUpdate()
   {
     base.animUpdate();
-    rec.localScale = Vector2.Lerp(scaleBase, scaleBase * bumpStr, getProgress());
+
+    rec.transform.localScale = Vector3.Lerp(scaleBase, scaleBase * bumpStr, getProgress());
+
+    //Debug.Log(scaleBase+" , "+ rec.transform.localScale);
   }
 
   static public void callBump(GameObject obj) {

@@ -37,7 +37,7 @@ public class SoundManager
   {
     if (sources == null) sources = GameObject.FindObjectsOfType<AudioSource>();
 
-    Debug.Log("searching for clip " + containsClipName + " in " + sources.Length + " sources");
+    //Debug.Log("searching for clip " + containsClipName + " in " + sources.Length + " sources");
 
     for (int i = 0; i < sources.Length; i++)
     {
@@ -112,16 +112,11 @@ public class SoundManager
     }
     return false;
   }
-  static public void stop(string name)
+  static public void stop(string clipName)
   {
-    if (sources == null) sources = GameObject.FindObjectsOfType<AudioSource>();
-    for (int i = 0; i < sources.Length; i++)
-    {
-      if (sources[i].clip.name.Contains(name))
-      {
-        sources[i].Stop();
-      }
-    }
+    AudioSource src = getMatchingSource(clipName);
+    if (src == null) return;
+    src.Stop();
   }
 
   static public void stopAllSources()

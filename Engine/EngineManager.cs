@@ -42,7 +42,8 @@ public class EngineManager : MonoBehaviour {
   public DataSounds sounds;
 
   [Header("logs")]
-  public bool mobile_logs_preset = false;
+  public bool mobile_logs_preset = false; // if true none,none,scriptonly on mobile
+
   public StackTraceLogType normal = StackTraceLogType.ScriptOnly;
   public StackTraceLogType warning = StackTraceLogType.ScriptOnly;
   public StackTraceLogType error = StackTraceLogType.ScriptOnly;
@@ -69,6 +70,8 @@ public class EngineManager : MonoBehaviour {
     {
       SoundManager.generate(sounds);
     }
+
+    GlobalSettingsSystem.setupTraceLog();
 
     EngineLoader.get().onLoadingDone += engine_scenes_loaded;
   }
