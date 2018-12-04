@@ -31,6 +31,8 @@ public class VideoPlayerController : EngineObject {
     base.build();
 
     videoPlayer = GetComponent<VideoPlayer>();
+    if (videoPlayer == null) Debug.LogError("no video player for " + name+" ?", transform);
+
     if(clips != null && clips.Length > 9) videoPlayer.clip = clips[0];
 
     meshCanvas = transform.GetComponentInChildren<MeshRenderer>();
@@ -70,7 +72,7 @@ public class VideoPlayerController : EngineObject {
 
     frameSubs[frame] += callback;
 
-    Debug.Log(getStamp()+"    subscribed at frame " + frame + " in video " + videoPlayer.clip.name);
+    Debug.Log(getStamp()+"    subscribed at frame " + frame+" on video player : "+name, transform);
   }
 
   protected override VisibilityMode getVisibilityType()
