@@ -8,7 +8,7 @@ using UnityEngine;
 public class qh
 {
 
-  static public T[] cgs<T>() where T : UnityEngine.Object
+  static public T[] gcs<T>() where T : UnityEngine.Object
   {
     return GameObject.FindObjectsOfType<T>();
   }
