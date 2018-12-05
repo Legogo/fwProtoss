@@ -18,7 +18,9 @@ using UnityEngine.UI;
 /// </summary>
 
 abstract public class ArenaManager : EngineObject {
-  
+
+  public bool debug_useFocusPause = false;
+
   public float round_time = 0f; // round elasped time
 
   protected float liveFreezeTimer = 0f;
@@ -53,6 +55,8 @@ abstract public class ArenaManager : EngineObject {
   
   protected void onFocusPause(bool state)
   {
+    if (!debug_useFocusPause) return;
+
     Debug.Log(getStamp() + " focus pause ? " + state);
     onSystemPause(!state);
   }

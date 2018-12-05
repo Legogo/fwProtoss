@@ -4,6 +4,10 @@ using UnityEngine;
 
 //https://docs.unity3d.com/Manual/InverseKinematics.html
 
+  /// <summary>
+  /// ik
+  /// </summary>
+
 public enum IkFollowGroup { Hand, Foot };
 
 [RequireComponent(typeof(Animator))]
@@ -20,6 +24,12 @@ public class IkFollowTransform : MonoBehaviour
   private void Awake()
   {
     animator = GetComponent<Animator>();
+
+    setup();
+  }
+  
+  virtual protected void setup()
+  {
   }
 
   protected void moveWeight(float speed)

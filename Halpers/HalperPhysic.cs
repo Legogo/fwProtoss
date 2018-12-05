@@ -4,6 +4,30 @@ using UnityEngine;
 
 public class HalperPhysic {
 
+  static public float getRaycastDistance(Vector3 from, Vector3 direction)
+  {
+    RaycastHit _hit;
+    if(Physics.Raycast(from, direction, out _hit, Mathf.Infinity))
+    {
+      return _hit.distance;
+    }
+    return Mathf.Infinity;
+  }
+
+  static public Vector2 getRaycastPoint(Vector3 from, Vector3 direction, float distance, int layer)
+  {
+    RaycastHit _hit;
+
+    Debug.DrawLine(from, from + (direction * distance), Color.magenta, 2f);
+
+    if (Physics.Raycast(from, direction, out _hit, distance, 1 << layer))
+    {
+      Debug.DrawLine(from, _hit.point, Color.yellow, 2f);
+      return _hit.point;
+    }
+    return Vector2.one * Mathf.Infinity;
+  }
+
   static public Collider2D[] getColliders2D(Transform parent)
   {
     List<Collider2D> tmp = new List<Collider2D>();

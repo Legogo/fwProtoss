@@ -103,7 +103,7 @@ abstract public class ArenaObject : EngineObject {
   /// JUST position, don't touch visibility here
   /// </summary>
   /// <param name="position"></param>
-  public void spawn(Vector3 position)
+  public void spawnAtPosition(Vector3 position)
   {
     transform.position = position;
 
