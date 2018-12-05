@@ -32,4 +32,11 @@ static public class HalperUi {
   {
     return elmt.sizeDelta.y;
   }
+
+  static public void setWidth(this RectTransform elmt, float val)
+  {
+    Vector2 size = elmt.sizeDelta;
+    size.x = val;
+    elmt.sizeDelta = size;
+  }
 }

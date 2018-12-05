@@ -23,7 +23,6 @@ public class UiProgressBar : EngineObject {
 
     progressiveStep = 1f;
     progressiveTarget = 1f;
-    
   }
 
   protected override void setup()
@@ -38,6 +37,8 @@ public class UiProgressBar : EngineObject {
     {
       Debug.LogError("asking to modify some ui element as progress bar but target ui element is not setup as fill ?");
     }
+
+    visibility.hide();
   }
   
   protected override VisibilityMode getVisibilityType()
@@ -102,9 +103,9 @@ public class UiProgressBar : EngineObject {
     return progressiveStep;
   }
   
-  public void follow(Vector2 targetPosition)
+  public void follow(Vector2 targetWorldPosition)
   {
-    renderRectTr.position = Camera.main.WorldToScreenPoint(targetPosition);
+    renderRectTr.position = Camera.main.WorldToScreenPoint(targetWorldPosition);
     //Debug.Log(pivot.position);
   }
 }

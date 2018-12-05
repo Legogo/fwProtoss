@@ -17,6 +17,7 @@ public class IkFollowTransform : MonoBehaviour
 
   public bool ikActive = false;
   float weight = 1f;
+  float speed = 1f;
 
   public AvatarIKGoal ikGoal;
   public Transform followObject = null;
@@ -44,7 +45,7 @@ public class IkFollowTransform : MonoBehaviour
     if (followObject == null) return;
     if (animator == null) return;
 
-    moveWeight(ikActive ? 1f : -1f);
+    moveWeight(ikActive ? speed : -speed);
     
     animator.SetIKPositionWeight(ikGoal, weight);
     animator.SetIKRotationWeight(ikGoal, weight);
