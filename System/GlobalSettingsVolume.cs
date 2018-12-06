@@ -2,46 +2,80 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// meant to be setup as
+/// Master (global)
+///  L fx
+///  L music
+/// </summary>
+
 static public class GlobalSettingsVolume {
 
-  public const string ppref_sound_master_volume = "ppref_sound_volume_master";
-  public const string ppref_sound_music_volume = "ppref_sound_volume_music";
-  public const string ppref_sound_fx_volume = "ppref_sound_volume_fx";
-  public const string ppref_sound_muted = "ppref_sound_muted";
+  public const string ppref_sound_volume_prefix = "ppref_sound_volume_";
+  public const string ppref_sound_mute = "ppref_sound_volume_mute";
+  public enum VolumeCategory { global, fx, music };
 
-  static public void setupVolumes()
+  static public void updateVolumes()
   {
-    applyMasterVolume();
-    applyMusicVolume();
-    applyFxVolume();
-    //Debug.Log("~SettingsManager~ setup volumes");
-
-    PlayerPrefs.Save();
+    Debug.Log("updating volumes");
+    updateVolume(VolumeCategory.global);
+    updateVolume(VolumeCategory.fx);
+    updateVolume(VolumeCategory.music);
   }
 
-  static public void applyMasterVolume() { applyVolume("global", ppref_sound_master_volume, PlayerPrefs.GetInt(ppref_sound_muted, 0) == 0 ? 0f : -80f); }
-  static public void applyFxVolume() { applyVolume("fx", ppref_sound_fx_volume); }
-  static public void applyMusicVolume() { applyVolume("music", ppref_sound_music_volume); }
+  static public bool isMuted() { return PlayerPrefs.GetInt(ppref_sound_mute, 0) == 1; }
+  static public bool muteVolume(bool mute)
+  {
+    PlayerPrefs.SetInt(ppref_sound_mute, mute ? 1 : 0);
+    PlayerPrefs.Save();
+
+    Debug.Log("sound is now muted ? " + mute);
+
+    updateVolume(VolumeCategory.global); // apply new mute state to Master
+
+    return mute;
+  }
+  
+  static public void setVolume(VolumeCategory category, float volume)
+  {
+    //raw volume [0,1], no transformation
+    volume = Mathf.Clamp01(volume);
+    PlayerPrefs.SetFloat(ppref_sound_volume_prefix + category, volume);
+
+    Debug.Log("mixer group : " + category + " volume : " + volume);
+  }
 
   static public AnimationCurve volumeCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
-  static public float transformVolumeSliderValue(float input)
-  {
-    //Debug.Log("input "+input+" => "+volumeCurve.Evaluate(input));
-    return Mathf.Lerp(-80f, 0f, volumeCurve.Evaluate(input));
-  }
 
-  static public void applyVolume(string category, string ppref_const, float boost = 0f)
+
+  static public void updateVolume(VolumeCategory category) { updateVolume(category.ToString()); }
+
+  /// <summary>
+  /// apply volume stored in ppref to a exposed float of the EM mixer
+  /// </summary>
+  /// <param name="category"></param>
+  /// <param name="ppref_const"></param>
+  /// <param name="boost"></param>
+  static public void updateVolume(string category)
   {
-    float volume = PlayerPrefs.GetFloat(ppref_const, 1f);
-    EngineManager em = GameObject.FindObjectOfType<EngineManager>();
+    EngineManager em = EngineManager.get();
     if (em == null) return;
     if (em.mixer == null)
     {
       Debug.LogWarning("no mixer ?");
       return;
     }
-    volume = transformVolumeSliderValue(volume);
-    em.mixer.SetFloat(category, volume + boost);
+
+    //mute only applied to global (Master), parent of fx/music
+    float muteBoost = 0f;
+    if (category == VolumeCategory.global.ToString())
+    {
+      muteBoost = isMuted() ? -80f : 0f;
+    }
+    
+    float rawVolume = PlayerPrefs.GetFloat(ppref_sound_volume_prefix + category, 1f); // [0f,1f]
+    float evalVolume = Mathf.Lerp(-80f, 0f, volumeCurve.Evaluate(rawVolume)); // transform volume
+    em.mixer.SetFloat(category, evalVolume + muteBoost);
   }
 
 }

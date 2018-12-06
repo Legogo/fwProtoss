@@ -20,16 +20,16 @@ public class SoundManager
     AsyncOperation async = SceneManager.LoadSceneAsync(soundSceneName, LoadSceneMode.Additive);
     while (!async.isDone) {
       yield return null;
-      Debug.Log(async.progress);
+      //Debug.Log(async.progress);
     }
     
-    Debug.Log("  L ... scene loaded");
+    Debug.Log("  L ... "+soundSceneName+" scene loaded");
 
     AudioSource[] srcs = GameObject.FindObjectsOfType<AudioSource>();
     sources = new List<AudioSource>();
     sources.AddRange(srcs);
 
-    Debug.Log("  L ... found "+ sources.Count+" AudioSource");
+    Debug.Log("  L ... found <b>"+ sources.Count+" AudioSource</b> in scene "+soundSceneName);
 
     /*
     List<AudioClip> clips = new List<AudioClip>();

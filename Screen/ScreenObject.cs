@@ -208,7 +208,7 @@ public class ScreenObject : EngineObject
 
     toggleVisible(true);
 
-    Debug.Log(name + " -> show");
+    //Debug.Log(name + " -> show");
   }
 
   virtual public void hide()
@@ -234,7 +234,7 @@ public class ScreenObject : EngineObject
 
     toggleVisible(false);
 
-    Debug.Log(name + " -> forceHide");
+    //Debug.Log(name + " -> forceHide");
   }
 
   public bool isVisible()

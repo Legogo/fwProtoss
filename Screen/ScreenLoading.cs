@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// to call loading screen before everything else put <EngineLoadingScreenFeeder> in startup scene
@@ -11,6 +12,7 @@ public class ScreenLoading : ScreenObject {
   static protected ScreenLoading _instance;
 
   Camera cam;
+  public Text txt;
 
   [RuntimeInitializeOnLoadMethod]
   static public void runetimeInit()
@@ -24,7 +26,7 @@ public class ScreenLoading : ScreenObject {
     {
       SceneManager.LoadSceneAsync(scName, LoadSceneMode.Additive);
     }
-
+    
     //HalperGameObject.checkDestroyOnSoloMono(this);
   }
 
@@ -33,6 +35,8 @@ public class ScreenLoading : ScreenObject {
     base.build();
 
     _instance = this;
+
+    txt.enabled = false;
 
     //loading must be sticky to not be closed by maanger open/close logic
     //of other screens
@@ -44,7 +48,7 @@ public class ScreenLoading : ScreenObject {
     //Debug.Log("hiding loading screen through static call");
     show();
   }
-  
+
   static public void showLoadingScreen()
   {
     _instance.show();
@@ -52,7 +56,7 @@ public class ScreenLoading : ScreenObject {
 
   static public void hideLoadingScreen()
   {
-    Debug.Log("hiding loading screen through static call");
+    //Debug.Log("hiding loading screen through static call");
 
     if(_instance == null)
     {

@@ -13,9 +13,12 @@ public class DebugView : DebugDisplayContent {
   {
     base.setup();
 
-    solver = new HelperScreenTouchSequenceSolver(zones, HelperScreenTouchSequenceSolver.ScreenDimensionMode.PROPORTIONNAL, transform);
-
-    solver.onToggle += toggle;
+    if (!useInBuild)
+    {
+      solver = new HelperScreenTouchSequenceSolver(zones, HelperScreenTouchSequenceSolver.ScreenDimensionMode.PROPORTIONNAL, transform);
+      solver.onToggle += toggle;
+    }
+    
   }
   
 }

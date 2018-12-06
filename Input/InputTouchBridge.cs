@@ -13,7 +13,7 @@ namespace fwp.input
     InputTouchSwipe swipeBridge;
     InputSelectionManager selectionBridge;
     HelperScreenTouchSequenceSolver sequencer;
-
+    
     public bool useMainCamera = true;
     public Camera inputCamera;
     public LayerMask _layer;
@@ -25,7 +25,7 @@ namespace fwp.input
     [Header("swipe")]
     public float limitLifeTime = 0.5f;
     public float limitSwipeAmplitude = 200f;
-
+    
     protected List<InputTouchFinger> _fingers = new List<InputTouchFinger>();
 
     public Action<InputTouchFinger> onTouch;
@@ -49,16 +49,19 @@ namespace fwp.input
       swipeBridge = new InputTouchSwipe(this);
       selectionBridge = new InputSelectionManager();
 
-      sequencer = new HelperScreenTouchSequenceSolver(new Rect[]{
-        new Rect(0.9f, 0.9f, 0.1f, 0.1f),
-        new Rect(0.9f, 0.9f, 0.1f, 0.1f)
-      });
-
-      sequencer.onToggle += delegate ()
+      if (useDebugInBuild)
       {
-        Debug.Log(getStamp() + "toggling drawDebug : " + drawDebug);
-        drawDebug = !drawDebug;
-      };
+        sequencer = new HelperScreenTouchSequenceSolver(new Rect[]{
+          new Rect(0.9f, 0.9f, 0.1f, 0.1f),
+          new Rect(0.9f, 0.9f, 0.1f, 0.1f)
+        });
+
+        sequencer.onToggle += delegate ()
+        {
+          Debug.Log(getStamp() + "toggling drawDebug : " + drawDebug);
+          drawDebug = !drawDebug;
+        };
+      }
 
     }
 
@@ -394,6 +397,8 @@ namespace fwp.input
 #endif
 
     [Header("debug stuff")]
+    public bool useDebugInBuild = false;
+
     public bool drawDebug = false;
     public Vector2 viewDimensions = new Vector2(Screen.width, Screen.height);
     public float viewScaleFactor = 1f;

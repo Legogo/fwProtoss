@@ -4,8 +4,21 @@ using UnityEngine;
 using System.IO;
 using System;
 using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
 static public class HalperUnity {
+
+  static public List<Object> shuffle<Object>(this List<Object> list)
+  {
+    for (int i = 0; i < list.Count; i++)
+    {
+      Object temp = list[i];
+      int randomIndex = Random.Range(i, list.Count);
+      list[i] = list[randomIndex];
+      list[randomIndex] = temp;
+    }
+    return list;
+  }
 
   static public List<T> loadResources<T>(string path = "") where T : Object
   {

@@ -15,9 +15,15 @@ static public class HalperNatives {
     return dt.Year + "-" + dt.Month + "-" + dt.Day + "_" + dt.Hour + "-" + dt.Minute;
   }
 
-  static public string getFrDate()
+  static public string getFrDate(bool addZeros = false)
   {
     DateTime dt = DateTime.Now;
+    if (addZeros)
+    {
+      string day = dt.Day < 10 ? "0" + dt.Day : dt.Day.ToString();
+      string month = dt.Month < 10 ? "0" + dt.Month : dt.Month.ToString();
+      return day + "-" + month + "-" + dt.Year;
+    }
     return dt.Day + "-" + dt.Month + "-" + dt.Year;
   }
 

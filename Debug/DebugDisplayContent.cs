@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class DebugDisplayContent : EngineObject {
 
+  public bool useInBuild = false;
+
   public bool startVisible = true;
   protected bool visible = false;
 
@@ -24,6 +26,12 @@ public class DebugDisplayContent : EngineObject {
     if (style == null)
     {
       style = new GUIStyle();
+    }
+
+    if (!useInBuild)
+    {
+      visible = false;
+      return;
     }
 
     visible = startVisible;
