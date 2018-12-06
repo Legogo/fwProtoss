@@ -148,7 +148,7 @@ public class VideoPlayerController : EngineObject {
         //on att que le vp commence a jouer pour balancer l'event
         if(videoPlayer.isPlaying && videoPlayer.frame > 1)
         {
-          Debug.Log(getStamp() + " " + videoPlayer.clip.name + " has started playing, frame count is positive, calling eventPlay()");
+          Debug.Log(getStamp() + videoPlayer.clip.name + " has started playing, frame count is positive, calling eventPlay()");
           eventPlay();
         }
 
