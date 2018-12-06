@@ -60,7 +60,9 @@ public class ResourceManager {
   }
 
   /// <summary>
-  /// will create a duplicate of resource element of given name, remove parent if parent is canvas. Object is deactivated by default !
+  /// will create a duplicate of resource element of given name, 
+  /// remove parent if parent is canvas.
+  /// <b>Object is deactivated by default !</b>
   /// </summary>
   static public T getDuplicate<T>(string nm, string rename = "") where T : Component
   {
@@ -88,7 +90,7 @@ public class ResourceManager {
     {
       obj.transform.SetParent(go.transform.parent);
 
-      Debug.Log("ResourceManager :: canvas item :: "+ obj.name + " is child of " + go.name + " parent : " + go.transform.parent.name, obj.transform);
+      //Debug.Log("ResourceManager :: canvas item :: "+ obj.name + " is child of " + go.name + " parent : " + go.transform.parent.name, obj.transform);
     }
     //else Debug.LogWarning("no canvas for " + nm, obj.transform);
 

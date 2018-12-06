@@ -11,30 +11,47 @@ public class HelperVisibleMesh : HelperVisible
   TextMesh _label;
   
   public HelperVisibleMesh(EngineObject parent) : base(parent.transform, parent)
-  { }
+  {
+    //Debug.Log("created " + _render);
+  }
 
   protected override Transform fetchCarrySymbol()
   {
     return _t.GetChild(0);
   }
+
+  /// <summary>
+  /// called in build() and later
+  /// </summary>
   protected override void fetchRenders()
   {
+    //if already setup
+    if (_render != null) return;
 
     ///// render
-    _render = _t.GetComponent<MeshRenderer>();
-    if (_render == null) _render = _t.GetComponentInChildren<MeshRenderer>();
 
+    //Debug.Log(HalperLogs.gatherDataHierarchyInfo(_t));
+
+    //Debug.Log(_t);
+    _render = _t.GetComponent<MeshRenderer>();
+    //Debug.Log(_render);
+    if (_render == null) _render = _t.GetComponentInChildren<MeshRenderer>();
+    //Debug.Log(_render);
+
+    if (_render == null)
+    {
+      Debug.LogWarning("no mesh fetched for " + _t.name, _t);
+      Debug.Log("  L GameObject active ? " + _t.gameObject.activeSelf);
+      MeshRenderer[] all = _t.GetComponentsInChildren<MeshRenderer>();
+      Debug.Log("  L " + all.Length);
+    }
+    
   }
 
   public override void setup()
   {
-    base.setup();
-
-    //Debug.Log(_owner.name + " fetching ...");
-
-    _collider = _t.GetComponent<Collider>();
-    if (_collider == null) _collider = _t.GetComponentInChildren<Collider>();
-
+    base.setup(); //fetch renders, symbolcarry, updatebounds
+    
     //no use of module visible if there is nothing to show
     if (_render == null)
     {

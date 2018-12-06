@@ -5,6 +5,24 @@ using UnityEngine;
 static public class HalperComponentsGenerics
 {
 
+  static public T[] getComponents<T>(Transform context) where T : Component
+  {
+    List<T> all = new List<T>();
+    T comp = context.GetComponent<T>();
+    if (comp != null) all.Add(comp);
+    foreach(Transform child in context)
+    {
+      comp = child.GetComponent<T>();
+      if (comp != null) all.Add(comp);
+
+      if(child.childCount > 0)
+      {
+        all.AddRange(getComponents<T>(child));
+      }
+    }
+    return all.ToArray();
+  }
+
   static public T getComponent<T>() where T : Component
   {
     return GameObject.FindObjectOfType<T>();

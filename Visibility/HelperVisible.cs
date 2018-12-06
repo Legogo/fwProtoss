@@ -27,6 +27,11 @@ abstract public class HelperVisible
 
     //if (_coroutineCarrier == null) Debug.LogWarning("no coroutineCarry given ... won't be able to use coroutines ...");
     
+    if(!pivot.gameObject.activeSelf)
+    {
+      Debug.LogWarning("pivot gameobject is not active ?", pivot);
+    }
+
     _t = pivot;
     if (_t == null) Debug.LogError("no transform ?");
 
