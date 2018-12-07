@@ -48,10 +48,13 @@ abstract public class EngineObject : MonoBehaviour, DebugSelection.iDebugSelecti
 
     //Debug.Log(GetType() + " <b>" + name + "</b> START", gameObject);
 
-    //attendre que le l'engine ai démarré
-    //qui doit etre contenu dans resource-engine.scene
-    while (EngineManager.get() == null) yield return null;
-    while (EngineManager.isLoading()) yield return null;
+    if (EngineLoader.compatibility)
+    {
+      //attendre que le l'engine ai démarré
+      //qui doit etre contenu dans resource-engine.scene
+      while (EngineManager.get() == null) yield return null;
+      while (EngineManager.isLoading()) yield return null;
+    }
 
     //si le manager recoit l'event de fin de loading après que Start soit exec
     //il y aura un UPDATE de l'engine avant de repasser par ici et de setup l'objet
@@ -179,6 +182,15 @@ abstract public class EngineObject : MonoBehaviour, DebugSelection.iDebugSelecti
   virtual protected void setupLate()
   {
 
+  }
+
+  void Update()
+  {
+    if(!EngineLoader.compatibility)
+    {
+      updateEngine();
+      updateEngineLate();
+    }
   }
 
   /* called by EngineManager */

@@ -14,6 +14,8 @@ using System;
 
 public class EngineLoader : MonoBehaviour
 {
+  static public bool compatibility = false; // permet de savoir si le moteur est actif
+
   static protected EngineLoader loader;
 
   protected List<Coroutine> queries = new List<Coroutine>();
@@ -34,6 +36,8 @@ public class EngineLoader : MonoBehaviour
       Debug.LogWarning("won't load engine here : scene starts with prefix "+filter);
       return;
     }
+
+    compatibility = true;
 
     loader = create();
 

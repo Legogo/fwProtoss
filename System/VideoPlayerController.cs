@@ -5,7 +5,7 @@ using UnityEngine.Video;
 
 public class VideoPlayerController : EngineObject {
 
-  public enum VideoState { IDLE, PLAY, STOP, END };
+  public enum VideoState { IDLE, PLAY, STOP, PAUSED, END };
 
   public VideoClip[] clips;
 
@@ -15,6 +15,7 @@ public class VideoPlayerController : EngineObject {
 
   public bool skippable = false;
   public bool hideOnStop = false;
+  public bool pauseAtEnd = false;
 
   public float scale = 1f;
   //public bool keepLastFrameVisible = true;
@@ -30,12 +31,17 @@ public class VideoPlayerController : EngineObject {
   {
     base.build();
 
+    Debug.Log("build");
+
     videoPlayer = GetComponent<VideoPlayer>();
     if (videoPlayer == null) Debug.LogError("no video player for " + name+" ?", transform);
 
     if(clips != null && clips.Length > 9) videoPlayer.clip = clips[0];
 
     meshCanvas = transform.GetComponentInChildren<MeshRenderer>();
+    if (meshCanvas == null) Debug.LogError("no mesh canvas ?");
+    else Debug.Log(meshCanvas);
+
     videoPlayer.targetMaterialRenderer = meshCanvas;
 
     Vector3 lScale =  meshCanvas.transform.localScale;
@@ -206,6 +212,14 @@ public class VideoPlayerController : EngineObject {
       case VideoState.STOP:
         if(videoPlayer.isPlaying)
         {
+          Debug.Log(getStamp() + "resumt from stop");
+          eventResume();
+        }
+        break;
+      case VideoState.PAUSED:
+        if (videoPlayer.isPlaying)
+        {
+          Debug.Log(getStamp() + "resume from pause");
           eventResume();
         }
         break;
@@ -277,8 +291,21 @@ public class VideoPlayerController : EngineObject {
       
       stop(); // not visible
     }
+    else if (pauseAtEnd)
+    {
+      Debug.Log(getStamp() + videoPlayer.clip.name + " | eventEnd | paused");
 
-    Debug.Log(getStamp() + videoPlayer.clip.name + " | eventEnd | loop ? " + videoPlayer.isLooping, transform);
+      videoPlayer.Pause();
+
+      _state = VideoState.PAUSED;
+    }
+
+    Debug.Log(getStamp() + videoPlayer.clip.name + " | eventEnd", transform);
+    //Debug.Log("  L pause at end ? "+pauseAtEnd);
+    //Debug.Log("  L isPlaying " + videoPlayer.isPlaying);
+    //Debug.Log("  L isLooping " + videoPlayer.isLooping);
+    //Debug.Log("  L isPrepared " + videoPlayer.isPrepared);
+
     frameHead = 0;
 
     if (onVideoEnd != null) onVideoEnd();

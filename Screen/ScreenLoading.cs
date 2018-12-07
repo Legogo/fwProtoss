@@ -17,6 +17,14 @@ public class ScreenLoading : ScreenObject {
   [RuntimeInitializeOnLoadMethod]
   static public void runetimeInit()
   {
+
+    string filter = EngineLoader.isContextEngineCompatible();
+    if (filter.Length > 0)
+    {
+      Debug.LogWarning("won't load engine here : scene starts with prefix " + filter);
+      return;
+    }
+
     string scName = "loading";
     //if (overrideLoadingScreenName.Length > 0) scName = overrideLoadingScreenName;
 
@@ -51,6 +59,8 @@ public class ScreenLoading : ScreenObject {
 
   static public void showLoadingScreen()
   {
+    if (_instance == null) return;
+
     _instance.show();
   }
 
