@@ -14,7 +14,18 @@ public class VideoPlayerLoop : VideoPlayerController {
   protected bool loopedOnce = false;
 
   public Action onVideoLoopFirstTime;
-  
+
+  protected override void setup()
+  {
+    base.setup();
+
+    if (loopAtFrame.Length <= 0)
+    {
+      Debug.LogWarning("loop player but no loop frame content ??");
+    }
+
+  }
+
   protected override void eventPlay()
   {
     base.eventPlay();
@@ -40,7 +51,9 @@ public class VideoPlayerLoop : VideoPlayerController {
   protected override void eventEnd()
   {
     base.eventEnd();
-    
+
+    if (loopAtFrame.Length <= 0) return;
+
     if (!loopedOnce && onVideoLoopFirstTime != null) onVideoLoopFirstTime();
 
     if (!loopedOnce) loopedOnce = true;

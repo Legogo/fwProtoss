@@ -163,19 +163,21 @@ public class VideoPlayerController : EngineObject {
 
         if (!videoPlayer.isPlaying) // not at end of video and not playing
         {
-          Debug.Log(getStamp() + " videoplayer is not playing and state is PLAY, calling eventStop()");
+          Debug.Log(getStamp() + "videoplayer is not playing and state is PLAY, calling eventStop()");
           eventStop();
           return;
         }
 
+#if UNITY_EDITOR
         if (skippable)
         {
           if (Input.GetMouseButtonUp(0))
           {
-            Debug.Log(getStamp() + "skipped video : " + videoPlayer.clip.name);
+            Debug.Log(getStamp() + "skipped | setup at last frame video : " + videoPlayer.clip.name);
             videoPlayer.frame = (long)videoPlayer.clip.frameCount - 3;
           }
         }
+#endif
 
         if (videoPlayer.frame > 2 && !meshCanvas.enabled)
         {
@@ -279,6 +281,8 @@ public class VideoPlayerController : EngineObject {
   }
   virtual protected void eventStop()
   {
+    if (hideOnStop) meshCanvas.enabled = false;
+
     _state = VideoState.STOP;
     Debug.Log(getStamp() + videoPlayer.clip.name + " | eventStop", transform);
   }
@@ -323,15 +327,15 @@ public class VideoPlayerController : EngineObject {
 
     if(clips.Length > 0)
     {
-      VideoPlayer video = GetComponent<VideoPlayer>();
-      if(video != null)
+      videoPlayer = GetComponent<VideoPlayer>();
+      if(videoPlayer != null)
       {
-        video.playOnAwake = false;
-        video.waitForFirstFrame = true;
+        videoPlayer.playOnAwake = false;
+        videoPlayer.waitForFirstFrame = true;
 
-        video.clip = clips[0];
+        videoPlayer.clip = clips[0];
         MeshRenderer msh = transform.GetChild(0).GetComponent<MeshRenderer>();
-        video.targetMaterialRenderer = msh;
+        videoPlayer.targetMaterialRenderer = msh;
 
         //msh.sharedMaterial.mainTexture = video.clip.
       }
