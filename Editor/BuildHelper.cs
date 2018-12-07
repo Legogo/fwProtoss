@@ -19,7 +19,7 @@ using UnityEditor.Build.Reporting;
 /// https://answers.unity.com/questions/707636/clear-console-window.html
 /// </summary>
 
-abstract public class BuildHelper
+public class BuildHelper
 {
   static BuildPlayerOptions buildPlayerOptions;
 
@@ -141,7 +141,19 @@ abstract public class BuildHelper
     string path = getBuildPathFolder();
     HalperNatives.os_openFolder(path);
   }
-  
+
+  protected string getBuildName()
+  {
+    DataBuildSettings data = GlobalSettingsBuild.getScriptableDataBuildSettings();
+    return data.build_prefix;
+  }
+
+  protected string getBuildPathFolder()
+  {
+    DataBuildSettings data = GlobalSettingsBuild.getScriptableDataBuildSettings();
+    return data.build_path;
+  }
+
   static protected string[] getScenePaths()
   {
     
@@ -161,8 +173,15 @@ abstract public class BuildHelper
     return sceneNames.ToArray();
   }
 
-  abstract public string getBuildPathFolder();
-  abstract public string getBuildName();
+#if UNITY_EDITOR
+
+  [MenuItem("Build/Build&Run (no-increment) %&x")]
+  public static void menu_build_android() { new BuildHelper(true, false); }
+
+  [MenuItem("Build/Build&Run (increment) %&c")]
+  public static void menu_build_run_android() { new BuildHelper(true, true); }
+
+#endif
 
 }
 
@@ -179,12 +198,6 @@ public class Builder : BuildHelper {
 
   public Builder(bool run, bool inc) : base(run, inc)
   { }
-
-  [MenuItem("Build/Build&Run (no-increment) %&x")]
-  public static void menu_build_android() { new Builder(true, false); }
-
-  [MenuItem("Build/Build&Run (increment) %&c")]
-  public static void menu_build_run_android() { new Builder(true, true); }
 
   public override string getBuildName()
   {

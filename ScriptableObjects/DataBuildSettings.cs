@@ -20,6 +20,11 @@ public class DataBuildSettings : ScriptableObject
   public string product_name = "*";
   public string package_name = "com.*.*";
 
+  [Header("file")]
+  public string build_path = "builds/";
+  public string build_prefix = "build";
+
+
 #if UNITY_EDITOR
   [Header("SDK")]
   public iOSTargetDevice target_device;
