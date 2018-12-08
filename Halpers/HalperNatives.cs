@@ -5,6 +5,10 @@ using System;
 
 static public class HalperNatives {
 
+  static public string generateUniqId()
+  {
+    return Guid.NewGuid().ToString();
+  }
 
   /// <summary>
   /// yyyy-mm-dd_hh:mm
@@ -56,4 +60,9 @@ static public class HalperNatives {
     return Application.persistentDataPath;
   }
 
+
+  static public bool isMobile()
+  {
+    return Input.touchSupported;
+  }
 }
