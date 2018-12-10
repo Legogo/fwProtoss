@@ -5,11 +5,25 @@ using UnityEngine;
 static public class HalperComponentsGenerics
 {
 
-  static public T[] getComponents<T>(Transform context) where T : Component
+  /// <summary>
+  /// won't include itself in the search
+  /// </summary>
+  /// <typeparam name="T"></typeparam>
+  /// <param name="context"></param>
+  /// <returns></returns>
+  static public T[] getComponentsInChildren<T>(Transform context) where T : Component
+  {
+    return getComponents<T>(context, false);
+  }
+
+  static public T[] getComponents<T>(Transform context, bool includeItself = true) where T : Component
   {
     List<T> all = new List<T>();
-    T comp = context.GetComponent<T>();
+    
+    T comp = null;
+    if (includeItself) comp = context.GetComponent<T>();
     if (comp != null) all.Add(comp);
+
     foreach(Transform child in context)
     {
       comp = child.GetComponent<T>();
@@ -17,7 +31,7 @@ static public class HalperComponentsGenerics
 
       if(child.childCount > 0)
       {
-        all.AddRange(getComponents<T>(child));
+        all.AddRange(getComponents<T>(child, false));
       }
     }
     return all.ToArray();
