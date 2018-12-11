@@ -52,14 +52,18 @@ public class EngineManager : MonoBehaviour {
   {
     _manager = this;
 
-    if(application_targetFramerate > 0)
+    //https://docs.unity3d.com/ScriptReference/Application-targetFrameRate.html
+    if (application_targetFramerate > 0)
     {
-      Debug.LogWarning(getStamp()+" overriding target <b>framerate to " + application_targetFramerate+"</b>");
+      Debug.LogWarning(getStamp()+"overriding target <b>framerate to " + application_targetFramerate+"</b>");
       Application.targetFrameRate = application_targetFramerate;
+      Debug.LogWarning(getStamp() + "removing vsync");
+      QualitySettings.vSyncCount = 0;
     }
 
     Debug.Log(GlobalSettingsSystem.getSystemInfo());
 
+    //https://docs.unity3d.com/ScriptReference/Screen-sleepTimeout.html
     Screen.sleepTimeout = (mobile_never_sleep) ? SleepTimeout.NeverSleep : SleepTimeout.SystemSetting;
     Debug.Log(getStamp() + " sleep timeout is setup to : " + Screen.sleepTimeout);
 

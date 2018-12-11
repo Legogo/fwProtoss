@@ -15,15 +15,14 @@ public class VideoPlayerLoop : VideoPlayerController {
 
   public Action onVideoLoopFirstTime;
 
-  protected override void setup()
+  protected override void build()
   {
-    base.setup();
+    base.build();
 
-    if (loopAtFrame.Length <= 0)
+    if(!videoPlayer.isLooping)
     {
-      Debug.LogWarning("loop player but no loop frame content ??");
+      Debug.LogWarning("videoplayer is not looping, loop frame won't work !");
     }
-
   }
 
   protected override void eventPlay()
@@ -48,19 +47,23 @@ public class VideoPlayerLoop : VideoPlayerController {
     loopedOnce = false;
   }
 
-  protected override void eventEnd()
+  protected override void solveLooping()
   {
-    base.eventEnd();
+    //base.solveLooping();
 
-    if (loopAtFrame.Length <= 0) return;
+    if (!loopedOnce)
+    {
+      Debug.Log(getStamp() + "loop player | looped once");
+      if (onVideoLoopFirstTime != null) onVideoLoopFirstTime();
+      loopedOnce = true;
+    }
 
-    if (!loopedOnce && onVideoLoopFirstTime != null) onVideoLoopFirstTime();
-
-    if (!loopedOnce) loopedOnce = true;
-
-    //play(loopAtFrame);
     int idx = getCurrentClipIndex();
-    setAtFrame(loopAtFrame[idx]);
+    int frameTarget = loopAtFrame[idx];
+
+    Debug.Log(getStamp() + "loop player | setting up player at frame : " + frameTarget);
+
+    setAtFrame(frameTarget);
   }
   
 }

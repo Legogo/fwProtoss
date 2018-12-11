@@ -52,7 +52,7 @@ static public class GlobalSettingsSystem {
     string str = "<color=red>SYSTEM INFO</color>";
 
 #if UNITY_IOS
-    str += "\n[iphone generation]"+iPhone.generation.ToString();
+    str += "\n[iphone generation]"+UnityEngine.iOS.Device.generation.ToString();
 #endif
 
 #if UNITY_ANDROID

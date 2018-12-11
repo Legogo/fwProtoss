@@ -5,7 +5,7 @@ using UnityEngine.Video;
 
 public class VideoPlayerController : EngineObject {
 
-  public enum VideoState { IDLE, PLAY, STOP, PAUSED, END };
+  public enum VideoState { IDLE, PLAY, STOP, SPAWN, PAUSED, END };
 
   public VideoClip[] clips;
 
@@ -25,13 +25,16 @@ public class VideoPlayerController : EngineObject {
 
   public Dictionary<int, Action<int>> frameSubs;
 
+  protected List<string> logs = new List<string>();
+
   protected long frameHead = 0;
-  
+  protected long lastFrame = 0;
+
   protected override void build()
   {
     base.build();
 
-    Debug.Log("build");
+    //Debug.Log("build");
 
     videoPlayer = GetComponent<VideoPlayer>();
     if (videoPlayer == null) Debug.LogError("no video player for " + name+" ?", transform);
@@ -48,7 +51,17 @@ public class VideoPlayerController : EngineObject {
     lScale *= scale;
     meshCanvas.transform.localScale = lScale;
 
+    //videoPlayer.loopPointReached += onLoop;
     //meshCanvas = HalperComponentsGenerics.getComponentContext<MeshRenderer>(transform, "canvas");
+  }
+
+  virtual protected void onLoop(VideoPlayer vp)
+  {
+    Debug.Log("onLoop");
+
+    frameHead = 0;
+    lastFrame = 0;
+
   }
 
   protected override void setup()
@@ -59,12 +72,19 @@ public class VideoPlayerController : EngineObject {
   
   public void setupClipAndPlay(int index)
   {
-    stop();
+    //stop();
     videoPlayer.clip = clips[index];
 
     Debug.Log(getStamp()+"swapped video (index : "+ index+") for " + videoPlayer.clip.name, transform);
 
     play();
+  }
+
+  public int getNextClipIndex()
+  {
+    int idx = getCurrentClipIndex() + 1;
+    if (idx > clips.Length - 1) idx = 0;
+    return idx;
   }
 
   public void subscribeAtFrame(int frame, Action<int> callback)
@@ -89,45 +109,58 @@ public class VideoPlayerController : EngineObject {
   public void playDefaultClip()
   {
     videoPlayer.clip = clips[0];
-    play();
+    play(); // at frame 0
   }
-
-  public void play()
-  {
-    play(0);
-    
-    //onPlay();
-  }
-
+  
   public void play(int startAtFrame = 0)
   {
     _state = VideoState.IDLE;
 
+    if (!videoPlayer.isPlaying)
+    {
+      Debug.Log("video player play");
+      videoPlayer.Play();
+    }
+
+    videoPlayer.frame = startAtFrame;
     frameHead = startAtFrame;
-
-    videoPlayer.frame = frameHead;
-    if(!videoPlayer.isPlaying) videoPlayer.Play();
-
-    videoPlayer.playbackSpeed = 1f;
+    lastFrame = startAtFrame;
+    
+    //videoPlayer.playbackSpeed = 1f;
 
     meshCanvas.enabled = false;
 
     Debug.Log(getStamp() + "video controller is now playing : " + videoPlayer.clip.name+" , head = "+frameHead, transform);
+    Debug.Log("  L " + videoPlayer.clip.name + " " + videoPlayer.frame + " / " + videoPlayer.frameCount);
+    Debug.Log("  L head : " + frameHead + " | " + lastFrame);
 
-    //onPlay();
   }
 
   public void setAtFrame(int newFrame)
   {
-    if (!videoPlayer.isPlaying) videoPlayer.Play();
+    if (!videoPlayer.isPlaying)
+    {
+      Debug.Log("video player play");
+      videoPlayer.Play();
+    }
 
     videoPlayer.frame = newFrame;
     frameHead = newFrame;
-    _state = VideoState.IDLE;
+    lastFrame = newFrame;
+
+    Debug.Log(getStamp() + "setAtFrame(" + newFrame + ") | videplayer frame " + videoPlayer.frame + " / " + videoPlayer.frameCount);
+    Debug.Log("  L head : " + frameHead);
+    Debug.Log("  L last : " + lastFrame);
+
+    //player will take a frame to change frame to new target frame ?
+    //_state = VideoState.IDLE;
+    _state = VideoState.SPAWN;
   }
 
   public void stop()
   {
+    _state = VideoState.STOP;
+    
     if(videoPlayer == null)
     {
       Debug.LogWarning(getStamp() + "no video player ?");
@@ -146,7 +179,14 @@ public class VideoPlayerController : EngineObject {
   public override void updateEngine()
   {
     base.updateEngine();
-    
+
+    checkCanvasVisibility();
+    solveSkippable();
+
+    if (videoPlayer.isPlaying && videoPlayer.isPrepared)
+
+    //return;
+
     switch (_state)
     {
       case VideoState.IDLE:
@@ -154,67 +194,22 @@ public class VideoPlayerController : EngineObject {
         //on att que le vp commence a jouer pour balancer l'event
         if(videoPlayer.isPlaying && videoPlayer.frame > 1)
         {
-          Debug.Log(getStamp() + videoPlayer.clip.name + " has started playing, frame count is positive, calling eventPlay()");
+          Debug.Log(getStamp() + videoPlayer.clip.name + " has started playing, frame count ("+videoPlayer.frame+") is positive, calling eventPlay()");
           eventPlay();
         }
 
         break;
       case VideoState.PLAY:
 
-        if (!videoPlayer.isPlaying) // not at end of video and not playing
-        {
-          Debug.Log(getStamp() + "videoplayer is not playing and state is PLAY, calling eventStop()");
-          eventStop();
-          return;
-        }
+        headCatchup();
 
-#if UNITY_EDITOR
-        if (skippable)
-        {
-          if (Input.GetMouseButtonUp(0))
-          {
-            Debug.Log(getStamp() + "skipped | setup at last frame video : " + videoPlayer.clip.name);
-            videoPlayer.frame = (long)videoPlayer.clip.frameCount - 3;
-          }
-        }
-#endif
+        checkForEndOfVideo();
 
-        if (videoPlayer.frame > 2 && !meshCanvas.enabled)
-        {
-          meshCanvas.enabled = true;
-        }
-
-        //le video player met plusieurs frame a bien se resynchro
-        if (frameHead > videoPlayer.frame) return;
-
-        /*
-        if(frameHead > videoPlayer.frame)
-        {
-          Debug.LogWarning("frame head is after current video player frame ???");
-          Debug.Log("  L clip ? "+videoPlayer.clip.name + " | playing ? " + videoPlayer.isPlaying);
-          Debug.Log("  L state ? "+_state+" | head ? "+frameHead+" / vp frame ? "+ videoPlayer.frame, videoPlayer.transform);
-          return;
-        }
-        */
-
-        //sometimes the player stay at the same video frame for multiple engine frame
-        while (frameHead < videoPlayer.frame)
-        {
-          checkFrame();
-        }
-
-        //Debug.Log(videoPlayer.frame + " / " + videoPlayer.frameCount);
-
-        if ((int)videoPlayer.frame >= (int)videoPlayer.frameCount) // at last frame of video
-        {
-          eventEnd();
-        }
-        
         break;
       case VideoState.STOP:
         if(videoPlayer.isPlaying)
         {
-          Debug.Log(getStamp() + "resumt from stop");
+          Debug.Log(getStamp() + "resume from stop");
           eventResume();
         }
         break;
@@ -225,13 +220,71 @@ public class VideoPlayerController : EngineObject {
           eventResume();
         }
         break;
+      case VideoState.SPAWN:
+        if(videoPlayer.frame >= frameHead)
+        {
+          Debug.Log(getStamp() + "is now ready after spawning");
+          _state = VideoState.PLAY;
+        }
+        break;
+    }
+
+  }
+
+  protected void checkForEndOfVideo()
+  {
+    bool atEnd = false;
+
+    if (videoPlayer.frame >= (int)videoPlayer.frameCount)
+    {
+      Debug.Log("go to last frame of current clip");
+      atEnd = true;
+    }
+
+    if(!atEnd)
+    {
+      //sometimes (on ios) the player don't get to the very last frame and jump right away to the beginning of the video (loop case)
+      //component just reseted it's frame count (loop ?)
+      int bufferLength = 4; // how many frames the player might have skipped when arrived at the end of the video
+      int last = (int)videoPlayer.frameCount - bufferLength;
+      if (lastFrame >= last && videoPlayer.frame < lastFrame)
+      {
+        Debug.Log("videoplayer is playing a frame " + videoPlayer.frame + " that is before last frame : " + lastFrame);
+        atEnd = true;
+      }
+    }
+
+    if (atEnd)
+    {
+      Debug.Log(frameHead + " | " + videoPlayer.frame + "/" + videoPlayer.frameCount);
+      eventEnd();
+    }
+
+    lastFrame = videoPlayer.frame;
+  }
+
+  protected void headCatchup()
+  {
+    int diff = (int)frameHead - (int)videoPlayer.frame;
+
+    if(diff > 1)
+    {
+      Debug.Log("head progression delta " + frameHead + " VS " + videoPlayer.frame + " = " + diff);
     }
     
+    //catchup
+    //sometimes the player stay at the same video frame for multiple engine frame
+    while (frameHead < videoPlayer.frame)
+    {
+      checkFrame();
+    }
+
   }
 
   protected void checkFrame()
   {
     //Debug.Log("checking callbacks for frame : " + frameHead);
+
     if (frameSubs != null)
     {
 
@@ -239,7 +292,7 @@ public class VideoPlayerController : EngineObject {
       {
         if (frameHead == kp.Key)
         {
-          //Debug.Log("  L callback !");
+          Debug.Log("  L callback for time "+kp.Key);
 
           kp.Value((int)frameHead);
         }
@@ -250,13 +303,41 @@ public class VideoPlayerController : EngineObject {
     frameHead++;
   }
 
+  protected void checkCanvasVisibility()
+  {
+    if (_state != VideoState.PLAY) return;
+
+    //display canvas if it was hidden during for loading
+    if (videoPlayer.frame > 2 && !meshCanvas.enabled)
+    {
+      meshCanvas.enabled = true;
+    }
+
+  }
+
+  protected void solveSkippable()
+  {
+    if (_state != VideoState.PLAY) return;
+
+    if (skippable)
+    {
+      if (Input.GetMouseButtonUp(0))
+      {
+        Debug.Log(getStamp() + "skipped video : " + videoPlayer.clip.name);
+        videoPlayer.frame = (long)videoPlayer.clip.frameCount - 3;
+        return;
+      }
+    }
+
+  }
+
 
   protected VideoClip getClip(int idx)
   {
     return clips[idx];
   }
   
-  protected int getCurrentClipIndex()
+  public int getCurrentClipIndex()
   {
     for (int i = 0; i < clips.Length; i++)
     {
@@ -270,6 +351,7 @@ public class VideoPlayerController : EngineObject {
     _state = VideoState.PLAY;
     Debug.Log(getStamp() + videoPlayer.clip.name + " | <b>eventResume</b> | at frame : " + videoPlayer.frame, transform);
   }
+
   virtual protected void eventPlay()
   {
     _state = VideoState.PLAY;
@@ -277,23 +359,34 @@ public class VideoPlayerController : EngineObject {
 
     visibility.show();
 
+    logs.Add("event play " + videoPlayer.clip.name+"("+videoPlayer.frameCount+")");
+
     if (onPlay != null) onPlay();
   }
+
   virtual protected void eventStop()
   {
-    if (hideOnStop) meshCanvas.enabled = false;
-
     _state = VideoState.STOP;
     Debug.Log(getStamp() + videoPlayer.clip.name + " | eventStop", transform);
+
+    logs.Add("event stop");
   }
-  
-  virtual protected void eventEnd()
+
+  virtual protected void solveLooping()
   {
-    if(!videoPlayer.isLooping)
+    setAtFrame(0);
+  }
+
+  protected void eventEnd()
+  {
+    _state = VideoState.END;
+
+    Debug.Log(getStamp() + videoPlayer.clip.name + " | eventEnd", transform);
+
+    if (videoPlayer.isLooping)
     {
-      _state = VideoState.END;
-      
-      stop(); // not visible
+      Debug.Log(getStamp()+"event end > looping");
+      solveLooping();
     }
     else if (pauseAtEnd)
     {
@@ -301,23 +394,46 @@ public class VideoPlayerController : EngineObject {
 
       videoPlayer.Pause();
 
+      logs.Add("end > pauseatend (player is playing ? "+videoPlayer.isPlaying);
+
       _state = VideoState.PAUSED;
     }
+    else
+    {
+      Debug.Log(getStamp() + "player not looping, calling stop");
+      stop(); // not visible
+    }
 
-    Debug.Log(getStamp() + videoPlayer.clip.name + " | eventEnd", transform);
-    //Debug.Log("  L pause at end ? "+pauseAtEnd);
-    //Debug.Log("  L isPlaying " + videoPlayer.isPlaying);
-    //Debug.Log("  L isLooping " + videoPlayer.isLooping);
-    //Debug.Log("  L isPrepared " + videoPlayer.isPrepared);
-
-    frameHead = 0;
-
+    //callback on video end
     if (onVideoEnd != null) onVideoEnd();
   }
   
   static protected string getStamp()
   {
     return "<color=yellow>fwp VideoPlayer</color> | ";
+  }
+
+  public override string toString()
+  {
+    string ct = base.toString();
+
+    ct = "[video controller]";
+    ct += "\n  L state : " + _state;
+    ct += "\n  L component playing : " + videoPlayer.isPlaying;
+    ct += "\n  L frame : " + videoPlayer.frame + " / " + videoPlayer.frameCount;
+    ct += "\n  L head : " + frameHead;
+
+    ct += "\n(logs)";
+    int lines = 20;
+    int min = Mathf.Max(0, logs.Count - lines);
+    int max = logs.Count;
+    
+    for (int i = min; i < max; i++)
+    {
+      ct += "\n  L " + logs[i];
+    }
+
+    return ct;
   }
 
 #if UNITY_EDITOR
@@ -327,15 +443,15 @@ public class VideoPlayerController : EngineObject {
 
     if(clips.Length > 0)
     {
-      videoPlayer = GetComponent<VideoPlayer>();
-      if(videoPlayer != null)
+      VideoPlayer video = GetComponent<VideoPlayer>();
+      if(video != null)
       {
-        videoPlayer.playOnAwake = false;
-        videoPlayer.waitForFirstFrame = true;
+        video.playOnAwake = false;
+        video.waitForFirstFrame = true;
 
-        videoPlayer.clip = clips[0];
+        video.clip = clips[0];
         MeshRenderer msh = transform.GetChild(0).GetComponent<MeshRenderer>();
-        videoPlayer.targetMaterialRenderer = msh;
+        video.targetMaterialRenderer = msh;
 
         //msh.sharedMaterial.mainTexture = video.clip.
       }
