@@ -265,12 +265,8 @@ public class VideoPlayerController : EngineObject {
 
   protected void headCatchup()
   {
-    int diff = (int)frameHead - (int)videoPlayer.frame;
-
-    if(diff > 1)
-    {
-      Debug.Log("head progression delta " + frameHead + " VS " + videoPlayer.frame + " = " + diff);
-    }
+    //int diff = (int)frameHead - (int)videoPlayer.frame;
+    //if(diff > 1) Debug.Log("head progression delta " + frameHead + " VS " + videoPlayer.frame + " = " + diff);
     
     //catchup
     //sometimes the player stay at the same video frame for multiple engine frame

@@ -28,11 +28,13 @@ public class DebugDisplayContent : EngineObject {
       style = new GUIStyle();
     }
 
+#if !UNITY_EDITOR
     if (!useInBuild)
     {
       visible = false;
       return;
     }
+#endif
 
     visible = startVisible;
   }
