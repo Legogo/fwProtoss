@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class DebugDisplayContent : EngineObject {
-
-  public bool useInBuild = false;
-
+  
   public bool startVisible = true;
   protected bool visible = false;
 
@@ -28,12 +26,8 @@ public class DebugDisplayContent : EngineObject {
       style = new GUIStyle();
     }
 
-#if !UNITY_EDITOR
-    if (!useInBuild)
-    {
-      visible = false;
-      return;
-    }
+#if !debug
+    startVisible = false;
 #endif
 
     visible = startVisible;
@@ -56,8 +50,10 @@ public class DebugDisplayContent : EngineObject {
 
   protected void toggle()
   {
+#if debug
     visible = !visible;
     enabled = visible;
+#endif
   }
 
   /// <summary>
