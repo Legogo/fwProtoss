@@ -65,8 +65,8 @@ public class EngineManager : MonoBehaviour {
 
     //https://docs.unity3d.com/ScriptReference/Screen-sleepTimeout.html
     Screen.sleepTimeout = (mobile_never_sleep) ? SleepTimeout.NeverSleep : SleepTimeout.SystemSetting;
-    Debug.Log(getStamp() + " sleep timeout is setup to : " + Screen.sleepTimeout);
-
+    Debug.Log(getStamp() + " sleep timeout is setup to : " + Screen.sleepTimeout + "(-2 = system | -1 = never sleep)");
+    
     state_loading = true;
     state_live = false;
     
