@@ -89,6 +89,8 @@ public class UiProgressBar : EngineObject {
   public void setProgress(float newProgress)
   {
     progressiveTarget = newProgress; // new goal
+    progressiveTarget = Mathf.Clamp01(progressiveTarget);
+
     applyProgress();
     updateStep();
   }

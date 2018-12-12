@@ -85,6 +85,8 @@ public class UiProgressBarSplit : UiProgressBar {
       slots[i].enabled = (i < slotCount);
     }
 
+    //Debug.Log(progressiveStep+" , "+slotCount+" | "+ idx+" / "+slots.Length);
+
     if (idx > slots.Length - 1) slots[slots.Length - 1].fillAmount = 1f;
     else slots[idx].fillAmount = subProg / step;
   }

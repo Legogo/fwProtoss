@@ -28,6 +28,11 @@ abstract public class UiAnimation : EngineObject
 
   protected float animTimer = 0f;
   public Action onAnimationDone;
+
+  public HelperVisibleUi hVisibility;
+
+  public bool playOnSetup = false;
+  public bool loop = false;
   public bool destroyOnDone = true;
 
   [Header("basic")]
@@ -42,9 +47,16 @@ abstract public class UiAnimation : EngineObject
     setFreeze(true);
   }
 
+  protected override VisibilityMode getVisibilityType()
+  {
+    return VisibilityMode.UI;
+  }
+
   protected override void setupEarly()
   {
     base.setupEarly();
+
+    hVisibility = visibility as HelperVisibleUi;
 
     //canvas doit etre choppé après le build
     //dans le cas de l'utilisation de ResourceManager un element d'UI va etre mit enfant du canvas de l'objet qui est dupliqué
@@ -57,6 +69,7 @@ abstract public class UiAnimation : EngineObject
       Debug.LogError("no canvas for UiAnimation object " + name, transform);
     }
 
+    if (playOnSetup) play();
   }
 
   public UiAnimation play()
@@ -120,7 +133,14 @@ abstract public class UiAnimation : EngineObject
 
     if (onAnimationDone != null) onAnimationDone();
 
-    if (destroyOnDone) GameObject.DestroyImmediate(gameObject);
+    if (loop)
+    {
+      play();
+    }
+    else if (destroyOnDone)
+    {
+      GameObject.DestroyImmediate(gameObject);
+    }
   }
 
   virtual public void clean() {

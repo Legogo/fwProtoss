@@ -83,6 +83,11 @@ abstract public class HelperVisible
   public void show() { setVisibility(true); }
   public void hide() { setVisibility(false); }
 
+  public void fadeStep(float targetAlpha, float step)
+  {
+    setAlpha(Mathf.MoveTowards(getAlpha(), targetAlpha, step));
+  }
+
   /// <summary>
   /// fade alpha toward given target value (using coroutine), callback returns target alpha on completion
   /// </summary>
