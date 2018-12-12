@@ -9,6 +9,8 @@ public class VersionToggle : EngineObject
 
   protected HelperVisibleUi vui;
 
+  public bool hideOnStartup = true;
+
   protected override VisibilityMode getVisibilityType()
   {
     return VisibilityMode.UI;
@@ -21,6 +23,7 @@ public class VersionToggle : EngineObject
     HelperVisibleUi h = (HelperVisibleUi)visibility;
     h.setTextLabel(VersionManager.getFormatedVersion());
 
+    visibility.show();
   }
 
   protected override void setup()
@@ -41,7 +44,15 @@ public class VersionToggle : EngineObject
       Debug.LogError(name + " need to be setup as VisibilityUI");
     }
 
-    visibility.hide();
+#if !debug
+    Debug.Log("debug is off : killing version number on startup");
+    hideOnStartup = true;
+#endif
+
+    if (hideOnStartup)
+    {
+      visibility.hide();
+    }
 
     //if (!Debug.isDebugBuild) visibility.hide();
   }

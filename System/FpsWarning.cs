@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class FpsWarning : DebugDisplayContent
+public class FpsWarning : DebugView
 {
   int fps = 0;
 
