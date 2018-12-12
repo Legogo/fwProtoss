@@ -43,10 +43,11 @@ abstract public class UiAnimation : EngineObject
   {
     base.build();
     rec = GetComponent<RectTransform>();
-    
+
+    //somehow MUST BE in build() and not setup()
     setFreeze(true);
   }
-
+  
   protected override VisibilityMode getVisibilityType()
   {
     return VisibilityMode.UI;
@@ -80,7 +81,9 @@ abstract public class UiAnimation : EngineObject
     animTimer = 0f;
 
     animStart();
+
     //Debug.Log(name + " play !");
+    //Debug.Log("  L " + animTimer + " / " + animationLength);
 
     return this;
   }
@@ -100,11 +103,15 @@ abstract public class UiAnimation : EngineObject
     if(animTimer < animationLength)
     {
       animTimer += Time.deltaTime;
-      
+
+      //Debug.Log(name + " , " + animTimer+" / "+animationLength, transform);
+
       if(animTimer >= animationLength)
       {
         animTimer = animationLength;
-        animUpdate();
+
+        animUpdate(); // one last time to match end state
+
         animEnd();
         return;
       }
@@ -137,7 +144,8 @@ abstract public class UiAnimation : EngineObject
     {
       play();
     }
-    else if (destroyOnDone)
+
+    if (destroyOnDone)
     {
       GameObject.DestroyImmediate(gameObject);
     }
