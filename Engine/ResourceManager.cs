@@ -68,7 +68,7 @@ public class ResourceManager {
   {
     if(nm.Length <= 0)
     {
-      Debug.LogError("you need to provide a name to find a ressource");
+      Debug.LogError("getDuplicate : resource to duplicate seek 'name' is empty : you need to provide a name to find a resource");
       return null;
     }
 
