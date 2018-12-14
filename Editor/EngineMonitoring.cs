@@ -17,11 +17,16 @@ public class EngineMonitoring : EditorWindow
   void OnGUI()
   {
     GUILayout.Label("~Protoss framework~");
-    if(!UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode || !Application.isPlaying)
+
+    if (!UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode || !Application.isPlaying)
     {
       GUILayout.Label("only at runtime");
       return;
     }
+
+    EngineManager em = EngineManager.get();
+
+    if (em == null) return;
 
     SortedDictionary<int, List<EngineObject>> layers = EngineManager.eosLayers;
 
@@ -32,7 +37,17 @@ public class EngineMonitoring : EditorWindow
 
     GUILayout.Label("mEngine loading ? " + EngineManager.isLoading());
     GUILayout.Label("mEngine live ? "+EngineManager.isLive());
-    
+
+    if(GUILayout.Button("select main camera"))
+    {
+      UnityEditor.Selection.activeGameObject = Camera.main.gameObject;
+    }
+
+    if (GUILayout.Button("select arena"))
+    {
+      ArenaManager am = ArenaManager.get();
+      if(am != null) UnityEditor.Selection.activeGameObject = am.gameObject;
+    }
   }
   
 }

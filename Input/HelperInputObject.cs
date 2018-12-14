@@ -15,6 +15,7 @@ namespace fwp.input
 {
   public class HelperInputObject
   {
+    protected ArenaManager arena;
 
     public InputTouchFinger finger;
     public EngineObject owner;
@@ -24,6 +25,7 @@ namespace fwp.input
     protected bool _touching = false; // état press/release (besoin de pas utiliser le doigt directement pour debug possible)
     protected bool _inputLayerAtStart = false;
 
+    public bool onlyDuringArenaLiveState = false;
     public bool dontReactToCapturedFinger = false;
     public bool captureFingerOnTouch = false;
 
@@ -33,8 +35,7 @@ namespace fwp.input
     //globals
     public Action<InputTouchFinger> cbTouch;
     public Action<InputTouchFinger> cbRelease;
-
-
+    
     //specifics
     public Action<InputTouchFinger> cbStayOver; // each frame
     public Action<InputTouchFinger, RaycastHit2D> cbTouchOver; // touch
@@ -63,6 +64,8 @@ namespace fwp.input
       _input.onTouch += eventOnTouch;
       _input.onRelease += eventOnRelease;
       _input.onOverring += eventOnOverring;
+
+      arena = ArenaManager.get();
     }
 
     public void setupCollider(Collider2D[] newColliders)
@@ -79,7 +82,8 @@ namespace fwp.input
     /* un doigt passe par là et y a que moi en dessous */
     private void eventOnOverring(InputTouchFinger finger)
     {
-      if (!_interactive) return;
+      if (!reactToTouch()) return;
+
       if (!_overring) return;
 
       if (finger.isCaptured() && dontReactToCapturedFinger) return;
@@ -96,9 +100,7 @@ namespace fwp.input
     /* global touch event (everybody get this event) */
     private void eventOnTouch(InputTouchFinger finger)
     {
-      //Debug.Log(name + " eventOnTouch (interactive?" + _interactive+") , finger "+finger.fingerId+" captured ? "+finger.captured, gameObject);
-
-      if (!_interactive) return;
+      if (!reactToTouch()) return;
 
       if (dontReactToCapturedFinger)
       {
@@ -126,6 +128,7 @@ namespace fwp.input
 
     private void eventTouchOver(InputTouchFinger finger, RaycastHit2D hit)
     {
+      if (!reactToTouch()) return;
 
       if (!finger.isCaptured() && captureFingerOnTouch)
       {
@@ -138,6 +141,8 @@ namespace fwp.input
 
     private void eventOnRelease(InputTouchFinger finger)
     {
+      if (!reactToTouch()) return;
+
       //Debug.Log(name+" release finger "+finger.fingerId);
 
       if (finger.isCapturedBy(this))
@@ -182,11 +187,15 @@ namespace fwp.input
 
     virtual protected void onTouch(InputTouchFinger finger)
     {
+      if (!reactToTouch()) return;
+
       this.finger = finger;
       if (cbTouch != null) cbTouch(finger);
     }
     virtual protected void onRelease(InputTouchFinger finger)
     {
+      if (!reactToTouch()) return;
+
       if (finger != this.finger) return;
 
       this.finger = null;
@@ -236,6 +245,24 @@ namespace fwp.input
     public void setOverringCapacity(bool flag)
     {
       _overring = flag;
+    }
+
+    /// <summary>
+    /// context that tells the helper if it should react to touch events
+    /// </summary>
+    /// <returns></returns>
+    bool reactToTouch()
+    {
+      //Debug.Log(name + " eventOnTouch (interactive?" + _interactive+") , finger "+finger.fingerId+" captured ? "+finger.captured, gameObject);
+      if (onlyDuringArenaLiveState)
+      {
+        if (!arena.canUpdate()) return false;
+        if (!arena.isArenaStateLive()) return false;
+      }
+
+      if (!_interactive) return false;
+
+      return true;
     }
 
     public virtual void setInteractive(bool flag)

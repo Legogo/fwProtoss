@@ -139,6 +139,8 @@ abstract public class ArenaManager : EngineObject {
     }
 
     round_restart();
+    
+    ScreensManager.open(ScreensManager.ScreenNames.ingame);
   }
 
   /// <summary>

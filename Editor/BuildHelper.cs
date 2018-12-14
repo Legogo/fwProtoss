@@ -17,6 +17,20 @@ using UnityEditor.Build.Reporting;
 /// 
 /// clear console
 /// https://answers.unity.com/questions/707636/clear-console-window.html
+/// 
+/// what is supposed to be version number on ios
+/// https://stackoverflow.com/questions/21125159/which-ios-app-version-build-numbers-must-be-incremented-upon-app-store-release/38009895#38009895
+/// 
+/// 
+/// The pair(Version, Build number) must be unique.
+/// The sequence is valid: (1.0.1, 12) -> (1.0.1, 13) -> (1.0.2, 13) -> (1.0.2, 14) ...
+/// Version(CFBundleShortVersionString) must be in ascending sequential order.
+/// Build number(CFBundleVersion) must be in ascending sequential order.
+/// 
+/// Based on the checklist, the following (Version, Build Number) sequence is valid too.
+/// Case: reuse Build Number in different release trains.
+/// (1.0.0, 1) -> (1.0.0, 2) -> ... -> (1.0.0, 11) -> (1.0.1, 1) -> (1.0.1, 2)
+/// 
 /// </summary>
 
 public class BuildHelper

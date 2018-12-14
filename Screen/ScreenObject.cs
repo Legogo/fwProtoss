@@ -12,6 +12,8 @@ public class ScreenObject : EngineObject
 {
   protected ArenaManager _arena;
 
+  public ScreensManager.ScreenType type;
+
   public bool useUiCamera = false;
   public bool sticky = false; // can't be hidden
   public bool dontHideOtherOnShow = false; // won't close other non sticky screen when showing
@@ -242,6 +244,14 @@ public class ScreenObject : EngineObject
     return mainCanvas.enabled;
     //return transform.position.sqrMagnitude == 0f;
   }
+
+  public void act_button(Button clickedButton)
+  {
+    process_button_press(clickedButton.name);
+  }
+
+  virtual protected void process_button_press(string buttonName)
+  { }
 
   virtual public void act_call_home()
   {

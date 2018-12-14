@@ -8,6 +8,12 @@ public class ScreensManager {
   
   static protected List<ScreenObject> screens;
 
+  public enum ScreenType
+  {
+    menu,
+    ingame
+  }
+
   //usual screen names
   public enum ScreenNames {
     home, // home menu
@@ -24,6 +30,13 @@ public class ScreensManager {
     screens.AddRange(GameObject.FindObjectsOfType<ScreenObject>());
   }
   
+  static public bool hasOpenScreenOfType(ScreenType type)
+  {
+    ScreenObject so = getOpenedScreen();
+    if (so == null) return false;
+    return so.type == type;
+  }
+
   /// <summary>
   /// returns NON-STICKY visible screen
   /// </summary>
@@ -127,6 +140,7 @@ public class ScreensManager {
 
   }
 
+  static public void close(string scName) { close(scName, "", false); }
   static public void close(ScreenNames scName) { close(scName.ToString(), "", false); }
   static public void close(ScreenNames scName, bool force = false) { close(scName.ToString(), "", force); }
   static public void close(ScreenNames scName, string filter = "", bool force = false) { close(scName.ToString(), filter, force); }
