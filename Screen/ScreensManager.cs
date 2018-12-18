@@ -43,6 +43,7 @@ public class ScreensManager {
   /// <returns></returns>
   static public ScreenObject getOpenedScreen()
   {
+    if (screens == null) return null;
     return screens.Select(x => x).Where(x => !x.sticky && x.isVisible()).FirstOrDefault();
   }
 
