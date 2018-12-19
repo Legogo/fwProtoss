@@ -38,7 +38,7 @@ public class UiProgressBar : EngineObject {
       Debug.LogError("asking to modify some ui element as progress bar but target ui element is not setup as fill ?");
     }
 
-    visibility.hide();
+    //visibility.hide();
   }
   
   protected override VisibilityMode getVisibilityType()
