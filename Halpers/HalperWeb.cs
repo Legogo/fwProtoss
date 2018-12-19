@@ -1,13 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 using System;
+
+/// <summary>
+/// https://docs.unity3d.com/ScriptReference/Networking.UnityWebRequest.html
+/// https://docs.unity3d.com/ScriptReference/Networking.DownloadHandler.html
+/// text	Convenience property. Returns the bytes from data interpreted as a UTF8 string. (Read Only)
+/// </summary>
 
 static public class HalperWeb {
   
   static public IEnumerator query(string url, Action<string> onComplete, Action onTimeout, float timeout = 3f)
   {
-    WWW www = new WWW(url);
+    UnityWebRequest www = new UnityWebRequest(url);
 
     while (!www.isDone && timeout > 0f)
     {
@@ -21,6 +28,6 @@ static public class HalperWeb {
       yield break;
     }
 
-    if (onComplete != null) onComplete(www.text);
+    if (onComplete != null) onComplete(www.downloadHandler.text);
   }
 }
