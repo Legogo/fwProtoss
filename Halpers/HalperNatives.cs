@@ -65,4 +65,11 @@ static public class HalperNatives {
   {
     return Input.touchSupported;
   }
+
+  static public void clearGC()
+  {
+    Debug.Log("clearing GC at frame : "+Time.frameCount);
+    Resources.UnloadUnusedAssets();
+    System.GC.Collect();
+  }
 }

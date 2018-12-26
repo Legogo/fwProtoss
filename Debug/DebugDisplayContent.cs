@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class DebugDisplayContent : EngineObject {
-  
+
   public bool startVisible = true;
   protected bool visible = false;
+
+  [Header("align")]
+  public Vector2 offset;
+  public bool alignBottom;
 
   protected string ct = "";
   protected GUIStyle style;
@@ -18,8 +22,13 @@ public class DebugDisplayContent : EngineObject {
   protected override void build()
   {
     base.build();
+    
+    view = new Rect(offset.x, offset.y, Screen.width, Screen.height);
 
-    view = new Rect(20, 20, Screen.width - 20, Screen.height - 20);
+    if (alignBottom)
+    {
+      view.y = Screen.height - offset.y;
+    }
 
     if (style == null)
     {

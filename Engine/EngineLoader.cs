@@ -58,7 +58,7 @@ public class EngineLoader : MonoBehaviour
     string[] filter = { "ui", "screen", "resource", "level" };
     for (int i = 0; i < filter.Length; i++)
     {
-      if (isActiveSceneName(filter[i]))
+      if (doActiveSceneNameContains(filter[i]))
       {
         //SceneManager.LoadScene("game");
         Debug.LogWarning("<color=red><b>" + filter[i] + " SCENE ?!</b></color> can't load that");
@@ -196,7 +196,7 @@ public class EngineLoader : MonoBehaviour
       string sceneName = sceneNames[i];
 
       //do not load the current active scene
-      if (isActiveSceneName(sceneName))
+      if (doActiveSceneNameContains(sceneName))
       {
         Debug.LogWarning("trying to load active scene ?");
         continue;
@@ -307,18 +307,26 @@ public class EngineLoader : MonoBehaviour
     return SceneManager.GetActiveScene().name;
   }
   
-  static public bool isActiveSceneName(string nm) {
-    return getActiveSceneName().Contains(nm);
+  static public bool doActiveSceneNameContains(string nm) {
+    string scName = getActiveSceneName();
+    //Debug.Log(scName + " vs " + nm);
+    return scName.Contains(nm);
+  }
+
+  static public bool isGameScene()
+  {
+    return getActiveSceneName().StartsWith("game");
+    //return doActiveSceneNameContains("game");
   }
 
   static protected bool isResourceScene()
   {
-    return isActiveSceneName("resource-");
+    return doActiveSceneNameContains("resource-");
   }
 
   static protected bool isSceneLevel()
   {
-    return isActiveSceneName("level-");
+    return doActiveSceneNameContains("level-");
   }
   
   static public EngineLoader get() {

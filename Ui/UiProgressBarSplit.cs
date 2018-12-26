@@ -12,10 +12,19 @@ public class UiProgressBarSplit : UiProgressBar {
   public Image[] slots;
   public int slotCount = 1; // to keep, see documentation
 
+  public bool matchWidth = false;
+  public float matchWidthGap = 0f;
+
   protected override void build()
   {
     base.build();
     fetchRefs();
+  }
+
+  protected override void setup()
+  {
+    //don't use image of slots parent
+    //base.setup();
   }
 
   protected void fetchRefs()
@@ -122,6 +131,32 @@ public class UiProgressBarSplit : UiProgressBar {
     fetchRefs();
     applyProgress();
 
+    if (matchWidth)
+    {
+      float tw = slots[0].transform.parent.GetComponent<RectTransform>().getWidth();
+      tw -= matchWidthGap * (slots.Length + 1);
+
+      float cell = tw / slots.Length;
+
+      //Debug.Log(tw+" / "+slots.Length+" = "+ cell);
+      for (int i = 0; i < slots.Length; i++)
+      {
+        slots[i].rectTransform.setWidth(cell);
+        //Debug.Log(slots[i].name + " = " + slots[i].rectTransform.getWidth());
+        
+        if(i > 0)
+        {
+          Vector2 pos = slots[i - 1].rectTransform.getPixelPosition();
+          pos += Vector2.right * slots[i].rectTransform.getWidth();
+          pos += Vector2.right * matchWidthGap;
+          slots[i].rectTransform.setPixelPosition(pos);
+        }
+        else
+        {
+          slots[i].rectTransform.setPixelPosition(Vector2.right * matchWidthGap);
+        }
+      }
+    }
   }
 #endif
 

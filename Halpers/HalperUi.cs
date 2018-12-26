@@ -30,7 +30,7 @@ static public class HalperUi {
   }
   static public float getWidth(this RectTransform elmt)
   {
-    return elmt.sizeDelta.y;
+    return elmt.sizeDelta.x;
   }
 
   static public void setWidth(this RectTransform elmt, float val)
@@ -38,6 +38,7 @@ static public class HalperUi {
     Vector2 size = elmt.sizeDelta;
     size.x = val;
     elmt.sizeDelta = size;
+    //Debug.Log(elmt.name + " size : " + elmt.sizeDelta);
   }
 
   static public void setHeight(this RectTransform elmt, float val)
@@ -45,5 +46,14 @@ static public class HalperUi {
     Vector2 size = elmt.sizeDelta;
     size.y = val;
     elmt.sizeDelta = size;
+  }
+
+  static public void setPixelPosition(this RectTransform elmt, Vector2 pos)
+  {
+    elmt.anchoredPosition = pos;
+  }
+  static public Vector2 getPixelPosition(this RectTransform elmt)
+  {
+    return elmt.anchoredPosition;
   }
 }

@@ -38,19 +38,17 @@ abstract public class ArenaManager : EngineObject {
 
     EngineEventSystem.onPauseEvent += onSystemPause;
     EngineEventSystem.onFocusEvent += onFocusPause;
-    
-    startup();
+
+    if (inDebugContext())
+    {
+      Debug.LogWarning("arena is starting up auto in debug context");
+      arena_startup(); // startup in debug context
+    }
   }
-
-  /// <summary>
-  /// by default called on setup(), can be overrided to not start round by default
-  /// </summary>
-  virtual protected void startup()
+  
+  virtual protected bool inDebugContext()
   {
-    Debug.Log(getStamp() + "DEFAULT BEHAVIOR | starting round right away");
-
-    //launch startup then round
-    arena_startup();
+    return !EngineLoader.isGameScene();
   }
   
   protected void onFocusPause(bool state)
@@ -113,6 +111,7 @@ abstract public class ArenaManager : EngineObject {
 
   /// <summary>
   /// describe how to clean (destroy everything)
+  /// default : called when going to home menu
   /// </summary>
   virtual public void arena_cleanup()
   {
@@ -120,14 +119,20 @@ abstract public class ArenaManager : EngineObject {
     {
       arenaObjects[i].arena_cleanup();
     }
+
+    HalperNatives.clearGC();
   }
 
   /// <summary>
-  /// what must be called by a menu to start the first round
+  /// this is entry point for session generation / startup
+  /// called auto in debug context (not game scene)
   /// some object need to create/regenerate stuff when coming back to arena (if ld data changed)
+  /// must be wrapped for more readability
   /// </summary>
-  virtual public void arena_startup()
+  virtual protected void arena_startup()
   {
+    arena_cleanup();
+
     //if something calls the restart but the process is doing end stuff
     cancelEndProcess();
 
