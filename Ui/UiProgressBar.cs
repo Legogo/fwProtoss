@@ -33,12 +33,13 @@ public class UiProgressBar : EngineObject {
     renderImg = render.getImage();
     renderRectTr = renderImg.GetComponent<RectTransform>();
 
-    if(renderImg.type != Image.Type.Filled)
+#if UNITY_EDITOR
+    if (renderImg.type != Image.Type.Filled)
     {
       Debug.LogError("asking to modify some ui element as progress bar but target ui element is not setup as fill ?");
       UnityEditor.Selection.activeGameObject = renderImg.gameObject;
     }
-
+#endif
     //visibility.hide();
   }
   
