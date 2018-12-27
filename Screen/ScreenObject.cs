@@ -202,7 +202,7 @@ public class ScreenObject : EngineObject
 
   virtual public void show()
   {
-    Debug.Log(getStamp()+" show "+name);
+    Debug.Log(getStamp()+" show screen : "+name);
 
     notInteractiveTimer = 0.2f; // to kill interactive frame offset
 
