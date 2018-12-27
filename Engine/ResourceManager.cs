@@ -23,7 +23,7 @@ public class ResourceManager {
 
       if(cv != null && cv.name.StartsWith("~")) cv.enabled = false; // kill canvas guide of resource object
 
-      if (gos[i].name.StartsWith("~")) GameObject.DestroyImmediate(gos[i].gameObject); // guides objects
+      if (gos[i].name.StartsWith("~")) GameObject.Destroy(gos[i].gameObject); // guides objects
       else resources.Add(gos[i]); // normal resource object
 
     }

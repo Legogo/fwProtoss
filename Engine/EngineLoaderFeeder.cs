@@ -44,7 +44,7 @@ public class EngineLoaderFeeder : MonoBehaviour {
 
     addWithPrefix("", other_names);
 
-    GameObject.DestroyImmediate(this);
+    GameObject.Destroy(this);
 
     return scene_names.ToArray();
   }

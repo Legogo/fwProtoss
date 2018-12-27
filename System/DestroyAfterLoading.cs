@@ -8,7 +8,7 @@ public class DestroyAfterLoading : MonoBehaviour
   {
     while (EngineManager.isLoading()) yield return null;
 
-    GameObject.DestroyImmediate(gameObject);
+    GameObject.Destroy(gameObject);
   }
   
 }

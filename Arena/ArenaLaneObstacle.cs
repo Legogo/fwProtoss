@@ -22,7 +22,7 @@ abstract public class ArenaLaneObstacle : ArenaObject {
     //remove on ooscreen
     if (transform.position.x < -12f)
     {
-      GameObject.DestroyImmediate(gameObject);
+      GameObject.Destroy(gameObject);
     }
   }
 
@@ -49,19 +49,5 @@ abstract public class ArenaLaneObstacle : ArenaObject {
   {
     return true;
   }
-
-  //abstract public void onTouched(ArenaObject other, Collider2D otherColliderTouched);
-
-  static public void cleanAllObstacles()
-  {
-    ArenaLaneObstacle[] obstacles = GameObject.FindObjectsOfType<ArenaLaneObstacle>();
-
-    //clean obstacles
-    while (obstacles.Length > 0)
-    {
-      GameObject.DestroyImmediate(obstacles[0].gameObject);
-      //obstacles.RemoveAt(0);
-    }
-      
-  }
+  
 }

@@ -43,14 +43,14 @@ static public class HalperTransform {
     //remove all children
     while (tr.childCount > 0)
     {
-      GameObject.DestroyImmediate(tr.GetChild(0).gameObject);
+      GameObject.Destroy(tr.GetChild(0).gameObject);
     }
 
     SpriteRenderer[] renders = tr.GetComponents<SpriteRenderer>();
-    foreach (SpriteRenderer render in renders) { GameObject.DestroyImmediate(render); }
+    foreach (SpriteRenderer render in renders) { GameObject.Destroy(render); }
 
     Collider[] colliders = tr.GetComponents<Collider>();
-    foreach (Collider collider in colliders) { GameObject.DestroyImmediate(collider); }
+    foreach (Collider collider in colliders) { GameObject.Destroy(collider); }
 
 
   }

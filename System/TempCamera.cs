@@ -27,7 +27,7 @@ public class TempCamera : MonoBehaviour {
   public void loadingDone()
   {
     StopAllCoroutines();
-    GameObject.DestroyImmediate(gameObject);
+    GameObject.Destroy(gameObject);
   }
 
   private void OnDestroy()
@@ -48,7 +48,7 @@ public class TempCamera : MonoBehaviour {
       AudioListener[] listeners = GameObject.FindObjectsOfType<AudioListener>();
       if (listeners.Length > 1)
       {
-        GameObject.DestroyImmediate(gameObject);
+        GameObject.Destroy(gameObject);
       }
     }
 

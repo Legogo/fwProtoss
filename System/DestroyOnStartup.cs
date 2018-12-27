@@ -11,8 +11,8 @@ public class DestroyOnStartup : MonoBehaviour {
     if(timerToWait > 0f) {
       yield return new WaitForSeconds(timerToWait);
     }
-    
-    DestroyImmediate(gameObject);
+
+    GameObject.Destroy(gameObject);
   }
 
 }

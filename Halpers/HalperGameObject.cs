@@ -25,12 +25,12 @@ static public class HalperGameObject {
     MonoBehaviour[] monos = mono.gameObject.GetComponents<MonoBehaviour>();
     if(monos.Length == 1)
     {
-      GameObject.DestroyImmediate(mono.gameObject);
+      GameObject.Destroy(mono.gameObject);
     }
     else
     {
       //Debug.LogWarning("gameobject has " + monos.Length + " other monos, won't destroy");
-      GameObject.DestroyImmediate(mono);
+      GameObject.Destroy(mono);
     }
   }
 }

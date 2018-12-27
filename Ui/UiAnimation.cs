@@ -147,7 +147,7 @@ abstract public class UiAnimation : EngineObject
 
     if (destroyOnDone)
     {
-      GameObject.DestroyImmediate(gameObject);
+      GameObject.Destroy(gameObject);
     }
   }
 

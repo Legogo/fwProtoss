@@ -161,8 +161,8 @@ public class EngineLoader : MonoBehaviour
     Debug.Log(getStamp()+" ... done loading!");
 
     if (onLoadingDone != null) onLoadingDone();
-    
-    GameObject.DestroyImmediate(gameObject);
+
+    GameObject.Destroy(gameObject);
   }
   
   public Coroutine loadScenes(string[] sceneNames, Action onComplete = null)
@@ -290,7 +290,7 @@ public class EngineLoader : MonoBehaviour
     if(obj.name.StartsWith("~"))
     {
       Debug.Log("   <b>removing guide</b> of name : " + obj.name);
-      GameObject.DestroyImmediate(obj.gameObject);
+      GameObject.Destroy(obj.gameObject);
       return true;
     }
 
