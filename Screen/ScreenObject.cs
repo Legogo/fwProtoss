@@ -20,6 +20,7 @@ public class ScreenObject : EngineObject
 
   protected Canvas mainCanvas;
   protected Canvas[] _canvas;
+  protected RectTransform _rt;
 
   protected float notInteractiveTimer = 0f;
 
@@ -40,6 +41,8 @@ public class ScreenObject : EngineObject
 
     mainCanvas = getCanvas();
 
+    _rt = GetComponent<RectTransform>();
+
     //if (_canvas == null) Debug.LogError("wat ?");
 
     // / ! \
@@ -57,10 +60,18 @@ public class ScreenObject : EngineObject
     if (useUiCamera)
     {
       Camera uiCam = qh.gc<Camera>("camera-ui");
+      if (uiCam == null) Debug.LogError("no camera ui found");
       if(mainCanvas.renderMode == RenderMode.ScreenSpaceOverlay)
       {
+        int sort = mainCanvas.sortingOrder;
+        if(sort == 0)
+        {
+          Debug.LogWarning("when using ui camera sort should be > 0, it's used as plane distance");
+        }
+
         mainCanvas.renderMode = RenderMode.ScreenSpaceCamera;
         mainCanvas.worldCamera = uiCam;
+        mainCanvas.planeDistance = sort; // use sort order for plane distance
       }
     }
 

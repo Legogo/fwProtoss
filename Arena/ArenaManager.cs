@@ -144,7 +144,8 @@ abstract public class ArenaManager : EngineObject {
     }
 
     round_restart();
-    
+
+    Debug.Log(getStamp() + "is calling ingame screen");
     ScreensManager.open(ScreensManager.ScreenNames.ingame);
   }
 

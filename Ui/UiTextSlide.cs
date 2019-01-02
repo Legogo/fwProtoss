@@ -41,9 +41,8 @@ public class UiTextSlide : UiAnimation
     destination = origin + (transform.up * distancePx);
   }
 
-  protected override void animUpdate()
+  protected override void updateAnimationProcess()
   {
-    base.animUpdate();
     
     rec.position = Vector3.Lerp(origin, destination, getProgress());
   }

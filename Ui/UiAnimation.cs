@@ -23,12 +23,11 @@ using System;
 
 abstract public class UiAnimation : EngineObject
 {
-  protected Canvas canvas;
-  protected RectTransform rec;
-
   protected float animTimer = 0f;
   public Action onAnimationDone;
 
+  protected Canvas canvas;
+  protected RectTransform rec;
   public HelperVisibleUi hVisibility;
 
   public bool playOnSetup = false;
@@ -94,7 +93,7 @@ abstract public class UiAnimation : EngineObject
     setFreeze(true);
   }
 
-  public override void updateEngine()
+  sealed public override void updateEngine()
   {
     base.updateEngine();
     
@@ -110,15 +109,17 @@ abstract public class UiAnimation : EngineObject
       {
         animTimer = animationLength;
 
-        animUpdate(); // one last time to match end state
+        updateAnimationProcess(); // one last time to match end state
 
         animEnd();
         return;
       }
     }
 
-    animUpdate();
+    updateAnimationProcess();
   }
+
+  abstract protected void updateAnimationProcess();
   
   protected float getProgress()
   {
@@ -128,11 +129,6 @@ abstract public class UiAnimation : EngineObject
 
   virtual protected void animStart() {
     if (canvas != null) canvas.enabled = true;
-  }
-
-  virtual protected void animUpdate()
-  {
-    //Debug.Log(name + " "+GetType()+" update ...");
   }
 
   virtual protected void animEnd() {

@@ -26,10 +26,8 @@ public class UiSlide : UiAnimation {
     //Debug.Log(name + " reset to "+_owner.localPosition, gameObject);
   }
 
-  protected override void animUpdate()
+  protected override void updateAnimationProcess()
   {
-    base.animUpdate();
-
     //Debug.Log(getProgress());
     rec.localPosition = Vector3.Lerp(originalPosition, target.localPosition, getProgress());
     

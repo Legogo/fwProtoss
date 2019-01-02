@@ -48,6 +48,13 @@ static public class HalperUi {
     elmt.sizeDelta = size;
   }
 
+  static public void setProporPosition(this RectTransform elmt, Vector2 pos)
+  {
+    pos.x = pos.x * Screen.width;
+    pos.y = pos.y * Screen.height;
+    elmt.anchoredPosition = pos;
+  }
+
   static public void setPixelPosition(this RectTransform elmt, Vector2 pos)
   {
     elmt.anchoredPosition = pos;

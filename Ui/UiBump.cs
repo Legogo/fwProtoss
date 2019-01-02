@@ -21,10 +21,8 @@ public class UiBump : UiAnimation {
     rec.localScale = scaleBase;
   }
 
-  protected override void animUpdate()
+  protected override void updateAnimationProcess()
   {
-    base.animUpdate();
-
     rec.transform.localScale = Vector3.Lerp(scaleBase, scaleBase * bumpStr, getProgress());
 
     //Debug.Log(scaleBase+" , "+ rec.transform.localScale);
