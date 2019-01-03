@@ -6,6 +6,11 @@ using Object = UnityEngine.Object;
 
 static public class HalperType {
 
+  static public bool isSameType<T>(Object obj) where T : Type
+  {
+    return (obj as T) != null;
+  }
+  
   /// <summary>
   /// Encapsule (obj != null && obj.GetType() == typeof())
   /// </summary>
@@ -24,8 +29,9 @@ static public class HalperType {
   /// <param name="a"></param>
   /// <param name="b"></param>
   /// <returns></returns>
-  static public bool compareType(Type a, Type b)
+  static public bool compareType(Type a, Type b, bool strict = false)
   {
-    return a.IsAssignableFrom(b) || b.IsAssignableFrom(a);
+    if(!strict) return a.IsAssignableFrom(b) || b.IsAssignableFrom(a);
+    return a == b;
   }
 }

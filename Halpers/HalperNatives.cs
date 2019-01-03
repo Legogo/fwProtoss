@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+/// <summary>
+/// tools to gain data from current device
+/// </summary>
+
 static public class HalperNatives {
 
   static public string generateUniqId()
