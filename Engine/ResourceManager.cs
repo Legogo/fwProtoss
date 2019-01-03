@@ -71,14 +71,16 @@ public class ResourceManager {
       Debug.LogError("getDuplicate : resource to duplicate seek 'name' is empty : you need to provide a name to find a resource");
       return null;
     }
-
+    
     GameObject obj = getDuplicate(nm, rename);
     if (obj == null)
     {
       Debug.LogWarning("no object found in resources named : '<b>" + nm+"</b>'");
       return default(T);
     }
-    
+
+    //Debug.Log("duplicate resource of name : " + nm);
+
     T comp = obj.GetComponent<T>();
 
     //get canvas of origin resource
