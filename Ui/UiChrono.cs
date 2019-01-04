@@ -57,7 +57,7 @@ public class UiChrono : ArenaObject {
   {
     countdown.onTimeout += callback;
   }
-
+  
   public void play(float timeout)
   {
     if (countdown == null) Debug.LogError("can't setup timeout if chrono is not setup as countdown (bool in editor)");
