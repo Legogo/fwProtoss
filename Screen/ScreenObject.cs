@@ -17,8 +17,7 @@ public class ScreenObject : EngineObject
   public bool useUiCamera = false;
   public bool sticky = false; // can't be hidden
   public bool dontHideOtherOnShow = false; // won't close other non sticky screen when showing
-
-  protected Canvas mainCanvas;
+  
   protected Canvas[] _canvas;
   protected RectTransform _rt;
 
@@ -38,9 +37,7 @@ public class ScreenObject : EngineObject
 
     _canvas = transform.GetComponentsInChildren<Canvas>();
     if (_canvas == null) Debug.LogError("no canvas ?");
-
-    mainCanvas = getCanvas();
-
+    
     _rt = GetComponent<RectTransform>();
 
     //if (_canvas == null) Debug.LogError("wat ?");
@@ -56,26 +53,23 @@ public class ScreenObject : EngineObject
   protected override void setupEarly()
   {
     base.setupEarly();
-    
+
+    getCanvas();
+
     if (useUiCamera)
     {
       Camera uiCam = qh.gc<Camera>("camera-ui");
       if (uiCam == null) Debug.LogError("no camera ui found");
-      if(mainCanvas.renderMode == RenderMode.ScreenSpaceOverlay)
-      {
-        int sort = mainCanvas.sortingOrder;
-        if(sort == 0)
-        {
-          Debug.LogWarning("when using ui camera sort should be > 0, it's used as plane distance");
-        }
 
-        mainCanvas.renderMode = RenderMode.ScreenSpaceCamera;
-        mainCanvas.worldCamera = uiCam;
-        mainCanvas.planeDistance = sort; // use sort order for plane distance
+      for (int i = 0; i < _canvas.Length; i++)
+      {
+        if(_canvas[i].renderMode == RenderMode.ScreenSpaceCamera)
+        {
+          _canvas[i].worldCamera = uiCam;
+        }
       }
     }
-
-    hide();
+    
   }
 
   public void subscribeToPressedEvents(Action down, Action up, Action left, Action right)
@@ -115,14 +109,14 @@ public class ScreenObject : EngineObject
     
     //Debug.Log(name + " update " + canUpdate()+" and is visible ? "+isVisible());
 
-    if (isVisible()) updateVisible();
-    else updateNotVisible();
+    if (isVisible()) updateScreenVisible();
+    else updateScreenNotVisible();
   }
 
   sealed public override void updateEngineLate() { base.updateEngineLate(); }
 
-  virtual protected void updateNotVisible(){}
-  virtual protected void updateVisible()
+  virtual protected void updateScreenNotVisible(){}
+  virtual protected void updateScreenVisible()
   {
     update_input_keyboard();
   }
@@ -176,7 +170,7 @@ public class ScreenObject : EngineObject
     {
       if (_canvas[i].name.Contains(nm))
       {
-        //Debug.Log(flag + " for " + nm);
+        Debug.Log("  L found canvas '"+nm+"' => visibility to "+flag);
         _canvas[i].enabled = flag;
       }
     }
@@ -184,20 +178,23 @@ public class ScreenObject : EngineObject
   
   protected void toggleVisible(bool flag)
   {
-    //si le scriptorder fait que le ScreenObject arrive après le Screenmanager ...
-    if(_canvas == null) setup();
     
+    //si le scriptorder fait que le ScreenObject arrive après le Screenmanager ...
+    if (_canvas == null) setup();
+
     if (_canvas == null) Debug.LogError("no canvas ? for "+name, gameObject);
 
-    //Debug.Log(name + " visibility ? " + flag+" for "+_canvas.Length+" canvas");
+    Debug.Log("toggle screen " + name + " visibility to " + flag + " | " + _canvas.Length + " canvas");
     
+    //Debug.Log(name + " visibility ? " + flag+" for "+_canvas.Length+" canvas");
+
     //show all canvas of screen
     for (int i = 0; i < _canvas.Length; i++)
     {
       //Debug.Log(name + "  " + _canvas[i].name);
       if (_canvas[i].enabled != flag)
       {
-        //Debug.Log("canvas " + _canvas[i].name + " toggle to " + flag);
+        Debug.Log("  L canvas " + _canvas[i].name + " toggle to " + flag);
         _canvas[i].enabled = flag;
       }
     }
@@ -252,8 +249,11 @@ public class ScreenObject : EngineObject
 
   public bool isVisible()
   {
-    return mainCanvas.enabled;
-    //return transform.position.sqrMagnitude == 0f;
+    for (int i = 0; i < _canvas.Length; i++)
+    {
+      if (_canvas[i].enabled) return true;
+    }
+    return false;
   }
 
   public void act_button(Button clickedButton)

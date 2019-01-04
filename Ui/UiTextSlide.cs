@@ -23,17 +23,7 @@ public class UiTextSlide : UiAnimation
     txt = GetComponent<Text>();
     if (txt == null) txt = GetComponentInChildren<Text>();
   }
-
-  protected override void setupLate()
-  {
-    base.setupLate();
-
-    if(canvas == null)
-    {
-      Debug.LogError("not assigned to a canvas ?");
-    }
-  }
-
+  
   protected override void animStart()
   {
     base.animStart();

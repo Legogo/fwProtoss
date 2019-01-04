@@ -72,12 +72,13 @@ public class ScreensManager {
     return null;
   }
   
-  static public void open(ScreenNames nm, string filter = "") { open(nm.ToString(), filter); }
+  static public ScreenObject open(ScreenNames nm, string filter = "") { return open(nm.ToString(), filter); }
 
   /// <summary>
   /// best practice : should never call a screen by name but create a contextual enum
+  /// this function won't return a screen that is not already loaded
   /// </summary>
-  static public ScreenObject open(string nm, string filterName = "")
+  static public ScreenObject open(string nm, string filterName = "", Action onComplete = null)
   {
     Debug.Log("ScreensManager | opening screen of name : <b>" + nm + "</b> , filter ? "+filterName);
 
@@ -94,6 +95,7 @@ public class ScreensManager {
     {
       Debug.Log("  ... missing screen '"+nm+"' is now loaded, opening");
       changeScreenVisibleState(nm, true, filterName);
+      if (onComplete != null) onComplete();
     });
 
     return null;
@@ -108,7 +110,7 @@ public class ScreensManager {
     ScreenObject selected = getScreen(scName);
     if(selected == null)
     {
-      Debug.LogError("no 'selected' returned for " + scName);
+      Debug.LogWarning("trying to change visibility of screen "+scName+" but this ScreenObject doesn't exist");
       return;
     }
 

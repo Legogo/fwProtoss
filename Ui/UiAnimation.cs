@@ -18,7 +18,12 @@ using System;
 /// animUpdate
 /// animEnd
 /// clean
-/// 
+
+
+//canvas doit etre choppé après le build
+//dans le cas de l'utilisation de ResourceManager un element d'UI va etre mit enfant du canvas de l'objet qui est dupliqué
+//il est donc pas déjà enfant au build()
+
 /// </summary>
 
 abstract public class UiAnimation : EngineObject
@@ -26,7 +31,7 @@ abstract public class UiAnimation : EngineObject
   protected float animTimer = 0f;
   public Action onAnimationDone;
 
-  protected Canvas canvas;
+  //protected Canvas canvas; // it shouldn't manage it's own canvas
   protected RectTransform rec;
   public HelperVisibleUi hVisibility;
 
@@ -57,17 +62,6 @@ abstract public class UiAnimation : EngineObject
     base.setupEarly();
 
     hVisibility = visibility as HelperVisibleUi;
-
-    //canvas doit etre choppé après le build
-    //dans le cas de l'utilisation de ResourceManager un element d'UI va etre mit enfant du canvas de l'objet qui est dupliqué
-    //il est donc pas déjà enfant au build()
-    canvas = GetComponent<Canvas>();
-    if (canvas == null) canvas = GetComponentInParent<Canvas>();
-
-    if (canvas == null)
-    {
-      Debug.LogError("no canvas for UiAnimation object " + name, transform);
-    }
 
     if (playOnSetup) play();
   }
@@ -128,7 +122,7 @@ abstract public class UiAnimation : EngineObject
   }
 
   virtual protected void animStart() {
-    if (canvas != null) canvas.enabled = true;
+    gameObject.SetActive(true);
   }
 
   virtual protected void animEnd() {
@@ -148,7 +142,7 @@ abstract public class UiAnimation : EngineObject
   }
 
   virtual public void clean() {
-    if (canvas != null) canvas.enabled = false;
+    gameObject.SetActive(false);
   }
 
   static public void killAll()
