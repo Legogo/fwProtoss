@@ -5,9 +5,8 @@ using UnityEngine.UI;
 
 public class UiProgressBar : EngineObject {
 
-  protected HelperVisibleUi render;
-  protected Image renderImg;
-  protected RectTransform renderRectTr;
+  public Image renderImg;
+  protected RectTransform rtPivot;
 
   [Header("progressive logic")]
   public float progressiveSpeed = 999f;
@@ -16,7 +15,12 @@ public class UiProgressBar : EngineObject {
   public float progressiveStep = 1f; // where it's at
 
   protected float progressiveTarget = 1f; // where it wanna go
-  
+
+  protected override VisibilityMode getVisibilityType()
+  {
+    return VisibilityMode.UI;
+  }
+
   protected override void build()
   {
     base.build();
@@ -28,10 +32,14 @@ public class UiProgressBar : EngineObject {
   protected override void setup()
   {
     base.setup();
+    
+    if(renderImg == null)
+    {
+      renderImg = GetComponent<Image>();
+      if (renderImg == null) renderImg = GetComponentInChildren<Image>();
+    }
 
-    render = visibility as HelperVisibleUi;
-    renderImg = render.getImage();
-    renderRectTr = renderImg.GetComponent<RectTransform>();
+    rtPivot = GetComponent<RectTransform>();
 
 #if UNITY_EDITOR
     if (renderImg.type != Image.Type.Filled)
@@ -43,19 +51,14 @@ public class UiProgressBar : EngineObject {
     //visibility.hide();
   }
   
-  protected override VisibilityMode getVisibilityType()
+  public void setVisibility(bool flag)
   {
-    return VisibilityMode.UI;
+    if (gameObject.activeSelf != flag) gameObject.SetActive(flag);
   }
-  
-  private void OnValidate()
-  {
-    if (Application.isPlaying) return;
-    
-    renderImg = transform.GetComponent<Image>();
-    renderRectTr = renderImg.GetComponent<RectTransform>();
 
-    applyProgress();
+  public bool isVisible()
+  {
+    return gameObject.activeSelf;
   }
 
   public override void updateEngine()
@@ -109,7 +112,21 @@ public class UiProgressBar : EngineObject {
   
   public void follow(Vector2 targetWorldPosition)
   {
-    renderRectTr.position = Camera.main.WorldToScreenPoint(targetWorldPosition);
+    rtPivot.position = Camera.main.WorldToScreenPoint(targetWorldPosition);
     //Debug.Log(pivot.position);
   }
+
+
+#if UNITY_EDITOR
+  private void OnValidate()
+  {
+    if (Application.isPlaying) return;
+
+    if(renderImg == null) renderImg = transform.GetComponent<Image>();
+    rtPivot = renderImg.GetComponent<RectTransform>();
+
+    applyProgress();
+  }
+#endif
+
 }
