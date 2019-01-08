@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// entry point is callSlide()
+/// </summary>
+
 public class UiTextSlide : UiAnimation
 {
   protected Vector3 origin;
   protected Vector3 destination;
   protected Vector3 dir;
-  protected Text txt;
+  public Text txt;
 
   [Header("slide data")]
   public float spreadAngle = 0f;
@@ -20,8 +24,11 @@ public class UiTextSlide : UiAnimation
   protected override void build()
   {
     base.build();
-    txt = GetComponent<Text>();
-    if (txt == null) txt = GetComponentInChildren<Text>();
+    if(txt == null)
+    {
+      txt = GetComponent<Text>();
+      if (txt == null) txt = GetComponentInChildren<Text>();
+    }
   }
   
   protected override void animStart()
@@ -88,7 +95,11 @@ public class UiTextSlide : UiAnimation
     return txt.text;
   }
 
-
+  /// <summary>
+  /// type is resource name
+  /// </summary>
+  /// <param name="typeResource"></param>
+  /// <returns></returns>
   static public UiTextSlide create(string typeResource)
   {
     return ResourceManager.getDuplicate<UiTextSlide>(typeResource);

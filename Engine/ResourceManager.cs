@@ -79,7 +79,7 @@ public class ResourceManager {
       return default(T);
     }
 
-    //Debug.Log("duplicate resource of name : " + nm);
+    Debug.Log("duplicate resource of name : " + nm);
 
     T comp = obj.GetComponent<T>();
 

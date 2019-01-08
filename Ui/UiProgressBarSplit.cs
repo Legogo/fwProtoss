@@ -131,20 +131,32 @@ public class UiProgressBarSplit : UiProgressBar {
     fetchRefs();
     applyProgress();
 
+    //Debug.Log("  - " + slots.Length);
+
     if (matchWidth)
     {
-      float tw = slots[0].transform.parent.GetComponent<RectTransform>().getWidth();
-      tw -= matchWidthGap * (slots.Length + 1);
+      RectTransform parentTr = slots[0].transform.parent.GetComponent<RectTransform>();
+      float parentWidth = parentTr.getWidth();
 
-      float cell = tw / slots.Length;
+      if(parentWidth <= 0f)
+      {
+        Debug.LogWarning("parent width is negative ? "+ parentWidth, parentTr);
+        UnityEditor.Selection.activeGameObject = parentTr.gameObject;
+        return;
+      }
 
-      //Debug.Log(tw+" / "+slots.Length+" = "+ cell);
+      parentWidth -= matchWidthGap * (slots.Length + 1);
+
+      float cell = parentWidth / slots.Length;
+      
+      //Debug.Log(parentWidth + " / " + slots.Length + " = " + cell);
+
       for (int i = 0; i < slots.Length; i++)
       {
         slots[i].rectTransform.setWidth(cell);
         //Debug.Log(slots[i].name + " = " + slots[i].rectTransform.getWidth());
-        
-        if(i > 0)
+
+        if (i > 0)
         {
           Vector2 pos = slots[i - 1].rectTransform.getPixelPosition();
           pos += Vector2.right * slots[i].rectTransform.getWidth();

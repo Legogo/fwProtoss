@@ -184,7 +184,7 @@ public class ScreenObject : EngineObject
 
     if (_canvas == null) Debug.LogError("no canvas ? for "+name, gameObject);
 
-    Debug.Log("toggle screen " + name + " visibility to " + flag + " | " + _canvas.Length + " canvas");
+    //Debug.Log("toggle screen " + name + " visibility to " + flag + " | " + _canvas.Length + " canvas");
     
     //Debug.Log(name + " visibility ? " + flag+" for "+_canvas.Length+" canvas");
 
@@ -194,7 +194,7 @@ public class ScreenObject : EngineObject
       //Debug.Log(name + "  " + _canvas[i].name);
       if (_canvas[i].enabled != flag)
       {
-        Debug.Log("  L canvas " + _canvas[i].name + " toggle to " + flag);
+        //Debug.Log("  L canvas " + _canvas[i].name + " toggle to " + flag);
         _canvas[i].enabled = flag;
       }
     }
