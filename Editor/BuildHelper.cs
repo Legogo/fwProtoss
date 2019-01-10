@@ -42,8 +42,9 @@ public class BuildHelper
   DataBuildSettings data = null;
   bool auto_run = false;
   bool version_increment = false;
+  bool open_on_sucess = false;
 
-  public BuildHelper(bool autorun = false, bool incVersion = true, DataBuildSettings paramData = null)
+  public BuildHelper(bool autorun = false, bool incVersion = true, bool openFolderOnSucess = false, DataBuildSettings paramData = null)
   {
     //update data
     if (paramData != null) data = paramData;
@@ -53,19 +54,15 @@ public class BuildHelper
 
     Debug.Log("starting build process");
 
-    start_build();
 
     auto_run = autorun;
     version_increment = incVersion;
-  }
+    open_on_sucess = openFolderOnSucess;
 
-  void start_build()
-  {
     EditorApplication.update += update_check_process;
-
     process = process_setup_build();
   }
-
+  
   void update_check_process()
   {
 
@@ -128,7 +125,7 @@ public class BuildHelper
 
     if (summary.result == BuildResult.Succeeded)
     {
-      onSuccess(summary);
+      onSuccess(summary, data.openFolderOnBuildSuccess || open_on_sucess);
     }
 
     if (summary.result == BuildResult.Failed)
@@ -137,7 +134,7 @@ public class BuildHelper
     }
   }
 
-  protected void onSuccess(BuildSummary summary) {
+  protected void onSuccess(BuildSummary summary, bool openFolder = false) {
 
     Debug.Log("Build succeeded: " + summary.totalSize + " bytes");
 
@@ -189,10 +186,13 @@ public class BuildHelper
 
 #if UNITY_EDITOR
 
-  [MenuItem("Build/Build&Run (no-increment) %&x")]
+  [MenuItem("Build/Build n Open")]
+  public static void menu_build_open() { new BuildHelper(false, false, true); }
+  
+  [MenuItem("Build/Build n Run (no-increment) %&x")]
   public static void menu_build_android() { new BuildHelper(true, false); }
 
-  [MenuItem("Build/Build&Run (increment) %&c")]
+  [MenuItem("Build/Build n Run (increment) %&c")]
   public static void menu_build_run_android() { new BuildHelper(true, true); }
 
 #endif
