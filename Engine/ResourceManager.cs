@@ -78,8 +78,8 @@ public class ResourceManager {
       Debug.LogWarning("no object found in resources named : '<b>" + nm+"</b>'");
       return default(T);
     }
-
-    Debug.Log("duplicate resource of name : " + nm);
+    
+    //Debug.Log("duplicate resource of name : " + nm);
 
     T comp = obj.GetComponent<T>();
 

@@ -170,7 +170,7 @@ public class ScreenObject : EngineObject
     {
       if (_canvas[i].name.Contains(nm))
       {
-        Debug.Log("  L found canvas '"+nm+"' => visibility to "+flag);
+        //Debug.Log("  L found canvas '"+nm+"' => visibility to "+flag);
         _canvas[i].enabled = flag;
       }
     }
@@ -210,7 +210,7 @@ public class ScreenObject : EngineObject
 
   virtual public void show()
   {
-    Debug.Log(getStamp()+" show screen : "+name);
+    //Debug.Log(getStamp()+" show screen : "+name);
 
     notInteractiveTimer = 0.2f; // to kill interactive frame offset
 

@@ -263,5 +263,17 @@ abstract public class EngineObject : MonoBehaviour, DebugSelection.iDebugSelecti
     return toString();
   }
 
+  /// <summary>
+  /// editor selection
+  /// </summary>
+  /// <returns></returns>
+  public bool isSelection()
+  {
+#if UNITY_EDITOR
+    return UnityEditor.Selection.activeGameObject == gameObject;
+#else
+    return false;
+#endif
+  }
   
 }
