@@ -44,11 +44,16 @@ static public class HalperNatives {
 
     return hour + separator + min;
   }
-  
+
   static public void os_openFolder(string folderPath)
   {
     folderPath = folderPath.Replace(@"/", @"\");   // explorer doesn't like front slashes
-    System.Diagnostics.Process.Start("explorer.exe", "/select," + folderPath);
+    
+    //https://stackoverflow.com/questions/334630/opening-a-folder-in-explorer-and-selecting-a-file
+    string argument = "/select, \"" + folderPath + "\"";
+
+    //https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.process.start?view=netframework-4.7.2#System_Diagnostics_Process_Start_System_String_System_String_
+    System.Diagnostics.Process.Start("explorer.exe", argument);
   }
 
 
