@@ -63,4 +63,15 @@ static public class HalperUi {
   {
     return elmt.anchoredPosition;
   }
+
+  /// <summary>
+  /// this is cost heavy, don't do it each frame
+  /// </summary>
+  /// <param name="elmt"></param>
+  /// <param name="target"></param>
+  /// <param name="offset"></param>
+  static public void followTransform(this RectTransform elmt, Transform target, Vector2 offset)
+  {
+    elmt.position = Camera.main.WorldToScreenPoint(target.position);
+  }
 }
