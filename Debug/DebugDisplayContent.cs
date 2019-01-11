@@ -56,8 +56,8 @@ public class DebugDisplayContent : EngineObject {
     style.fontSize = 30;
 
   }
-
-  protected void toggle()
+  
+  public void toggle()
   {
 #if debug
     visible = !visible;
