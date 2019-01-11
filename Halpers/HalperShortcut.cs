@@ -25,6 +25,8 @@ public class qh
 
   static public T gc<T>(string containtName) where T : UnityEngine.Object
   {
+    if (containtName.Length <= 0) return gc<T>();
+
     T[] list = GameObject.FindObjectsOfType<T>();
     for (int i = 0; i < list.Length; i++)
     {

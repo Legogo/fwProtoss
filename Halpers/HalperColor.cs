@@ -25,6 +25,8 @@ static public class HalperColor
 
   }//rgbToColor()
 
+  //static public Color htmlToColor(string hex){}
+
   static public string parse(Color color)
   {
     string data = string.Empty;

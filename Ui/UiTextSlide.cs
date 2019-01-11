@@ -85,6 +85,11 @@ public class UiTextSlide : UiAnimation
     
   }
 
+  public void swapColor(Color newTextColor)
+  {
+    txt.color = newTextColor;
+  }
+
   public string getCurrentText()
   {
     if (txt == null) {
