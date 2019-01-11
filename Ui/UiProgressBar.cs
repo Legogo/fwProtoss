@@ -96,6 +96,8 @@ public class UiProgressBar : EngineObject {
     progressiveTarget = newProgress; // new goal
     progressiveTarget = Mathf.Clamp01(progressiveTarget);
 
+    //Debug.Log(name+" , new progress is " + newProgress, transform);
+
     applyProgress();
     updateStep();
   }
