@@ -44,5 +44,7 @@ public class DataBuildSettings : ScriptableObject
   [Header("icons")]
   public Texture2D icon_ios;
   public Texture2D icon_android;
-  
+
+  [Header("splashscreen")]
+  public Sprite splashscreen;
 }

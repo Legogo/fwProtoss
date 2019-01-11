@@ -50,16 +50,26 @@ static public class GlobalSettingsBuild {
     icons[0] = data.icon_android;
 #endif
 
-    PlayerSettings.SplashScreen.show = false;
     PlayerSettings.SetIconsForTargetGroup(BuildTargetGroup.Unknown, icons);
+
+    Debug.Log("  L updated icons");
+
+    PlayerSettings.SplashScreen.show = false;
+    //PlayerSettings.SplashScreen.background = data.splashscreen;
+    //PlayerSettings.SplashScreenLogo.unityLogo = data.splashscreen;
+    //PlayerSettings.SplashScreenLogo.unityLogo = data.splashscreen;
+    Debug.Log("  L updated splash");
+    
     EditorUserBuildSettings.development = data.developementBuild;
 
     //android specific
     PlayerSettings.Android.minSdkVersion = data.minSdk;
+    Debug.Log("  L updated android stuff");
 
     //ios specific
     PlayerSettings.iOS.targetDevice = data.target_device;
     PlayerSettings.iOS.targetOSVersionString = data.iOSVersion;
+    Debug.Log("  L updated ios stuff");
   }
 #endif
 
