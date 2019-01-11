@@ -53,6 +53,7 @@ abstract public class TimeObject
 
   public bool hasBalancing() { return balancingTimer != null; }
 
+  //in seconds
   public float getTime() { return time; }
 
   public bool isRunning() { return running; }
