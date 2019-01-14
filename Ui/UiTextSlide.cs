@@ -40,22 +40,32 @@ public class UiTextSlide : UiAnimation
 
   protected override void updateAnimationProcess()
   {
-    
     rec.position = Vector3.Lerp(origin, destination, getProgress());
   }
 
-  public UiTextSlide callSlide(Vector3 position, string[] overrideText = null)
+  public UiTextSlide callSlide(Vector3 worldPosition, string[] overrideText = null)
   {
     //rec.SetParent(GameObject.FindObjectOfType<Canvas>().transform);
-    rec.position = Camera.main.WorldToScreenPoint(position);
+    Camera cam = Camera.main;
+    worldPosition.z = -cam.transform.position.z;
+    rec.position = cam.WorldToScreenPoint(worldPosition);
+    //rec.position = worldPosition;
+
+    //Debug.Log(rec.transform.parent, rec.transform.parent);
+    //Debug.Log(Camera.main, Camera.main.transform);
+    //Debug.Log(worldPosition);
+    //Debug.Log(rec.position);
 
     if(overrideText != null)
     {
       setupText(overrideText);
     }
 
-    transform.Rotate(Vector3.forward, Random.Range(-spreadAngle, spreadAngle));
-
+    if(spreadAngle != 0f)
+    {
+      transform.Rotate(Vector3.forward, Random.Range(-spreadAngle, spreadAngle));
+    }
+    
     play();
 
     return this;
