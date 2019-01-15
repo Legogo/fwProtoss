@@ -36,6 +36,12 @@ public class UiTextSlide : UiAnimation
     base.animStart();
     origin = rec.position;
     destination = origin + (transform.up * distancePx);
+
+    if (spreadAngle != 0f)
+    {
+      transform.Rotate(Vector3.forward, Random.Range(-spreadAngle, spreadAngle));
+    }
+
   }
 
   protected override void updateAnimationProcess()
@@ -43,32 +49,32 @@ public class UiTextSlide : UiAnimation
     rec.position = Vector3.Lerp(origin, destination, getProgress());
   }
 
-  public UiTextSlide callSlide(Vector3 worldPosition, string[] overrideText = null)
+  public UiTextSlide callSlide(Vector2 pixelPosition, float depth)
   {
-    //rec.SetParent(GameObject.FindObjectOfType<Canvas>().transform);
-    Camera cam = Camera.main;
-    worldPosition.z = -cam.transform.position.z;
-    rec.position = cam.WorldToScreenPoint(worldPosition);
-    //rec.position = worldPosition;
+    rec.position = pixelPosition;
+
+    //Debug.DrawLine(Vector3.zero, rec.position, Color.black, 3f);
 
     //Debug.Log(rec.transform.parent, rec.transform.parent);
     //Debug.Log(Camera.main, Camera.main.transform);
     //Debug.Log(worldPosition);
     //Debug.Log(rec.position);
-
-    if(overrideText != null)
-    {
-      setupText(overrideText);
-    }
-
-    if(spreadAngle != 0f)
-    {
-      transform.Rotate(Vector3.forward, Random.Range(-spreadAngle, spreadAngle));
-    }
     
     play();
 
     return this;
+  }
+
+  public UiTextSlide callSlide(Vector3 worldPosition)
+  {
+    Debug.DrawLine(Vector3.zero, worldPosition, Color.cyan, 3f);
+
+    //rec.SetParent(GameObject.FindObjectOfType<Canvas>().transform);
+    Camera cam = Camera.main;
+    //Debug.DrawLine(Vector3.zero, cam.transform.position, Color.gray, 3f);
+    
+    Vector3 output = cam.WorldToScreenPoint(worldPosition);
+    return callSlide(output, output.z);
   }
   
   public void setupText(string singleText)
