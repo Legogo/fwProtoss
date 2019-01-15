@@ -7,6 +7,12 @@ using UnityEditor;
 using System.Reflection;
 #endif
 
+/// <summary>
+/// % = ctrl
+/// # = shit
+/// & = alt
+/// </summary>
+
 public class HalperEditor {
 
   [MenuItem("Tools/Clear console #&c")]
@@ -19,6 +25,14 @@ public class HalperEditor {
   }
 
 #if UNITY_EDITOR
+
+  [MenuItem("Tools/pause %#&w")]
+  public static void PauseEditor()
+  {
+    Debug.Log("PAUSE EDITOR");
+    Debug.Break();
+    //UnityEditor.EditorApplication.isPlaying = false;
+  }
 
   static public T editor_draw_selectObject<T>(T instance = null, string overrideSelectLabel = "") where T : Component
   {
