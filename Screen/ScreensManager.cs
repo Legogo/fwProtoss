@@ -116,7 +116,7 @@ public class ScreensManager {
 
     bool hideOthers = !selected.dontHideOtherOnShow;
 
-    Debug.Log(selected.name + " visibilty to " + state+" (filter ? "+containsFilter+" | dont hide other ? "+selected.dontHideOtherOnShow+" => hide others ? "+hideOthers+")");
+    //Debug.Log(selected.name + " visibilty to " + state+" (filter ? "+containsFilter+" | dont hide other ? "+selected.dontHideOtherOnShow+" => hide others ? "+hideOthers+")");
 
     //on opening a specific screen we close all other non sticky screens
     if (hideOthers && state)

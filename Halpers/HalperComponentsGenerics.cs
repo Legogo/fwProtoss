@@ -20,14 +20,14 @@ static public class HalperComponentsGenerics
   {
     List<T> all = new List<T>();
     
-    T comp = null;
-    if (includeItself) comp = context.GetComponent<T>();
-    if (comp != null) all.Add(comp);
+    T[] comps = null;
+    if (includeItself) comps = context.GetComponents<T>();
+    if (comps != null) all.AddRange(comps);
 
     foreach(Transform child in context)
     {
-      comp = child.GetComponent<T>();
-      if (comp != null) all.Add(comp);
+      comps = child.GetComponents<T>();
+      if (comps != null) all.AddRange(comps);
 
       if(child.childCount > 0)
       {
