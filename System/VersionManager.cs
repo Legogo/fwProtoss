@@ -32,12 +32,15 @@ using UnityEditor;
 
 static public class VersionManager
 {
-
+  /// <summary>
+  /// to display build number in logs of build
+  /// </summary>
   [RuntimeInitializeOnLoadMethod]
   static public void logVersion()
   {
     //https://docs.unity3d.com/Manual/StyledText.html
-    Debug.Log("<color=teal>v" + getFormatedVersion() + "</color> - "+getBuildNumber());
+    Debug.Log(Application.version);
+    //Debug.Log("v" + getFormatedVersion());
   }
 
   /// <summary>
@@ -86,10 +89,15 @@ static public class VersionManager
 
 #if UNITY_EDITOR
 
+  static public void logEditorVersion()
+  {
+    Debug.Log("<color=maroon>v" + getFormatedVersion() + "</color> - " + getBuildNumber());
+  }
+
   [MenuItem("Version/log current")]
   static public void menuLogVersion()
   {
-    logVersion();
+    logEditorVersion();
   }
 
   [MenuItem("Version/Increment X.minor.build")]
@@ -139,16 +147,16 @@ static public class VersionManager
 
     apply(v);
   }
-  
-  static public void incrementBuildNumber()
-  {
-    PlayerSettings.Android.bundleVersionCode++; // shared with ios ?
-    PlayerSettings.iOS.buildNumber = PlayerSettings.Android.bundleVersionCode.ToString();
-  }
 
   static public int getBuildNumber()
   {
     return PlayerSettings.Android.bundleVersionCode;
+  }
+
+  static public void incrementBuildNumber()
+  {
+    PlayerSettings.Android.bundleVersionCode++; // shared with ios ?
+    PlayerSettings.iOS.buildNumber = PlayerSettings.Android.bundleVersionCode.ToString();
   }
 
   static private void apply(int[] data, bool incBuildVersion = true)
@@ -158,7 +166,7 @@ static public class VersionManager
     PlayerSettings.bundleVersion = getFormatedVersion('.', data);
     //PlayerSettings.iOS.buildNumber = PlayerSettings.bundleVersion;
 
-    logVersion();
+    logEditorVersion();
   }
 
 #endif

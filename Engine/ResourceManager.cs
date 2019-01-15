@@ -50,6 +50,16 @@ public class ResourceManager {
     return null;
   }
 
+  static public GameObject[] getAllResourceByPrefix(string prefix)
+  {
+    List<GameObject> objs = new List<GameObject>();
+    for (int i = 0; i < resources.Count; i++)
+    {
+      if (resources[i].name.StartsWith(prefix)) objs.Add(resources[i]);
+    }
+    return objs.ToArray();
+  }
+
   static public bool hasResourceByName(string nm)
   {
     for (int i = 0; i < resources.Count; i++)
