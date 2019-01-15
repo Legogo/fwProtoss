@@ -24,9 +24,7 @@ public class VideoPlayerController : EngineObject {
   public Action onVideoEnd;
 
   public Dictionary<int, Action<int>> frameSubs;
-
-  protected List<string> logs = new List<string>();
-
+  
   protected long frameHead = 0;
   protected long lastFrame = 0;
 
@@ -355,7 +353,7 @@ public class VideoPlayerController : EngineObject {
 
     visibility.show();
 
-    logs.Add("event play " + videoPlayer.clip.name+"("+videoPlayer.frameCount+")");
+    log("event play " + videoPlayer.clip.name+"("+videoPlayer.frameCount+")");
 
     if (onPlay != null) onPlay();
   }
@@ -365,7 +363,7 @@ public class VideoPlayerController : EngineObject {
     _state = VideoState.STOP;
     Debug.Log(getStamp() + videoPlayer.clip.name + " | eventStop", transform);
 
-    logs.Add("event stop");
+    log("event stop");
   }
 
   virtual protected void solveLooping()
@@ -390,7 +388,7 @@ public class VideoPlayerController : EngineObject {
 
       videoPlayer.Pause();
 
-      logs.Add("end > pauseatend (player is playing ? "+videoPlayer.isPlaying);
+      log("end > pauseatend (player is playing ? "+videoPlayer.isPlaying);
 
       _state = VideoState.PAUSED;
     }
@@ -418,17 +416,7 @@ public class VideoPlayerController : EngineObject {
     ct += "\n  L component playing : " + videoPlayer.isPlaying;
     ct += "\n  L frame : " + videoPlayer.frame + " / " + videoPlayer.frameCount;
     ct += "\n  L head : " + frameHead;
-
-    ct += "\n(logs)";
-    int lines = 20;
-    int min = Mathf.Max(0, logs.Count - lines);
-    int max = logs.Count;
     
-    for (int i = min; i < max; i++)
-    {
-      ct += "\n  L " + logs[i];
-    }
-
     return ct;
   }
 

@@ -23,7 +23,7 @@ abstract public class EngineObject : MonoBehaviour, DebugSelection.iDebugSelecti
   //[Serializable]public enum InputMode { NONE, MOUSE };
   //public InputMode inputMode;
 
-  protected bool logs = false; // display logs
+  bool logs = false; // display logs
   protected HelperInputObject inputObject = null;
 
   //constructor

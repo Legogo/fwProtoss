@@ -37,7 +37,7 @@ static public class VersionManager
   static public void logVersion()
   {
     //https://docs.unity3d.com/Manual/StyledText.html
-    Debug.Log("<color=teal>v" + getFormatedVersion() + "</color>");
+    Debug.Log("<color=teal>v" + getFormatedVersion() + "</color> - "+getBuildNumber());
   }
 
   /// <summary>
@@ -144,6 +144,11 @@ static public class VersionManager
   {
     PlayerSettings.Android.bundleVersionCode++; // shared with ios ?
     PlayerSettings.iOS.buildNumber = PlayerSettings.Android.bundleVersionCode.ToString();
+  }
+
+  static public int getBuildNumber()
+  {
+    return PlayerSettings.Android.bundleVersionCode;
   }
 
   static private void apply(int[] data, bool incBuildVersion = true)
