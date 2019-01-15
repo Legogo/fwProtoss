@@ -19,10 +19,11 @@ abstract public class EngineObject : MonoBehaviour, DebugSelection.iDebugSelecti
   [Serializable]
   public enum VisibilityMode { NONE, SPRITE, UI, MESH, SKINNED };
   public HelperVisible visibility;
-  
+
   //[Serializable]public enum InputMode { NONE, MOUSE };
   //public InputMode inputMode;
 
+  protected bool logs = false; // display logs
   protected HelperInputObject inputObject = null;
 
   //constructor
@@ -274,6 +275,13 @@ abstract public class EngineObject : MonoBehaviour, DebugSelection.iDebugSelecti
 #else
     return false;
 #endif
+  }
+
+  public void log(string data, Transform logTarget = null)
+  {
+    if (!logs) return;
+    if (logTarget == null) logTarget = transform;
+    Debug.Log(GetType() + " | " + data, logTarget);
   }
   
 }
