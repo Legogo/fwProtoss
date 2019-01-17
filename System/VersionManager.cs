@@ -91,7 +91,7 @@ static public class VersionManager
 
   static public void logEditorVersion()
   {
-    Debug.Log("<color=maroon>v" + getFormatedVersion() + "</color> - " + getBuildNumber());
+    Debug.Log("<color=green>v" + getFormatedVersion() + "</color> - " + getBuildNumber());
   }
 
   [MenuItem("Version/log current")]
