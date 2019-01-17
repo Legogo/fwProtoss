@@ -17,7 +17,7 @@ public class IkFollowTransform : MonoBehaviour
 
   public bool ikActive = false;
   float weight = 1f;
-  float speed = 1f;
+  float speed = 3f;
 
   public AvatarIKGoal ikGoal;
   public Transform followObject = null;
@@ -25,6 +25,7 @@ public class IkFollowTransform : MonoBehaviour
   private void Awake()
   {
     animator = GetComponent<Animator>();
+    if (animator == null) Debug.LogWarning("no animator ? ik won't work");
 
     setup();
   }
@@ -33,9 +34,9 @@ public class IkFollowTransform : MonoBehaviour
   {
   }
 
-  protected void moveWeight(float speed)
+  protected void moveWeight(float stepSpeed)
   {
-    weight += Time.deltaTime * speed;
+    weight += Time.deltaTime * stepSpeed;
     weight = Mathf.Clamp01(weight);
   }
   
@@ -46,7 +47,9 @@ public class IkFollowTransform : MonoBehaviour
     if (animator == null) return;
 
     moveWeight(ikActive ? speed : -speed);
-    
+
+    //Debug.Log(followObject.name+" , "+weight+" , "+speed, transform);
+
     animator.SetIKPositionWeight(ikGoal, weight);
     animator.SetIKRotationWeight(ikGoal, weight);
     animator.SetIKPosition(ikGoal, followObject.position);
