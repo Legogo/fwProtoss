@@ -135,12 +135,12 @@ public class UiTrajectory : EngineObject {
     
     RaycastHit hit;
 
-    Debug.DrawLine(from, to, Color.black, 0.5f);
+    //Debug.DrawLine(from, to, Color.black, 0.5f);
 
     //if (Physics.Raycast(point, Vector3.down, out hit, 100f, raycastLayer))
     if (Physics.SphereCast(from, 0.05f, Vector3.down, out hit, magn, raycastLayer))
     {
-      Debug.DrawLine(from, hit.point, Color.red, 0.5f);
+      //Debug.DrawLine(from, hit.point, Color.red, 0.5f);
       //Debug.Log(from + " | pt : " + hit.point + " | distance : " + hit.distance);
       return true;
     }
@@ -162,6 +162,7 @@ public class UiTrajectory : EngineObject {
     return Physics.gravity;
   }
 
+#if UNITY_EDITOR
   private void OnDrawGizmos()
   {
     if (pts == null) return;
@@ -174,4 +175,6 @@ public class UiTrajectory : EngineObject {
 
     Debug.DrawLine(pts[0], pts[pts.Count - 1], Color.black);
   }
+#endif
+
 }
