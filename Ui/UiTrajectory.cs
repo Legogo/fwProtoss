@@ -9,12 +9,12 @@ using UnityEngine;
 public class UiTrajectory : EngineObject {
   
   LineRenderer lineRender;
-  float gapFactor = 2f;
-  int maxVerts = 100;
+  float gapFactor = 5f;
 
   Vector3 pt = Vector3.zero;
+  List<Vector3> pts = new List<Vector3>();
 
-  FthArena fthArena;
+  //FthArena fthArena;
 
   public LayerMask raycastLayer;
 
@@ -22,14 +22,13 @@ public class UiTrajectory : EngineObject {
   {
     base.build();
     lineRender = gameObject.GetComponent<LineRenderer>();
-    lineRender.positionCount = maxVerts;
+    //lineRender.positionCount = maxVerts;
   }
 
   protected override void setup()
   {
     base.setup();
-
-    fthArena = ArenaManager.get<FthArena>();
+    //fthArena = ArenaManager.get<FthArena>();
   }
 
   public void show()
@@ -45,59 +44,65 @@ public class UiTrajectory : EngineObject {
   public void drawTrajectory(Vector3 startPosition, Vector3 startVelocity)
   {
     transform.position = startPosition;
+
+    solveAllPoints(startPosition, startVelocity);
+
+    Debug.Log(pts.Count);
+
+    lineRender.positionCount = pts.Count;
+    for (int i = 0; i < pts.Count; i++)
+    {
+      lineRender.SetPosition(i, pts[i]);
+    }
     
+    show();
+  }
+
+  protected void solveAllPoints(Vector3 startPosition, Vector3 startVelocity)
+  {
+    pts.Clear();
+
     Vector3 pos = startPosition;
     Vector3 vel = startVelocity;
     Vector3 grav = getGravityFactor();
     Vector3 prev = pos;
-    Vector3 pt = pos;
+
+    pt = pos;
 
     int count = 0;
-    
+
     //lineRender.SetPosition(0, pos);
 
-    Debug.Log("starting at " + pos);
+    //Debug.Log("starting at " + pos);
 
     int safe = 999;
     bool foundEnd = false;
-    while(safe > 0 && !foundEnd)
+    while (safe > 0 && !foundEnd)
     {
       //lineRender.positionCount = count+1;
       pt.x = pos.x;
       pt.y = pos.y;
-      lineRender.SetPosition(count, pt);
+      pts.Add(pt);
+      //lineRender.SetPosition(count, pt);
 
       vel = vel + grav * Time.fixedDeltaTime * gapFactor;
       pos = pos + vel * Time.fixedDeltaTime * gapFactor;
       count++;
-      
+
       //seulement en descente
       if (prev.y > pos.y)
       {
         foundEnd = isEndOfLine(pos);
         Debug.Log("eol : " + count + " at " + pos);
       }
+      
       prev = pos;
 
       safe--;
     }
 
-    //force all last points to the same position
-    for (int i = count; i < lineRender.positionCount; i++)
-    {
-      //lineRender.SetPosition(i, pos);
-    }
-
     if (safe <= 0) Debug.LogError("safe!");
 
-    Debug.Log(count);
-
-    if(count < maxVerts)
-    {
-      solveLastPoint(pos);
-    }
-    
-    show();
   }
 
   virtual protected bool isEndOfLine(Vector3 point)
@@ -105,7 +110,9 @@ public class UiTrajectory : EngineObject {
     if (point.y < -40f) return true;
     
     RaycastHit hit;
-    if (Physics.Raycast(point, Vector3.down, out hit, 100f, raycastLayer))
+
+    //if (Physics.Raycast(point, Vector3.down, out hit, 100f, raycastLayer))
+    if (Physics.SphereCast(point, 1f, Vector3.down, out hit, 1f, raycastLayer))
     {
       Debug.DrawLine(point, hit.point, Color.black, 0.5f);
 
