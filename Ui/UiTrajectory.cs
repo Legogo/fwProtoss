@@ -11,8 +11,10 @@ public class UiTrajectory : EngineObject {
   LineRenderer lineRender;
   float gapFactor = 5f;
 
+  //Vector3 origin;
   Vector3 pt = Vector3.zero;
   List<Vector3> pts = new List<Vector3>();
+  Material mat;
 
   //FthArena fthArena;
 
@@ -22,6 +24,8 @@ public class UiTrajectory : EngineObject {
   {
     base.build();
     lineRender = gameObject.GetComponent<LineRenderer>();
+    mat = lineRender.material;
+    lineRender.material = mat;
     //lineRender.positionCount = maxVerts;
   }
 
@@ -47,7 +51,7 @@ public class UiTrajectory : EngineObject {
 
     solveAllPoints(startPosition, startVelocity);
 
-    Debug.Log(pts.Count);
+    //Debug.Log(pts.Count);
 
     lineRender.positionCount = pts.Count;
     for (int i = 0; i < pts.Count; i++)
@@ -60,14 +64,21 @@ public class UiTrajectory : EngineObject {
 
   protected void solveAllPoints(Vector3 startPosition, Vector3 startVelocity)
   {
-    pts.Clear();
+    //origin = startPosition;
 
     Vector3 pos = startPosition;
     Vector3 vel = startVelocity;
     Vector3 grav = getGravityFactor();
     Vector3 prev = pos;
+    //Vector3 diff;
+
+    float totalMagnitude = 0f;
+    float magn = 0f;
 
     pt = pos;
+
+    pts.Clear();
+    pts.Add(pt);
 
     int count = 0;
 
@@ -79,21 +90,28 @@ public class UiTrajectory : EngineObject {
     bool foundEnd = false;
     while (safe > 0 && !foundEnd)
     {
-      //lineRender.positionCount = count+1;
-      pt.x = pos.x;
-      pt.y = pos.y;
-      pts.Add(pt);
-      //lineRender.SetPosition(count, pt);
-
+      //next velocity
       vel = vel + grav * Time.fixedDeltaTime * gapFactor;
+
+      //next position based on new velocity
       pos = pos + vel * Time.fixedDeltaTime * gapFactor;
+
+      //diff = pos - prev;
+
+      pts.Add(pos);
+      
+      Vector3 diff = pos - prev;
+      magn = diff.magnitude;
+
+      totalMagnitude += magn;
+
       count++;
 
       //seulement en descente
       if (prev.y > pos.y)
       {
-        foundEnd = isEndOfLine(pos);
-        Debug.Log("eol : " + count + " at " + pos);
+        foundEnd = isEndOfLine(prev, pos, magn);
+        //Debug.Log("eol : " + count + " at " + pos);
       }
       
       prev = pos;
@@ -101,28 +119,30 @@ public class UiTrajectory : EngineObject {
       safe--;
     }
 
+    //mat.SetTextureOffset("_MainTex", new Vector2(totalMagnitude * 0.5f, 1f));
+
     if (safe <= 0) Debug.LogError("safe!");
 
   }
 
-  virtual protected bool isEndOfLine(Vector3 point)
+  virtual protected bool isEndOfLine(Vector3 from, Vector3 to, float magn)
   {
-    if (point.y < -40f) return true;
+    if (to.y < -40f)
+    {
+      //Debug.Log("line went under world");
+      return true;
+    }
     
     RaycastHit hit;
 
-    //if (Physics.Raycast(point, Vector3.down, out hit, 100f, raycastLayer))
-    if (Physics.SphereCast(point, 1f, Vector3.down, out hit, 1f, raycastLayer))
-    {
-      Debug.DrawLine(point, hit.point, Color.black, 0.5f);
+    Debug.DrawLine(from, to, Color.black, 0.5f);
 
-      if (hit.distance < 0.1f)
-      {
-        Debug.DrawLine(point, hit.point, Color.red, 0.5f);
-        Debug.Log(point + " | pt : " + hit.point + " | distance : " + hit.distance);
-        //Debug.Log(hit.collider.name, hit.collider.transform);
-        return true;
-      }
+    //if (Physics.Raycast(point, Vector3.down, out hit, 100f, raycastLayer))
+    if (Physics.SphereCast(from, 0.05f, Vector3.down, out hit, magn, raycastLayer))
+    {
+      Debug.DrawLine(from, hit.point, Color.red, 0.5f);
+      //Debug.Log(from + " | pt : " + hit.point + " | distance : " + hit.distance);
+      return true;
     }
 
     return false;
@@ -140,5 +160,18 @@ public class UiTrajectory : EngineObject {
   virtual public Vector3 getGravityFactor()
   {
     return Physics.gravity;
+  }
+
+  private void OnDrawGizmos()
+  {
+    if (pts == null) return;
+    if (pts.Count <= 0) return;
+
+    for (int i = 0; i < pts.Count; i++)
+    {
+      Gizmos.DrawSphere(pts[i], 0.1f);
+    }
+
+    Debug.DrawLine(pts[0], pts[pts.Count - 1], Color.black);
   }
 }
