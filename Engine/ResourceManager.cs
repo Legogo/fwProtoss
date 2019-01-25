@@ -74,18 +74,18 @@ public class ResourceManager {
   /// remove parent if parent is canvas.
   /// <b>Object is deactivated by default !</b>
   /// </summary>
-  static public T getDuplicate<T>(string nm, string rename = "") where T : Component
+  static public T getDuplicate<T>(string resourceName, string instanceName = "") where T : Component
   {
-    if(nm.Length <= 0)
+    if(resourceName.Length <= 0)
     {
       Debug.LogError("getDuplicate : resource to duplicate seek 'name' is empty : you need to provide a name to find a resource");
       return null;
     }
     
-    GameObject obj = getDuplicate(nm, rename);
+    GameObject obj = getDuplicate(resourceName, instanceName);
     if (obj == null)
     {
-      Debug.LogWarning("no object found in resources named : '<b>" + nm+"</b>'");
+      Debug.LogWarning("no object found in resources named : '<b>" + resourceName+"</b>'");
       return default(T);
     }
     
@@ -94,14 +94,15 @@ public class ResourceManager {
     T comp = obj.GetComponent<T>();
 
     //get canvas of origin resource
-    GameObject go = getResourceByName(nm);
+    GameObject go = getResourceByName(resourceName);
     Canvas cs = go.GetComponentInParent<Canvas>();
 
     //setup new generated object child of canvas
     if(cs != null)
     {
       obj.transform.SetParent(go.transform.parent);
-
+      obj.transform.position = go.transform.position;
+      obj.transform.localScale = go.transform.localScale;
       //Debug.Log("ResourceManager :: canvas item :: "+ obj.name + " is child of " + go.name + " parent : " + go.transform.parent.name, obj.transform);
     }
     //else Debug.LogWarning("no canvas for " + nm, obj.transform);
