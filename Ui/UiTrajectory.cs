@@ -47,9 +47,9 @@ public class UiTrajectory : EngineObject {
   
   public void drawTrajectory(Vector3 startPosition, Vector3 startVelocity)
   {
-    transform.position = startPosition;
+    lineRender.transform.position = startPosition;
 
-    solveAllPoints(startPosition, startVelocity);
+    solveAllPoints(startVelocity);
 
     //Debug.Log(pts.Count);
 
@@ -62,11 +62,22 @@ public class UiTrajectory : EngineObject {
     show();
   }
 
-  protected void solveAllPoints(Vector3 startPosition, Vector3 startVelocity)
+  public override void updateEngine()
+  {
+    base.updateEngine();
+
+    if (!lineRender.enabled) return;
+
+    Vector2 offset = mat.GetTextureOffset("_MainTex");
+    offset.x -= Time.deltaTime * 1.5f;
+    mat.SetTextureOffset("_MainTex", offset);
+  }
+
+  protected void solveAllPoints(Vector3 startVelocity)
   {
     //origin = startPosition;
 
-    Vector3 pos = startPosition;
+    Vector3 pos = Vector3.zero; // position are local not world based
     Vector3 vel = startVelocity;
     Vector3 grav = getGravityFactor();
     Vector3 prev = pos;
@@ -137,10 +148,14 @@ public class UiTrajectory : EngineObject {
 
     //Debug.DrawLine(from, to, Color.black, 0.5f);
 
+    //local -> global
+    from += transform.position;
+    to += transform.position;
+
     //if (Physics.Raycast(point, Vector3.down, out hit, 100f, raycastLayer))
     if (Physics.SphereCast(from, 0.05f, Vector3.down, out hit, magn, raycastLayer))
     {
-      //Debug.DrawLine(from, hit.point, Color.red, 0.5f);
+      Debug.DrawLine(from, hit.point, Color.red, 0.5f);
       //Debug.Log(from + " | pt : " + hit.point + " | distance : " + hit.distance);
       return true;
     }
@@ -170,10 +185,10 @@ public class UiTrajectory : EngineObject {
 
     for (int i = 0; i < pts.Count; i++)
     {
-      Gizmos.DrawSphere(pts[i], 0.1f);
+      Gizmos.DrawSphere(transform.position + pts[i], 0.1f);
     }
 
-    Debug.DrawLine(pts[0], pts[pts.Count - 1], Color.black);
+    Debug.DrawLine(transform.position + pts[0], transform.position + pts[pts.Count - 1], Color.black);
   }
 #endif
 
