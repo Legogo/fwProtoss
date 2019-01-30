@@ -34,4 +34,11 @@ static public class HalperType {
     if(!strict) return a.IsAssignableFrom(b) || b.IsAssignableFrom(a);
     return a == b;
   }
+
+  /// <summary>
+  /// pas dit que ça fonctionne ?
+  /// </summary>
+  static public bool compareComponentType(Component a, Component b, bool strict = false){
+    return compareType(a.GetType(), b.GetType(), strict);
+  }
 }
