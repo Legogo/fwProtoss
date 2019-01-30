@@ -21,6 +21,10 @@ using UnityEditor.Build.Reporting;
 /// what is supposed to be version number on ios
 /// https://stackoverflow.com/questions/21125159/which-ios-app-version-build-numbers-must-be-incremented-upon-app-store-release/38009895#38009895
 /// 
+/// buils size
+/// 
+/// https://stackoverflow.com/questions/28100362/how-to-reduce-the-size-of-an-apk-file-in-unity
+/// https://docs.unity3d.com/Manual/iphone-playerSizeOptimization.html
 /// 
 /// The pair(Version, Build number) must be unique.
 /// The sequence is valid: (1.0.1, 12) -> (1.0.1, 13) -> (1.0.2, 13) -> (1.0.2, 14) ...
@@ -119,6 +123,8 @@ public class BuildHelper
     if(auto_run) buildPlayerOptions.options |= BuildOptions.AutoRunPlayer;
 
     //BuildPipeline.BuildPlayer(buildPlayerOptions);
+
+    // https://docs.unity3d.com/ScriptReference/Build.Reporting.BuildSummary.html
     
     BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
     BuildSummary summary = report.summary;
@@ -133,18 +139,40 @@ public class BuildHelper
       Debug.Log("Build failed");
     }
   }
-
+  
   protected void onSuccess(BuildSummary summary, bool openFolder = false) {
 
-    Debug.Log("Build succeeded: " + summary.totalSize + " bytes");
+    ulong bytes = summary.totalSize;
+    ulong byteToMo = 1048576;
 
-    //DataBuildSettings data = SettingsManager.getScriptableDataBuildSettings();
+    int size = (int)(bytes / byteToMo);
 
-    if (data.openFolderOnBuildSuccess)
+    Debug.Log("Build finished");
+    Debug.Log("  L result : " + summary.result+" | warnings : "+summary.totalWarnings+" | errors "+summary.totalErrors);
+    Debug.Log("  L platform : "+summary.platform);
+    Debug.Log("  L build time : " + summary.totalTime);
+
+    switch (summary.result)
     {
-      Debug.Log("opening build folder ...");
-      openBuildFolder();
+      case BuildResult.Succeeded:
+
+        Debug.Log("  L byte size : " + summary.totalSize + " bytes");
+        Debug.Log("  L ~ size : " + size + " Mo");
+        Debug.Log("  L path : " + summary.outputPath);
+
+        //DataBuildSettings data = SettingsManager.getScriptableDataBuildSettings();
+
+        if (data.openFolderOnBuildSuccess)
+        {
+          Debug.Log("opening build folder ...");
+          openBuildFolder();
+        }
+        break;
+      default:
+        Debug.Log("Build failed: " + summary.result);
+        break;
     }
+
   }
 
   protected void openBuildFolder()
