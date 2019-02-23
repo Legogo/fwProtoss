@@ -41,7 +41,7 @@ abstract public class ArenaManager : EngineObject {
 
     if (inDebugContext())
     {
-      Debug.LogWarning("arena is starting up auto in debug context");
+      Debug.LogWarning("(debug context) arena is starting up <b>auto</b>");
       arena_startup(); // startup in debug context
     }
   }
