@@ -61,15 +61,6 @@ abstract public class ArenaManager : EngineObject {
 
   protected void onSystemPause(bool state)
   {
-    //Debug.Log("system pause ! "+state);
-    /*
-    if (Application.isEditor)
-    {
-      Debug.LogWarning("do nothing with pause in editor");
-      return;
-    }
-    */
-
     Debug.Log(getStamp() + " system pause ? " + state);
 
     if (state && canPause()) onRoundPause(true);
