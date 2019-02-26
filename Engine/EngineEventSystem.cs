@@ -12,11 +12,14 @@ public class EngineEventSystem {
   //where scripts can subscribe to receive pause event
   static public Action<bool> onPauseEvent;
   static public Action<bool> onFocusEvent;
-
-  [RuntimeInitializeOnLoadMethod]
+  
+  /// <summary>
+  /// if pause checker is not added by hand, this function needs to be called
+  /// </summary>
   static public void create()
   {
-    qh.cr<PauseChecker>("[pause]");
+    PauseChecker pc = qh.gc<PauseChecker>();
+    if(pc == null) qh.cr<PauseChecker>("[pause]");
   }
   
   static public string getStamp()

@@ -6,14 +6,14 @@ using UnityEngine;
 /// meant to be the funnel point to catch a pause event
 /// </summary>
 
-abstract public class PauseChecker : MonoBehaviour {
+public class PauseChecker : MonoBehaviour {
   
   private void OnApplicationFocus(bool state)
   {
     //Debug.Log("app focus : "+focus);
     if(!state && !canUnpause())
     {
-      Debug.Log("can't unpause on focus = " + state);
+      Debug.Log("can't OnApplicationFocus(" + state + ") on focus = " + state);
       return;
     }
 
@@ -23,9 +23,28 @@ abstract public class PauseChecker : MonoBehaviour {
   private void OnApplicationPause(bool state)
   {
     //Debug.Log("app pause : "+pause);
+    //Debug.Log("app focus : "+focus);
+    if (!state && !canUnpause())
+    {
+      Debug.Log("can't OnApplicationPause("+state+") on focus = " + state);
+      return;
+    }
+
     if (EngineEventSystem.onPauseEvent != null) EngineEventSystem.onPauseEvent(state);
   }
 
-  abstract protected bool canUnpause();
+  virtual protected bool canUnpause()
+  {
+    //can't unpause when pause menu is visible
+    ScreenObject screen = ScreensManager.getScreen(ScreensManager.ScreenNames.pause);
+    ScreenPause sp = screen as ScreenPause;
+
+    if (sp != null)
+    {
+      if (sp.isVisible()) return false;
+    }
+
+    return true;
+  }
 
 }

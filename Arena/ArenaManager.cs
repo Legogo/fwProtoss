@@ -36,6 +36,8 @@ abstract public class ArenaManager : EngineObject {
   {
     base.setupLate();
 
+    EngineEventSystem.create(); // make sure PauseChecker exists ...
+
     EngineEventSystem.onPauseEvent += onSystemPause;
     EngineEventSystem.onFocusEvent += onFocusPause;
 
@@ -44,6 +46,7 @@ abstract public class ArenaManager : EngineObject {
       Debug.LogWarning("(debug context) arena is starting up <b>auto</b>");
       arena_startup(); // startup in debug context
     }
+    
   }
   
   virtual protected bool inDebugContext()
