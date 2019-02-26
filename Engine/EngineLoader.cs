@@ -205,7 +205,7 @@ public class EngineLoader : MonoBehaviour
       //don't double load same scene
       if (SceneManager.GetSceneByName(sceneName).isLoaded)
       {
-        Debug.LogWarning("<b>"+sceneName + "</b> is concidered as already loaded");
+        Debug.LogWarning("<b>"+sceneName + "</b> is considered as already loaded");
         continue;
       }
       
@@ -234,7 +234,9 @@ public class EngineLoader : MonoBehaviour
       yield break;
     }
 
+#if UNITY_EDITOR
     Debug.Log(getStamp() + "  L <b>" + sceneLoad + "</b> loading ... ");
+#endif
 
     AsyncOperation async = SceneManager.LoadSceneAsync(sceneLoad, LoadSceneMode.Additive);
     while (!async.isDone)

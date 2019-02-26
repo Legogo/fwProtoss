@@ -66,7 +66,7 @@ public class ScreenLoading : ScreenObject {
 
   static public void hideLoadingScreen()
   {
-    Debug.Log("hiding loading screen through static call");
+    //Debug.Log("hiding loading screen through static call");
 
     if (_instance == null)
     {

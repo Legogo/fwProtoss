@@ -32,6 +32,7 @@ public class HalperEditor {
     Debug.Log("PAUSE EDITOR");
     Debug.Break();
     //UnityEditor.EditorApplication.isPlaying = false;
+
   }
 
   static public T editor_draw_selectObject<T>(T instance = null, string overrideSelectLabel = "") where T : Component

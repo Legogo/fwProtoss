@@ -112,7 +112,11 @@ namespace fwp.input
       if (useMainCamera && inputCamera == null)
       {
         inputCamera = Camera.main;
+
+#if UNITY_EDITOR
         if (inputCamera == null) Debug.LogWarning(getStamp()+"no MainCamera tagged in context (frame : "+Time.frameCount+")");
+#endif
+
         return;
       }
 
