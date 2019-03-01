@@ -92,9 +92,12 @@ namespace fwp.input
 
       //Debug.Log(GetType() + " setup is done, enabling update");
 
+      //EngineEventSystem.onPauseEvent += onSystemPause;
+      //EngineEventSystem.onFocusEvent += onFocusPause;
+
       enabled = true;
     }
-
+    
     public void subscribeToScroll(Action<float, float> onScroll)
     {
       pinchBridge.onScroll += onScroll;
@@ -209,6 +212,11 @@ namespace fwp.input
 
     }
 
+    void clearFingers()
+    {
+      
+    }
+
     protected void killFinger(InputTouchFinger finger)
     {
       //les doigts qui ne sont plus utilisés
@@ -234,7 +242,9 @@ namespace fwp.input
       Touch[] touches = Input.touches;
 
       InputTouchFinger _finger;
-      for (int i = 0; i < touchCount; i++)
+
+      int i = 0;
+      for (i = 0; i < touchCount; i++)
       {
         _finger = getFingerById(touches[i].fingerId);
 
@@ -244,6 +254,16 @@ namespace fwp.input
         _finger.update(touches[i]);
       }
 
+      if(i < _fingers.Count)
+      {
+        //cancel unused fingers
+        while (i < _fingers.Count)
+        {
+          _fingers[i].reset();
+          i++;
+        }
+      }
+      
     }
 
     //ON PC
@@ -404,10 +424,10 @@ namespace fwp.input
     public bool useDebugInBuild = false;
 
     public bool drawDebug = false;
-    public Vector2 viewDimensions = new Vector2(Screen.width, Screen.height);
-    public float viewScaleFactor = 1f;
 
+    Vector2 viewDimensions = new Vector2(Screen.width, Screen.height);
     protected GUIStyle style;
+
     void OnGUI()
     {
       if (!drawDebug) return;
@@ -420,10 +440,12 @@ namespace fwp.input
         style.richText = true;
         style.normal.background = Texture2D.whiteTexture;
       }
-      style.fontSize = 40;
       //style.normal.background
 
       //solve scaling
+
+      float ratio = Screen.width / 720f;
+      style.fontSize = Mathf.FloorToInt(ratio * 20f);
 
       viewDimensions.x = Screen.width;
       viewDimensions.y = Screen.height;

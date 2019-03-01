@@ -235,8 +235,10 @@ namespace fwp.input
     }
 
     // release
+    public bool isPhaseActive() { return phase < TouchPhase.Ended; }
     public bool isPhaseEnded() { return phase == TouchPhase.Ended; }
     public bool isPhaseCanceled() { return phase == TouchPhase.Canceled; }
+    public TouchPhase getPhase() { return phase; }
 
     /* si le doigt a toujours un impact potentiel dans l'espace de jeu donc meme dans la frame de release ! */
     public bool isFingerUsed()

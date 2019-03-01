@@ -97,6 +97,7 @@ abstract public class ArenaManager : EngineObject {
 
     Debug.Log(getStamp() + "round pause ("+state+") | arena state switched to "+_state);
 
+    //will freeze all objects
     for (int i = 0; i < arenaObjects.Count; i++)
     {
       arenaObjects[i].round_pause(state);
