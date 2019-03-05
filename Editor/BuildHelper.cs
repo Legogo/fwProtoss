@@ -119,8 +119,15 @@ public class BuildHelper
     //will setup android or ios based on unity build settings target platform
     buildPlayerOptions.target = EditorUserBuildSettings.activeBuildTarget;
 
-    buildPlayerOptions.options |= BuildOptions.Development;
-    if(auto_run) buildPlayerOptions.options |= BuildOptions.AutoRunPlayer;
+    if (data.developementBuild)
+    {
+      buildPlayerOptions.options |= BuildOptions.Development;
+    }
+
+    if (auto_run)
+    {
+      buildPlayerOptions.options |= BuildOptions.AutoRunPlayer;
+    }
 
     //BuildPipeline.BuildPlayer(buildPlayerOptions);
 
@@ -148,8 +155,9 @@ public class BuildHelper
     int size = (int)(bytes / byteToMo);
 
     Debug.Log("Build finished");
+    Debug.Log("  L version : <b>" + VersionManager.getFormatedVersion()+"</b>");
     Debug.Log("  L result : " + summary.result+" | warnings : "+summary.totalWarnings+" | errors "+summary.totalErrors);
-    Debug.Log("  L platform : "+summary.platform);
+    Debug.Log("  L platform : <b>"+summary.platform+"</b>");
     Debug.Log("  L build time : " + summary.totalTime);
 
     switch (summary.result)
