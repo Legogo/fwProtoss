@@ -73,6 +73,7 @@ public class ScreensManager {
   }
   
   static public ScreenObject open(ScreenNames nm, string filter = "") { return open(nm.ToString(), filter); }
+  static public ScreenObject open(string nm, Action onComplete) { return open(nm, "", onComplete); }
 
   /// <summary>
   /// best practice : should never call a screen by name but create a contextual enum
