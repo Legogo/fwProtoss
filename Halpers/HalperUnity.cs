@@ -69,4 +69,11 @@ static public class HalperUnity {
     return default(KeyValuePair<string, string[]>);
   }
 
+  static public void clearGC()
+  {
+    Debug.Log("clearing GC at frame : " + Time.frameCount);
+    Resources.UnloadUnusedAssets();
+    System.GC.Collect();
+  }
+
 }

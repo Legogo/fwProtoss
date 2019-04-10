@@ -24,4 +24,18 @@ public class HalperIO
     */
   }
 
+  static public string getFolderPathByName(string basePath, string folderName)
+  {
+    //this returns FULL PATHs
+    string[] dirs = Directory.GetDirectories(basePath);
+    
+    foreach (string dir in dirs)
+    {
+      if (dir.ToLower().EndsWith(folderName.ToLower())) return dir;
+      string output = getFolderPathByName(dir, folderName);
+      if (output.Length > 0) return output;
+    }
+
+    return "";
+  }
 }

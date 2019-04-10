@@ -115,7 +115,7 @@ abstract public class ArenaManager : EngineObject {
       arenaObjects[i].arena_cleanup();
     }
 
-    HalperNatives.clearGC();
+    HalperUnity.clearGC();
   }
 
   /// <summary>
