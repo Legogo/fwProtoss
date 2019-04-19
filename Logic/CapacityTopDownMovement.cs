@@ -32,7 +32,7 @@ namespace fwp
 
     public override void setupCapacity()
     {
-      _inputLocal = _owner.GetComponent<CapacityInput>().keys.get<InputKeyTopDown>();
+      _inputLocal = _owner.input.get<InputKeyTopDown>();
       _gameSpace = GameSpace.get();
     }
 

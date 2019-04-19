@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using fwp.input;
 
 /// <summary>
 /// Le bridge qui permet a un object d'avoir des <LogicCapacity>
@@ -12,14 +13,13 @@ namespace fwp
   public class LogicItem : ArenaObject
   {
     protected List<LogicCapacity> capacities = new List<LogicCapacity>();
-
-    [HideInInspector]
-    public CapacityInput input;
+    
+    public InputKeyBridge input;
 
     protected override void setupEarly()
     {
       base.setupEarly();
-      input = GetComponent<CapacityInput>();
+      input = new InputKeyBridge();
     }
 
     protected override void setup()

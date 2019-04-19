@@ -185,6 +185,9 @@ abstract public class EngineObject : MonoBehaviour, DebugSelection.iDebugSelecti
 
   }
 
+  /// <summary>
+  /// you should NOT override this function
+  /// </summary>
   void Update()
   {
     if(!EngineLoader.compatibility)

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
@@ -6,7 +7,7 @@ using System;
 namespace fwp
 {
 
-  public class CapacityInventory : LogicCapacity {
+  abstract public class CapacityInventory : LogicCapacity {
   
     List<InventoryItem> items = new List<InventoryItem>();
 
@@ -53,6 +54,12 @@ namespace fwp
 
     public InventoryItem addItem(string uid, int qty = 1)
     {
+      if(uid.Length <= 0)
+      {
+        Debug.LogWarning("no uid given ?");
+        return null;
+      }
+
       InventoryItem ii = getItem(uid);
       if (ii == null) {
         ii = new InventoryItem(uid);
@@ -64,6 +71,8 @@ namespace fwp
   
     public InventoryItem addItem(InventoryItem newItem)
     {
+      if (newItem == null) Debug.LogWarning("no item given ?");
+
       InventoryItem ii = getItem(newItem.getId());
       if (ii == null)
       {

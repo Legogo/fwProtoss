@@ -56,16 +56,29 @@ public class EditorGitShortcuts : MonoBehaviour
 
   static public bool folderHasGitFolder(string basePath)
   {
+    //Debug.Log(basePath);
+
+    string path;
+
+    //search for a /.git/ folder
     string[] dirs = Directory.GetDirectories(basePath);
     for (int i = 0; i < dirs.Length; i++)
     {
-      string path = dirs[i];
-      path = path.ToLower();
+      path = dirs[i].ToLower();
       if (path.Contains(".git")) return true;
     }
+
+    //search for .git file (submodules)
+    string[] files = Directory.GetFiles(basePath);
+    for (int i = 0; i < files.Length; i++)
+    {
+      path = files[i].ToLower();
+      if (path.Contains(".git")) return true;
+    }
+
     return false;
   }
-
+  
   /// <summary>
   /// permet de savoir si le dernier dossier dans un path est celui donné en param
   /// </summary>
@@ -112,9 +125,12 @@ public class EditorGitShortcuts : MonoBehaviour
 
     folderName = folderName.ToLower();
     basePath = basePath.ToLower();
+
     
     if(isLastFolderInPath(basePath, folderName))
     {
+      //Debug.Log(basePath);
+
       if (folderHasGitFolder(basePath)) return basePath;
     }
     

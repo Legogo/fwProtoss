@@ -4,16 +4,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using fwp.input;
 
+/// <summary>
+/// deprecated ; directly use InputKeyBridge
+/// </summary>
+
 namespace fwp
 {
-  public class CapacityInput : LogicCapacity
+  abstract public class CapacityInput : LogicCapacity
   {
-
+    /*
     public InputKeyBridge keys;
-
-    public enum InputKeyboardMode { NONE, TOPDOWN };
-    public InputKeyboardMode inputKeyboardMode;
-
+    
     public Action<InputTouchFinger> touch;
     //public Action<InputTouchFinger> release;
 
@@ -29,13 +30,7 @@ namespace fwp
     public override void earlySetupCapacity()
     {
       base.earlySetupCapacity();
-
-      switch (inputKeyboardMode)
-      {
-        case InputKeyboardMode.TOPDOWN: keys.get<InputKeyTopDown>(); break;
-        default: break;
-      }
-
+      
       if (useTouching)
       {
         subscribeToTouchRelease(onTouch);
@@ -47,6 +42,6 @@ namespace fwp
       if (isFreezed()) return;
       if (touch != null) touch(finger);
     }
-
+    */
   }
 }
