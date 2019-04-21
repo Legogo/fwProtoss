@@ -17,25 +17,15 @@ public class ScreenLoading : ScreenObject {
   [RuntimeInitializeOnLoadMethod]
   static public void runetimeInit()
   {
+    //to make sure loading screen exist
 
-    string filter = EngineLoader.isContextEngineCompatible();
-    if (filter.Length > 0)
-    {
-      Debug.LogWarning("won't load engine here : scene starts with prefix " + filter);
-      return;
-    }
-
-    string scName = "loading";
-    //if (overrideLoadingScreenName.Length > 0) scName = overrideLoadingScreenName;
-
-    if (!scName.StartsWith("screen")) scName = "screen-" + scName;
-
+    string scName = "screen-loading";
+    
     if (!EngineLoader.isSceneAdded(scName) && EngineLoader.checkIfCanBeLoaded(scName))
     {
       SceneManager.LoadSceneAsync(scName, LoadSceneMode.Additive);
     }
     
-    //HalperGameObject.checkDestroyOnSoloMono(this);
   }
 
   protected override void build()
