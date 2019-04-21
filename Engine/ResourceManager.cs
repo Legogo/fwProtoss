@@ -97,7 +97,7 @@ public class ResourceManager {
     GameObject go = getResourceByName(resourceName);
     Canvas cs = go.GetComponentInParent<Canvas>();
 
-    //setup new generated object child of canvas
+    //if original object is child of a canvas, make this new object child of the same canvas
     if(cs != null)
     {
       obj.transform.SetParent(go.transform.parent);

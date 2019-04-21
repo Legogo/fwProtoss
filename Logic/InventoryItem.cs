@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// objet abstrait qui représente le fait qu'un perso possède des objets de ce type
+/// l'item possède la quantité total
+/// </summary>
+
 namespace fwp
 {
   public class InventoryItem
@@ -33,15 +38,21 @@ namespace fwp
       return false;
     }
 
+    /// <summary>
+    /// returns false if can't remove (not enought quantity of this item)
+    /// </summary>
+    /// <param name="step"></param>
+    /// <returns></returns>
     public bool remove(int step)
     {
-      qty -= step;
-      if (qty < range.x)
+      if(step > qty)
       {
-        qty = (int)range.x;
-        return true;
+        return false;
       }
-      return false;
+
+      qty -= step;
+
+      return true;
     }
 
     public void setQuantity(int newQty) { qty = newQty; }

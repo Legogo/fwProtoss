@@ -69,17 +69,25 @@ namespace fwp
       return ii;
     }
   
+    /// <summary>
+    /// add new item to inventiry
+    /// </summary>
+    /// <param name="newItem"></param>
+    /// <returns></returns>
     public InventoryItem addItem(InventoryItem newItem)
     {
       if (newItem == null) Debug.LogWarning("no item given ?");
 
+      //check if another item of same id is already in inventory
       InventoryItem ii = getItem(newItem.getId());
       if (ii == null)
       {
         items.Add(newItem);
+        ii = newItem;
         if (onItemAdded != null) onItemAdded(ii);
       }
 
+      //copy
       ii.setQuantity(newItem.getQuantity());
 
       return ii;
