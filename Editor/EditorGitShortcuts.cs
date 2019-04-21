@@ -8,7 +8,8 @@ using System.IO;
 
 public class EditorGitShortcuts : MonoBehaviour
 {
-  [MenuItem("Assets/git")]
+  //[MenuItem("Assets/git !#&%g")]
+  [MenuItem("Assets/git &%g")]
   static protected void openGit()
   {
     //string fullPath = Path.Combine(Environment.CurrentDirectory, "/YourSubDirectory/yourprogram.exe");
