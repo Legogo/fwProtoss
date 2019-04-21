@@ -17,6 +17,7 @@ namespace fwp
     protected LogicItem _owner;
     protected CharacterLogic _character;
 
+    [HideInInspector]
     public LogicCapacity[] lockDependencies;
 
     protected override void build()
