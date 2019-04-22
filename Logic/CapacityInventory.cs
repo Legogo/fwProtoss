@@ -77,7 +77,7 @@ namespace fwp
       }
       else
       {
-        Debug.Log("adding " + newItem.getQuantity() + " to stack");
+        //Debug.Log("adding " + newItem.getQuantity() + " to stack");
 
         //item already exist in inventory, adding quantity to existing item
         ii.add(newItem.getQuantity());

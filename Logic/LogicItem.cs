@@ -21,13 +21,10 @@ namespace fwp
       base.setupEarly();
       input = new InputKeyBridge();
     }
-
-    protected override void setup()
+    
+    protected override void setupLate()
     {
-      base.setup();
-
-      //Debug.Log(GetType() + " , " + name + " , setup");
-
+      base.setupLate();
       setupCapacities();
     }
 

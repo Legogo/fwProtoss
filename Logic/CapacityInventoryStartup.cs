@@ -8,10 +8,10 @@ public class CapacityInventoryStartup : LogicCapacity
   public ItemHeaderData[] startup_items;
 
   CapacityInventory inv;
-  
-  public override void setupCapacity()
+
+  protected override void setup()
   {
-    base.setupCapacity();
+    base.setup();
     inv = _owner.getCapacity<CapacityInventory>();
   }
 

@@ -45,7 +45,12 @@ public class HelperVisibleSprite : HelperVisible
 
   public void setSprite(Sprite newSprite)
   {
-    if (_spriteRenderDefault == null) return;
+    if (_spriteRenderDefault == null)
+    {
+      Debug.LogWarning(GetType() +" trying to assign a sprite to " + _t.name+" but no renderer found", _t);
+      return;
+    }
+
     _spriteRenderDefault.sprite = newSprite;
   }
   
