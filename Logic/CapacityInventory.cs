@@ -91,6 +91,17 @@ namespace fwp
       return items.Count;
     }
 
+    public ItemHeaderData[] getHeaders()
+    {
+      InventoryItem[] items = getItems();
+      List<ItemHeaderData> headers = new List<ItemHeaderData>();
+      for (int i = 0; i < items.Length; i++)
+      {
+        headers.Add(items[i].data);
+      }
+      return headers.ToArray();
+    }
+
     public InventoryItem[] getItems(string filterUid = "")
     {
       if (filterUid.Length <= 0) return items.ToArray();
