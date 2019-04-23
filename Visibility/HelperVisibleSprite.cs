@@ -96,4 +96,9 @@ public class HelperVisibleSprite : HelperVisible
     if (_spriteRenderDefault == null) Debug.LogWarning("no render sprite for <b>" + _coroutineCarrier.name+"</b>", _coroutineCarrier);
     return _spriteRenderDefault.bounds;
   }
+
+  public SpriteRenderer getSprRender()
+  {
+    return _spriteRenderDefault;
+  }
 }

@@ -2,8 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 using fwp.input;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 abstract public class EngineObject : MonoBehaviour, DebugSelection.iDebugSelection
 {
@@ -287,4 +290,28 @@ abstract public class EngineObject : MonoBehaviour, DebugSelection.iDebugSelecti
     Debug.Log(GetType() + " | " + data, logTarget);
   }
   
+  protected void drawCircle(Vector3 position, float radius, Color color, float alpha = 1f, string label = "")
+  {
+#if UNITY_EDITOR
+    color.a = alpha;
+
+    Gizmos.DrawLine(position, position + Vector3.up * (radius + 0.05f));
+
+    Gizmos.color = color;
+    Gizmos.DrawSphere(position, radius);
+
+    if (label.Length > 0) Handles.Label(position + (Vector3.right * 0.01f) + Vector3.up * (radius + 0.05f), label);
+#endif
+  }
+
+  protected void drawCross(Vector3 position, float size, Color color, string label = "")
+  {
+#if UNITY_EDITOR
+    Gizmos.color = color;
+    Gizmos.DrawLine(transform.position + Vector3.up * size, transform.position + Vector3.down * size);
+    Gizmos.DrawLine(transform.position + Vector3.left * size, transform.position + Vector3.right * size);
+
+    if (label.Length > 0) Handles.Label(transform.position, name);
+#endif
+  }
 }
