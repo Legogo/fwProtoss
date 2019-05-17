@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+using System.Diagnostics;
+
 /// <summary>
 /// tools to gain data from current device
 /// </summary>
@@ -88,7 +90,7 @@ static public class HalperNatives {
   {
     return Input.touchSupported;
   }
-
+  
   static public bool isMobile()
   {
     if (isIos()) return true;
@@ -96,11 +98,22 @@ static public class HalperNatives {
     //if (isTouch()) return true;
     return false;
   }
-
-  static public void clearGC()
+  
+  /// <summary>
+  /// meant to call cmd on windows
+  /// </summary>
+  /// <param name="fullPath"></param>
+  /// <param name="args"></param>
+  static public void startCmd(string fullPath, string args = "")
   {
-    Debug.Log("clearing GC at frame : "+Time.frameCount);
-    Resources.UnloadUnusedAssets();
-    System.GC.Collect();
+    ProcessStartInfo startInfo = new ProcessStartInfo(fullPath);
+    startInfo.WindowStyle = ProcessWindowStyle.Normal;
+    if (args.Length > 0) startInfo.Arguments = args;
+
+    //Debug.Log(Environment.CurrentDirectory);
+
+    Process.Start(startInfo);
+
   }
+
 }

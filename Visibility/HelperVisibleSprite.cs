@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -45,7 +45,12 @@ public class HelperVisibleSprite : HelperVisible
 
   public void setSprite(Sprite newSprite)
   {
-    if (_spriteRenderDefault == null) return;
+    if (_spriteRenderDefault == null)
+    {
+      Debug.LogWarning(GetType() +" trying to assign a sprite to " + _t.name+" but no renderer found", _t);
+      return;
+    }
+
     _spriteRenderDefault.sprite = newSprite;
   }
   
@@ -66,8 +71,6 @@ public class HelperVisibleSprite : HelperVisible
       Debug.LogWarning("no render sprite for " + _coroutineCarrier.name, _coroutineCarrier.gameObject);
       return;
     }
-
-    //Debug.Log(_spriteRenderDefault + " , " + flag);
     _spriteRenderDefault.enabled = flag;
   }
 
@@ -94,7 +97,7 @@ public class HelperVisibleSprite : HelperVisible
     return _spriteRenderDefault.bounds;
   }
 
-  public SpriteRenderer getSymbol()
+  public SpriteRenderer getSprRender()
   {
     return _spriteRenderDefault;
   }

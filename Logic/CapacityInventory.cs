@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
@@ -6,45 +7,24 @@ using System;
 namespace fwp
 {
 
-  public class CapacityInventory : LogicCapacity {
-  
-    List<InventoryItem> items = new List<InventoryItem>();
-
+  abstract public class CapacityInventory : LogicCapacity
+  {
+    [SerializeField]
+    protected List<InventoryItem> items;
+    
     public Action<InventoryItem> onItemAdded;
 
-    [Serializable]
-    public class ItemStartupData
+    protected override void build()
     {
-      public string uid;
-      public int qty;
+      base.build();
+
+      if (items == null) items = new List<InventoryItem>();
     }
-
-    public ItemStartupData[] startup_items;
-
-    protected override void setup()
-    {
-      base.setup();
-
-      //clear prev
-      if(items != null && items.Count > 0)
-      {
-        for (int i = 0; i < items.Count; i++)
-        {
-          items[i] = null;
-        }
-        items.Clear();
-      }
-
-      for (int i = 0; i < startup_items.Length; i++)
-      {
-        addItem(startup_items[i].uid, startup_items[i].qty);
-      }
-    }
-
+    
     public bool hasSome(string uid)
     {
       InventoryItem ii = getItem(uid);
-      if(ii != null)
+      if (ii != null)
       {
         return ii.getQuantity() > 0;
       }
@@ -53,32 +33,73 @@ namespace fwp
 
     public InventoryItem addItem(string uid, int qty = 1)
     {
+      if (uid.Length <= 0)
+      {
+        Debug.LogWarning("no uid given ?");
+        return null;
+      }
+
       InventoryItem ii = getItem(uid);
-      if (ii == null) {
+      if (ii == null)
+      {
         ii = new InventoryItem(uid);
         ii.setQuantity(qty);
         addItem(ii);
       }
       return ii;
     }
-  
+
+
+    public InventoryItem addItem(ItemHeaderData data)
+    {
+      InventoryItem ii = new InventoryItem(data.uid);
+      ii.setQuantity(data.qty);
+      return addItem(ii);
+    }
+
+    /// <summary>
+    /// add new item to inventory
+    /// </summary>
+    /// <param name="newItem"></param>
+    /// <returns></returns>
     public InventoryItem addItem(InventoryItem newItem)
     {
+      if (newItem == null) Debug.LogWarning("no item given ?");
+
+      //check if another item of same id is already in inventory
       InventoryItem ii = getItem(newItem.getId());
+
       if (ii == null)
       {
-        items.Add(newItem);
+        ii = newItem;
+        items.Add(ii);
         if (onItemAdded != null) onItemAdded(ii);
       }
+      else
+      {
+        //Debug.Log("adding " + newItem.getQuantity() + " to stack");
 
-      ii.setQuantity(newItem.getQuantity());
-
+        //item already exist in inventory, adding quantity to existing item
+        ii.add(newItem.getQuantity());
+      }
+      
       return ii;
     }
 
     public int countItems()
     {
       return items.Count;
+    }
+
+    public ItemHeaderData[] getHeaders()
+    {
+      InventoryItem[] items = getItems();
+      List<ItemHeaderData> headers = new List<ItemHeaderData>();
+      for (int i = 0; i < items.Length; i++)
+      {
+        headers.Add(items[i].data);
+      }
+      return headers.ToArray();
     }
 
     public InventoryItem[] getItems(string filterUid = "")
@@ -100,7 +121,7 @@ namespace fwp
         Debug.LogWarning("asking for item " + idx + " ?");
         return null;
       }
-      if(items.Count > idx) return items[idx];
+      if (items.Count > idx) return items[idx];
       return null;
     }
 
@@ -113,6 +134,30 @@ namespace fwp
       return null;
     }
 
+    public void removeAllItems()
+    {
+      items.Clear();
+    }
+
+    public void addItemsByHeaders(ItemHeaderData[] headers)
+    {
+      for (int i = 0; i < headers.Length; i++)
+      {
+        addItem(headers[i]);
+      }
+    }
+
+    public void addItems(InventoryItem[] newItems, bool makeCopies = false)
+    {
+
+      for (int i = 0; i < newItems.Length; i++)
+      {
+        if (makeCopies) addItem(newItems[i].copy());
+        else addItem(newItems[i]);
+      }
+
+    }
+
     public override string toString()
     {
       string ct = base.toString();
@@ -122,11 +167,11 @@ namespace fwp
 
     public string debug_display(int selectionIdx = -1)
     {
-      string ct = "\n logic : "+name;
+      string ct = "\n logic : " + name;
       for (int i = 0; i < items.Count; i++)
       {
         InventoryItem item = items[i];
-        ct += "\n  "+ ((selectionIdx == i) ? ">" : " ") + item.getId() + " x " + item.getQuantity();
+        ct += "\n  " + ((selectionIdx == i) ? ">" : " ") + item.getId() + " x " + item.getQuantity();
       }
       return ct;
     }

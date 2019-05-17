@@ -12,8 +12,15 @@ public class UiSocketSelection : EngineObject {
   protected override void setup()
   {
     base.setup();
+
     if (ui == null) ui = visibility as HelperVisibleUi;
+
     img = ui.getImage();
+  }
+
+  protected override VisibilityMode getVisibilityType()
+  {
+    return VisibilityMode.UI;
   }
 
   public void setupSocket(int idx)

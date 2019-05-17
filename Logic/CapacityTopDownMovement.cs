@@ -32,7 +32,7 @@ namespace fwp
 
     public override void setupCapacity()
     {
-      _inputLocal = _owner.GetComponent<CapacityInput>().keys.get<InputKeyTopDown>();
+      _inputLocal = _owner.input.get<InputKeyTopDown>();
       _gameSpace = GameSpace.get();
     }
 
@@ -45,13 +45,9 @@ namespace fwp
 
     public override void updateCapacity()
     {
-      direction.x = direction.y = 0f;
+      //direction.x = direction.y = 0f;
 
-      if (_inputLocal.pressing_up()) direction.y = 1f;
-      else if (_inputLocal.pressing_down()) direction.y = -1f;
-
-      if (_inputLocal.pressing_left()) direction.x = -1f;
-      else if (_inputLocal.pressing_right()) direction.x = 1f;
+      direction = getInputMovement();
 
       if (progressiveSpeed == 0f)
       {
@@ -70,6 +66,19 @@ namespace fwp
 
       //clamp in screen
       if (_gameSpace != null) _owner.forceWithinBounds(_gameSpace.offsetSpace);
+    }
+
+    virtual protected Vector2 getInputMovement()
+    {
+      Vector2 move = Vector2.zero;
+
+      if (_inputLocal.pressing_up()) move.y = 1f;
+      else if (_inputLocal.pressing_down()) move.y = -1f;
+
+      if (_inputLocal.pressing_left()) move.x = -1f;
+      else if (_inputLocal.pressing_right()) move.x = 1f;
+
+      return move;
     }
 
     public Vector2 getLastDirection() { return lastDirection; }

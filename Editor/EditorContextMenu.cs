@@ -9,22 +9,6 @@ using Debug = UnityEngine.Debug;
 
 public class EditorContextMenu : MonoBehaviour {
 
-  [MenuItem("Assets/git")]
-  static protected void openGit()
-  {
-    //string fullPath = Path.Combine(Environment.CurrentDirectory, "/YourSubDirectory/yourprogram.exe");
-    string fullPath = "git";
-
-    startCmd("git", "--cd=" + Environment.CurrentDirectory);
-    
-    fullPath = Path.Combine(Environment.CurrentDirectory, "Assets/Lib/fwProtoss");
-    if (Directory.Exists(fullPath))
-    {
-      startCmd("git", "--cd=" + fullPath);
-    }
-    
-  }
-
   [MenuItem("Assets/readme")]
   static protected void openReadme()
   {
@@ -38,19 +22,7 @@ public class EditorContextMenu : MonoBehaviour {
       File.Create(fullPath).Close();
     }
 
-    startCmd(fullPath);
-  }
-  
-  static protected void startCmd(string fullPath, string args = "")
-  {
-    ProcessStartInfo startInfo = new ProcessStartInfo(fullPath);
-    startInfo.WindowStyle = ProcessWindowStyle.Normal;
-    if(args.Length > 0) startInfo.Arguments = args;
-
-    //Debug.Log(Environment.CurrentDirectory);
-
-    Process.Start(startInfo);
-
+    HalperNatives.startCmd(fullPath);
   }
   
   [MenuItem("Tools/open persistant data path")]

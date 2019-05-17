@@ -2,57 +2,108 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// objet abstrait qui représente le fait qu'un perso possède des objets de ce type
+/// l'item possède la quantité total
+/// </summary>
+
 namespace fwp
 {
+  [System.Serializable]
   public class InventoryItem
   {
+    public ItemHeaderData data;
+    public Vector2 range = new Vector2(0f, -1f);
 
-    protected string uid = "";
-    protected Vector2 range = new Vector2(0, -1);
-    protected int qty = 0;
-
-    public InventoryItem(string uid, int min = 0, int max = -1)
+    //this won't init as 0,-1 but always 0,0 by default ...
+    //Vector2 range;
+    
+    public InventoryItem(string uid)
     {
-      this.uid = uid;
+      if (data == null) data = new ItemHeaderData();
+
+      data.uid = uid;
+
+      setQuantity(0);
+    }
+
+    public InventoryItem setupRange(int min, int max)
+    {
       range.x = min;
       range.y = max;
+      return this;
     }
 
     public bool add(int step)
     {
-      qty += step;
+      data.qty += step;
 
       //Debug.Log(uid + " x " + qty);
 
-      if (range.y > -1 && qty > range.y)
+      if (range.y > -1)
       {
-        qty = (int)range.y;
+        data.qty = Mathf.Min(data.qty, (int)range.y);
         return true;
       }
 
       return false;
     }
 
+    /// <summary>
+    /// returns false if can't remove (not enought quantity of this item)
+    /// </summary>
+    /// <param name="step"></param>
+    /// <returns></returns>
     public bool remove(int step)
     {
-      qty -= step;
-      if (qty < range.x)
+      if(step > data.qty)
       {
-        qty = (int)range.x;
-        return true;
+        return false;
       }
-      return false;
-    }
 
-    public void setQuantity(int newQty) { qty = newQty; }
-    public int getQuantity() { return qty; }
-    public string getId() { return uid; }
+      data.qty -= step;
+
+      return true;
+    }
+    
+    public void setQuantity(int newQty) { data.qty = newQty; }
+    public int getQuantity() { return data.qty; }
+    public string getId() { return data.uid; }
 
     public bool isItem(string nm)
     {
-      if (uid.Contains(nm)) return true;
+      if (data.uid.Contains(nm)) return true;
       return false;
+    }
+
+    public ItemHeaderData split(int splitQty)
+    {
+      if (remove(splitQty))
+      {
+        ItemHeaderData ii = copy();
+        ii.qty = splitQty;
+        return ii;
+      }
+
+      return null;
+    }
+
+    public ItemHeaderData copy()
+    {
+      //Debug.Log(data.uid +" , "+range.y);
+      ItemHeaderData newData = new ItemHeaderData();
+      newData.uid = getId();
+      newData.qty = getQuantity();
+      return newData;
     }
   }
 
+}
+
+
+[System.Serializable]
+public class ItemHeaderData
+{
+  public string uid;
+  public int qty;
 }

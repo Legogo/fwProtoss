@@ -17,6 +17,7 @@ namespace fwp
     protected LogicItem _owner;
     protected CharacterLogic _character;
 
+    [HideInInspector]
     public LogicCapacity[] lockDependencies;
 
     protected override void build()
@@ -40,6 +41,10 @@ namespace fwp
     /* called by LogicItem, on scene loading */
     virtual public void earlySetupCapacity() { }
     virtual public void setupCapacity() { }
+
+    /// <summary>
+    /// called on arena round_restart
+    /// </summary>
     virtual public void restartCapacity() { }
 
     /* explain how the module resets */

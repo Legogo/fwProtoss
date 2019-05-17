@@ -41,10 +41,9 @@ public class CapacityCollision : LogicCapacity
   protected override void build()
   {
     base.build();
-
     _t = transform;
   }
-
+  
   public override void setupCapacity()
   {
     boxCollider = gameObject.GetComponent<BoxCollider2D>();

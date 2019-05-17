@@ -1,13 +1,32 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using System.IO;
 using System;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 static public class HalperUnity {
   
+#if UNITY_EDITOR
+  static public ScriptableObject getScriptable<T>() where T : ScriptableObject
+  {
+    string typ = typeof(T).ToString();
+    //Debug.Log(typ);
+    string[] all = AssetDatabase.FindAssets("t:" + typ);
+    //Debug.Log(all.Length);
+    for (int i = 0; i < all.Length; i++)
+    {
+      Object obj = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(all[i]), typeof(T));
+      T data = obj as T;
+      if (data != null) return data;
+    }
+    return null;
+  }
+#endif 
+
   static public List<Object> shuffle<Object>(this List<Object> list)
   {
     for (int i = 0; i < list.Count; i++)
@@ -67,6 +86,13 @@ static public class HalperUnity {
       return kp;
     }
     return default(KeyValuePair<string, string[]>);
+  }
+
+  static public void clearGC()
+  {
+    Debug.Log("clearing GC at frame : " + Time.frameCount);
+    Resources.UnloadUnusedAssets();
+    System.GC.Collect();
   }
 
 }

@@ -22,17 +22,10 @@ namespace fwp
     {
       _collision = _owner.GetComponent<CapacityCollision>();
       _move = _owner.GetComponent<CapacityMovement>();
-    
-      _owner.input.touch += touch; // mouse input
     }
 
     abstract protected bool pressJump();
-
-    protected void touch(InputTouchFinger finger)
-    {
-      solveJump();
-    }
-
+    
     public override void updateCapacity()
     {
       base.updateCapacity();
