@@ -275,6 +275,12 @@ public class EngineLoader : MonoBehaviour
     return get().loadScenes(sceneNames, onComplete);
   }
 
+  static public void removeScene(string sceneName)
+  {
+    Debug.Log("unloading <b>" + sceneName+"</b>");
+    SceneManager.UnloadSceneAsync(sceneName);
+  }
+
   static protected void cleanScene(Scene sc)
   {
 

@@ -30,8 +30,34 @@ using UnityEditor;
 ///   
 /// </summary>
 
-static public class VersionManager
+public class VersionManager : MonoBehaviour
 {
+  float timer = 2f;
+  
+  private void Update()
+  {
+    timer -= Time.deltaTime;
+    if(timer <= 0f)
+    {
+      GameObject.Destroy(gameObject);
+    }
+  }
+
+  private void OnGUI()
+  {
+    string v = Application.version;
+
+    GUIStyle guis = new GUIStyle();
+
+    guis.normal.textColor = Color.white;
+
+    if (Screen.width >= 1920f) guis.fontSize = 30;
+
+    float width = 80f;
+    float height = 50f;
+    GUI.Label(new Rect(Screen.width - width, Screen.height - height, width, height), v, guis);
+  }
+
   /// <summary>
   /// to display build number in logs of build
   /// </summary>
@@ -41,6 +67,10 @@ static public class VersionManager
     //https://docs.unity3d.com/Manual/StyledText.html
     Debug.Log(Application.version);
     //Debug.Log("v" + getFormatedVersion());
+
+#if !noversion
+    new GameObject("!version").AddComponent<VersionManager>();
+#endif
   }
 
   /// <summary>

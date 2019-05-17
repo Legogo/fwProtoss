@@ -10,7 +10,6 @@ using UnityEngine.UI;
 
 public class ScreenObject : EngineObject
 {
-  protected ArenaManager _arena;
 
   public ScreensManager.ScreenType type;
 
@@ -59,17 +58,15 @@ public class ScreenObject : EngineObject
     if (useUiCamera)
     {
       Camera uiCam = qh.gc<Camera>("camera-ui");
-      if (uiCam == null) Debug.LogError("no camera ui found");
-
-      for (int i = 0; i < _canvas.Length; i++)
+      Canvas canvas = getCanvas();
+      if (canvas.renderMode == RenderMode.ScreenSpaceOverlay)
       {
-        if(_canvas[i].renderMode == RenderMode.ScreenSpaceCamera)
-        {
-          _canvas[i].worldCamera = uiCam;
-        }
+        canvas.renderMode = RenderMode.ScreenSpaceCamera;
+        canvas.worldCamera = uiCam;
       }
     }
-    
+
+    hide();
   }
 
   public void subscribeToPressedEvents(Action down, Action up, Action left, Action right)
@@ -80,17 +77,8 @@ public class ScreenObject : EngineObject
     if (right != null) onPressedRight += right;
   }
   
-  [ContextMenu("fetch")]
-  override protected void setup()
-  {
-    base.setup();
-    _arena = ArenaManager.get();
-  }
-
   virtual public void reset()
-  {
-    
-  }
+  { }
 
   sealed public override void updateEngine()
   {
@@ -247,6 +235,24 @@ public class ScreenObject : EngineObject
     //Debug.Log(name + " -> forceHide");
   }
 
+  public void unload(bool force = false)
+  {
+    if (!force && sticky)
+    {
+      Debug.LogWarning("can't unload sticky scenes : " + name);
+      return;
+    }
+
+    string nm = name;
+
+    if (nm.StartsWith("|")) nm = nm.Substring(1, nm.Length - 1); // remove starting | symbol
+    if (!nm.StartsWith("screen-")) nm = "screen-" + nm;
+
+    Debug.Log("unloading <b>" + nm + "</b>");
+
+    SceneManager.UnloadSceneAsync(nm);
+  }
+
   public bool isVisible()
   {
     for (int i = 0; i < _canvas.Length; i++)
@@ -267,13 +273,6 @@ public class ScreenObject : EngineObject
   virtual public void act_call_home()
   {
     Debug.Log(getStamp()+" calling <b>home screen</b>");
-
-    ArenaManager am = ArenaManager.get();
-    if(am != null)
-    {
-      am.cancelEndProcess(); // if arena was showing an ending screen, kill this process
-      am.arena_cleanup(); 
-    }
     
     ScreensManager.open(ScreensManager.ScreenNames.home);
   }
@@ -289,7 +288,8 @@ public class ScreenObject : EngineObject
     return split[1].Substring(0, split[1].Length - 1); // remove ')'
   }
 
-  static public Canvas getCanvas(string screenName, string canvasName) {
+  static public Canvas getCanvas(string screenName, string canvasName)
+  {
     ScreenObject screen = ScreensManager.getScreen(screenName);
     return screen.getCanvas(canvasName);
   }

@@ -2,31 +2,36 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using fwp.input;
 
 namespace fwp.input
 {
-  public enum BehaviorTargetPlatform { DESKTOP, MOBILE };
-
   public class InputTouchBridge : MonoBehaviour
   {
     InputTouchPinch pinchBridge;
     InputTouchSwipe swipeBridge;
-    InputSelectionManager selectionBridge;
     HelperScreenTouchSequenceSolver sequencer;
-    
+
     public bool useMainCamera = true;
+    public bool useOverlayCast = false; // cast another ray to get everything in "overlay" canvas
     public Camera inputCamera;
     public LayerMask _layer;
 
     [Header("pinch|scroll")]
-    public float mouseScrollMulFactor = 1f;
+    public float mouseScrollMulFactor = 1f; // step / cran de souris
+    public float touchSpreadMulFactor = 1f; // step / event de spread
     public Vector2 scrollClampMagnitude = Vector2.zero;
+    public bool useOvershoot = false; // use progressive clamping
+    public float overshootClampLength = 1f; // qty of overshoot possible
+    public float overshootClampMulFactor = 1f; // speed move toward clamp
 
     [Header("swipe")]
     public float limitLifeTime = 0.5f;
     public float limitSwipeAmplitude = 200f;
-    
-    protected List<InputTouchFinger> _fingers = new List<InputTouchFinger>();
+
+    protected InputTouchFinger[] _fingers;
+    InputTouchFinger _finger = null;
+    Touch[] touches;
 
     public Action<InputTouchFinger> onTouch;
     public Action<InputTouchFinger> onRelease;
@@ -34,6 +39,8 @@ namespace fwp.input
     public Action onTouching;
 
     private int touchCount = 0; // read only
+
+
 
     void Awake()
     {
@@ -47,7 +54,6 @@ namespace fwp.input
 
       pinchBridge = new InputTouchPinch(this);
       swipeBridge = new InputTouchSwipe(this);
-      selectionBridge = new InputSelectionManager();
 
       if (useDebugInBuild)
       {
@@ -81,9 +87,10 @@ namespace fwp.input
       if (!isMobile()) qtyFingers = 2;
 
       //create all 11 touches
-      for (int i = 0; i < qtyFingers; i++)
+      _fingers = new InputTouchFinger[qtyFingers];
+      for (int i = 0; i < _fingers.Length; i++)
       {
-        _fingers.Add(new InputTouchFinger());
+        _fingers[i] = new InputTouchFinger();
       }
 
 #if UNITY_EDITOR
@@ -97,7 +104,7 @@ namespace fwp.input
 
       enabled = true;
     }
-    
+
     public void subscribeToScroll(Action<float, float> onScroll)
     {
       pinchBridge.onScroll += onScroll;
@@ -117,7 +124,7 @@ namespace fwp.input
         inputCamera = Camera.main;
 
 #if UNITY_EDITOR
-        if (inputCamera == null) Debug.LogWarning(getStamp()+"no MainCamera tagged in context (frame : "+Time.frameCount+")");
+        //if (inputCamera == null) Debug.LogWarning(getStamp() + "no MainCamera tagged in context (frame : " + Time.frameCount + ")");
 #endif
 
         return;
@@ -152,11 +159,17 @@ namespace fwp.input
     {
       pinchBridge.reset();
 
-      for (int i = 0; i < _fingers.Count; i++)
+      //force active fingers to end state
+      for (int i = 0; i < _fingers.Length; i++)
       {
-        _fingers[i].phase = TouchPhase.Ended;
-        onRelease(_fingers[i]);
+        if (_fingers[i].isActiveAndUsed())
+        {
+          _fingers[i].setEnded();
+        }
       }
+
+      //release all concerned fingers
+      update_clean();
     }
 
     /// <summary>
@@ -164,43 +177,27 @@ namespace fwp.input
     /// </summary>
     void Update()
     {
-
+      //solve all data of fingers
+      //will change state and make fingers at "ended" when technically released
       if (isMobile()) update_touch();
       else update_desktop();
 
-      //on vire les infos des doigts en trop
-      update_callbacksAndClean();
+      update_clean(); // make all ended fingers as canceled
 
-      if (countFingers() > 0)
-      {
-        if (onTouching != null) onTouching();
-      }
+      update_callbacks(); // ontouch , onrelease
+
+      pinchBridge.update(); // each frame
     }
 
-    void update_callbacksAndClean()
+    void update_callbacks()
     {
-
-      for (int i = 0; i < _fingers.Count; i++)
+      for (int i = 0; i < _fingers.Length; i++)
       {
-
-        //forcekill unused fingers
-        if (i >= touchCount)
-        {
-          killFinger(_fingers[i]);
-          continue;
-        }
-
-        //forcekill done fingers
-        if (_fingers[i].phase == TouchPhase.Ended)
-        {
-          killFinger(_fingers[i]);
-          continue;
-        }
 
         //solve ...
         if (_fingers[i].phase == TouchPhase.Began)
         {
-          //Debug.Log("<RainbowInputManager> touch, finger id : " + _fingers[i].fingerId);
+          //Debug.Log("finger "+_fingers[i].fingerId+" <b>Began</b>");
           if (onTouch != null) onTouch(_fingers[i]);
         }
         else if (_fingers[i].phase == TouchPhase.Moved || _fingers[i].phase == TouchPhase.Stationary)
@@ -210,60 +207,82 @@ namespace fwp.input
 
       }
 
-    }
-
-    void clearFingers()
-    {
-      
-    }
-
-    protected void killFinger(InputTouchFinger finger)
-    {
-      //les doigts qui ne sont plus utilisés
-      if (finger.isPhaseEnded())
+      //each frame callback
+      if (countFingers() > 0)
       {
-        //DebugManager.get().addInput("finger ? " + _fingers[i].fingerId);
+        if (onTouching != null) onTouching();
+      }
+    }
 
-        if (onRelease != null)
+    /// <summary>
+    /// clean all finger that are setup as ended
+    /// </summary>
+    void update_clean()
+    {
+
+      for (int i = 0; i < _fingers.Length; i++)
+      {
+        if (_fingers[i].isPhaseEnded()) //forcekill done fingers
         {
-          //Debug.Log("<RainbowInputManager> release, finger id : " + finger.toString());
-          onRelease(finger);
+          killFinger(_fingers[i]);
         }
-
-        finger.reset(); // set to canceled
       }
 
+    }
+
+    /// <summary>
+    /// this will trigger onRelease callback for that finger
+    /// must be called once per end state
+    /// </summary>
+    /// <param name="finger"></param>
+    void killFinger(InputTouchFinger finger)
+    {
+      //Debug.Log("killing " + finger.fingerId + " at phase " + finger.phase);
+
+      //force a release if finger was used
+      //active AND ended fingers !
+      if (!finger.isPhaseCanceled())
+      {
+        if (onRelease != null) onRelease(finger); // on finger killed
+      }
+
+      finger.reset(); // set to canceled
     }
 
     //ON TOUCH DEVICES (MOBILE,TABLET)
     void update_touch()
     {
-      touchCount = Input.touchCount;
-      Touch[] touches = Input.touches;
+      touches = Input.touches; // stored for opti
+      touchCount = Input.touchCount; // quantité de doigts a un instant T
 
-      InputTouchFinger _finger;
-
-      int i = 0;
-      for (i = 0; i < touchCount; i++)
+      //first, check for new touch and assign touches to fingers
+      for (int i = 0; i < touchCount; i++)
       {
+        Touch touch = touches[i];
         _finger = getFingerById(touches[i].fingerId);
-
-        //si on trouve pas de doigt on en prend un dispo
-        if (_finger == null) _finger = getFirstAvailableFinger();
-
-        _finger.update(touches[i]);
-      }
-
-      if(i < _fingers.Count)
-      {
-        //cancel unused fingers
-        while (i < _fingers.Count)
+        if (_finger == null)
         {
-          _fingers[i].reset();
-          i++;
+          _finger = getFirstAvailableFinger();
+          _finger.assign(touch.fingerId);
         }
       }
-      
+
+      //second, for each fingers apply state
+      for (int i = 0; i < _fingers.Length; i++)
+      {
+        _finger = _fingers[i]; // never null
+
+        Touch? touch = getSystemTouchById(_fingers[i].fingerId);
+        if (touch != null) // active finger
+        {
+          _finger.update(touch.Value);
+        }
+        else if (_finger.isFingerNotCanceled())
+        {
+          _finger.setEnded();
+        }
+      }
+
     }
 
     //ON PC
@@ -273,19 +292,38 @@ namespace fwp.input
 
       touchCount = mouseDown ? 1 : 0;
 
-      InputTouchFinger _finger;
-      for (int i = 0; i < _fingers.Count; i++)
+      //default finger
+      _finger = _fingers[0];
+
+      if (mouseDown) _finger.update(0, Input.mousePosition);
+      else if (_finger.isFingerNotCanceled()) _finger.setEnded();
+
+    }
+
+    /// <summary>
+    /// returns Touch struct based on finger id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    Touch? getSystemTouchById(int id)
+    {
+      //Touch[] touches = Input.touches;
+      for (int i = 0; i < touches.Length; i++)
       {
-        _finger = _fingers[i];
+        if (touches[i].fingerId == id) return touches[i];
+      }
+      return null;
+    }
 
-        //les doigts en trop
-        if (i >= touchCount && _finger.isFingerUsed()) _finger.setEnded();
-
-        //les doigts qui sont encore là (ou nouveaux)
-        else if (i < touchCount) _finger.update(i, Input.mousePosition);
+    protected InputTouchFinger getFirstAvailableFinger()
+    {
+      for (int i = 0; i < _fingers.Length; i++)
+      {
+        if (_fingers[i].isPhaseCanceled()) return _fingers[i];
       }
 
-      pinchBridge.update(BehaviorTargetPlatform.DESKTOP);
+      Debug.LogWarning("no available fingers ?");
+      return null;
     }
 
     public bool hasTouchedCollider(Collider[] list)
@@ -299,9 +337,9 @@ namespace fwp.input
 
     public bool hasTouchedCollider(Collider col)
     {
-      for (int i = 0; i < _fingers.Count; i++)
+      for (int i = 0; i < _fingers.Length; i++)
       {
-        if (!_fingers[i].isFingerUsed()) continue;
+        if (!_fingers[i].isFingerNotCanceled()) continue;
         if (_fingers[i].hasCollider(col)) return true;
       }
       return false;
@@ -310,24 +348,24 @@ namespace fwp.input
     public Camera getInputCamera() { return inputCamera; }
 
     /* permet de récup un finger pas utilisé */
-    protected InputTouchFinger getFirstAvailableFinger()
+    protected InputTouchFinger getRecycledFinger()
     {
-      for (int i = 0; i < _fingers.Count; i++)
+      for (int i = 0; i < _fingers.Length; i++)
       {
         if (_fingers[i].isPhaseCanceled()) return _fingers[i];
       }
       return null;
     }
 
-    public InputTouchFinger[] getFingers() { return _fingers.ToArray(); }
+    public InputTouchFinger[] getFingers() { return _fingers; }
 
     public InputTouchFinger getFingerById(int id, bool checkActivity = true)
     {
-      for (int i = 0; i < _fingers.Count; i++)
+      for (int i = 0; i < _fingers.Length; i++)
       {
         //on retourne pas les doigts qui ont déjà fini
         //sur mobile la phase "ended" dure 6+ frames ...
-        if (checkActivity && !_fingers[i].isFingerUsed()) continue;
+        if (checkActivity && !_fingers[i].isFingerNotCanceled()) continue;
 
         if (_fingers[i].fingerId == id) return _fingers[i];
       }
@@ -340,9 +378,9 @@ namespace fwp.input
     public bool hasFingers() { return touchCount > 0; }
     public bool hasSelectedObject()
     {
-      for (int i = 0; i < _fingers.Count; i++)
+      for (int i = 0; i < _fingers.Length; i++)
       {
-        if (!_fingers[i].isFingerUsed()) continue;
+        if (!_fingers[i].isFingerNotCanceled()) continue;
         if (_fingers[i].hasTouchedSomething()) return true;
       }
       return false;
@@ -361,11 +399,11 @@ namespace fwp.input
       string content = "<color=red>[BRIDGE INPUT MANAGER]</color>";
       content += "\nisMobile() ? " + isMobile();
 
-      content += "\ntouchCount   : " + touchCount;
-      content += "\nmax fingers  : " + _fingers.Count;
-      for (int i = 0; i < _fingers.Count; i++)
+      content += "\ntouchCount   : " + touchCount + " / max " + _fingers.Length;
+
+      for (int i = 0; i < _fingers.Length; i++)
       {
-        if (_fingers[i].isFingerUsed())
+        if (_fingers[i].isFingerNotCanceled())
         {
           content += "\n" + _fingers[i].toString();
         }
@@ -412,10 +450,13 @@ namespace fwp.input
     void OnDrawGizmos()
     {
       Gizmos.color = gizmoColor;
-      for (int i = 0; i < _fingers.Count; i++)
+      if (_fingers != null)
       {
-        //Gizmos.DrawSphere(fingers[i].position, 0.5f);
-        Gizmos.DrawSphere(_fingers[i].worldPosition, 0.1f);
+        for (int i = 0; i < _fingers.Length; i++)
+        {
+          //Gizmos.DrawSphere(fingers[i].position, 0.5f);
+          Gizmos.DrawSphere(_fingers[i].worldPosition, 0.1f);
+        }
       }
     }
 #endif
@@ -467,19 +508,17 @@ namespace fwp.input
       {
         guiDrawDebugInfo(1, pinchBridge.toString());
       }
-
-      guiDrawDebugInfo(2, selectionBridge.toString());
     }
 
     protected void guiDrawDebugInfo(int windowIndex, string ctx)
     {
       //GUI.color = Color.red;
-      float width = viewDimensions.x * 1f / (3f * 1.05f);
+      float width = viewDimensions.x * 1f / (2f * 1.05f);
       float gap = 10f;
 
       //Debug.Log(viewDimensions.x+" , "+ width);
 
-      GUI.Label(new Rect((gap * windowIndex) + (windowIndex * width), 10, width, Screen.height * 0.5f), ctx, style);
+      GUI.Label(new Rect((gap * windowIndex) + (windowIndex * width), 10, width, Screen.height * 0.9f), ctx, style);
     }
 
     static public InputTouchFinger getDefaultFinger()
@@ -504,7 +543,7 @@ namespace fwp.input
     {
       InputTouchBridge itb = InputTouchBridge.get();
 
-      if(itb != null && itb.countFingers() > 0)
+      if (itb != null && itb.countFingers() > 0)
       {
         return getDefaultFinger().screenPosition;
       }
@@ -524,4 +563,5 @@ namespace fwp.input
     }
 
   }
+
 }

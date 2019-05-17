@@ -29,37 +29,51 @@ public class PostImport : AssetPostprocessor
   void OnPreprocessTexture()
   {
     TextureImporter ti = (TextureImporter)assetImporter;
+    
+  }
 
-    //Object asset = AssetDatabase.LoadAssetAtPath(assetPath, typeof(Texture2D));
+  protected bool isInFolder(string path, string folder)
+  {
+    return (path.ToLower().IndexOf("/" + folder + "/") == -1) ;
+  }
 
-    //this filters went it's an editor modification and not first import
+  void solveMoulinexAsset()
+  {
+    TextureImporter ti = (TextureImporter)assetImporter;
+
     Object asset = AssetDatabase.LoadAssetAtPath(assetPath, typeof(Texture2D));
+
     if (asset != null)
     {
       EditorUtility.SetDirty(asset);
       return;
     }
 
-    Debug.Log("<b>[import]</b> | texture");
-    Debug.Log("  L path : " + assetPath);
-    //Debug.Log("  L asset : " + asset.name);
+    solveStandardMapSprite();
 
-    if (assetPath.ToLower().Contains("icon"))
-    {
-      Debug.Log("  L solving icon !");
-
-      ti.textureCompression = 0;
-      ti.filterMode = FilterMode.Point;
-      ti.textureType = TextureImporterType.Sprite;
-      ti.spriteImportMode = SpriteImportMode.Single;
-      //ti.spritePivot = (Vector2.right * 0.5f);
-    }
-
-    //assetImporter.SaveAndReimport();
+    Debug.Log("<b>[import]</b> | texture | path : " + assetPath);
   }
 
-  protected bool isInFolder(string path, string folder)
+  void solveStandardMapSprite()
   {
-    return (path.ToLower().IndexOf("/" + folder + "/") == -1) ;
+    TextureImporter ti = (TextureImporter)assetImporter;
+
+    ti.textureCompression = 0;
+    //ti.spritePixelsPerUnit = LabyConst.spritePixelPerUnit;
+    
+    //ti.filterMode = FilterMode.Point;
+    ti.textureType = TextureImporterType.Sprite;
+    ti.spriteImportMode = SpriteImportMode.Single;
+    //ti.maxTextureSize = 4096;
+
+    //ti.spritePivot = new Vector2(asset.texture.width * -0.5f, asset.texture.height * 0.5f);
+    
+
+    TextureImporterSettings texSettings = new TextureImporterSettings();
+    ti.ReadTextureSettings(texSettings);
+    texSettings.spriteAlignment = (int)SpriteAlignment.TopLeft;
+    ti.SetTextureSettings(texSettings);
+
+    //ti.spritePivot = new Vector2(0f, 1f);
   }
 }

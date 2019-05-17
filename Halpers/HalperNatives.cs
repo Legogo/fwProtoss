@@ -68,11 +68,33 @@ static public class HalperNatives {
   {
     return Application.persistentDataPath;
   }
+  
+  static public bool isWindows() {
+    return Application.platform == RuntimePlatform.WindowsPlayer 
+      || Application.platform == RuntimePlatform.WindowsEditor;
+  }
 
+  static public bool isOsx() {
+    return Application.platform == RuntimePlatform.OSXPlayer 
+      || Application.platform == RuntimePlatform.OSXEditor;
+  }
+
+  static public bool isAndroid() { return Application.platform == RuntimePlatform.Android; }
+  static public bool isIos() { return Application.platform == RuntimePlatform.IPhonePlayer; }
+  static public bool isSwitch() { return Application.platform == RuntimePlatform.Switch; }
+  //static public bool isIpad() { return Application.platform == RuntimePlatform.; }
+
+  static public bool isTouch()
+  {
+    return Input.touchSupported;
+  }
 
   static public bool isMobile()
   {
-    return Input.touchSupported;
+    if (isIos()) return true;
+    if (isAndroid()) return true;
+    //if (isTouch()) return true;
+    return false;
   }
 
   static public void clearGC()

@@ -10,8 +10,8 @@ namespace fwp.input
   public class InputTouchFinger
   {
 
-    InputTouchBridge _manager;
-    Camera _cam;
+    InputTouchBridge owner;
+    Camera _camera;
 
     public List<RaycastHit2D> touchedObjects = new List<RaycastHit2D>();
 
@@ -38,9 +38,9 @@ namespace fwp.input
     public InputTouchFinger()
     {
 
-      _manager = InputTouchBridge.get();
-      _cam = _manager.getInputCamera();
-      if (_cam == null) Debug.LogError("finger input NEED camera to be assigned");
+      owner = InputTouchBridge.get();
+      _camera = owner.getInputCamera();
+      if (_camera == null) Debug.LogError("finger input NEED camera to be assigned");
 
       reset();
 
@@ -68,18 +68,30 @@ namespace fwp.input
       resetMomentum();
     }
 
+    public void assign(int newId)
+    {
+      reset(); // make sure all values are reset
+      fingerId = newId;
+    }
+
     /* update avec le framework de touch */
     public void update(Touch touch)
     {
+      if (touch.fingerId != fingerId)
+      {
+        Debug.LogError("wat, finger id touch");
+        return;
+      }
+
       phase = touch.phase;
 
-      fingerId = touch.fingerId;
+      //fingerId = touch.fingerId;
 
       screenLastPosition = screenPosition;
 
       screenPosition = touch.position;
 
-      worldPosition = _cam.ScreenToWorldPoint(screenPosition);
+      worldPosition = _camera.ScreenToWorldPoint(screenPosition);
 
       solveDuplicate();
 
@@ -102,7 +114,7 @@ namespace fwp.input
 
       }
 
-      if (isFingerUsed())
+      if (isFingerNotCanceled())
       {
         solve_finger_selection();
       }
@@ -111,7 +123,7 @@ namespace fwp.input
     /* update simulation de touch avec la souris */
     public void update(int idx, Vector3 mousePosition)
     {
-      fingerId = idx;
+      fingerId = idx; // desktop, force coords
 
       screenPosition = mousePosition; // set new position
 
@@ -130,7 +142,7 @@ namespace fwp.input
       {
         //screenPosition.z = _cam.transform.position.z;
 
-        worldPosition = _cam.ScreenToWorldPoint(screenPosition);
+        worldPosition = _camera.ScreenToWorldPoint(screenPosition);
         //Debug.Log(screenPosition+" , "+worldPosition);
       }
 
@@ -158,7 +170,7 @@ namespace fwp.input
         resetMomentum();
       }
 
-      if (isFingerUsed()) solve_finger_selection();
+      if (isFingerNotCanceled()) solve_finger_selection();
     }
 
     protected void solveDuplicate()
@@ -172,14 +184,23 @@ namespace fwp.input
     protected void solve_finger_selection()
     {
       touchedObjects.Clear();
-      bool hitSomething = true;
-
-      //Debug.Log("solve");
 
       lifeTime += Time.deltaTime;
 
-      Vector2 origin = worldPosition;
+      castFromPosition(worldPosition);
+
+      if (owner.useOverlayCast)
+      {
+        castFromPosition(screenPosition);
+      }
+    }
+
+    void castFromPosition(Vector2 originPosition)
+    {
+      bool hitSomething = true;
       Vector2 direction = Vector2.zero;
+      Vector3 origin = originPosition;
+      origin.z = _camera.transform.position.z;
 
       //float distanceRay = 100f;
       //Vector2 target = origin + (Vector3.forward * distanceRay);
@@ -190,7 +211,7 @@ namespace fwp.input
       {
         hitSomething = false;
 
-        _hit = Physics2D.Raycast(origin, direction, Mathf.Infinity, _manager._layer);
+        _hit = Physics2D.Raycast(origin, direction, Mathf.Infinity, owner._layer);
 
         if (_hit.collider != null)
         {
@@ -235,13 +256,15 @@ namespace fwp.input
     }
 
     // release
-    public bool isPhaseActive() { return phase < TouchPhase.Ended; }
+    public bool isActiveAndUsed() { return phase < TouchPhase.Ended; }
     public bool isPhaseEnded() { return phase == TouchPhase.Ended; }
     public bool isPhaseCanceled() { return phase == TouchPhase.Canceled; }
-    public TouchPhase getPhase() { return phase; }
 
-    /* si le doigt a toujours un impact potentiel dans l'espace de jeu donc meme dans la frame de release ! */
-    public bool isFingerUsed()
+    /// <summary>
+    /// si le doigt a toujours un impact potentiel dans l'espace de jeu
+    /// donc meme dans la frame de release !
+    /// </summary>
+    public bool isFingerNotCanceled()
     {
       return phase != TouchPhase.Canceled;
     }
@@ -308,10 +331,15 @@ namespace fwp.input
       return (screenPosition - screenStartPosition).normalized;
     }
 
-
-
-
     public string toString()
+    {
+      string ctx = "id " + fingerId + " (" + phase + ")";
+      ctx += "\n" + screenPosition.x + "x" + screenPosition.y;
+
+      return ctx;
+    }
+
+    public string toStringFull()
     {
       string ctx = "id:" + fingerId + " " + (isPhaseCanceled() ? "[CANCELED]" : "") + " position:" + screenPosition + " state:" + phase;
       ctx += "\ndir(Start):" + getDirFromStart() + ", momentum:" + getMomentum() + ", delta:" + screenDeltaPosition + "(mg:" + screenDeltaPosition.magnitude + ")";

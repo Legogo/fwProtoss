@@ -74,4 +74,8 @@ static public class HalperUi {
   {
     elmt.position = Camera.main.WorldToScreenPoint(target.position);
   }
+  static public void followTransform(this RectTransform elmt, Transform target)
+  {
+    elmt.followTransform(target, Vector2.zero);
+  }
 }

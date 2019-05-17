@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 static public class HalperString
 {
@@ -31,5 +32,14 @@ static public class HalperString
       if (lines[i].Length > 0) output.Add(lines[i]);
     }
     return output.ToArray();
+  }
+
+  /// <summary>
+  /// MM:SS:MMM
+  /// </summary>
+  static public string getFormatedTimeMSM(int seconds, string separator = ":")
+  {
+    TimeSpan ts = new TimeSpan(0, 0, seconds);
+    return ts.Minutes + separator + ts.Seconds + separator + ts.Milliseconds;
   }
 }

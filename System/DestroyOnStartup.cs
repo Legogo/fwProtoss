@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DestroyOnStartup : MonoBehaviour {
 
-  public float timerToWait = 0f;
+  public float timerToWait = 0.1f;
 
   IEnumerator Start() {
     
@@ -12,7 +12,9 @@ public class DestroyOnStartup : MonoBehaviour {
       yield return new WaitForSeconds(timerToWait);
     }
 
-    GameObject.Destroy(gameObject);
+    yield return null;
+
+    GameObject.DestroyImmediate(gameObject);
   }
 
 }

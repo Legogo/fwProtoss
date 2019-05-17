@@ -15,14 +15,15 @@ public class ScreensManager {
   }
 
   //usual screen names
-  public enum ScreenNames {
+  public enum ScreenNames
+  {
     home, // home menu
     ingame, // ingame interface (ui)
     pause, // pause screen
     result, // end of round screen, result of round
     loading
   };
-  
+
   static protected void fetchScreens()
   {
     if (screens == null) screens = new List<ScreenObject>();
@@ -72,6 +73,16 @@ public class ScreensManager {
     return null;
   }
   
+  static public void unloadScreen(string nm)
+  {
+    ScreenObject so = getScreen(nm);
+    if (so != null)
+    {
+      Debug.Log("unloading screen | asked name : " + nm);
+      so.unload();
+    }
+  }
+
   static public ScreenObject open(ScreenNames nm, string filter = "") { return open(nm.ToString(), filter); }
   static public ScreenObject open(string nm, Action onComplete) { return open(nm, "", onComplete); }
 
@@ -81,7 +92,14 @@ public class ScreensManager {
   /// </summary>
   static public ScreenObject open(string nm, string filterName = "", Action onComplete = null)
   {
-    Debug.Log("ScreensManager | opening screen of name : <b>" + nm + "</b> , filter ? "+filterName);
+    Debug.Log("ScreensManager | opening screen of name : <b>" + nm + "</b> , filter ? " + filterName);
+
+    // -- removing startup "screen-" prefix
+    string prefix = "screen-";
+    if (nm.StartsWith(prefix))
+    {
+      nm = nm.Substring(prefix.Length, nm.Length - prefix.Length);
+    }
 
     ScreenObject so = getScreen(nm);
 
@@ -94,7 +112,7 @@ public class ScreensManager {
     //si le screen existe pas on essaye de le load
     loadMissingScreen(nm, delegate (ScreenObject loadedScreen)
     {
-      Debug.Log("  ... missing screen '"+nm+"' is now loaded, opening");
+      Debug.Log("  ... missing screen '" + nm + "' is now loaded, opening");
       changeScreenVisibleState(nm, true, filterName);
       if (onComplete != null) onComplete();
     });
@@ -144,8 +162,8 @@ public class ScreensManager {
 
   }
 
+  static public void close(ScreenNames scName) { close(scName.ToString()); }
   static public void close(string scName) { close(scName, "", false); }
-  static public void close(ScreenNames scName) { close(scName.ToString(), "", false); }
   static public void close(ScreenNames scName, bool force = false) { close(scName.ToString(), "", force); }
   static public void close(ScreenNames scName, string filter = "", bool force = false) { close(scName.ToString(), filter, force); }
 
@@ -174,14 +192,17 @@ public class ScreensManager {
     }
   }
   
-  static protected void loadMissingScreen(string screeName, Action<ScreenObject> onComplete)
+  static protected void loadMissingScreen(string screenName, Action<ScreenObject> onComplete)
   {
-    string fullName = screeName;
+    ScreenLoading.showLoadingScreen();
+
+    //re-add "screen-" prefix if missing
+    string fullName = screenName;
     if (!fullName.StartsWith("screen-")) fullName = "screen-" + fullName;
 
-    ScreenObject so = getScreen(screeName);
-
-    if(so != null)
+    // first search if already exists
+    ScreenObject so = getScreen(fullName);
+    if (so != null)
     {
       onComplete(so);
       return;
@@ -191,8 +212,11 @@ public class ScreensManager {
 
     EngineLoader.queryScene(fullName, delegate ()
     {
-      so = getScreen(screeName);
-      if (so == null) Debug.LogError("ScreensManager ~~ end of screen loading but no ScreenObject of name : <b>"+ screeName+"</b>");
+      so = getScreen(screenName);
+      if (so == null)
+      {
+        Debug.LogError("ScreensManager | end of screen loading (name given : " + screenName + ") but no <ScreenObject> returned");
+      }
       onComplete(so);
     });
     

@@ -21,11 +21,15 @@ public class EngineManager : MonoBehaviour {
     }
   }
 
-  static public SortedDictionary<int, List<EngineObject>> eosLayers;
+  static private List<EngineObject> eos; // layer 0
+  static public SortedDictionary<int, List<EngineObject>> eosNegLayers; // layers ]-inf,-1]
+  static public SortedDictionary<int, List<EngineObject>> eosPosLayers; // layers [1,inf[
 
   static protected bool state_live = false;
   static protected bool state_loading = true;
   static protected int loadedCount = 0;
+
+  public List<EngineObject> lockers = new List<EngineObject>();
 
   //something need to subscribe to this to get end of loading callback
   public Action onLoadingDone;
@@ -47,10 +51,14 @@ public class EngineManager : MonoBehaviour {
   public StackTraceLogType normal = StackTraceLogType.ScriptOnly;
   public StackTraceLogType warning = StackTraceLogType.ScriptOnly;
   public StackTraceLogType error = StackTraceLogType.ScriptOnly;
-  
+
+  EngineObject tmpEo = null;
+
   void Awake()
   {
     _manager = this;
+
+    if(eos == null) eos = new List<EngineObject>();
 
     //https://docs.unity3d.com/ScriptReference/Application-targetFrameRate.html
     if (application_targetFramerate > 0)
@@ -79,18 +87,43 @@ public class EngineManager : MonoBehaviour {
 
   static public void subscribe(EngineObject obj)
   {
-    if (eosLayers == null) eosLayers = new SortedDictionary<int, List<EngineObject>>();
+    if (obj.engineLayer == 0)
+    {
+      eos.Add(obj);
+      return;
+    }
 
-    if (!eosLayers.ContainsKey(obj.engineLayer)) eosLayers.Add(obj.engineLayer, new List<EngineObject>());
-    eosLayers[obj.engineLayer].Add(obj);
+    //pos
+    if(obj.engineLayer < 0)
+    {
+      if (eosNegLayers == null) eosNegLayers = new SortedDictionary<int, List<EngineObject>>();
+
+      if (!eosNegLayers.ContainsKey(obj.engineLayer)) eosNegLayers.Add(obj.engineLayer, new List<EngineObject>());
+      eosNegLayers[obj.engineLayer].Add(obj);
+    }
+
+    //neg
+    if (obj.engineLayer > 0)
+    {
+      if (eosPosLayers == null) eosPosLayers = new SortedDictionary<int, List<EngineObject>>();
+
+      if (!eosPosLayers.ContainsKey(obj.engineLayer)) eosPosLayers.Add(obj.engineLayer, new List<EngineObject>());
+      eosPosLayers[obj.engineLayer].Add(obj);
+    }
 
     //Debug.Log(obj.name + " added to eos on layer "+obj.engineLayer);
   }
   
   static public void unsubscribe(EngineObject obj)
   {
-    if (eosLayers == null) return;
-    eosLayers[obj.engineLayer].Remove(obj);
+    if(obj.engineLayer == 0)
+    {
+      eos.Remove(obj);
+      return;
+    }
+
+    if (obj.engineLayer < 0) eosNegLayers[obj.engineLayer].Remove(obj);
+    if (obj.engineLayer > 0) eosPosLayers[obj.engineLayer].Remove(obj);
   }
 
   /* end of scenes loading */
@@ -112,47 +145,67 @@ public class EngineManager : MonoBehaviour {
   {
     GameTime.update();
 
-    if (Input.GetKeyUp(KeyCode.P)) // pause
-    {
-      setPause(!state_live);
-    }
+    //if (!isLive()) return;
 
-    //exit app
-    if (Input.GetKeyUp(KeyCode.Delete) || Input.GetKeyUp(KeyCode.Backspace))
-    {
-      Application.Quit();
-      return;
-    }
+    if (!state_live) return;
+    if (state_loading) return;
 
-    if (!isLive()) return;
+    processLayerUpdate();
 
-    //update everything
-    processUpdateLayers();
   }
-
-  void processUpdateLayers()
+  
+  void processLayerUpdate()
   {
-    if (eosLayers == null) return;
+    //update
 
-    EngineObject obj;
-    foreach (KeyValuePair<int, List<EngineObject>> layer in eosLayers)
+    if (eosNegLayers != null)
     {
-      for (int i = 0; i < layer.Value.Count; i++)
-      {
-        obj = layer.Value[i];
-        if (!obj.canUpdate()) continue;
-        obj.updateEngine();
-      }
-
-      for (int i = 0; i < layer.Value.Count; i++)
-      {
-        obj = layer.Value[i];
-        if (!obj.canUpdate()) continue;
-        obj.updateEngineLate();
-      }
+      for (int i = 0; i < eosNegLayers.Count; i++) processUpdateLayer(eosNegLayers[i]);
     }
-    
+
+    if (eos != null) processUpdateLayer(eos);
+
+    if (eosPosLayers != null)
+    {
+      for (int i = 0; i < eosPosLayers.Count; i++) processUpdateLayer(eosPosLayers[i]);
+    }
+
+    //late update
+
+    if (eosNegLayers != null)
+    {
+      for (int i = 0; i < eosNegLayers.Count; i++) processUpdateLayerLate(eosNegLayers[i]);
+    }
+
+    if (eos != null) processUpdateLayerLate(eos);
+
+    if (eosPosLayers != null)
+    {
+      for (int i = 0; i < eosPosLayers.Count; i++) processUpdateLayerLate(eosPosLayers[i]);
+    }
+
   }
+
+  void processUpdateLayer(List<EngineObject> objects)
+  {
+    for (int i = 0; i < objects.Count; i++)
+    {
+      tmpEo = objects[i];
+      if (!tmpEo.canUpdate()) continue;
+      tmpEo.updateEngine();
+    }
+  }
+
+  void processUpdateLayerLate(List<EngineObject> objects)
+  {
+    for (int i = 0; i < objects.Count; i++)
+    {
+      tmpEo = objects[i];
+      if (!tmpEo.canUpdate()) continue;
+      tmpEo.updateEngineLate();
+    }
+  }
+
 
   void processUpdateObjectsDebug(List<EngineObject> objects)
   {
@@ -214,7 +267,7 @@ public class EngineManager : MonoBehaviour {
   static public bool isPaused() { return !state_live; }
 
   static public bool isLoading(){ return state_loading; }
-  static public bool isLive(){return state_live && !state_loading;}
+  static public bool isLive(){ return state_live && !state_loading; }
   
   public string toStringDebug()
   {

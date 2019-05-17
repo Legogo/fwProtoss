@@ -15,6 +15,8 @@ abstract public class HelperVisible
   protected Rect _wbounds; // bounds expressed in world position
   protected Collider _collider;
 
+  //protected Renderer _render;
+
   protected MonoBehaviour _coroutineCarrier; // needs to be able to call coroutines
   protected Transform _t;
   protected Transform _symbolCarry;
@@ -198,8 +200,13 @@ abstract public class HelperVisible
   {
     return _t;
   }
-
-  public Transform getSymbol() { return _symbolCarry; }
+  
+  /*
+  public T getSymbol() where T : Renderer
+  {
+    return _render as T;
+  }
+  */
 
   public void setSymbolTransformScale(Vector3 newScale)
   {

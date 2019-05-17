@@ -77,8 +77,13 @@ static public class HalperColor
     color.a = a;
 
     return color;
+  }
 
-  }// setAlpha()
+  static public Color towardAlpha(this Color color, float target = 1f, float speed = 1f)
+  {
+    color.a = Mathf.MoveTowards(color.a, target, speed);
+    return color;
+  }
 
   /// <summary>
   /// Retourne une Color avec la valeur d'alpha multiplié.

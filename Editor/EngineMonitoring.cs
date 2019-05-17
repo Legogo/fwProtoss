@@ -28,12 +28,16 @@ public class EngineMonitoring : EditorWindow
 
     if (em == null) return;
 
-    SortedDictionary<int, List<EngineObject>> layers = EngineManager.eosLayers;
+    GUILayout.Label("layer neg ? " + (EngineManager.eosNegLayers != null));
+    GUILayout.Label("layer pos ? " + (EngineManager.eosPosLayers != null));
 
+    //SortedDictionary<int, List<EngineObject>> layers = EngineManager.eosLayers;
+    /*
     for (int i = 0; i < layers.Count; i++)
     {
       GUILayout.Label("  #" + i + " count : " + layers[i].Count);
     }
+    */
 
     GUILayout.Label("mEngine loading ? " + EngineManager.isLoading());
     GUILayout.Label("mEngine live ? "+EngineManager.isLive());
@@ -42,12 +46,7 @@ public class EngineMonitoring : EditorWindow
     {
       UnityEditor.Selection.activeGameObject = Camera.main.gameObject;
     }
-
-    if (GUILayout.Button("select arena"))
-    {
-      ArenaManager am = ArenaManager.get();
-      if(am != null) UnityEditor.Selection.activeGameObject = am.gameObject;
-    }
+    
   }
   
 }

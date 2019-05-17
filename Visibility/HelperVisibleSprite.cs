@@ -66,6 +66,8 @@ public class HelperVisibleSprite : HelperVisible
       Debug.LogWarning("no render sprite for " + _coroutineCarrier.name, _coroutineCarrier.gameObject);
       return;
     }
+
+    //Debug.Log(_spriteRenderDefault + " , " + flag);
     _spriteRenderDefault.enabled = flag;
   }
 
@@ -90,5 +92,10 @@ public class HelperVisibleSprite : HelperVisible
   {
     if (_spriteRenderDefault == null) Debug.LogWarning("no render sprite for <b>" + _coroutineCarrier.name+"</b>", _coroutineCarrier);
     return _spriteRenderDefault.bounds;
+  }
+
+  public SpriteRenderer getSymbol()
+  {
+    return _spriteRenderDefault;
   }
 }

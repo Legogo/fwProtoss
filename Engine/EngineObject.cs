@@ -5,12 +5,12 @@ using UnityEngine;
 
 using fwp.input;
 
-abstract public class EngineObject : MonoBehaviour, DebugSelection.iDebugSelection
+abstract public class EngineObject : MonoBehaviour
 {
   protected EngineManager _eManager;
 
   [HideInInspector]
-  public int engineLayer = 0;
+  public int engineLayer = 0; // script execution order
 
   protected Transform _tr;
   protected bool _unfreeze = true;
@@ -23,7 +23,7 @@ abstract public class EngineObject : MonoBehaviour, DebugSelection.iDebugSelecti
   //[Serializable]public enum InputMode { NONE, MOUSE };
   //public InputMode inputMode;
 
-  bool logs = false; // display logs
+  protected bool logs = false; // display logs
   protected HelperInputObject inputObject = null;
 
   //constructor
@@ -209,6 +209,25 @@ abstract public class EngineObject : MonoBehaviour, DebugSelection.iDebugSelecti
     return true;
   }
 
+  public bool isFreezed() { return !_unfreeze; }
+  public void setFreeze(bool flag) { _unfreeze = !flag; } // unfreeze true == ça tourne !
+  public bool isReady() { return _ready; }
+
+  virtual public string toString()
+  {
+    string ct = name+" ["+GetType()+"]";
+    ct += "\n └ " + iStringFormatBool("UNfreezed", _unfreeze);
+    ct += "\n └ " + iStringFormatBool("can update", canUpdate());
+    ct += "\n └ " + iStringFormatBool("ready", _ready);
+    ct += enabled + " , " + gameObject.activeSelf + " , " + _ready + " , " + _unfreeze;
+    return ct;
+  }
+
+  protected string iStringFormatBool(string label, bool val)
+  {
+    return label + " ? " + (val ? "<color=green>true</color>" : "<color=red><b>false</b></color>");
+  }
+
   private void OnDestroy()
   {
 #if UNITY_EDITOR
@@ -238,20 +257,6 @@ abstract public class EngineObject : MonoBehaviour, DebugSelection.iDebugSelecti
     pos.y = newPosition.y;
     transform.position = pos;
     return pos;
-  }
-
-  public bool isFreezed() { return !_unfreeze; }
-  public void setFreeze(bool flag) { _unfreeze = !flag; } // unfreeze true == ça tourne !
-  public bool isReady() { return _ready; }
-
-  virtual public string toString()
-  {
-    return name + "\n └ "+iStringFormatBool("UNfreezed", _unfreeze)+"\n └ "+iStringFormatBool("can update", canUpdate());
-  }
-
-  protected string iStringFormatBool(string label, bool val)
-  {
-    return label + " ? " + (val ? "<color=green>true</color>" : "<color=red><b>false</b></color>");
   }
 
   public HelperInputObject getIO()
