@@ -1,6 +1,6 @@
 {
   "name": "com.andreberlemont.fwProtoss",
-  "version": "0.1",
+  "version": "0.1.1",
   "displayName": "Framework Protoss",
   "description": "framework of basic tools to make a game prototype",
   "unity": "2018.4",
