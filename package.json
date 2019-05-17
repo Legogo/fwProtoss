@@ -4,9 +4,15 @@
   "displayName": "Framework Protoss",
   "description": "framework of basic tools to make a game prototype",
   "unity": "2018.4",
-  "unityRelease": "0f1",
-  "dependencies": {},
- "keywords": [
+  "license":"MIT",
+
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mob-sakai/UpmGitExtension.git"
+  },
+  "src":"Assets/Lib/fwProtoss",
+
+  "keywords": [
     "prototype",
     "framework"
   ],
@@ -14,5 +20,7 @@
     "name": "André Berlemont",
     "email": "andre.berlemont@gmail.com",
     "url": "https://www.andreberlemont.com"
-  } 
+  },
+  "dependencies": {
+  }
 }
