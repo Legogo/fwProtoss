@@ -1,8 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 using System;
+using fwp.sound;
 
 /// <summary>
 /// Manager that will cal updates for all EngineObject(s)

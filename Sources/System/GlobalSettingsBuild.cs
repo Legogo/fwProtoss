@@ -10,13 +10,13 @@ static public class GlobalSettingsBuild {
 
 #if UNITY_EDITOR
 
-  static public DataBuildSettings getScriptableDataBuildSettings()
+  static public ScriptableBuildSettingsData getScriptableDataBuildSettings()
   {
     string[] all = AssetDatabase.FindAssets("t:DataBuildSettings");
     for (int i = 0; i < all.Length; i++)
     {
-      Object obj = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(all[i]), typeof(DataBuildSettings));
-      DataBuildSettings data = obj as DataBuildSettings;
+      Object obj = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(all[i]), typeof(ScriptableBuildSettingsData));
+      ScriptableBuildSettingsData data = obj as ScriptableBuildSettingsData;
       if (data != null) return data;
     }
     return null;
@@ -26,11 +26,11 @@ static public class GlobalSettingsBuild {
   [MenuItem("Build/Apply settings")]
   static public void apply()
   {
-    DataBuildSettings data = getScriptableDataBuildSettings();
+    ScriptableBuildSettingsData data = getScriptableDataBuildSettings();
     applySettings(data);
   }
 
-  static public void applySettings(DataBuildSettings data)
+  static public void applySettings(ScriptableBuildSettingsData data)
   {
     Debug.Log("applying DataBuildSettings ...");
 

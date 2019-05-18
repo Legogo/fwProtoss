@@ -6,7 +6,7 @@ public class LandscapeGenerator : ArenaObject {
 
   protected GameSpace gspace;
 
-  public DataResourceAtlas atlas;
+  public ScriptableSpriteAtlas atlas;
 
   //public struct LandscapeData { public float pos, public  }
   List<SpriteRenderer> landscapeObjects = new List<SpriteRenderer>();

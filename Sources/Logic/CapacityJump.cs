@@ -69,7 +69,7 @@ namespace fwp
 
     virtual public void soundPlayJump()
     {
-      SoundManager.playOneShot("PlayerJump");
+      fwp.sound.SoundManager.playOneShot("PlayerJump");
     }
   }
 

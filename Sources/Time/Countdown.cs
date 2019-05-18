@@ -14,7 +14,7 @@ public class Countdown : TimeObject
 
     if (balancingTimer != null)
     {
-      timeoutTime = balancingTimer.fetchTime();
+      timeoutTime = balancingTimer.getRandomTimeTarget();
     }
   }
 

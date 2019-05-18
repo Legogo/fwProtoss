@@ -2,7 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HalperCollisionsMakeCircle : MonoBehaviour {
+/// <summary>
+/// attach this script to a MonoBehavior to be able to create a circle of collider on it
+/// </summary>
+
+public class HalperMonoCollisionsMakeCircle : MonoBehaviour {
 
   public LayerMask collisionLayer;
 

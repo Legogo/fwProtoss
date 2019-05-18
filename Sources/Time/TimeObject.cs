@@ -4,12 +4,12 @@ using UnityEngine;
 
 abstract public class TimeObject
 {
-  protected DataTimer balancingTimer;
+  protected ScriptableTimerParams balancingTimer;
   bool running = false;
 
   float time = 0f;
 
-  virtual public void setupBalancing(DataTimer data)
+  virtual public void setupBalancing(ScriptableTimerParams data)
   {
     balancingTimer = data;
   }

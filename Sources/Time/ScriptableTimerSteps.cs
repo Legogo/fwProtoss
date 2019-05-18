@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-[CreateAssetMenu(menuName = "protoss/create DataTimerSteps", order = 100)]
-public class DataTimerSteps : DataTimer
+[CreateAssetMenu(menuName = "protoss/create ScriptableTimerSteps", order = 100)]
+public class ScriptableTimerSteps : ScriptableTimerParams
 {
   //public TimerParams[] timedParams;
   public TimerParam[] timerParamSteps;

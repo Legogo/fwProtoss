@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -12,8 +10,8 @@ using UnityEditor;
 /// 506x900
 /// </summary>
 
-[CreateAssetMenu(menuName = "protoss/create DataBuildSettings", order = 100)]
-public class DataBuildSettings : ScriptableObject
+[CreateAssetMenu(menuName = "protoss/create ScriptableBuildSettingsData", order = 100)]
+public class ScriptableBuildSettingsData : ScriptableObject
 {
   [Header("identification")]
   public string compagny_name = "*";

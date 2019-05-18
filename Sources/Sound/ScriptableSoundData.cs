@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "protoss/create DataSounds", order = 100)]
-public class DataSounds : ScriptableObject {
+[CreateAssetMenu(menuName = "fwp/create ScriptableSoundData", order = 100)]
+public class ScriptableSoundData : ScriptableObject {
 
   public AudioClip[] common;
 
@@ -11,8 +11,7 @@ public class DataSounds : ScriptableObject {
   public AudioClip[] ingame_feedback;
 
   public AudioClip[] musics;
-
-
+  
   public List<AudioClip> getCombinedLists()
   {
     List<AudioClip> clips = new List<AudioClip>();

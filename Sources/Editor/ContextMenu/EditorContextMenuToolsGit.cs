@@ -1,12 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
+﻿using UnityEngine;
 using UnityEditor;
 using System;
 using System.IO;
 
-public class EditorGitShortcuts : MonoBehaviour
+public class EditorContextMenuToolsGit : MonoBehaviour
 {
   //[MenuItem("Assets/git !#&%g")]
   [MenuItem("Assets/git &%g")]
@@ -24,7 +21,7 @@ public class EditorGitShortcuts : MonoBehaviour
 
     //Debug.Log("opening gits from "+ fullPath);
     
-    if (folderHasGitFolder(fullPath))
+    if (pathHasGitFolder(fullPath))
     {
       Debug.Log("current path has git folder : opening");
       HalperNatives.startCmd("git", "--cd=" + fullPath);
@@ -54,8 +51,8 @@ public class EditorGitShortcuts : MonoBehaviour
     }
 
   }
-
-  static public bool folderHasGitFolder(string basePath)
+  
+  static public bool pathHasGitFolder(string basePath)
   {
     //Debug.Log(basePath);
 
@@ -81,46 +78,12 @@ public class EditorGitShortcuts : MonoBehaviour
   }
   
   /// <summary>
-  /// permet de savoir si le dernier dossier dans un path est celui donné en param
+  /// recurcively search for git folder
   /// </summary>
-  static public bool isLastFolderInPath(string path, string folderName)
-  {
-    path = cleanPathFromFile(path);
-    return path.EndsWith(folderName);
-  }
-
-  static public bool isLastFolderDotFolder(string path)
-  {
-    path = path.Replace("\\", "/"); // make path with all /
-
-    // remove all last /
-    while (path[path.Length-1] == '/')
-    {
-      path.Substring(0, path.Length - 1); 
-    }
-    
-    string[] split = path.Split('/');
-    return split[split.Length - 1].StartsWith(".");
-  }
-
-  static protected string cleanPathFromFile(string path)
-  {
-    path = path.Replace("\\", "/");
-
-    int extIndex = path.LastIndexOf('.'); // some folder have .
-    int lastSlash = path.LastIndexOf('/');
-
-    if (extIndex > 0)
-    {
-      path = path.Substring(0, lastSlash); // remove any file name
-    }
-
-    if (path[path.Length - 1] == '/') path.Substring(0, path.Length - 1); // remove last /
-
-    return path;
-  }
-
-  static public string getFolderPathContainingGit(string basePath, string folderName)
+  /// <param name="basePath"></param>
+  /// <param name="folderName"></param>
+  /// <returns></returns>
+  static private string getFolderPathContainingGit(string basePath, string folderName)
   {
     //Debug.Log("path : " + basePath);
 
@@ -128,11 +91,11 @@ public class EditorGitShortcuts : MonoBehaviour
     basePath = basePath.ToLower();
 
     
-    if(isLastFolderInPath(basePath, folderName))
+    if(HalperIO.isLastFolderInPath(basePath, folderName))
     {
       //Debug.Log(basePath);
 
-      if (folderHasGitFolder(basePath)) return basePath;
+      if (pathHasGitFolder(basePath)) return basePath;
     }
     
     //this returns FULL PATHs
@@ -140,7 +103,7 @@ public class EditorGitShortcuts : MonoBehaviour
 
     foreach (string dir in dirs)
     {
-      if (isLastFolderDotFolder(dir)) continue;
+      if (HalperIO.isLastFolderDotFolder(dir)) continue;
 
       string output = getFolderPathContainingGit(dir, folderName);
       if (output.Length > 0) return output;

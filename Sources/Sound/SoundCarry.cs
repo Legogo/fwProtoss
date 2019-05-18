@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 
-public class SoundCarry : MonoBehaviour
+namespace fwp.sound
 {
-  public DataSounds sounds;
-  public AudioMixerGroup mixer;
-  
+  public class SoundCarry : MonoBehaviour
+  {
+    public ScriptableSoundData sounds;
+    public AudioMixerGroup mixer;
+  }
 }

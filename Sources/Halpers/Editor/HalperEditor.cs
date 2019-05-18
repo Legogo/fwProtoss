@@ -1,11 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-#if UNITY_EDITOR
 using UnityEditor;
 using System.Reflection;
-#endif
 
 /// <summary>
 /// % = ctrl
@@ -23,9 +20,7 @@ public class HalperEditor {
     var method = type.GetMethod("Clear");
     method.Invoke(new object(), null);
   }
-
-#if UNITY_EDITOR
-
+  
   [MenuItem("Tools/pause %#&w")]
   public static void PauseEditor()
   {
@@ -130,6 +125,39 @@ public class HalperEditor {
 
   }// getLocalIdInFile()
 
-#endif
+  
+  static public ScriptableObject getScriptable<T>() where T : ScriptableObject
+  {
+    string typ = typeof(T).ToString();
+    //Debug.Log(typ);
+    string[] all = AssetDatabase.FindAssets("t:" + typ);
+    //Debug.Log(all.Length);
+    for (int i = 0; i < all.Length; i++)
+    {
+      Object obj = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(all[i]), typeof(T));
+      T data = obj as T;
+      if (data != null) return data;
+    }
+    return null;
+  }
 
+  static public T getScriptableObjectInEditor<T>(string nameEnd = "") where T : ScriptableObject
+  {
+    string[] all = AssetDatabase.FindAssets("t:" + typeof(T).Name);
+    for (int i = 0; i < all.Length; i++)
+    {
+      Object obj = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(all[i]), typeof(T));
+      T data = obj as T;
+
+      if (data == null) continue;
+      if (nameEnd.Length > 0)
+      {
+        if (!data.name.EndsWith(nameEnd)) continue;
+      }
+
+      return data;
+    }
+    Debug.LogWarning("can't locate scriptable of type " + typeof(T).Name + " (filter name ? " + nameEnd + ")");
+    return null;
+  }
 }

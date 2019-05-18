@@ -4,29 +4,32 @@ using System;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-
 static public class HalperUnity {
-  
-#if UNITY_EDITOR
-  static public ScriptableObject getScriptable<T>() where T : ScriptableObject
-  {
-    string typ = typeof(T).ToString();
-    //Debug.Log(typ);
-    string[] all = AssetDatabase.FindAssets("t:" + typ);
-    //Debug.Log(all.Length);
-    for (int i = 0; i < all.Length; i++)
-    {
-      Object obj = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(all[i]), typeof(T));
-      T data = obj as T;
-      if (data != null) return data;
-    }
-    return null;
-  }
-#endif 
 
+  public static void clearPlayerPrefs()
+  {
+    PlayerPrefs.DeleteAll();
+    PlayerPrefs.Save();
+
+    Debug.Log("all pprefs deleted");
+  }
+
+  /// <summary>
+  /// call for GC
+  /// </summary>
+  static public void clearGC()
+  {
+    Debug.Log("clearing GC at frame : " + Time.frameCount);
+    Resources.UnloadUnusedAssets();
+    System.GC.Collect();
+  }
+
+  /// <summary>
+  /// shuffle list of Object
+  /// </summary>
+  /// <typeparam name="Object"></typeparam>
+  /// <param name="list"></param>
+  /// <returns></returns>
   static public List<Object> shuffle<Object>(this List<Object> list)
   {
     for (int i = 0; i < list.Count; i++)
@@ -39,6 +42,12 @@ static public class HalperUnity {
     return list;
   }
 
+  /// <summary>
+  /// shortcut to load a bunch of object in Resources/
+  /// </summary>
+  /// <typeparam name="T"></typeparam>
+  /// <param name="path"></param>
+  /// <returns></returns>
   static public List<T> loadResources<T>(string path = "") where T : Object
   {
     Object[] list = Resources.LoadAll(path, typeof(T));
@@ -57,6 +66,12 @@ static public class HalperUnity {
     return elements;
   }
 
+  /// <summary>
+  /// fetch all TextAsset at path and clean returns lines[] (cleaned from empty lines)
+  /// </summary>
+  /// <param name="path"></param>
+  /// <param name="prefix"></param>
+  /// <returns>filename, lines[]</returns>
   static public Dictionary<string, string[]> loadResourcesLines(string path, string prefix = "")
   {
     List<TextAsset> tmp = loadResources<TextAsset>(path);
@@ -78,6 +93,12 @@ static public class HalperUnity {
     return list;
   }
   
+  /// <summary>
+  /// returns first TextAsset lines[] at path
+  /// </summary>
+  /// <param name="path"></param>
+  /// <param name="prefix"></param>
+  /// <returns></returns>
   static public KeyValuePair<string, string[]> loadResourceLine(string path, string prefix)
   {
     Dictionary<string, string[]> files = loadResourcesLines(path, prefix);
@@ -86,13 +107,6 @@ static public class HalperUnity {
       return kp;
     }
     return default(KeyValuePair<string, string[]>);
-  }
-
-  static public void clearGC()
-  {
-    Debug.Log("clearing GC at frame : " + Time.frameCount);
-    Resources.UnloadUnusedAssets();
-    System.GC.Collect();
   }
 
 }

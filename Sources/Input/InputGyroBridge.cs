@@ -1,57 +1,60 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using fwp.input;
 
-public class InputGyroBridge : MonoBehaviour {
-
-  Gyroscope gyro;
-
-  public float desktop_scaling = 1f;
-  public float mobile_scaling = 1f;
-
-  private void Awake()
+namespace fwp.input
+{
+  public class InputGyroBridge : MonoBehaviour
   {
 
-    if (!SystemInfo.supportsGyroscope)
+    Gyroscope gyro;
+
+    public float desktop_scaling = 1f;
+    public float mobile_scaling = 1f;
+
+    private void Awake()
     {
-      Debug.LogWarning("don't support gyro !");
-      return;
+
+      if (!SystemInfo.supportsGyroscope)
+      {
+        Debug.LogWarning("don't support gyro !");
+        return;
+      }
+
+      gyro = Input.gyro;
+      gyro.enabled = true;
+
     }
 
-    gyro = Input.gyro;
-    gyro.enabled = true;
-
-  }
-
-  public float getLateralSlantValue()
-  {
-    if (InputTouchBridge.isMobile()) return gyro.gravity.x;
-    return -gyro.gravity.x;
-  }
-
-  private void OnGUI()
-  {
-    string ct = "[Input Gyro]";
-    
-    ct += "\n L supported ? " + SystemInfo.supportsGyroscope;
-    if(gyro != null)
+    public float getLateralSlantValue()
     {
-      ct += "\n L enabled ? " + gyro.enabled;
-      ct += "\n L gravity " + gyro.gravity;
-      ct += "\n L userAccel " + gyro.userAcceleration;
-      ct += "\n L attitude " + gyro.attitude;
-      ct += "\n L rotation " + gyro.rotationRate;
-      ct += "\n L rotation (unbiased) " + gyro.rotationRateUnbiased;
+      if (InputTouchBridge.isMobile()) return gyro.gravity.x;
+      return -gyro.gravity.x;
     }
 
-    ct += "\n[Acceleration]";
-    ct += "\n L " + Input.acceleration;
+    private void OnGUI()
+    {
+      string ct = "[Input Gyro]";
 
-    GUIStyle style = new GUIStyle();
-    style.fontSize = 40;
+      ct += "\n L supported ? " + SystemInfo.supportsGyroscope;
+      if (gyro != null)
+      {
+        ct += "\n L enabled ? " + gyro.enabled;
+        ct += "\n L gravity " + gyro.gravity;
+        ct += "\n L userAccel " + gyro.userAcceleration;
+        ct += "\n L attitude " + gyro.attitude;
+        ct += "\n L rotation " + gyro.rotationRate;
+        ct += "\n L rotation (unbiased) " + gyro.rotationRateUnbiased;
+      }
 
-    GUI.Label(new Rect(10f, 50f, 500f, 500f), ct, style);
+      ct += "\n[Acceleration]";
+      ct += "\n L " + Input.acceleration;
+
+      GUIStyle style = new GUIStyle();
+      style.fontSize = 40;
+
+      GUI.Label(new Rect(10f, 50f, 500f, 500f), ct, style);
+    }
+
   }
-  
 }

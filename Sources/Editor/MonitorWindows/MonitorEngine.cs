@@ -5,13 +5,13 @@ using System;
 using UnityEngine.SceneManagement;
 using UnityEngine.Profiling;
 
-public class EngineMonitoring : EditorWindow
+public class MonitorEngineObject : EditorWindow
 {
 
   [MenuItem("Tools/monitoring/engine")]
   static void init()
   {
-    EditorWindow.GetWindow(typeof(EngineMonitoring));
+    EditorWindow.GetWindow(typeof(MonitorEngineObject));
   }
   
   void OnGUI()
