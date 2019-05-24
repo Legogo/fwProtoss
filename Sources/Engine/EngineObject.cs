@@ -275,6 +275,11 @@ abstract public class EngineObject : MonoBehaviour
     return toString();
   }
 
+  protected string getStamp()
+  {
+    return GetType() + " | " + name + " | ";
+  }
+
   /// <summary>
   /// editor selection
   /// </summary>
@@ -295,6 +300,14 @@ abstract public class EngineObject : MonoBehaviour
     Debug.Log(GetType() + " | " + data, logTarget);
   }
   
+
+
+
+
+
+
+  // DEBUG DRAW
+
   protected void drawCircle(Vector3 position, float radius, Color color, float alpha = 1f, string label = "")
   {
 #if UNITY_EDITOR

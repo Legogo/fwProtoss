@@ -24,9 +24,16 @@ namespace fwp
     {
       base.build();
 
-      _owner = gameObject.GetComponent<LogicItem>();
+      _owner = gameObject.GetComponent<LogicItem>(); // local
+      if (_owner == null) _owner = gameObject.GetComponentInParent<LogicItem>(); // in parent ?
+
+      if (_owner == null)
+      {
+        Debug.LogWarning("creating owner");
+        _owner = gameObject.AddComponent<LogicItem>(); // if none
+      }
+
       //if (_owner == null) Debug.LogError("you NEED to <b>add a LogicItem</b> script to manipulate Capacities on : "+name, gameObject);
-      if (_owner == null) _owner = gameObject.AddComponent<LogicItem>(); // need
 
       _owner.subscribeCapacity(this);
 

@@ -38,6 +38,7 @@ public class PauseChecker : MonoBehaviour {
     //can't unpause when pause menu is visible
     ScreenObject screen = ScreensManager.getScreen(ScreensManager.ScreenNames.pause);
     //ScreenPause sp = screen as ScreenPause;
+    if (screen == null) return true;
 
     if (screen.name.Contains("pause"))
     {

@@ -12,6 +12,7 @@ namespace fwp
 {
   public class LogicItem : ArenaObject
   {
+    //capacities will subscribe to this List on their constructor
     protected List<LogicCapacity> capacities = new List<LogicCapacity>();
     
     public InputKeyBridge input;

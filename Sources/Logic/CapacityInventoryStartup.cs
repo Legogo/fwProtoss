@@ -13,6 +13,7 @@ public class CapacityInventoryStartup : LogicCapacity
   {
     base.setup();
     inv = _owner.getCapacity<CapacityInventory>();
+    if (inv == null) Debug.LogError("need inventory");
   }
 
   public override void restartCapacity()
