@@ -1,11 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System;
-using Object = UnityEngine.Object;
-using UnityEditor.Build.Reporting;
 
 /// <summary>
 /// 
@@ -38,7 +34,10 @@ using UnityEditor.Build.Reporting;
 /// </summary>
 
 namespace fwp.build
-{ 
+{
+  using UnityEditor.Build.Reporting;
+  using UnityEditor;
+
   public class BuildHelperBase
   {
     static BuildPlayerOptions buildPlayerOptions;
@@ -200,6 +199,11 @@ namespace fwp.build
     protected string getBuildPathFolder()
     {
       ScriptableBuildSettingsData data = GlobalSettingsBuild.getScriptableDataBuildSettings();
+      if (data == null)
+      {
+        Debug.LogError("no data ?");
+        return "";
+      }
       return data.build_path;
     }
 

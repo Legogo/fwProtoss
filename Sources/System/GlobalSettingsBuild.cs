@@ -12,7 +12,7 @@ static public class GlobalSettingsBuild {
 
   static public ScriptableBuildSettingsData getScriptableDataBuildSettings()
   {
-    string[] all = AssetDatabase.FindAssets("t:DataBuildSettings");
+    string[] all = AssetDatabase.FindAssets("t:ScriptableBuildSettingsData");
     for (int i = 0; i < all.Length; i++)
     {
       Object obj = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(all[i]), typeof(ScriptableBuildSettingsData));

@@ -1,47 +1,47 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
 using UnityEditor;
-using System;
-using UnityEngine.SceneManagement;
-using UnityEngine.Profiling;
 
-public class ArenaMonitoring : EditorWindow
+namespace fwp.arena
 {
-
-  [MenuItem("Tools/monitoring/arena")]
-  static void init()
+  public class ArenaMonitoring : EditorWindow
   {
-    EditorWindow.GetWindow(typeof(ArenaMonitoring));
-  }
-  
-  void OnGUI()
-  {
-    GUILayout.Label("~Protoss framework~ arena");
 
-    if(!UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode || !Application.isPlaying)
+    [MenuItem("Tools/monitoring/arena")]
+    static void init()
     {
-      GUILayout.Label("only at runtime");
-      return;
+      EditorWindow.GetWindow(typeof(ArenaMonitoring));
     }
 
-    GUILayout.Label("  engine paused ? " + EngineManager.isPaused());
-
-    ArenaManager am = ArenaManager.get();
-    
-    if (am == null) return;
-
-    GUILayout.Label("status : " + am.getState().ToString());
-
-    GUILayout.Label("  menu ? " + am.isArenaStateMenu());
-    GUILayout.Label("  live ? " + am.isArenaStateLive());
-    GUILayout.Label("  end ? " + am.isArenaStateEnd());
-    
-    GUILayout.Label("arena manager has "+am.arenaObjects.Count+" objects");
-    for (int i = 0; i < am.arenaObjects.Count; i++)
+    void OnGUI()
     {
-      GUILayout.Label("  #" + i + " "+am.arenaObjects[i]);
+      GUILayout.Label("~Protoss framework~ arena");
+
+      if (!UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode || !Application.isPlaying)
+      {
+        GUILayout.Label("only at runtime");
+        return;
+      }
+
+      GUILayout.Label("  engine paused ? " + EngineManager.isPaused());
+
+      ArenaManager am = ArenaManager.get();
+
+      if (am == null) return;
+
+      GUILayout.Label("status : " + am.getState().ToString());
+
+      GUILayout.Label("  menu ? " + am.isArenaStateMenu());
+      GUILayout.Label("  live ? " + am.isArenaStateLive());
+      GUILayout.Label("  end ? " + am.isArenaStateEnd());
+
+      GUILayout.Label("arena manager has " + am.arenaObjects.Count + " objects");
+      for (int i = 0; i < am.arenaObjects.Count; i++)
+      {
+        GUILayout.Label("  #" + i + " " + am.arenaObjects[i]);
+      }
+
     }
 
   }
-  
+
 }
