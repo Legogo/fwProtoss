@@ -139,16 +139,18 @@ abstract public class ArenaObject : EngineObject {
   /// </summary>
   public void updateArena()
   {
-    if (EngineManager.isPaused()) return;
-
+    //if (!canUpdate()) return;
     if (_arena.isArenaStateLive()) updateArenaLive(_arena.getElapsedTime());
     else if (_arena.isArenaStateEnd()) updateArenaEnd();
     else updateArenaMenu();
   }
 
+  /// <summary>
+  /// called only during live round
+  /// </summary>
   public void updateArenaLate()
   {
-    if (_arena.isArenaStateLive()) updateArenaLiveLate(_arena.getElapsedTime());
+    updateArenaLiveLate(_arena.getElapsedTime());
   }
 
   virtual protected void updateArenaMenu()

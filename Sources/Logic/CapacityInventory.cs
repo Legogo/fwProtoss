@@ -46,6 +46,9 @@ namespace fwp
         ii.setQuantity(qty);
         addItem(ii);
       }
+
+      Debug.Log(_owner.name + "  added " + ii.getId() + " x" + ii.getQuantity(), transform);
+
       return ii;
     }
 
@@ -132,6 +135,14 @@ namespace fwp
         if (items[i].isItem(id)) return items[i];
       }
       return null;
+    }
+    
+    public bool removeItemsOfType(string id, int qty)
+    {
+      InventoryItem ii = getItem(id);
+      if (ii == null) return false;
+
+      return ii.remove(qty); // success ?
     }
 
     public void removeAllItems()

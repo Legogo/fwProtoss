@@ -213,7 +213,7 @@ abstract public class ArenaManager : EngineObject {
   {
     for (int i = 0; i < arenaObjects.Count; i++)
     {
-      if (!arenaObjects[i].isFreezed()) arenaObjects[i].updateArena();
+      if (arenaObjects[i].canUpdate()) arenaObjects[i].updateArena();
     }
   }
 
@@ -221,7 +221,7 @@ abstract public class ArenaManager : EngineObject {
   {
     for (int i = 0; i < arenaObjects.Count; i++)
     {
-      if (!arenaObjects[i].isFreezed()) arenaObjects[i].updateArenaLate();
+      if (arenaObjects[i].canUpdate()) arenaObjects[i].updateArenaLate();
     }
   }
 
@@ -229,7 +229,7 @@ abstract public class ArenaManager : EngineObject {
   {
     for (int i = 0; i < arenaObjects.Count; i++)
     {
-      if (!arenaObjects[i].isFreezed()) arenaObjects[i].updateArena();
+      if (arenaObjects[i].canUpdate()) arenaObjects[i].updateArena();
     }
   }
   
@@ -347,7 +347,7 @@ abstract public class ArenaManager : EngineObject {
     return ct;
   }
 
-  static public string getStamp()
+  protected override string getStamp()
   {
     return "<color=lime>ArenaManager</color> | ";
   }

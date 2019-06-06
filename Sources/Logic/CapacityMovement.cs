@@ -9,10 +9,12 @@ namespace fwp
 
   abstract public class CapacityMovement : LogicCapacity {
 
-    protected Transform _t;
+    protected Transform _moveTransform;
     protected CapacityCollision _collision;
-    protected Vector2 lastDirection; // (int) last valid direction
-    protected Vector2 lastStep; // previous frame step
+
+    protected Vector2 rawDirection; // last direction
+    protected Vector2 lastDirection; // (int) last valid direction (!= 0)
+    protected Vector2 lastInstantVelocity; // previous frame step
     protected Vector2 lastFullMovement; // debug
 
     protected Vector2 solvedVelocity;
@@ -34,8 +36,9 @@ namespace fwp
     protected override void build()
     {
       base.build();
-    
-      _t = transform;
+
+      _moveTransform = _logicTransform; // OWNER
+
       lockHorizontal = new CapacityPropertyLocker();
       lockGravity = new CapacityPropertyLocker();
 
@@ -94,10 +97,11 @@ namespace fwp
       //Debug.Log(" added " + y + " to velocity.y = " + velocity.y);
     }
 
-    public override void updateCapacity(){
+    public override void updateCapacity()
+    {
       base.updateCapacity();
 
-      Vector2 forceToAdd;
+      Vector2 forceToAdd = Vector2.zero;
 
       int i = 0;
       int safe = 100;
@@ -151,9 +155,7 @@ namespace fwp
       solvedVelocity = instantVelocity + velocity;
 
       //clampSolvedVelocity();
-    
-      Vector3 position = transform.position; // save position before moving
-
+      
       //Debug.Log(Time.time);
 
       //MOVEMENT
@@ -165,18 +167,24 @@ namespace fwp
 
       //Debug.Log(Time.frameCount + " , velocity | x : " + solvedVelocity.x+" y : "+solvedVelocity.y);
 
-      moveStep(solvedVelocity * Time.deltaTime);
+      Vector3 position = transform.position; // save position before moving
+      
+      moveStep(solvedVelocity * Time.deltaTime); //apply movement with physic
 
+      //get actual movement solved
       lastFullMovement = transform.position - position;
 
-      lastStep = instantVelocity;
+      //Debug.Log(lastFullMovement);
 
-      //direction
+      lastInstantVelocity = instantVelocity;
+
+      //update last direction
+      rawDirection = instantVelocity;
       if (instantVelocity.x != 0f) lastDirection.x = Mathf.Sign(instantVelocity.x);
       if (instantVelocity.y != 0f) lastDirection.y = Mathf.Sign(instantVelocity.y);
-    
+      
       instantVelocity.x = instantVelocity.y = 0f;
-    
+      
       /*
       Debug.Log(Time.frameCount + " end of movement for " + name, gameObject);
       Debug.Log("instant ?  " + instantForce);
@@ -222,10 +230,11 @@ namespace fwp
     public float getVerticalSpeed() { return lastFullMovement.y; }
     public float getHorizontalSpeed() { return lastFullMovement.x; }
     public float getHorizontalVelocity() { return velocity.x; }
-  
+    public Vector2 getDirection() { return rawDirection; }
+
     protected void moveStep(Vector2 step)
     {
-      Vector2 originOfMovement = _t.position;
+      Vector2 originOfMovement = _moveTransform.position;
 
       //store for direction
       //if (step.x != 0f) lastDirection = step;
@@ -252,7 +261,7 @@ namespace fwp
       //Debug.DrawLine(_t.position, nextPosition, Color.white);
       //Debug.DrawLine(Vector3.zero, nextPosition, Color.yellow);
 
-      _t.position = nextPosition;
+      _moveTransform.position = nextPosition;
     }
 
     /* dirige l'entité vers un point */
@@ -304,7 +313,7 @@ namespace fwp
   
     public int getHorizontalDirection(bool raw = false)
     {
-      if (raw) return (int)Mathf.Sign(lastStep.x);
+      if (raw) return (int)Mathf.Sign(lastInstantVelocity.x);
       return (int)lastDirection.x;
     }
 
@@ -338,7 +347,7 @@ namespace fwp
       ct += "\n~solved step data~";
       ct += "\n └ velocity : " + velocity.x + " x " + velocity.y;
       ct += "\n └ instant : " + instantVelocity.x + " x " + instantVelocity.y;
-      ct += "\n └ instant : " + lastStep.x + " x " + lastStep.y;
+      ct += "\n └ instant : " + lastInstantVelocity.x + " x " + lastInstantVelocity.y;
       ct += "\n └ last direction : " + lastDirection.x + " x " + lastDirection.y;
 
       ct += "\n~forces~";

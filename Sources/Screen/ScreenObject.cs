@@ -294,7 +294,7 @@ public class ScreenObject : EngineObject
     return screen.getCanvas(canvasName);
   }
 
-  static public string getStamp()
+  protected override string getStamp()
   {
     return "<color=white>ScreenObject</color> | ";
   }

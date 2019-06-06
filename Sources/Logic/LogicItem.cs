@@ -68,9 +68,14 @@ namespace fwp
       }
     }
 
-    public void subscribeCapacity(LogicCapacity capa)
+    public void subCapacity(LogicCapacity capa)
     {
       capacities.Add(capa);
+    }
+
+    public void unsubCapacity(LogicCapacity capa)
+    {
+      capacities.Remove(capa);
     }
 
     public T getCapacity<T>() where T : LogicCapacity

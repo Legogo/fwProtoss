@@ -12,8 +12,8 @@ namespace fwp
   [System.Serializable]
   public class InventoryItem
   {
-    public ItemHeaderData data;
-    public Vector2 range = new Vector2(0f, -1f);
+    public ItemHeaderData data; // id & qty in data
+    public Vector2 range = new Vector2(0f, -1f); // store capacity
 
     //this won't init as 0,-1 but always 0,0 by default ...
     //Vector2 range;

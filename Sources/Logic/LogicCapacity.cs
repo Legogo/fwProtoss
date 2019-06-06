@@ -14,7 +14,9 @@ namespace fwp
   {
 
     protected bool _lock;
+    
     protected LogicItem _owner;
+    protected Transform _logicTransform; // owner transform
     protected CharacterLogic _character;
 
     [HideInInspector]
@@ -35,7 +37,8 @@ namespace fwp
 
       //if (_owner == null) Debug.LogError("you NEED to <b>add a LogicItem</b> script to manipulate Capacities on : "+name, gameObject);
 
-      _owner.subscribeCapacity(this);
+      _logicTransform = _owner.transform;
+      _owner.subCapacity(this);
 
       _character = gameObject.GetComponent<CharacterLogic>();
     }
@@ -97,7 +100,18 @@ namespace fwp
 
     }
 
+    public bool isOwner(LogicItem cmp)
+    {
+      return cmp.gameObject == _owner.gameObject;
+    }
+
     public LogicItem getOwner() { return _owner; }
+
+    protected override void destroy()
+    {
+      base.destroy();
+      _owner.unsubCapacity(this);
+    }
   }
 
 }

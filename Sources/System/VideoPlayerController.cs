@@ -401,9 +401,10 @@ public class VideoPlayerController : EngineObject {
     //callback on video end
     if (onVideoEnd != null) onVideoEnd();
   }
-  
-  static protected string getStamp()
+
+  protected override string getStamp()
   {
+    //return base.getStamp();
     return "<color=yellow>fwp VideoPlayer</color> | ";
   }
 

@@ -15,7 +15,7 @@ abstract public class EngineObject : MonoBehaviour
   [HideInInspector]
   public int engineLayer = 0; // script execution order
 
-  protected Transform _tr;
+  protected Transform _eoTransform;
   protected bool _unfreeze = true;
   protected bool _ready = false;
   
@@ -32,7 +32,7 @@ abstract public class EngineObject : MonoBehaviour
   //constructor
   private void Awake()
   {
-    _tr = transform;
+    _eoTransform = transform;
 
     _ready = false;
 
@@ -74,7 +74,7 @@ abstract public class EngineObject : MonoBehaviour
 
     setupLate();
     
-    _ready = true; // can now update
+    _ready = true; // all setup done, can now update
   }
 
   protected void overrideEngineLayer(int newLayer)
@@ -169,9 +169,7 @@ abstract public class EngineObject : MonoBehaviour
   
   /* how this object will create some stuff before setup-ing (ie : symbols) */
   virtual protected void setupEarly()
-  {
-    _ready = true;
-  }
+  { }
 
   /* called by onEngineSceneLoaded, fetch something in dependencies that are now ready to be fetched */
   virtual protected void setup()
@@ -184,9 +182,7 @@ abstract public class EngineObject : MonoBehaviour
   }
 
   virtual protected void setupLate()
-  {
-
-  }
+  { }
 
   /// <summary>
   /// you should NOT override this function
@@ -206,11 +202,11 @@ abstract public class EngineObject : MonoBehaviour
 
   virtual public bool canUpdate()
   {
-    if (!enabled) return false;
-    if (!gameObject.activeSelf) return false;
+    if (!enabled) return false; // only if changed in editor, no Update() here
+    if (!gameObject.activeSelf) return false; // specific cases
 
-    if (!_ready) return false; // loading
-    if (isFreezed()) return false;
+    if (!_ready) return false; // loading (true after setupLate)
+    if (isFreezed()) return false; // freeze logic
 
     return true;
   }
@@ -261,6 +257,7 @@ abstract public class EngineObject : MonoBehaviour
     Vector3 pos = transform.position;
     pos.x = newPosition.x;
     pos.y = newPosition.y;
+    //keep z
     transform.position = pos;
     return pos;
   }
@@ -275,7 +272,7 @@ abstract public class EngineObject : MonoBehaviour
     return toString();
   }
 
-  protected string getStamp()
+  virtual protected string getStamp()
   {
     return GetType() + " | " + name + " | ";
   }

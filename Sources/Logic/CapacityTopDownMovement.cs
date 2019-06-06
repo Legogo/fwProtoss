@@ -9,7 +9,6 @@ namespace fwp
 {
   public class CapacityTopDownMovement : CapacityMovement
   {
-
     protected Vector2 direction;
     protected Vector2 solvedDirection; // [0,1]
 
@@ -17,8 +16,10 @@ namespace fwp
     protected float clampMagnitudeSpeed = 1f;
 
     public float moveSpeed = 1f;
+    public bool useDefaultInput = true;
 
     InputKeyTopDown _inputLocal;
+    Vector2 move = Vector2.zero;
 
     GameSpace _gameSpace;
 
@@ -32,7 +33,13 @@ namespace fwp
 
     public override void setupCapacity()
     {
-      _inputLocal = _owner.input.get<InputKeyTopDown>();
+      if (useDefaultInput)
+      {
+        _inputLocal = _owner.input.get<InputKeyTopDown>();
+      }
+      
+      //Debug.Log(_inputLocal + " " + _owner.name, transform);
+
       _gameSpace = GameSpace.get();
     }
 
@@ -45,9 +52,14 @@ namespace fwp
 
     public override void updateCapacity()
     {
+      //use of force and velocity ?
+      base.updateCapacity(); // this was disabled ... 
+
       //direction.x = direction.y = 0f;
 
       direction = getInputMovement();
+
+      //Debug.Log(direction);
 
       if (progressiveSpeed == 0f)
       {
@@ -63,31 +75,27 @@ namespace fwp
       if (direction.sqrMagnitude > 0f) lastDirection = direction;
 
       instantVelocity += solvedDirection * moveSpeed;
-
+      
       //clamp in screen
       if (_gameSpace != null) _owner.forceWithinBounds(_gameSpace.offsetSpace);
     }
-
+    
     virtual protected Vector2 getInputMovement()
     {
-      Vector2 move = Vector2.zero;
+      move.x = move.y = 0f;
+      
+      if(_inputLocal != null)
+      {
+        if (_inputLocal.pressing_up()) move.y = 1f;
+        else if (_inputLocal.pressing_down()) move.y = -1f;
 
-      if (_inputLocal.pressing_up()) move.y = 1f;
-      else if (_inputLocal.pressing_down()) move.y = -1f;
-
-      if (_inputLocal.pressing_left()) move.x = -1f;
-      else if (_inputLocal.pressing_right()) move.x = 1f;
+        if (_inputLocal.pressing_left()) move.x = -1f;
+        else if (_inputLocal.pressing_right()) move.x = 1f;
+      }
 
       return move;
     }
-
-    public Vector2 getLastDirection() { return lastDirection; }
-    public Vector2 getDirection() { return solvedDirection; }
-
-    public override void clean()
-    {
-    }
-
+    
   }
 
 }
