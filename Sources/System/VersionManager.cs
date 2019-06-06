@@ -32,7 +32,10 @@ using UnityEditor;
 
 public class VersionManager : MonoBehaviour
 {
-  float timer = 2f;
+
+  public const char versionSeparator = '.';
+
+  float timer = 4f;
   
   private void Update()
   {
@@ -49,40 +52,57 @@ public class VersionManager : MonoBehaviour
 
     GUIStyle guis = new GUIStyle();
 
-    guis.normal.textColor = Color.white;
+    guis.normal.textColor = Color.gray;
 
-    if (Screen.width >= 1920f) guis.fontSize = 30;
-
-    float width = 80f;
+    guis.fontSize = 30;
+    float width = 150f;
     float height = 50f;
+
+    if (Screen.width >= 1000f)
+    {
+      guis.fontSize = 50;
+      width = 300f;
+      height = 150f;
+    }
+
+    // must be safe from rounded angle on mobile
+    
     GUI.Label(new Rect(Screen.width - width, Screen.height - height, width, height), v, guis);
   }
-
-  /// <summary>
-  /// to display build number in logs of build
-  /// </summary>
+  
   [RuntimeInitializeOnLoadMethod]
-  static public void logVersion()
+  static public void displayOnStartup()
   {
-    //https://docs.unity3d.com/Manual/StyledText.html
-    Debug.Log(Application.version);
-    //Debug.Log("v" + getFormatedVersion());
+    logVersion();
 
 #if !noversion
     new GameObject("!version").AddComponent<VersionManager>();
 #endif
   }
 
+  static public void logVersion()
+  {
+    //https://docs.unity3d.com/Manual/StyledText.html
+    Debug.Log(getFormatedVersion(getApplicationVersion()));
+  }
+
   /// <summary>
   /// major.minor.inc
+  /// no build number
   /// </summary>
-  static public string getFormatedVersion(char separator = '.', int[] data = null)
+  static public string getFormatedVersion(int[] data = null)
   {
-    if (data == null) data = getVersion();
-    return ""+ data[0] + separator + data[1] + separator + data[2];
+    if (data == null) data = getApplicationVersion();
+    return "" + data[0] + versionSeparator + data[1] + versionSeparator + data[2];
   }
   
-  static private int[] getVersion()
+  static public string getFormatedVersion(char separator, int[] data = null)
+  {
+    if (data == null) data = getApplicationVersion();
+    return "" + data[0] + separator + data[1] + separator + data[2];
+  }
+
+  static private int[] getApplicationVersion()
   {
     string v = "";
 
@@ -90,98 +110,32 @@ public class VersionManager : MonoBehaviour
 
     //Debug.Log(v);
 
+    //default
     if(v.Length < 1 || v.IndexOf(".") < 0)
     {
       v = "0.0.1";
     }
 
+    //gather numbers
     List<string> split = new List<string>();
     split.AddRange(v.Split('.'));
     
-    //Debug.Log(split.Count);
-
+    //add missing members
     if (split.Count < 1) split.Add("0");
     if (split.Count < 2) split.Add("0");
     if (split.Count < 3) split.Add("0");
-
-    //Debug.Log(split.Count);
-
+    
+    //convert to int[]
     int[] output = new int[split.Count];
     for (int i = 0; i < split.Count; i++)
     {
       output[i] = int.Parse(split[i]);
     }
     return output;
-    //return new int[] { int.Parse(split[0]), int.Parse(split[1]), int.Parse(split[2]) };
   }
-
 
 
 #if UNITY_EDITOR
-
-  static public void logEditorVersion()
-  {
-    Debug.Log("<color=green>v" + getFormatedVersion() + "</color> - " + getBuildNumber());
-  }
-
-  [MenuItem("Version/log current")]
-  static public void menuLogVersion()
-  {
-    logEditorVersion();
-  }
-
-  [MenuItem("Version/Increment X.minor.build")]
-  static public void incrementMajor()
-  {
-    int[] v = getVersion();
-
-    v[0]++;
-    if (v.Length > 1) v[1] = 0;
-    if (v.Length > 2) v[2] = 0;
-    apply(v);
-  }
-
-  [MenuItem("Version/Increment major.X.build")]
-  private static void incrementMinor()
-  {
-    int[] v = getVersion();
-
-    if (v.Length < 2)
-    {
-      List<int> tmp = new List<int>();
-      tmp.AddRange(v);
-      tmp.Add(0);
-      v = tmp.ToArray();
-    }
-
-    v[1]++;
-    if (v.Length > 2) v[2] = 0;
-
-    apply(v);
-  }
-
-  [MenuItem("Version/Increment major.minor.X")]
-  public static void incrementFix()
-  {
-    int[] v = getVersion();
-
-    if (v.Length < 3)
-    {
-      List<int> tmp = new List<int>();
-      tmp.AddRange(v);
-      tmp.Add(0);
-      v = tmp.ToArray();
-    }
-
-    v[2]++;
-
-    apply(v);
-  }
-
-  static public int getBuildNumber()
-  {
-    return PlayerSettings.Android.bundleVersionCode;
-  }
 
   static public void incrementBuildNumber()
   {
@@ -191,14 +145,39 @@ public class VersionManager : MonoBehaviour
 
   static private void apply(int[] data, bool incBuildVersion = true)
   {
-    if(incBuildVersion) incrementBuildNumber();
+    if (incBuildVersion) incrementBuildNumber();
 
-    PlayerSettings.bundleVersion = getFormatedVersion('.', data);
+    PlayerSettings.bundleVersion = getFormatedVersion(data);
     //PlayerSettings.iOS.buildNumber = PlayerSettings.bundleVersion;
 
     logEditorVersion();
   }
 
+  [MenuItem("Version/log current")]
+  static public void menuLogVersion()
+  {
+    logEditorVersion();
+  }
+
+  static public void logEditorVersion()
+  {
+    Debug.Log("<color=green>v" + getFormatedVersion(getApplicationVersion()) + "</color> - " + getApplicationBuildNumber());
+  }
+
+  static public void setApplicationVersion(string v)
+  {
+    PlayerSettings.bundleVersion = v;
+  }
+
+  static public void setApplicationBuildNumber(int num)
+  {
+    PlayerSettings.Android.bundleVersionCode = num;
+  }
+  static public int getApplicationBuildNumber()
+  {
+    return PlayerSettings.Android.bundleVersionCode;
+  }
+
 #endif
 
-  }
+}
