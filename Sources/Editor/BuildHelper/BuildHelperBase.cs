@@ -254,7 +254,7 @@ namespace fwp.build
     {
       Debug.Log("applying profile : " + data.name + " ...");
 
-      data.apply(); // apply version
+      data.version.applyCurrent(); // apply version
 
       PlayerSettings.productName = data.product_name;
       PlayerSettings.companyName = data.compagny_name;

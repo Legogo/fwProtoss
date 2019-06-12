@@ -35,21 +35,21 @@ namespace fwp.build
     static public void incMajor()
     {
       DataBuildSettingProfile prof = BuildHelperBase.getActiveProfile();
-      prof.incrementMajor();
+      prof.version.incrementMajor();
     }
 
     [MenuItem("Version/Incr major.X.build")]
     static public void inMinor()
     {
       DataBuildSettingProfile prof = BuildHelperBase.getActiveProfile();
-      prof.incrementMinor();
+      prof.version.incrementMinor();
     }
 
     [MenuItem("Version/Incr major.minor.X")]
     static public void incFix()
     {
       DataBuildSettingProfile prof = BuildHelperBase.getActiveProfile();
-      prof.incrementFix();
+      prof.version.incrementFix();
     }
   }
 

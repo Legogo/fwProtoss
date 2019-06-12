@@ -87,6 +87,8 @@ public class EngineManager : MonoBehaviour {
 
   static public void subscribe(EngineObject obj)
   {
+    if (!Application.isPlaying) return;
+
     if (obj.engineLayer == 0)
     {
       eos.Add(obj);
@@ -116,8 +118,9 @@ public class EngineManager : MonoBehaviour {
   
   static public void unsubscribe(EngineObject obj)
   {
-    if(obj.engineLayer == 0)
+    if(obj.engineLayer == 0 && eos != null)
     {
+      //if (eos == null) Debug.LogError("no eos when unsub " + obj.name, obj.transform);
       eos.Remove(obj);
       return;
     }
