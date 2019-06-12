@@ -44,18 +44,18 @@ namespace fwp.build
 
     IEnumerator process;
 
-    ScriptableBuildSettingsData data = null;
+    DataBuildSettings data = null;
     bool auto_run = false;
     bool version_increment = false;
     bool open_on_sucess = false;
 
-    public BuildHelperBase(bool autorun = false, bool incVersion = true, bool openFolderOnSucess = false, ScriptableBuildSettingsData paramData = null)
+    public BuildHelperBase(bool autorun = false, bool incVersion = true, bool openFolderOnSucess = false, DataBuildSettings paramData = null)
     {
       //update data
       if (paramData != null) data = paramData;
-      else data = GlobalSettingsBuild.getScriptableDataBuildSettings();
+      else data = getScriptableDataBuildSettings();
 
-      if (data != null) GlobalSettingsBuild.applySettings(data);
+      if (data != null) applySettings(data.activeProfile);
 
       Debug.Log("starting build process");
 
@@ -120,7 +120,9 @@ namespace fwp.build
       //will setup android or ios based on unity build settings target platform
       buildPlayerOptions.target = EditorUserBuildSettings.activeBuildTarget;
 
-      if (data.developementBuild)
+      DataBuildSettingProfile profile = data.activeProfile;
+
+      if (profile.developementBuild)
       {
         buildPlayerOptions.options |= BuildOptions.Development;
       }
@@ -139,7 +141,7 @@ namespace fwp.build
 
       if (summary.result == BuildResult.Succeeded)
       {
-        onSuccess(summary, data.openFolderOnBuildSuccess || open_on_sucess);
+        onSuccess(summary, profile.openFolderOnBuildSuccess || open_on_sucess);
       }
 
       if (summary.result == BuildResult.Failed)
@@ -171,7 +173,7 @@ namespace fwp.build
 
           //DataBuildSettings data = SettingsManager.getScriptableDataBuildSettings();
 
-          if (data.openFolderOnBuildSuccess)
+          if (openFolder)
           {
             Debug.Log("opening build folder ...");
             openBuildFolder();
@@ -192,19 +194,19 @@ namespace fwp.build
 
     protected string getBuildName()
     {
-      ScriptableBuildSettingsData data = GlobalSettingsBuild.getScriptableDataBuildSettings();
-      return data.build_prefix;
+      DataBuildSettings data = getScriptableDataBuildSettings();
+      return data.activeProfile.build_prefix;
     }
 
     protected string getBuildPathFolder()
     {
-      ScriptableBuildSettingsData data = GlobalSettingsBuild.getScriptableDataBuildSettings();
+      DataBuildSettings data = getScriptableDataBuildSettings();
       if (data == null)
       {
         Debug.LogError("no data ?");
         return "";
       }
-      return data.build_path;
+      return data.activeProfile.build_path;
     }
 
     static protected string[] getScenePaths()
@@ -302,8 +304,12 @@ namespace fwp.build
 
     [MenuItem("Build/Build n Run (increment) %&c")]
     public static void menu_build_run_android() { new BuildHelperBase(true, true); }
+
     
   }
+
+
+
 
 }
 
