@@ -10,10 +10,8 @@ using UnityEditor;
 /// USed to declare specific additionnal scene to load on startup
 /// </summary>
 
-public class EngineLoaderFeeder : MonoBehaviour {
-
-  protected List<string> scene_names;
-
+public class EngineLoaderFeeder : EngineLoaderFeederBase
+{
   [Header("prefix resource-")]
   public string[] resource_names;
 
@@ -33,9 +31,9 @@ public class EngineLoaderFeeder : MonoBehaviour {
   /// generate list of scenes with exact names
   /// </summary>
   /// <returns></returns>
-  virtual public string[] feed()
+  override public string[] feed()
   {
-    if (scene_names == null) scene_names = new List<string>();
+    base.feed();
 
     addWithPrefix("resource-", resource_names);
     addWithPrefix("ui-", ui_names);
@@ -46,29 +44,6 @@ public class EngineLoaderFeeder : MonoBehaviour {
 
     GameObject.Destroy(this);
 
-    return scene_names.ToArray();
-  }
-
-  protected void addWithPrefix(string prefix, string[] names)
-  {
-    if (names == null)
-    {
-      Debug.LogWarning("names is null for prefix " + prefix);
-      return;
-    }
-
-    if (names.Length <= 0) return;
-
-    //Debug.Log(prefix + " count ? " + names.Length);
-
-    for (int i = 0; i < names.Length; i++)
-    {
-      scene_names.Add(prefix + names[i]);
-    }
-  }
-
-  public string[] getNames()
-  {
     return scene_names.ToArray();
   }
   

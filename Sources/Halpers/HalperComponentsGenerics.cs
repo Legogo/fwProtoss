@@ -52,12 +52,12 @@ static public class HalperComponentsGenerics
     return output.ToArray();
   }
 
-  static public T[] getComponents<T>() where T : Component
+  static public T[] findComponents<T>() where T : Component
   {
     return GameObject.FindObjectsOfType<T>();
   }
 
-  static public T getComponent<T>() where T : Component
+  static public T findComponent<T>() where T : Component
   {
     return GameObject.FindObjectOfType<T>();
   }

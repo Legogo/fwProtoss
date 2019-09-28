@@ -108,11 +108,15 @@ public class EngineLoader : MonoBehaviour
   {
     Coroutine co = null;
 
+    Debug.Log(getStamp() + " process startup, frame : " + Time.frameCount);
+
     //leave a few frame for loading screen to be created and displayed
     yield return null;
     yield return null;
     yield return null;
-    
+
+    Debug.Log(getStamp() + " loading screen should be visible, frame : " + Time.frameCount);
+
     ///// then we load engine, to get the feeder script
     co = loadScenes(new string[] { prefix + "engine" });
     while(queries.IndexOf(co) > -1) yield return null;
@@ -124,7 +128,7 @@ public class EngineLoader : MonoBehaviour
     cleanScene(sc);
 
     ///// feeder, additionnal scenes (from feeder script)
-    EngineLoaderFeeder[] feeders = GameObject.FindObjectsOfType<EngineLoaderFeeder>();
+    EngineLoaderFeederBase[] feeders = GameObject.FindObjectsOfType<EngineLoaderFeederBase>();
 
     List<string> all = new List<string>();
     for (int i = 0; i < feeders.Length; i++)
@@ -203,9 +207,11 @@ public class EngineLoader : MonoBehaviour
       }
 
       //don't double load same scene
+      //Debug.Log(getStamp()+ Time.frameCount + "  is " + sceneName + " already loaded ?");
+
       if (SceneManager.GetSceneByName(sceneName).isLoaded)
       {
-        Debug.LogWarning("<b>"+sceneName + "</b> is considered as already loaded");
+        Debug.LogWarning("<b>"+sceneName + "</b> is considered as already loaded, skipping loading of that scene");
         continue;
       }
       
