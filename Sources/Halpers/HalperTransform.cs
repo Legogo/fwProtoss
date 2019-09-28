@@ -4,6 +4,23 @@ using UnityEngine;
 
 static public class HalperTransform {
 
+  static public List<Transform> getTransformsOfName(Transform parent, string nameStart)
+  {
+    if (parent == null) Debug.LogError("no tr ?");
+
+    List<Transform> trs = new List<Transform>();
+    foreach(Transform tr in parent)
+    {
+      if(tr.name.StartsWith(nameStart))
+      {
+        trs.Add(tr);
+      }
+
+      if (tr.childCount > 0) trs.AddRange(getTransformsOfName(tr, nameStart));
+    }
+    return trs;
+  }
+
   static public Transform getTransform<T>() where T : Component
   {
     T t = GameObject.FindObjectOfType<T>();

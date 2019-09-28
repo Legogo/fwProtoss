@@ -236,7 +236,7 @@ public class EngineLoader : MonoBehaviour
 
     if (!checkIfCanBeLoaded(sceneLoad))
     {
-      Debug.LogWarning("asked to load <b>" + sceneLoad + "</b> but this scene is <b>not added to BuildSettings</b>");
+      Debug.LogError("asked to load <b>" + sceneLoad + "</b> but this scene is <b>not added to BuildSettings</b>");
       yield break;
     }
 
