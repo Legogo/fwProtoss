@@ -1,9 +1,7 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿#if UNITY_EDITOR
+
+using UnityEngine;
 using UnityEditor;
-using System;
-using UnityEngine.SceneManagement;
-using UnityEngine.Profiling;
 
 public class MonitorEngineObject : EditorWindow
 {
@@ -50,3 +48,4 @@ public class MonitorEngineObject : EditorWindow
   }
   
 }
+#endif

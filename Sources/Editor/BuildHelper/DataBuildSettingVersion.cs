@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 
 /// <summary>
 /// (ratio iphone)
@@ -16,44 +14,6 @@ public class DataBuildSettingVersion : ScriptableObject
   public string version = "0.0.1";
   public int buildNumber = 1;
   
-  /// <summary>
-  /// override and apply
-  /// </summary>
-  /// <param name="data"></param>
-  /// <param name="buildNum"></param>
-  public void apply(int[] data, int buildNum)
-  {
-    //----- version
-    
-    version = VersionManager.getFormatedVersion(data);
-    VersionManager.setApplicationVersion(version);
-    
-    //----- build number
-
-    buildNumber = buildNum;
-    VersionManager.setApplicationBuildNumber(buildNum);
-
-    Debug.Log("applied : " + version+" - "+buildNumber);
-  }
-
-  public void apply(int major, int minor, int fix, int buildNum)
-  {
-    List<int> list = new List<int>();
-    list.Add(major);
-    list.Add(minor);
-    list.Add(fix);
-
-    apply(list.ToArray(), buildNum);
-  }
-
-  /// <summary>
-  /// just apply
-  /// </summary>
-  public void applyCurrent()
-  {
-    apply(getDataVersionInts(), buildNumber);
-  }
-
   /// <summary>
   /// x.y.z
   /// </summary>
@@ -80,7 +40,9 @@ public class DataBuildSettingVersion : ScriptableObject
     }
     return output.ToArray();
   }
-  
+
+#if UNITY_EDITOR
+
   public void incrementMajor()
   {
     int[] v = getDataVersionInts();
@@ -132,5 +94,49 @@ public class DataBuildSettingVersion : ScriptableObject
 
     apply(v, buildNumber);
   }
-  
+
+
+
+
+
+  /// <summary>
+  /// override and apply
+  /// </summary>
+  /// <param name="data"></param>
+  /// <param name="buildNum"></param>
+  public void apply(int[] data, int buildNum)
+  {
+    //----- version
+
+    version = VersionManager.getFormatedVersion(data);
+    VersionManager.setApplicationVersion(version);
+
+    //----- build number
+
+    buildNumber = buildNum;
+    VersionManager.setApplicationBuildNumber(buildNum);
+
+    Debug.Log("applied : " + version + " - " + buildNumber);
+  }
+
+  public void apply(int major, int minor, int fix, int buildNum)
+  {
+    List<int> list = new List<int>();
+    list.Add(major);
+    list.Add(minor);
+    list.Add(fix);
+
+    apply(list.ToArray(), buildNum);
+  }
+
+  /// <summary>
+  /// just apply
+  /// </summary>
+  public void applyCurrent()
+  {
+    apply(getDataVersionInts(), buildNumber);
+  }
+
+#endif
+
 }

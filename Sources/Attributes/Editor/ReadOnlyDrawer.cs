@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿#if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
 
@@ -21,13 +20,4 @@ public class ReadOnlyDrawer : PropertyDrawer
     GUI.enabled = true;
   }
 }
-
-/*
-public class Test
-{
-  [ReadOnly] public string a;
-  [ReadOnly] public int b;
-  [ReadOnly] public Material c;
-  [ReadOnly] public List<int> d = new List<int>();
-}
-*/
+#endif

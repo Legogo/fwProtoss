@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
+using UnityEngine;
 using UnityEditor;
 
 public class HalperEditorResource : MonoBehaviour {
@@ -10,3 +11,4 @@ public class HalperEditorResource : MonoBehaviour {
   }// getAssetFullPath()
 
 }
+#endif

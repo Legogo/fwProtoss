@@ -1,8 +1,11 @@
-﻿using UnityEngine;
+﻿
+#if UNITY_EDITOR
 using UnityEditor;
+using UnityEngine;
 
 namespace fwp.arena
 {
+
   public class ArenaMonitoring : EditorWindow
   {
 
@@ -45,3 +48,5 @@ namespace fwp.arena
   }
 
 }
+
+#endif

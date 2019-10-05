@@ -1,7 +1,13 @@
-﻿using System.Collections;
+﻿
+#if UNITY_EDITOR
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+
+using UnityEditor.Build.Reporting;
+using UnityEditor;
+
 
 /// <summary>
 /// 
@@ -35,8 +41,6 @@ using UnityEngine.SceneManagement;
 
 namespace fwp.build
 {
-  using UnityEditor.Build.Reporting;
-  using UnityEditor;
 
   public class BuildHelperBase
   {
@@ -339,3 +343,5 @@ public class Builder : BuildHelper {
 
 }
 */
+
+#endif

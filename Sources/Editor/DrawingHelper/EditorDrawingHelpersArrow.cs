@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿#if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
 
@@ -67,3 +66,4 @@ public static class EditorDrawingHelpersArrow
     Debug.DrawRay(pos + direction, left * arrowHeadLength, color);
   }
 }
+#endif

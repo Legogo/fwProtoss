@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿#if UNITY_EDITOR
+using UnityEditor;
 
 /// <summary>
 /// some various context menu related to Unity
@@ -19,3 +20,4 @@ public class EditorContextMenuToolsUnity
   }
 
 }
+#endif

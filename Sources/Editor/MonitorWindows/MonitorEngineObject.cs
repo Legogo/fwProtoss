@@ -1,9 +1,7 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
+using UnityEngine;
 using System.Collections.Generic;
 using UnityEditor;
-using System;
-using UnityEngine.SceneManagement;
-using UnityEngine.Profiling;
 
 public class EngineObjectMonitoring : EditorWindow
 {
@@ -80,3 +78,4 @@ public class EngineObjectMonitoring : EditorWindow
   }
 
 }
+#endif
