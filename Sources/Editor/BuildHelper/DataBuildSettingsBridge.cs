@@ -12,9 +12,12 @@ using UnityEditor;
 /// 506x900
 /// </summary>
 
-[CreateAssetMenu(menuName = "protoss/create DataBuildSettings", order = 100)]
-public class DataBuildSettings : ScriptableObject
+[CreateAssetMenu(menuName = "protoss/create DataBuildSettingsBridge", order = 100)]
+public class DataBuildSettingsBridge : ScriptableObject
 {
   public DataBuildSettingProfile activeProfile;
+  public DataBuildSettingProfilScenes activeScenes;
+
+  public DataBuildSettingProfilScenes[] profiles;
 
 }

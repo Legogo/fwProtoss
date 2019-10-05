@@ -39,7 +39,7 @@ public class EngineManager : MonoBehaviour {
   public bool log_device_info = true;
 
   [Header("sound")]
-  public bool useSoundFramework = false;
+  //public bool useSoundFramework = false;
   public AudioMixer mixer;
 
   [Header("mobile specifics")]
@@ -58,7 +58,7 @@ public class EngineManager : MonoBehaviour {
   {
     _manager = this;
 
-    if(eos == null) eos = new List<EngineObject>();
+    if (eos == null) eos = new List<EngineObject>();
 
     //https://docs.unity3d.com/ScriptReference/Application-targetFrameRate.html
     if (application_targetFramerate > 0)
@@ -78,7 +78,7 @@ public class EngineManager : MonoBehaviour {
     state_loading = true;
     state_live = false;
     
-    if(useSoundFramework) SoundManager.generate(this);
+    //if(useSoundFramework) SoundManager.generate(this);
     
     GlobalSettingsSystem.setupTraceLog();
 

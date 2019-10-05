@@ -14,6 +14,7 @@ public class DataBuildSettingProfile : ScriptableObject
 {
   [Header("version")]
   public DataBuildSettingVersion version;
+  public BuildPhase phase = BuildPhase.α;
 
   [Header("identification")]
   public string compagny_name = "*";
@@ -23,8 +24,7 @@ public class DataBuildSettingProfile : ScriptableObject
   [Header("file")]
   public string build_path = "builds/";
   public string build_prefix = "build";
-
-
+  
 #if UNITY_EDITOR
   [Header("SDK")]
   public iOSTargetDevice target_device;
@@ -48,4 +48,14 @@ public class DataBuildSettingProfile : ScriptableObject
   [Header("splashscreen")]
   public Sprite splashscreen;
   
+}
+
+[System.Serializable]
+public enum BuildPhase
+{
+  none,
+  φ, // proto
+  α, // alpha
+  β, // beta
+  Ω  // gold
 }

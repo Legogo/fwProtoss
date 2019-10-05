@@ -1,13 +1,7 @@
-﻿
-#if UNITY_EDITOR
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
-using UnityEditor.Build.Reporting;
-using UnityEditor;
-
 
 /// <summary>
 /// 
@@ -41,6 +35,8 @@ using UnityEditor;
 
 namespace fwp.build
 {
+  using UnityEditor.Build.Reporting;
+  using UnityEditor;
 
   public class BuildHelperBase
   {
@@ -48,34 +44,38 @@ namespace fwp.build
 
     IEnumerator process;
 
-    DataBuildSettings data = null;
+    DataBuildSettingsBridge data = null;
     bool auto_run = false;
     bool version_increment = false;
     bool open_on_sucess = false;
 
-    public BuildHelperBase(bool autorun = false, bool incVersion = true, bool openFolderOnSucess = false, DataBuildSettings paramData = null)
+    public BuildHelperBase(bool autorun = false, bool incVersion = true, bool openFolderOnSucess = false, DataBuildSettingsBridge paramData = null)
     {
+      
       //update data
       if (paramData != null) data = paramData;
       else data = getScriptableDataBuildSettings();
 
-      if (data != null) applySettings(data.activeProfile);
+      //if (data != null) applySettings(data.activeProfile);
 
       Debug.Log("starting build process");
-
-
+      
       auto_run = autorun;
       version_increment = incVersion;
       open_on_sucess = openFolderOnSucess;
 
       EditorApplication.update += update_check_process;
-      process = process_setup_build();
+
+      process = preBuildProcess();
     }
   
+    /// <summary>
+    /// update in editor
+    /// </summary>
     void update_check_process()
     {
 
-      if (!process.MoveNext())
+      if (!process.MoveNext()) // wait for end of process
       {
         EditorApplication.update -= update_check_process;
 
@@ -86,7 +86,11 @@ namespace fwp.build
 
     }
 
-    virtual protected IEnumerator process_setup_build()
+    /// <summary>
+    /// whatever is needed to do before building
+    /// </summary>
+    /// <returns></returns>
+    virtual protected IEnumerator preBuildProcess()
     {
       yield return null;
       //...
@@ -98,8 +102,12 @@ namespace fwp.build
 
       buildPlayerOptions = new BuildPlayerOptions();
 
-      if (incVersion) DataBuildSettingsGui.incFix();
+      //this will apply
+      if (incVersion) DataBuildSettingsBridgeEditor.incFix();
       else VersionManager.incrementBuildNumber();
+
+      //apply everything (after inc)
+      if (data != null) applySettings(data.activeProfile);
 
       //buildPlayerOptions.scenes = new[] { "Assets/Scene1.unity", "Assets/Scene2.unity" };
       buildPlayerOptions.scenes = getScenePaths();
@@ -112,7 +120,7 @@ namespace fwp.build
       path += "_" + VersionManager.getFormatedVersion('-');
       path += "_" + PlayerSettings.Android.bundleVersionCode;
       path += "_" + HalperTime.getFullDate();
-
+       
       // [project]/build_path/build-name_version_build-number_fulldatetime
 
       if (!path.EndsWith(".apk")) path += ".apk";
@@ -198,13 +206,13 @@ namespace fwp.build
 
     protected string getBuildName()
     {
-      DataBuildSettings data = getScriptableDataBuildSettings();
+      DataBuildSettingsBridge data = getScriptableDataBuildSettings();
       return data.activeProfile.build_prefix;
     }
 
     protected string getBuildPathFolder()
     {
-      DataBuildSettings data = getScriptableDataBuildSettings();
+      DataBuildSettingsBridge data = getScriptableDataBuildSettings();
       if (data == null)
       {
         Debug.LogError("no data ?");
@@ -232,15 +240,22 @@ namespace fwp.build
       return sceneNames.ToArray();
     }
 
-    static public DataBuildSettings getScriptableDataBuildSettings()
+    static public DataBuildSettingsBridge getScriptableDataBuildSettings()
     {
-      string[] all = AssetDatabase.FindAssets("t:DataBuildSettings");
-      for (int i = 0; i < all.Length; i++)
+      string[] all = AssetDatabase.FindAssets("t:DataBuildSettingsBridge");
+
+      if (all.Length > 0)
       {
-        Object obj = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(all[i]), typeof(DataBuildSettings));
-        DataBuildSettings data = obj as DataBuildSettings;
-        if (data != null) return data;
+        for (int i = 0; i < all.Length; i++)
+        {
+          Object obj = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(all[i]), typeof(DataBuildSettingsBridge));
+          DataBuildSettingsBridge data = obj as DataBuildSettingsBridge;
+          if (data != null) return data;
+        }
       }
+      else Debug.LogWarning("no objects returned by AssetDatabase for type : DataBuildSettingsBridge");
+
+      Debug.LogError("could not find object of type : DataBuildSettingsBridge");
       return null;
     }
 
@@ -258,15 +273,29 @@ namespace fwp.build
 
     static public void applySettings(DataBuildSettingProfile data)
     {
-      Debug.Log("applying profile : " + data.name + " ...");
+      Debug.Log("applying profile : <b>" + data.name + "</b>");
+
+
+      Debug.Log("~Globals~");
 
       data.version.applyCurrent(); // apply version
-
-      PlayerSettings.productName = data.product_name;
+      
       PlayerSettings.companyName = data.compagny_name;
+      Debug.Log("  L companyName : " + PlayerSettings.companyName);
 
+      //α,β,Ω
+      string productName = data.product_name;
+      if(data.phase != BuildPhase.none && data.phase != BuildPhase.Ω)
+      {
+        productName += "("+data.phase+")";
+      }
+      PlayerSettings.productName = productName;
+      Debug.Log("  L productName : " + PlayerSettings.productName);
+      
       PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, data.package_name);
       PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.iOS, data.package_name);
+
+      Debug.Log("~Systems~");
 
       PlayerSettings.defaultInterfaceOrientation = data.orientation_default;
 
@@ -343,5 +372,3 @@ public class Builder : BuildHelper {
 
 }
 */
-
-#endif

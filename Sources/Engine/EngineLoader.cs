@@ -34,6 +34,9 @@ public class EngineLoader : MonoBehaviour
     string filter = isContextEngineCompatible();
     if(filter.Length > 0) {
       Debug.LogWarning("won't load engine here : scene starts with prefix : <b>" + filter + "</b>");
+
+      //EngineManager.create();
+
       return;
     }
 
@@ -396,7 +399,7 @@ public class EngineLoader : MonoBehaviour
 
   static public string isContextEngineCompatible()
   {
-    string[] filters = new string[] { "#" };
+    string[] filters = new string[] { "#", "network" };
 
     for (int i = 0; i < filters.Length; i++)
     {

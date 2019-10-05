@@ -1,11 +1,12 @@
-﻿#if UNITY_EDITOR
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
 namespace fwp.build
 {
-  [CustomEditor(typeof(DataBuildSettings))]
-  public class DataBuildSettingsGui : Editor
+  [CustomEditor(typeof(DataBuildSettingsBridge))]
+  public class DataBuildSettingsBridgeEditor : Editor
   {
     override public void OnInspectorGUI()
     {
@@ -13,20 +14,28 @@ namespace fwp.build
 
       EditorGUILayout.Separator();
 
-      if (GUILayout.Button("apply settings"))
+      DataBuildSettingsBridge handle = (DataBuildSettingsBridge)target;
+
+      if (GUILayout.Button("apply all settings"))
       {
+        handle.activeScenes.apply();
         BuildHelperBase.applySettings();
       }
 
-      if (GUILayout.Button("apply scenes"))
+      EditorGUILayout.Separator();
+
+      if(handle.profiles != null)
       {
-
+        for (int i = 0; i < handle.profiles.Length; i++)
+        {
+          if (GUILayout.Button("apply " + handle.profiles[i].name))
+          {
+            handle.profiles[i].apply();
+          }
+        }
       }
-
-      if (GUILayout.Button("record scenes"))
-      {
-
-      }
+      
+      
     }
 
 
@@ -53,4 +62,3 @@ namespace fwp.build
   }
 
 }
-#endif
