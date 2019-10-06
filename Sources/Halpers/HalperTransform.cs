@@ -125,6 +125,9 @@ static public class HalperTransform {
     return trs.ToArray();
   }
 
+  /// <summary>
+  /// will find child of name in given transform
+  /// </summary>
   static public Transform fetchInChildren(Transform parent, string partName, bool strict = false, bool toLowercase = false)
   {
     foreach (Transform t in parent)

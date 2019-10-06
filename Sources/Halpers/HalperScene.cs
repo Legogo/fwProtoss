@@ -10,7 +10,12 @@ using UnityEngine.SceneManagement;
 
 static public class HalperScene {
 
-  static public bool isSceneOpened(string partOfSceneName)
+  /// <summary>
+  /// active scene
+  /// </summary>
+  /// <param name="partOfSceneName"></param>
+  /// <returns></returns>
+  static public bool isActiveScene(string partOfSceneName)
   {
     Scene sc = SceneManager.GetActiveScene();
     if (sc.name.Contains(partOfSceneName)) return true;

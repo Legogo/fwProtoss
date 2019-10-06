@@ -28,6 +28,7 @@ abstract public class EngineObject : MonoBehaviour
 
   protected bool logs = false; // display logs
   protected HelperInputObject inputObject = null;
+  protected bool debugActiveScene = false;
 
   //constructor
   private void Awake()
@@ -38,6 +39,8 @@ abstract public class EngineObject : MonoBehaviour
 
     //Debug.Log(name);
     //if(name.Contains("hopper")) Debug.Log("build <b>"+name+"</b>");
+
+    debugActiveScene = HalperScene.isActiveScene(gameObject.scene.name);
 
     build();
   }
@@ -73,6 +76,8 @@ abstract public class EngineObject : MonoBehaviour
     yield return null;
 
     setupLate();
+    
+    if(debugActiveScene) setupDebug();
     
     _ready = true; // all setup done, can now update
   }
@@ -182,6 +187,12 @@ abstract public class EngineObject : MonoBehaviour
   }
 
   virtual protected void setupLate()
+  { }
+
+  /// <summary>
+  /// called after late if active scene is owner scene
+  /// </summary>
+  virtual protected void setupDebug()
   { }
 
   /// <summary>
@@ -297,7 +308,14 @@ abstract public class EngineObject : MonoBehaviour
     Debug.Log(GetType() + " | " + data, logTarget);
   }
   
-
+  protected void setAsEditorSelection(GameObject obj = null, bool parentIsActiveSceneCheck = false)
+  {
+#if UNITY_EDITOR
+    if (parentIsActiveSceneCheck && !debugActiveScene) return;
+    if (obj == null) obj = gameObject;
+    UnityEditor.Selection.activeGameObject = obj;
+#endif
+  }
 
 
 
