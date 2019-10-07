@@ -5,6 +5,17 @@ using UnityEngine;
 static public class HalperComponentsGenerics
 {
 
+  static public T[] getComponentsInChildrenByContext<T>(Transform parent, string childNameFilter) where T : Component
+  {
+    List<T> all = new List<T>();
+    if (parent.name.Contains(childNameFilter)) all.AddRange(parent.GetComponents<T>());
+    foreach(Transform child in parent)
+    {
+      all.AddRange(getComponentsInChildrenByContext<T>(child, childNameFilter));
+    }
+    return all.ToArray();
+  }
+
   /// <summary>
   /// won't include itself in the search
   /// </summary>
