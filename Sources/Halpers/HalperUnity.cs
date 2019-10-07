@@ -42,6 +42,46 @@ static public class HalperUnity {
     return list;
   }
 
+
+  static public List<Vector3> removePositionDuplicatesInV3List(List<Vector3> list)
+  {
+    int i = 0;
+    while (i < list.Count - 1)
+    {
+      bool found = false;
+      for (int j = i + 1; j < list.Count; j++)
+      {
+        if (HalperMath.compareVector3(list[i], list[j]))
+        {
+          found = true;
+        }
+      }
+      if (found) list.RemoveAt(i);
+      else i++;
+    }
+    return list;
+  }
+
+  static public List<Vector2> removePositionDuplicatesInV2List(List<Vector2> list)
+  {
+    int i = 0;
+    while (i < list.Count - 1)
+    {
+      bool found = false;
+      for (int j = i + 1; j < list.Count; j++)
+      {
+        if (HalperMath.compareVector2(list[i], list[j]))
+        {
+          found = true;
+        }
+      }
+      if (found) list.RemoveAt(i);
+      else i++;
+    }
+    return list;
+  }
+
+
   /// <summary>
   /// shortcut to load a bunch of object in Resources/
   /// </summary>

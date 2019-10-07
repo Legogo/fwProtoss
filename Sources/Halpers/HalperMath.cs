@@ -179,4 +179,22 @@ public class HalperMath
         B1.y + (B2.y - B1.y) * mu
     );
   }
+
+  static public bool compareVector2(Vector2 a, Vector2 b)
+  {
+    float epsilon = 0.1f;
+    if (b.x < a.x - epsilon || b.x > a.x + epsilon) return false;
+    if (b.y < a.y - epsilon || b.y > a.y + epsilon) return false;
+    return true;
+  }
+
+  static public bool compareVector3(Vector3 a, Vector3 b)
+  {
+    float epsilon = 0.1f;
+    if (b.x < a.x - epsilon || b.x > a.x + epsilon) return false;
+    if (b.y < a.y - epsilon || b.y > a.y + epsilon) return false;
+    if (b.z < a.z - epsilon || b.z > a.z + epsilon) return false;
+    return true;
+  }
+
 }
