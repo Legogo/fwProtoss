@@ -13,6 +13,8 @@ public class EngineManager : MonoBehaviour {
   
   static public void create()
   {
+    //Debug.Log("creating a new engine manager ?");
+
     EngineManager em = GameObject.FindObjectOfType<EngineManager>();
     if(em == null)
     {
@@ -81,8 +83,15 @@ public class EngineManager : MonoBehaviour {
     //if(useSoundFramework) SoundManager.generate(this);
     
     GlobalSettingsSystem.setupTraceLog();
+    
+    EngineStartup es = GameObject.FindObjectOfType<EngineStartup>();
+    if (es != null) es.onLoadingDone += engine_scenes_loaded;
+    else
+    {
+      Debug.LogWarning("bypassing startup process ?");
+      engine_scenes_loaded();
+    }
 
-    EngineLoader.get().onLoadingDone += engine_scenes_loaded;
   }
 
   static public void subscribe(EngineObject obj)
@@ -132,9 +141,11 @@ public class EngineManager : MonoBehaviour {
   /* end of scenes loading */
   public void engine_scenes_loaded()
   {
-    ResourceManager.reload();
-    
-    Debug.Log(getStamp()+ "engine_scenes_loaded()");
+    //ResourceManager.reload();
+
+    Debug.Log(getStamp()+ " engine detected end of loading, switching to live state");
+
+    //ResourceManager.logContent();
 
     state_loading = false;
     

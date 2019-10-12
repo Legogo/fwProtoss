@@ -12,7 +12,9 @@ public class ResourceManager {
   {
     GameObject[] gos = GameObject.FindGameObjectsWithTag("resource");
 
-    resources.Clear();
+    //resources.Clear();
+
+    int count = resources.Count;
 
     //kill all unused
     for (int i = 0; i < gos.Length; i++)
@@ -24,11 +26,20 @@ public class ResourceManager {
       if(cv != null && cv.name.StartsWith("~")) cv.enabled = false; // kill canvas guide of resource object
 
       if (gos[i].name.StartsWith("~")) GameObject.Destroy(gos[i].gameObject); // guides objects
-      else resources.Add(gos[i]); // normal resource object
+      else
+      {
+        if(resources.IndexOf(gos[i]) < 0) resources.Add(gos[i]); // normal resource object
+      }
 
     }
 
-    string debugContent = "~ResMa~ <b>" + resources.Count + " resource(s)</b> loaded ("+gos.Length+" initially found)";
+    if(count != resources.Count) logContent();
+  }
+
+  static public void logContent()
+  {
+
+    string debugContent = "~ResMa~ has now <b>" + resources.Count + " resource(s)</b> refs";
     for (int i = 0; i < resources.Count; i++)
     {
       debugContent += "\n    - " + resources[i].name;

@@ -3,57 +3,37 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System;
+using Random = UnityEngine.Random;
 
 /// <summary>
-/// BUILD
-/// (loading)
-/// SETUP
-/// (check)
-/// LIVE
+/// Un loader indépendant a qui on peut demander de load une scene spécifique
+/// Quand la scene sera load il va process les feeders lié a chaques scenes demandés
+/// Puis se détruire
 /// </summary>
 
 public class EngineLoader : MonoBehaviour
 {
-  static public bool compatibility = false; // permet de savoir si le moteur est actif
-
-  static protected EngineLoader loader;
+  static public List<EngineLoader> loaders = new List<EngineLoader>();
 
   protected List<Coroutine> queries = new List<Coroutine>();
   
-  public Action onLoadingDone;
-  
-  string prefix = "resource-";
-  
-  [RuntimeInitializeOnLoadMethod]
-  static protected void init()
+  public const string prefixResource = "resource-";
+
+  private void Awake()
   {
-#if UNITY_EDITOR
-    Debug.Log("<color=gray><b>~EngineLoader~</b> | app entry point</color>");
-#endif
-
-    string filter = isContextEngineCompatible();
-    if(filter.Length > 0) {
-      Debug.LogWarning("won't load engine here : scene starts with prefix : <b>" + filter + "</b>");
-
-      //EngineManager.create();
-
-      return;
-    }
-
-    compatibility = true;
-
-    loader = create();
-
-    loader.startupProcess();
+    //Debug.Log(EngineObject.getStamp(this) + " created");
+    loaders.Add(this);
   }
 
-  static protected EngineLoader create()
+  private void OnDestroy()
   {
-    loader = GameObject.FindObjectOfType<EngineLoader>();
-    if (loader != null) return loader;
+    //Debug.Log(EngineObject.getStamp(this) + " destroyed");
+    loaders.Remove(this);
+  }
 
-    loader = new GameObject("[loader]").AddComponent<EngineLoader>();
-    return loader;
+  static protected EngineLoader createLoader()
+  {
+    return new GameObject("[loader("+Random.Range(0,1000)+")]").AddComponent<EngineLoader>();
   }
 
   static protected bool checkForFilteredScenes()
@@ -71,7 +51,7 @@ public class EngineLoader : MonoBehaviour
     return true;
   }
   
-  static protected bool canLoad()
+  static public bool hasAnyScenesInBuildSettings()
   {
 
     if (SceneManager.sceneCountInBuildSettings <= 1)
@@ -83,120 +63,50 @@ public class EngineLoader : MonoBehaviour
     return true;
   }
   
-  public void startupProcess()
+  public Coroutine solveFeeders(Scene scene, Action onComplete = null)
   {
-
-    //don't load engine on guide scenes (starting with ~)
-    if (SceneManager.GetActiveScene().name.StartsWith("~"))
-    {
-      Debug.LogWarning("<color=red><b>guide scene</b> not loading engine here</color>");
-      return;
-    }
-
-    if (!canLoad())
-    {
-      Debug.Log(getStamp()+"can't load ?");
-    }
-
-    Coroutine co = null;
-    co = StartCoroutine(processStartup(delegate()
-    {
-      evtQueryDone(co);
-    }));
-
-    queries.Add(co);
+    return StartCoroutine(processFeeders(scene, onComplete));
   }
   
-  IEnumerator processStartup(Action onComplete = null)
+  IEnumerator processFeeders(Scene scene, Action onFeedersCompleted = null)
   {
-    Coroutine co = null;
-
-    Debug.Log(getStamp() + " process startup, frame : " + Time.frameCount);
-
-    //leave a few frame for loading screen to be created and displayed
-    yield return null;
-    yield return null;
-    yield return null;
-
-    Debug.Log(getStamp() + " loading screen should be visible, frame : " + Time.frameCount);
-
-    ///// then we load engine, to get the feeder script
-    co = loadScenes(new string[] { prefix + "engine" });
-    while(queries.IndexOf(co) > -1) yield return null;
-    
-    //NEEDED
-    EngineManager.create();
-
-    Scene sc = SceneManager.GetActiveScene();
-    cleanScene(sc);
-
     ///// feeder, additionnal scenes (from feeder script)
-    EngineLoaderFeederBase[] feeders = GameObject.FindObjectsOfType<EngineLoaderFeederBase>();
-
-    List<string> all = new List<string>();
-    for (int i = 0; i < feeders.Length; i++)
+    GameObject[] roots = scene.GetRootGameObjects();
+    List<EngineLoaderFeederBase> feeders = new List<EngineLoaderFeederBase>();
+    for (int i = 0; i < roots.Length; i++)
     {
-      if (feeders[i] != null) all.AddRange(feeders[i].feed());
+      feeders.AddRange(roots[i].GetComponentsInChildren<EngineLoaderFeederBase>());
     }
 
-    //string debugContent = "~EngineLoader~ now loading <b>" + all.Count + " scenes</b> ... ";
-    //for (int i = 0; i < all.Count; i++) debugContent += "\n  " + all[i];
-
-    co = loadScenes(all.ToArray());
-    while (queries.IndexOf(co) > -1) yield return null;
-
-    if (onComplete != null) onComplete();
-  }
-  
-  public void evtQueryDone(Coroutine co)
-  {
-    queries.Remove(co);
-
-    //Debug.Log(queries.Count + " queries left");
-
-    evtSceneIsDoneLoading();
-  }
-
-  void evtSceneIsDoneLoading() {
-    //Debug.Log("a query is done , " + queries.Count + " left");
-
-    if(queries.Count > 0)
+    for (int i = 0; i < feeders.Count; i++)
     {
-      return;
+      feeders[i].feed(scene);
     }
 
-    Debug.Log(getStamp()+" ... done loading!");
+    bool done = false;
+    do
+    {
+      done = true;
+      for (int i = 0; i < feeders.Count; i++)
+      {
+        if (feeders[i] != null) done = false;
+      }
+      yield return null;
+    } while (!done);
 
-    if (onLoadingDone != null) onLoadingDone();
+    yield return null;
 
-    GameObject.Destroy(gameObject);
+    if (onFeedersCompleted != null) onFeedersCompleted();
   }
   
-  public Coroutine loadScenes(string[] sceneNames, Action onComplete = null)
+  public Coroutine asyncLoadScenes(string[] sceneNames, Action onComplete = null)
   {
-    Coroutine co = null;
-
-    //Debug.Log(getStamp() + "loadScenes[" + sceneNames.Length + "]");
-
-    co = StartCoroutine(processLoadScenes(sceneNames, delegate()
-    {
-      //Debug.Log(" a query (of "+sceneNames.Length+") is done");
-
-      evtQueryDone(co);
-
-      if(onComplete != null) onComplete();
-    }));
-
-    queries.Add(co);
-
-    //Debug.Log("added query for " + sceneNames.Length + " scenes to load ("+queries.Count+" total)");
-
-    return co;
+    return StartCoroutine(processLoadScenes(sceneNames, onComplete));
   }
   
   IEnumerator processLoadScenes(string[] sceneNames, Action onComplete = null)
   {
-    //Debug.Log("  ... processing " + sceneNames.Length + " scenes");
+    //Debug.Log(getStamp() + " ... processing " + sceneNames.Length + " scenes", transform);
 
     for (int i = 0; i < sceneNames.Length; i++)
     {
@@ -205,7 +115,7 @@ public class EngineLoader : MonoBehaviour
       //do not load the current active scene
       if (doActiveSceneNameContains(sceneName))
       {
-        Debug.LogWarning("trying to load active scene ?");
+        Debug.LogWarning("  trying to load active scene ?");
         continue;
       }
 
@@ -214,22 +124,26 @@ public class EngineLoader : MonoBehaviour
 
       if (SceneManager.GetSceneByName(sceneName).isLoaded)
       {
-        Debug.LogWarning("<b>"+sceneName + "</b> is considered as already loaded, skipping loading of that scene");
+        Debug.LogWarning("  <b>"+sceneName + "</b> is considered as already loaded, skipping loading of that scene");
         continue;
       }
-      
+
+      //Debug.Log(sceneNames[i]);
+
       IEnumerator process = processLoadScene(sceneNames[i]);
       while (process.MoveNext()) yield return null;
 
-      //Debug.Log("  ... scene of index " + i + " | "+sceneNames[i]+" | is done loading");
+      //Debug.Log("  ... scene of index " + i + " | " + sceneNames[i] + " | is done loading");
     }
     
     //needed so that all new objects loaded have time to exec build()
     yield return null;
 
-    //Debug.Log("  ... processing " + sceneNames.Length + " is done");
+    //Debug.Log(getStamp() + "  ... processing " + sceneNames.Length + " is done");
 
     if (onComplete != null) onComplete();
+
+    GameObject.Destroy(gameObject);
   }
 
   IEnumerator processLoadScene(string sceneLoad, Action onComplete = null)
@@ -237,7 +151,7 @@ public class EngineLoader : MonoBehaviour
     //can't reload same scene
     //if (isSceneOfName(sceneLoad)) yield break;
 
-    if (!checkIfCanBeLoaded(sceneLoad))
+    if (!checkIfInBuildSettings(sceneLoad))
     {
       Debug.LogError("asked to load <b>" + sceneLoad + "</b> but this scene is <b>not added to BuildSettings</b>");
       yield break;
@@ -263,17 +177,45 @@ public class EngineLoader : MonoBehaviour
 
     cleanScene(sc);
 
-    //Debug.Log(getStamp()+" ... '<b>" + sceneLoad + "</b>' loaded");
+    //Debug.Log(getStamp() + "  L <b>" + sceneLoad + "</b> solving feeders ... ");
+
+    Coroutine feeders = solveFeeders(sc, delegate()
+    {
+      feeders = null;
+    });
+    while (feeders != null) yield return null;
+
+    yield return null;
+
+    ResourceManager.reload(); // add resources if any
+
+    //Debug.Log(getStamp() + " ... '<b>" + sceneLoad + "</b>' loaded");
 
     if (onComplete != null) onComplete();
   }
   
   protected string getStamp()
   {
-    return "<color=gray>"+GetType()+"</color> | ";
+    return EngineObject.getStamp(this, "cyan");
+  }
+  
+  static public Coroutine loadScenes(string[] nms, Action onComplete = null)
+  {
+    return createLoader().asyncLoadScenes(nms, onComplete);
   }
 
-
+  static public void unloadScenes(string[] nms)
+  {
+    for (int i = 0; i < nms.Length; i++)
+    {
+      Scene sc = getLoadedScene(nms[i]);
+      if (sc.isLoaded)
+      {
+        Debug.Log("unloading : " + sc.name);
+        SceneManager.UnloadSceneAsync(nms[i]);
+      }
+    }
+  }
 
   static public Coroutine queryScene(string sceneName, Action onComplete = null)
   {
@@ -281,10 +223,10 @@ public class EngineLoader : MonoBehaviour
   }
   static public Coroutine queryScenes(string[] sceneNames, Action onComplete = null)
   {
-    return get().loadScenes(sceneNames, onComplete);
+    return createLoader().asyncLoadScenes(sceneNames, onComplete);
   }
 
-  static public void removeScene(string sceneName)
+  static public void unloadSceneByExactName(string sceneName)
   {
     Debug.Log("unloading <b>" + sceneName+"</b>");
     SceneManager.UnloadSceneAsync(sceneName);
@@ -306,7 +248,7 @@ public class EngineLoader : MonoBehaviour
   {
     if(obj.name.StartsWith("~"))
     {
-      Debug.Log("   <b>removing guide</b> of name : " + obj.name);
+      Debug.Log("   <b>removing guide</b> of name : " + obj.name, obj);
       GameObject.Destroy(obj.gameObject);
       return true;
     }
@@ -320,13 +262,14 @@ public class EngineLoader : MonoBehaviour
     return false;
   }
 
-  static protected string getActiveSceneName() {
+  static private string getActiveSceneName() {
     return SceneManager.GetActiveScene().name;
   }
   
-  static public bool doActiveSceneNameContains(string nm) {
+  static public bool doActiveSceneNameContains(string nm, bool startWith = false) {
     string scName = getActiveSceneName();
     //Debug.Log(scName + " vs " + nm);
+    if (startWith) return scName.StartsWith(nm);
     return scName.Contains(nm);
   }
 
@@ -346,14 +289,9 @@ public class EngineLoader : MonoBehaviour
     return doActiveSceneNameContains("level-");
   }
   
-  static public EngineLoader get() {
-    if (loader == null) create();
-    return loader;
-  }
-
-  static public bool isLoading()
+  static public bool areAnyLoadersRunning()
   {
-    return loader != null;
+    return loaders.Count > 0;
   }
 
   /// <summary>
@@ -376,6 +314,17 @@ public class EngineLoader : MonoBehaviour
     return false;
   }
 
+  static public Scene getLoadedScene(string containName)
+  {
+    for (int i = 0; i < SceneManager.sceneCount; i++)
+    {
+      Scene sc = SceneManager.GetSceneAt(i);
+      //Debug.Log(sc.name + " , valid ? " + sc.IsValid() + " , loaded ? " + sc.isLoaded);
+      if (sc.name.Contains(containName)) return sc;
+    }
+    return default(Scene);
+  }
+
 #if UNITY_EDITOR
 
   static public bool isSceneInBuildSettingsList(string scName)
@@ -396,23 +345,7 @@ public class EngineLoader : MonoBehaviour
 
 #endif
 
-
-  static public string isContextEngineCompatible()
-  {
-    string[] filters = new string[] { "#", "network" };
-
-    for (int i = 0; i < filters.Length; i++)
-    {
-      if (getActiveSceneName().StartsWith(filters[i]))
-      {
-        return filters[i];
-      }
-    }
-
-    return "";
-  }
-  
-  static public bool checkIfCanBeLoaded(string sceneLoad)
+  static public bool checkIfInBuildSettings(string sceneLoad)
   {
     bool checkIfExists = false;
 
@@ -429,4 +362,5 @@ public class EngineLoader : MonoBehaviour
 
     return checkIfExists;
   }
+
 }

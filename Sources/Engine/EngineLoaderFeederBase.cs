@@ -1,14 +1,43 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using UnityEngine.SceneManagement;
 
 public class EngineLoaderFeederBase : MonoBehaviour
 {
   protected List<string> scene_names;
 
-  virtual public string[] feed()
+  public void feed(Scene contextCall)
+  {
+    //only called when owner scene just loaded
+    if (gameObject.scene != contextCall)
+    {
+      //GameObject.Destroy(this);
+      return;
+    }
+
+    string[] nms = solveNames();
+
+    //Debug.Log(EngineObject.getStamp(this) + " now feeding "+nms.Length+" names", transform);
+    //for (int i = 0; i < nms.Length; i++) { Debug.Log("  L " + nms[i]);}
+
+    EngineLoader.loadScenes(nms, delegate()
+    {
+      //Debug.Log("feed destroy");
+      GameObject.Destroy(this);
+    });
+  }
+
+  private void OnDestroy()
+  {
+    //Debug.Log(EngineObject.getStamp(this) + " done feeding !");
+  }
+
+  virtual protected string[] solveNames()
   {
     if (scene_names == null) scene_names = new List<string>();
+    scene_names.Clear();
     return scene_names.ToArray();
   }
 
@@ -39,5 +68,5 @@ public class EngineLoaderFeederBase : MonoBehaviour
   {
     return scene_names.ToArray();
   }
-
+  
 }

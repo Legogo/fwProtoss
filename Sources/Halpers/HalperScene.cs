@@ -22,6 +22,10 @@ static public class HalperScene {
     return false;
   }
 
+  static public void loadScene(string sceneName)
+  {
+
+  }
 
 #if UNITY_EDITOR
 

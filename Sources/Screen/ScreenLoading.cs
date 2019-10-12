@@ -21,7 +21,7 @@ public class ScreenLoading : ScreenObject {
 
     string scName = "screen-loading";
     
-    if (!EngineLoader.isSceneAdded(scName) && EngineLoader.checkIfCanBeLoaded(scName))
+    if (!EngineLoader.isSceneAdded(scName) && EngineLoader.checkIfInBuildSettings(scName))
     {
       SceneManager.LoadSceneAsync(scName, LoadSceneMode.Additive);
     }

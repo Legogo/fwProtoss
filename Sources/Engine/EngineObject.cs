@@ -55,10 +55,11 @@ abstract public class EngineObject : MonoBehaviour
 
     //Debug.Log(GetType() + " <b>" + name + "</b> START", gameObject);
 
-    if (EngineLoader.compatibility)
+    if (EngineStartup.compatibility)
     {
       //attendre que le l'engine ai démarré
       //qui doit etre contenu dans resource-engine.scene
+      while (EngineStartup.instanceExist()) yield return null;
       while (EngineManager.get() == null) yield return null;
       while (EngineManager.isLoading()) yield return null;
     }
@@ -200,7 +201,7 @@ abstract public class EngineObject : MonoBehaviour
   /// </summary>
   void Update()
   {
-    if(!EngineLoader.compatibility)
+    if(!EngineStartup.compatibility)
     {
       updateEngine();
       updateEngineLate();
@@ -285,7 +286,12 @@ abstract public class EngineObject : MonoBehaviour
 
   virtual protected string getStamp()
   {
-    return GetType() + " | " + name + " | ";
+    return getStamp(this);
+  }
+
+  static public string getStamp(MonoBehaviour obj, string color = "gray")
+  {
+    return "<color=" + color + ">" + obj.GetType() + "</color> | <b>" + obj.name + "</b> | ";
   }
 
   /// <summary>

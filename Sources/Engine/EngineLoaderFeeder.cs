@@ -31,9 +31,9 @@ public class EngineLoaderFeeder : EngineLoaderFeederBase
   /// generate list of scenes with exact names
   /// </summary>
   /// <returns></returns>
-  override public string[] feed()
+  override protected string[] solveNames()
   {
-    base.feed();
+    base.solveNames();
 
     addWithPrefix("resource-", resource_names);
     addWithPrefix("ui-", ui_names);
