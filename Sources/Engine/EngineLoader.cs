@@ -99,6 +99,37 @@ public class EngineLoader : MonoBehaviour
     if (onFeedersCompleted != null) onFeedersCompleted();
   }
   
+  public Coroutine asyncUnloadScenes(string[] sceneNames, Action onComplete = null)
+  {
+    return StartCoroutine(processUnload(sceneNames, onComplete));
+  }
+
+  IEnumerator processUnload(string[] sceneNames, Action onComplete = null)
+  {
+    List<AsyncOperation> asyncs = new List<AsyncOperation>();
+
+    for (int i = 0; i < sceneNames.Length; i++)
+    {
+      asyncs.Add(SceneManager.UnloadSceneAsync(sceneNames[i]));
+    }
+
+    while(asyncs.Count > 0)
+    {
+      int c = 0;
+      while(c < asyncs.Count)
+      {
+        if (asyncs[c].isDone) asyncs.RemoveAt(c);
+        else c++;
+      }
+
+      yield return null;
+    }
+
+    if(onComplete != null) onComplete();
+
+    GameObject.Destroy(gameObject);
+  }
+
   public Coroutine asyncLoadScenes(string[] sceneNames, Action onComplete = null)
   {
     return StartCoroutine(processLoadScenes(sceneNames, onComplete));
@@ -201,12 +232,21 @@ public class EngineLoader : MonoBehaviour
     return EngineObject.getStamp(this, "cyan");
   }
   
+  static public Coroutine loadScene(string nm, Action onComplete = null)
+  {
+    return loadScenes(new string[] { nm }, onComplete);
+  }
   static public Coroutine loadScenes(string[] nms, Action onComplete = null)
   {
     return createLoader().asyncLoadScenes(nms, onComplete);
   }
 
-  static public void unloadScenes(string[] nms)
+  static public void unloadScenes(string[] nms, Action onComplete = null)
+  {
+    createLoader().asyncUnloadScenes(nms, onComplete);
+  }
+
+  static public void unloadScenesInstant(string[] nms)
   {
     for (int i = 0; i < nms.Length; i++)
     {
