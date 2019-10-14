@@ -66,10 +66,11 @@ public class EngineStartup : MonoBehaviour
     Debug.Log(getStamp() + " process startup, frame : " + Time.frameCount);
 
     //leave a few frame for loading screen to be created and displayed
+    //Scene are not flagged as loaded during frame 1
     yield return null;
     yield return null;
     yield return null;
-
+    
     //Debug.Log(getStamp() + " loading screen should be visible, frame : " + Time.frameCount);
 
     // then we load engine, to get the feeder script
@@ -82,14 +83,22 @@ public class EngineStartup : MonoBehaviour
     //must be created after the (existing ?) engine scene is loaded (doublon)
     EngineManager.create();
 
-    Debug.Log(getStamp()+" is done at frame "+Time.frameCount+", removing gameobject");
-    
-    //tant qu'on a des loaders qui tournent ...
-    while (EngineLoader.areAnyLoadersRunning()) yield return null;
 
     yield return null;
 
+    // les feeders qui sont déjà présents quand on lance le runtime (pas par un load)
+    EngineLoaderFeederBase[] feeders = GameObject.FindObjectsOfType<EngineLoaderFeederBase>();
+    for (int i = 0; i < feeders.Length; i++)
+    {
+      feeders[i].feed(gameObject.scene);
+    }
+
+    //tant qu'on a des loaders qui tournent ...
+    while (EngineLoader.areAnyLoadersRunning()) yield return null;
+
     if (onLoadingDone != null) onLoadingDone();
+
+    Debug.Log(getStamp() + " is done at frame " + Time.frameCount + ", removing gameobject");
 
     GameObject.Destroy(gameObject);
   }

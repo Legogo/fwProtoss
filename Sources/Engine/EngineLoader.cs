@@ -115,14 +115,16 @@ public class EngineLoader : MonoBehaviour
       //do not load the current active scene
       if (doActiveSceneNameContains(sceneName))
       {
-        Debug.LogWarning("  trying to load active scene ?");
+        Debug.LogWarning(sceneName+" is current active scene, need to load it ?");
         continue;
       }
 
       //don't double load same scene
-      //Debug.Log(getStamp()+ Time.frameCount + "  is " + sceneName + " already loaded ?");
+      bool alreadyLoaded = getLoadedScene(sceneName).isLoaded;
 
-      if (SceneManager.GetSceneByName(sceneName).isLoaded)
+      Debug.Log(getStamp() + Time.frameCount + "  is " + sceneName + " already loaded ? "+ alreadyLoaded);
+      
+      if (alreadyLoaded)
       {
         Debug.LogWarning("  <b>"+sceneName + "</b> is considered as already loaded, skipping loading of that scene");
         continue;
@@ -316,12 +318,22 @@ public class EngineLoader : MonoBehaviour
 
   static public Scene getLoadedScene(string containName)
   {
+    if(Time.frameCount < 2)
+    {
+      Debug.LogError("scenes are not flagged as loaded until frame 2");
+      return default(Scene);
+    }
+
     for (int i = 0; i < SceneManager.sceneCount; i++)
     {
       Scene sc = SceneManager.GetSceneAt(i);
+
       //Debug.Log(sc.name + " , valid ? " + sc.IsValid() + " , loaded ? " + sc.isLoaded);
-      if (sc.name.Contains(containName)) return sc;
+
+      if (sc.isLoaded && sc.name.Contains(containName)) return sc;
     }
+
+    //Debug.LogWarning("asking if "+containName + " scene is loaded but its not");
     return default(Scene);
   }
 

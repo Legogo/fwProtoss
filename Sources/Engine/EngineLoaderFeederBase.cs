@@ -8,6 +8,10 @@ public class EngineLoaderFeederBase : MonoBehaviour
 {
   protected List<string> scene_names;
 
+  /// <summary>
+  /// starts feed process
+  /// contextCall is meant to filter if feeder must be called again
+  /// </summary>
   public void feed(Scene contextCall)
   {
     //only called when owner scene just loaded
