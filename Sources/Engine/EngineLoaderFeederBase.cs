@@ -7,26 +7,22 @@ using UnityEngine.SceneManagement;
 public class EngineLoaderFeederBase : MonoBehaviour
 {
   protected List<string> scene_names;
+  protected Coroutine feeding;
 
   /// <summary>
   /// starts feed process
   /// contextCall is meant to filter if feeder must be called again
   /// </summary>
-  public void feed(Scene contextCall)
+  public void feed()
   {
-    //only called when owner scene just loaded
-    if (gameObject.scene != contextCall)
-    {
-      //GameObject.Destroy(this);
-      return;
-    }
-
+    Debug.Log(EngineObject.getStamp(this)+" feed", transform);
+    
     string[] nms = solveNames();
 
     //Debug.Log(EngineObject.getStamp(this) + " now feeding "+nms.Length+" names", transform);
     //for (int i = 0; i < nms.Length; i++) { Debug.Log("  L " + nms[i]);}
 
-    EngineLoader.loadScenes(nms, delegate()
+    feeding = EngineLoader.loadScenes(nms, delegate()
     {
       //Debug.Log("feed destroy");
       GameObject.Destroy(this);
@@ -35,8 +31,11 @@ public class EngineLoaderFeederBase : MonoBehaviour
 
   private void OnDestroy()
   {
+    feeding = null;
     //Debug.Log(EngineObject.getStamp(this) + " done feeding !");
   }
+
+  public bool isFeeding() { return feeding != null; }
 
   virtual protected string[] solveNames()
   {

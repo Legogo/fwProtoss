@@ -80,7 +80,7 @@ public class EngineLoader : MonoBehaviour
 
     for (int i = 0; i < feeders.Count; i++)
     {
-      feeders[i].feed(scene);
+      feeders[i].feed();
     }
 
     bool done = false;

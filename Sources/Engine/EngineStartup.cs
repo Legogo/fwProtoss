@@ -82,15 +82,16 @@ public class EngineStartup : MonoBehaviour
     //NEEDED if not present
     //must be created after the (existing ?) engine scene is loaded (doublon)
     EngineManager.create();
-
-
+    
     yield return null;
 
     // les feeders qui sont déjà présents quand on lance le runtime (pas par un load)
     EngineLoaderFeederBase[] feeders = GameObject.FindObjectsOfType<EngineLoaderFeederBase>();
+    Debug.Log(getStamp() + " " + feeders.Length + " feeders still running");
     for (int i = 0; i < feeders.Length; i++)
     {
-      feeders[i].feed(gameObject.scene);
+      //feeders[i].feed(gameObject.scene);
+      if (!feeders[i].isFeeding()) feeders[i].feed();
     }
 
     //tant qu'on a des loaders qui tournent ...
