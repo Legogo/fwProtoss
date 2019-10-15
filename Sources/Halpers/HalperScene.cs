@@ -22,6 +22,11 @@ static public class HalperScene {
     return false;
   }
 
+  static public bool isActiveScene(Scene sc)
+  {
+    return sc == SceneManager.GetActiveScene();
+  }
+
   static public void loadScene(string sceneName)
   {
 
