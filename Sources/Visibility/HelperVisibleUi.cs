@@ -5,15 +5,22 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// this manage also Text elements
+/// Generic maskable graphic
+///   image
+///   text (fetched also in children)
+/// also manage CanvasGroup
 /// </summary>
 
 public class HelperVisibleUi : HelperVisible
 {
+  Canvas _canvas;
   CanvasGroup _group;
   MaskableGraphic _render;
   Image _img;
   Text _label;
+
+  public enum HelperVisibileUiMode { render, canvas, group }
+  HelperVisibileUiMode mode;
 
   public HelperVisibleUi(MonoBehaviour parent) : base(parent.transform, parent)
   {
@@ -26,9 +33,26 @@ public class HelperVisibleUi : HelperVisible
 
   protected override void fetchRenders()
   {
+    _canvas = _t.GetComponentInParent<Canvas>();
+
+    if (_group == null) _group = _t.GetComponent<CanvasGroup>();
+
+    //generic
     _render = _t.GetComponent<MaskableGraphic>();
     if (_render == null) _render = _t.GetComponentInChildren<MaskableGraphic>();
-    if (_render as Image) _img = _render as Image;
+
+    //fetch label
+    _label = _t.GetComponent<Text>();
+    if (_label == null) _label = _t.GetComponentInChildren<Text>();
+
+    //specific
+    _img = _render as Image;
+  }
+
+  public HelperVisibleUi setRenderMode(HelperVisibileUiMode mode)
+  {
+    this.mode = mode;
+    return this;
   }
 
   protected override Transform fetchCarrySymbol()
@@ -36,20 +60,7 @@ public class HelperVisibleUi : HelperVisible
     if (_render == null) Debug.LogError("no render ?", _coroutineCarrier.gameObject);
     return _render.transform;
   }
-
-  public override void setup()
-  {
-    base.setup();
-
-    if(_group == null) _group = _t.GetComponent<CanvasGroup>();
-    
-    _label = _t.GetComponent<Text>();
-    if (_label == null) _label = _t.GetComponentInChildren<Text>();
-
-    //override image when label
-    if (_label != null) _render = _label;
-  }
-
+  
   public void setTextLabel(string content) {
     if (_label != null) _label.text = content;
   }
@@ -61,18 +72,27 @@ public class HelperVisibleUi : HelperVisible
 
   public override bool isVisible()
   {
-    return _render.enabled;
+    switch(mode)
+    {
+      case HelperVisibileUiMode.canvas: return _canvas.enabled;
+      case HelperVisibileUiMode.render: return _render.enabled;
+      case HelperVisibileUiMode.group:  return _group.enabled;
+      default: return false;
+    }
   }
 
   override public void setVisibility(bool flag)
   {
-    if(_group != null)
+    switch(mode)
     {
-      _group.alpha = flag ? 1f : 0f;
-      return;
+      case HelperVisibileUiMode.group: _group.alpha = flag ? 1f : 0f;break;
+      case HelperVisibileUiMode.canvas: _canvas.enabled = flag;break;
+      case HelperVisibileUiMode.render: _render.enabled = flag;break;
     }
+    if (_label != null) _label.enabled = flag;
 
-    _render.enabled = flag;
+    //Debug.Log(_t.name+" -> "+flag+" (m "+mode+") ? c "+_canvas.enabled + " , r " + _render.enabled+" , l "+_label.enabled);
+    //Debug.Log(_canvas.name + " , " + _render.name + " , " + _label.name);
   }
 
   public override void setAlpha(float newAlpha)
