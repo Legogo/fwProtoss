@@ -28,7 +28,7 @@ abstract public class EngineObject : MonoBehaviour
 
   protected bool logs = false; // display logs
   protected HelperInputObject inputObject = null;
-  protected bool debugActiveScene = false;
+  protected bool debugIsSceneOwnerActiveScene = false;
 
   //constructor
   private void Awake()
@@ -40,7 +40,7 @@ abstract public class EngineObject : MonoBehaviour
     //Debug.Log(name);
     //if(name.Contains("hopper")) Debug.Log("build <b>"+name+"</b>");
 
-    debugActiveScene = HalperScene.isActiveScene(gameObject.scene.name);
+    debugIsSceneOwnerActiveScene = HalperScene.isActiveScene(gameObject.scene.name);
 
     build();
   }
@@ -78,7 +78,7 @@ abstract public class EngineObject : MonoBehaviour
 
     setupLate();
     
-    if(debugActiveScene) setupDebug();
+    if(debugIsSceneOwnerActiveScene) setupDebug();
     
     _ready = true; // all setup done, can now update
   }
@@ -314,15 +314,28 @@ abstract public class EngineObject : MonoBehaviour
     Debug.Log(GetType() + " | " + data, logTarget);
   }
   
-  protected void setAsEditorSelection(GameObject obj = null, bool parentIsActiveSceneCheck = false)
+  protected void editorFocus(bool parentIsActiveSceneCheck = false)
   {
 #if UNITY_EDITOR
-    if (parentIsActiveSceneCheck && !debugActiveScene) return;
-    if (obj == null) obj = gameObject;
+    if (parentIsActiveSceneCheck && !debugIsSceneOwnerActiveScene) return;
+    editorFocusGameObject(gameObject);
+#endif
+  }
+
+  static public void editorFocusGameObject(GameObject obj)
+  {
+#if UNITY_EDITOR
     UnityEditor.Selection.activeGameObject = obj;
 #endif
   }
 
+  static public void editorFocusGameObject(GameObject obj, bool parentIsActiveSceneCheck)
+  {
+#if UNITY_EDITOR
+    if (parentIsActiveSceneCheck && !HalperScene.isActiveScene(obj.gameObject.scene)) return;
+    editorFocusGameObject(obj);
+#endif
+  }
 
 
 
