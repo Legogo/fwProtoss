@@ -337,6 +337,14 @@ abstract public class EngineObject : MonoBehaviour
 #endif
   }
 
+  public bool editorIsSelected()
+  {
+#if UNITY_EDITOR
+    if (UnityEditor.Selection.activeGameObject == gameObject) return true;
+#endif
+    return false;
+  }
+
 
 
 

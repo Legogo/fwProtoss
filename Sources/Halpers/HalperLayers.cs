@@ -17,6 +17,11 @@ public class HalperLayers {
     return result;
   }
 
+  static public int maskToBit(LayerMask mask)
+  {
+    return 1 << mask;
+  }
+  
   //http://answers.unity3d.com/questions/150690/using-a-bitwise-operator-with-layermask.html
   static public bool isInLayerMask(GameObject obj, LayerMask layerMask)
   {
