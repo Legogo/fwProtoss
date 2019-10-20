@@ -32,6 +32,19 @@ static public class HalperScene {
 
   }
 
+  static public Scene getSceneFromAdded(string sceneName)
+  {
+    for (int i = 0; i < SceneManager.sceneCount; i++)
+    {
+      Scene sc = SceneManager.GetSceneAt(i);
+      if(sc.isLoaded && sc.IsValid())
+      {
+        if (sc.name == sceneName) return sc;
+      }
+    }
+    return default(Scene);
+  }
+
 #if UNITY_EDITOR
 
   /// <summary>
