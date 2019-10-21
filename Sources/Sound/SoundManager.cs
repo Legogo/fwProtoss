@@ -65,7 +65,7 @@ namespace fwp.sound
 
     static protected AudioSource getMatchingSource(string containsClipName)
     {
-      //if (sources == null) sources = GameObject.FindObjectsOfType<AudioSource>();
+      if (sources == null) return null;
 
       //Debug.Log("searching for clip " + containsClipName + " in " + sources.Length + " sources");
 
