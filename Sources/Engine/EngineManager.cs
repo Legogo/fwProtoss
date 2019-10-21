@@ -167,7 +167,28 @@ public class EngineManager : MonoBehaviour {
     processLayerUpdate();
 
   }
-  
+
+  private void FixedUpdate()
+  {
+    if (!state_live) return;
+    if (state_loading) return;
+    /*
+    if (eosNegLayers != null)
+    {
+      for (int i = 0; i < eosNegLayers.Count; i++) processUpdateFixedLayer(eosNegLayers[i]);
+    }
+    */
+
+    if (eos != null) processUpdateFixedLayer(eos);
+
+    /*
+    if (eosPosLayers != null)
+    {
+      for (int i = 0; i < eosPosLayers.Count; i++) processUpdateFixedLayer(eosPosLayers[i]);
+    }
+    */
+  }
+
   void processLayerUpdate()
   {
     //update
@@ -198,6 +219,16 @@ public class EngineManager : MonoBehaviour {
       for (int i = 0; i < eosPosLayers.Count; i++) processUpdateLayerLate(eosPosLayers[i]);
     }
 
+  }
+
+  void processUpdateFixedLayer(List<EngineObject> objects)
+  {
+    for (int i = 0; i < objects.Count; i++)
+    {
+      tmpEo = objects[i];
+      if (!tmpEo.canUpdate()) continue;
+      tmpEo.updateEngineFixed();
+    }
   }
 
   void processUpdateLayer(List<EngineObject> objects)

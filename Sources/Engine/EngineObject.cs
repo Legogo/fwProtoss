@@ -208,6 +208,14 @@ abstract public class EngineObject : MonoBehaviour
     }
   }
 
+  void FixedUpdate()
+  {
+    
+  }
+
+  virtual public void updateEngineFixed()
+  { }
+
   /* called by EngineManager */
   virtual public void updateEngine() { }
   virtual public void updateEngineLate() { }
