@@ -28,7 +28,7 @@ abstract public class EngineObject : MonoBehaviour
 
   protected bool logs = false; // display logs
   protected HelperInputObject inputObject = null;
-  protected bool debugIsSceneOwnerActiveScene = false;
+  protected bool debugIsSceneOwnerActiveScene = false; // au moment où il est généré
 
   //constructor
   private void Awake()

@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class HalperMath
 {
+  static public bool closeToZero(float val)
+  {
+    return Mathf.Abs(val) < 0.001f;
+  }
+
   static public Vector2 solvePointProjection(Vector2 p, Vector2 a, Vector2 b)
   {
     Vector2 ap = p - a;

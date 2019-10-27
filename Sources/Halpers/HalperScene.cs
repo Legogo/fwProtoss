@@ -45,6 +45,17 @@ static public class HalperScene {
     return default(Scene);
   }
 
+  static public T[] getComponentsInScene<T>(Scene sc) where T : Component
+  {
+    List<T> output = new List<T>();
+    GameObject[] roots = sc.GetRootGameObjects();
+    for (int i = 0; i < roots.Length; i++)
+    {
+      output.AddRange(roots[i].GetComponentsInChildren<T>());
+    }
+    return output.ToArray();
+  }
+
 #if UNITY_EDITOR
 
   /// <summary>
