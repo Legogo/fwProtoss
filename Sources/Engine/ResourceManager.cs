@@ -85,7 +85,7 @@ public class ResourceManager {
   /// remove parent if parent is canvas.
   /// <b>Object is deactivated by default !</b>
   /// </summary>
-  static public T getDuplicate<T>(string resourceName, string instanceName = "") where T : Component
+  static public T getDuplicate<T>(string resourceName, GameObject creator = null, string instanceName = "") where T : Component
   {
     if(resourceName.Length <= 0)
     {
@@ -93,7 +93,7 @@ public class ResourceManager {
       return null;
     }
     
-    GameObject obj = getDuplicate(resourceName, instanceName);
+    GameObject obj = getDuplicate(resourceName, creator, instanceName);
     if (obj == null)
     {
       Debug.LogWarning("no object found in resources named : '<b>" + resourceName+"</b>'");
@@ -117,12 +117,24 @@ public class ResourceManager {
       //Debug.Log("ResourceManager :: canvas item :: "+ obj.name + " is child of " + go.name + " parent : " + go.transform.parent.name, obj.transform);
     }
     //else Debug.LogWarning("no canvas for " + nm, obj.transform);
-
+    
     if (comp == null) comp = obj.GetComponentInChildren<T>();
     return comp;
   }
-  
-  static public GameObject getDuplicate(string nm, string rename = "")
+
+
+
+  static public GameObject getDuplicate(string nm, GameObject creator)
+  {
+    return getDuplicate(nm, creator, "");
+  }
+
+  static public GameObject getDuplicate(string nm, string rename)
+  {
+    return getDuplicate(nm, null, rename);
+  }
+
+  static public GameObject getDuplicate(string nm, GameObject creator = null, string rename = "")
   {
     GameObject obj = getResourceByName(nm);
     if (obj == null) return null;
@@ -130,6 +142,12 @@ public class ResourceManager {
     if(rename.Length > 0) obj.name = rename;
     obj.tag = "Untagged"; // remove resource tag !
     obj.SetActive(true);
+
+    if(creator != null)
+    {
+      HalperScene.setupObjectChildOfSceneOfObject(obj, creator);
+    }
+
     return obj;
   }
 }

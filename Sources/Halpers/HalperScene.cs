@@ -10,6 +10,14 @@ using UnityEngine.SceneManagement;
 
 static public class HalperScene {
 
+  static public void setupObjectChildOfSceneOfObject(GameObject target, GameObject owner)
+  {
+
+    //https://stackoverflow.com/questions/45798666/move-transfer-gameobject-to-another-scene
+    UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(target, owner.scene);
+
+  }
+
   /// <summary>
   /// active scene
   /// </summary>
