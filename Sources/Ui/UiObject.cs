@@ -21,6 +21,11 @@ public class UiObject : EngineObject
     hide();
   }
 
+  public void setupScreenPosition(float x, float y)
+  {
+    pivot.setOnScreen(x, y); // proportional
+  }
+
   protected override VisibilityMode getVisibilityType()
   {
     return VisibilityMode.UI;

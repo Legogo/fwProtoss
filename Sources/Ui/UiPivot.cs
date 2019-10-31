@@ -15,6 +15,14 @@ public class UiPivot
     rec = tr.GetComponent<RectTransform>();
   }
 
+  public void setOnScreen(float x, float y)
+  {
+    Vector3 pos = rec.position;
+    pos.x = Screen.width * x;
+    pos.y = Screen.height * y;
+    rec.position = pos;
+  }
+
   public void setOnScreen(int x, int y)
   {
     Vector3 pos = rec.position;
