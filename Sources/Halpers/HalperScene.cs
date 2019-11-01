@@ -18,6 +18,22 @@ static public class HalperScene {
 
   }
 
+  static public Scene[] getOpenedScenesOfPrefix(string prefix, string filter)
+  {
+    List<Scene> list = new List<Scene>();
+    int count = SceneManager.sceneCount;
+    for (int i = 0; i < count; i++)
+    {
+      Scene sc = SceneManager.GetSceneAt(i);
+
+      if (sc.name.Contains(filter)) continue;
+      if (!sc.name.StartsWith(prefix)) continue;
+
+      if (sc.isLoaded) list.Add(sc);
+    }
+    return list.ToArray();
+  }
+
   /// <summary>
   /// active scene
   /// </summary>

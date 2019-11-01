@@ -241,6 +241,11 @@ public class EngineLoader : MonoBehaviour
     return createLoader().asyncLoadScenes(nms, onComplete);
   }
 
+  static public void unloadScene(Scene sc)
+  {
+    unloadScene(sc.name);
+  }
+
   static public void unloadScene(string nm, Action onComplete = null)
   {
     if(nm.Length <= 0)
