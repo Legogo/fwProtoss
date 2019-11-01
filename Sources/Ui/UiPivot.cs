@@ -21,6 +21,8 @@ public class UiPivot
     pos.x = Screen.width * x;
     pos.y = Screen.height * y;
     rec.position = pos;
+
+    //Debug.Log(rec.position);
   }
 
   public void setOnScreen(int x, int y)

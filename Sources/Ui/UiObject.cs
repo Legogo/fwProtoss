@@ -11,6 +11,7 @@ public class UiObject : EngineObject
   {
     base.build();
     pivot = new UiPivot(transform);
+
     hVisible = visibility as HelperVisibleUi;
   }
   
@@ -18,6 +19,7 @@ public class UiObject : EngineObject
   {
     base.setup();
 
+    //show();
     hide();
   }
 

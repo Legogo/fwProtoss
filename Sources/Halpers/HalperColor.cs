@@ -75,7 +75,6 @@ static public class HalperColor
   static public Color setAlpha(this Color color, float a = 1f)
   {
     color.a = a;
-
     return color;
   }
 
