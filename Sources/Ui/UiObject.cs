@@ -25,6 +25,7 @@ public class UiObject : EngineObject
 
   public void setupScreenPosition(float x, float y)
   {
+    Debug.Log(name + " , " + x + " x " + y);
     pivot.setOnScreen(x, y); // proportional
   }
 
@@ -36,6 +37,8 @@ public class UiObject : EngineObject
   sealed public override void updateEngine()
   {
     base.updateEngine();
+
+    //Debug.Log(Time.frameCount + " update " + name, transform);
 
     updateUi();
   }
