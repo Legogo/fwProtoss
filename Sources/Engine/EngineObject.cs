@@ -301,20 +301,7 @@ abstract public class EngineObject : MonoBehaviour
   {
     return "<color=" + color + ">" + obj.GetType() + "</color> | <b>" + obj.name + "</b> | ";
   }
-
-  /// <summary>
-  /// editor selection
-  /// </summary>
-  /// <returns></returns>
-  public bool isSelection()
-  {
-#if UNITY_EDITOR
-    return UnityEditor.Selection.activeGameObject == gameObject;
-#else
-    return false;
-#endif
-  }
-
+  
   public void log(string data, Transform logTarget = null)
   {
     if (!logs) return;
