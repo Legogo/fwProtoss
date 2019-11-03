@@ -25,7 +25,7 @@ public class UiObject : EngineObject
 
   public void setupScreenPosition(float x, float y)
   {
-    Debug.Log(name + " , " + x + " x " + y);
+    //Debug.Log(name + " , " + x + " x " + y);
     pivot.setOnScreen(x, y); // proportional
   }
 
