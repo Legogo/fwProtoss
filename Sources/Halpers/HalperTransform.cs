@@ -4,6 +4,24 @@ using UnityEngine;
 
 static public class HalperTransform {
 
+
+  static public Transform searchParentWithTag(Transform tr, string tag, int recursiveLevel)
+  {
+    if (tr == null) return null;
+    if (recursiveLevel <= 0) return null;
+    if (tr.CompareTag(tag)) return tr;
+    return searchParentWithTag(tr.parent, tag, recursiveLevel - 1);
+  }
+
+  static public bool searchTagInParent(Transform tr, string tag, int recursiveLevel)
+  {
+    if (tr == null) return false;
+    if (recursiveLevel <= 0) return false;
+    if (tr.CompareTag(tag)) return true;
+    return searchTagInParent(tr.parent, tag, recursiveLevel - 1);
+  }
+
+
   static public List<Transform> getTransformsOfName(Transform parent, string nameStart)
   {
     if (parent == null) Debug.LogError("no tr ?");
