@@ -77,8 +77,10 @@ abstract public class EngineObject : MonoBehaviour
     yield return null;
 
     setupLate();
-    
-    if(debugIsSceneOwnerActiveScene) setupDebug();
+
+    yield return null;
+
+    if (debugIsSceneOwnerActiveScene) setupDebug();
     
     _ready = true; // all setup done, can now update
   }

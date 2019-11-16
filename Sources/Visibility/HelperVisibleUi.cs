@@ -20,7 +20,7 @@ public class HelperVisibleUi : HelperVisible
   Text _label;
 
   public enum HelperVisibileUiMode { render, canvas, group }
-  HelperVisibileUiMode mode;
+  HelperVisibileUiMode _mode = HelperVisibileUiMode.render;
 
   public HelperVisibleUi(MonoBehaviour parent) : base(parent.transform, parent)
   {
@@ -51,7 +51,7 @@ public class HelperVisibleUi : HelperVisible
 
   public HelperVisibleUi setRenderMode(HelperVisibileUiMode mode)
   {
-    this.mode = mode;
+    _mode = mode;
     return this;
   }
 
@@ -72,7 +72,7 @@ public class HelperVisibleUi : HelperVisible
 
   public override bool isVisible()
   {
-    switch(mode)
+    switch(_mode)
     {
       case HelperVisibileUiMode.canvas: return _canvas.enabled;
       case HelperVisibileUiMode.render: return _render.enabled;
@@ -83,7 +83,7 @@ public class HelperVisibleUi : HelperVisible
 
   override public void setVisibility(bool flag)
   {
-    switch(mode)
+    switch(_mode)
     {
       case HelperVisibileUiMode.group: _group.alpha = flag ? 1f : 0f;break;
       case HelperVisibileUiMode.canvas: _canvas.enabled = flag;break;
@@ -92,7 +92,8 @@ public class HelperVisibleUi : HelperVisible
     if (_label != null) _label.enabled = flag;
 
     //Debug.Log(_t.name+" -> "+flag+" (m "+mode+") ? c "+_canvas.enabled + " , r " + _render.enabled+" , l "+_label.enabled);
-    //Debug.Log(_canvas.name + " , " + _render.name + " , " + _label.name);
+    //Debug.Log(_mode);
+    //Debug.Log("mode : "+_mode.ToString()+" , canvas : "+_canvas.name + " , render : " + _render.name + " => flag ? "+flag);
   }
 
   public override void setAlpha(float newAlpha)

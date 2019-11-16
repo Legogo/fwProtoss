@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UiObject : EngineObject
+abstract public class UiObject : EngineObject
 {
   protected HelperVisibleUi hVisible;
   UiPivot pivot;
@@ -13,7 +13,15 @@ public class UiObject : EngineObject
     pivot = new UiPivot(transform);
 
     hVisible = visibility as HelperVisibleUi;
+    hVisible.setRenderMode(getVisibilityRenderMode());
   }
+  
+  protected override VisibilityMode getVisibilityType()
+  {
+    return VisibilityMode.UI;
+  }
+  
+  abstract protected HelperVisibleUi.HelperVisibileUiMode getVisibilityRenderMode();
   
   protected override void setup()
   {
@@ -27,11 +35,6 @@ public class UiObject : EngineObject
   {
     //Debug.Log(name + " , " + x + " x " + y);
     pivot.setOnScreen(x, y); // proportional
-  }
-
-  protected override VisibilityMode getVisibilityType()
-  {
-    return VisibilityMode.UI;
   }
 
   sealed public override void updateEngine()

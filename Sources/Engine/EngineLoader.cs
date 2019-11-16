@@ -261,6 +261,7 @@ public class EngineLoader : MonoBehaviour
     createLoader().asyncUnloadScenes(nms, onComplete);
   }
 
+  static public void unloadScenesInstant(Scene sc) { unloadScenesInstant(new string[] { sc.name }); }
   static public void unloadScenesInstant(string[] nms)
   {
     for (int i = 0; i < nms.Length; i++)
