@@ -124,6 +124,9 @@ public class VersionManager : MonoBehaviour
     return output;
   }
 
+  /// <summary>
+  /// x.y.z , no dash
+  /// </summary>
   static private int[] getApplicationVersion()
   {
     string v = "";
@@ -161,8 +164,8 @@ public class VersionManager : MonoBehaviour
 
   static public void incrementBuildNumber()
   {
-    PlayerSettings.Android.bundleVersionCode++; // shared with ios ?
-    PlayerSettings.iOS.buildNumber = PlayerSettings.Android.bundleVersionCode.ToString();
+    setApplicationBuildNumber(PlayerSettings.Android.bundleVersionCode + 1);
+    Debug.Log("incrementBuildNumber :: version to " + getDisplayVersion());
   }
 
   static private void apply(int[] data, bool incBuildVersion = true)
@@ -194,6 +197,12 @@ public class VersionManager : MonoBehaviour
   static public void setApplicationBuildNumber(int num)
   {
     PlayerSettings.Android.bundleVersionCode = num;
+
+    //ios, on IOS buildNumber is a X.Y.Z format
+    PlayerSettings.iOS.buildNumber = getFormatedVersion();
+
+    //PlayerSettings.iOS.buildNumber = PlayerSettings.Android.bundleVersionCode.ToString();
+    //PlayerSettings.iOS.buildNumber = PlayerSettings.bundleVersion;
   }
   static public int getApplicationBuildNumber()
   {
