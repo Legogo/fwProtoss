@@ -20,9 +20,8 @@ public class VersionToggle : EngineObject
   {
     base.build();
 
-    HelperVisibleUi h = (HelperVisibleUi)visibility;
-    h.setTextLabel(VersionManager.getFormatedVersion());
-
+    updateText();
+    
     visibility.show();
   }
 
@@ -60,7 +59,8 @@ public class VersionToggle : EngineObject
   [ContextMenu("apply current version")]
   protected void updateText()
   {
-    GetComponent<Text>().text = VersionManager.getFormatedVersion();
+    HelperVisibleUi h = (HelperVisibleUi)visibility;
+    h.setTextLabel(VersionManager.getDisplayVersion());
   }
 
   protected void touch(InputTouchFinger finger)

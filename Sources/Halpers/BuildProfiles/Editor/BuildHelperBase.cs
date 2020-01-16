@@ -117,7 +117,7 @@ namespace fwp.build
       if (!path.EndsWith("/")) path += "/";
 
       path += getBuildName();
-      path += "_" + VersionManager.getFormatedVersion('-');
+      path += "_" + VersionManager.getFormatedVersion('-'); // for android build
       path += "_" + PlayerSettings.Android.bundleVersionCode;
       path += "_" + HalperTime.getFullDate();
        

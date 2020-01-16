@@ -48,26 +48,28 @@ public class VersionManager : MonoBehaviour
 
   private void OnGUI()
   {
-    string v = Application.version;
+    //string v = Application.version;
+    string v = getDisplayVersion();
 
     GUIStyle guis = new GUIStyle();
 
     guis.normal.textColor = Color.gray;
+    guis.alignment = TextAnchor.MiddleRight;
 
     guis.fontSize = 30;
-    float width = 150f;
+    //float width = 50f;
     float height = 50f;
 
     if (Screen.width >= 1000f)
     {
       guis.fontSize = 50;
-      width = 300f;
+      //width = 300f;
       height = 150f;
     }
 
     // must be safe from rounded angle on mobile
     
-    GUI.Label(new Rect(Screen.width - width, Screen.height - height, width, height), v, guis);
+    GUI.Label(new Rect(Screen.width - 50f, Screen.height - height, 1f, height), v, guis);
   }
   
   [RuntimeInitializeOnLoadMethod]
@@ -92,14 +94,34 @@ public class VersionManager : MonoBehaviour
   /// </summary>
   static public string getFormatedVersion(int[] data = null)
   {
-    if (data == null) data = getApplicationVersion();
-    return "" + data[0] + versionSeparator + data[1] + versionSeparator + data[2];
+    return getFormatedVersion(versionSeparator, data);
   }
   
   static public string getFormatedVersion(char separator, int[] data = null)
   {
     if (data == null) data = getApplicationVersion();
-    return "" + data[0] + separator + data[1] + separator + data[2];
+
+    return data[0].ToString() + separator + data[1] + separator + data[2];
+  }
+  
+  /// <summary>
+  /// with context #if and debug indicator
+  /// </summary>
+  /// <returns></returns>
+  static public string getDisplayVersion()
+  {
+    string output = getFormatedVersion();
+
+    if (Debug.isDebugBuild)
+    {
+      output += "(devb)";
+    }
+
+#if debug
+    output += "(debug)";
+#endif
+
+    return output;
   }
 
   static private int[] getApplicationVersion()
