@@ -19,38 +19,34 @@ public class HalperPhysic {
     return getRaycastRay(from, direction, distance, layer).point;
   }
 
-  static public RaycastHit getRaycastRay(Vector3 from, Vector3 direction, float distance, int layer)
+  static public RaycastHit getRaycastRay(Vector3 from, Vector3 direction, float distance, int layer, bool drawDebug = false)
   {
     RaycastHit _hit;
 
-    if (Physics.Raycast(from, direction, out _hit, distance, 1 << layer))
+    bool rayed = Physics.Raycast(from, direction, out _hit, distance, 1 << layer);
+
+    if(!drawDebug)
     {
-      Debug.DrawLine(from, _hit.point, Color.yellow, 2f);
-    }
-    else
-    {
-      Debug.DrawLine(from, from + (direction * distance), Color.magenta, 2f);
+      if (rayed) Debug.DrawLine(from, _hit.point, Color.yellow, 2f);
+      else Debug.DrawLine(from, from + (direction * distance), Color.magenta, 2f);
     }
 
     return _hit;
   }
 
-  static public RaycastHit2D getRaycastRay(Vector2 from, Vector2 direction, float distance, int layer)
+  static public RaycastHit2D getRaycastRay(Vector2 from, Vector2 direction, float distance, int layer, bool drawDebug = false)
   {
     RaycastHit2D _hit;
 
     _hit = Physics2D.Raycast(from, direction, distance, layer);
     //Debug.Log(_hit.collider);
 
-    if (_hit.collider != null)
+    if(drawDebug)
     {
-      Debug.DrawLine(from, _hit.point, Color.yellow, 2f);
+      if (_hit.collider != null) Debug.DrawLine(from, _hit.point, Color.yellow, 2f);
+      else Debug.DrawLine(from, from + (direction * distance), Color.magenta, 2f);
     }
-    else
-    {
-      Debug.DrawLine(from, from + (direction * distance), Color.magenta, 2f);
-    }
-
+    
     return _hit;
   }
 
