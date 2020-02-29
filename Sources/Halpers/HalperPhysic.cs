@@ -16,16 +16,42 @@ public class HalperPhysic {
 
   static public Vector2 getRaycastPoint(Vector3 from, Vector3 direction, float distance, int layer)
   {
-    RaycastHit _hit;
+    return getRaycastRay(from, direction, distance, layer).point;
+  }
 
-    Debug.DrawLine(from, from + (direction * distance), Color.magenta, 2f);
+  static public RaycastHit getRaycastRay(Vector3 from, Vector3 direction, float distance, int layer)
+  {
+    RaycastHit _hit;
 
     if (Physics.Raycast(from, direction, out _hit, distance, 1 << layer))
     {
       Debug.DrawLine(from, _hit.point, Color.yellow, 2f);
-      return _hit.point;
     }
-    return Vector2.one * Mathf.Infinity;
+    else
+    {
+      Debug.DrawLine(from, from + (direction * distance), Color.magenta, 2f);
+    }
+
+    return _hit;
+  }
+
+  static public RaycastHit2D getRaycastRay(Vector2 from, Vector2 direction, float distance, int layer)
+  {
+    RaycastHit2D _hit;
+
+    _hit = Physics2D.Raycast(from, direction, distance, layer);
+    //Debug.Log(_hit.collider);
+
+    if (_hit.collider != null)
+    {
+      Debug.DrawLine(from, _hit.point, Color.yellow, 2f);
+    }
+    else
+    {
+      Debug.DrawLine(from, from + (direction * distance), Color.magenta, 2f);
+    }
+
+    return _hit;
   }
 
   static public Collider2D[] getColliders2D(Transform parent)
