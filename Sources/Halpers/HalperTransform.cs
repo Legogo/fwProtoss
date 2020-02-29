@@ -64,6 +64,12 @@ static public class HalperTransform {
     return path;
   }
 
+  static public void align(this Transform tr, Transform other)
+  {
+    tr.position = other.position;
+    tr.rotation = other.rotation;
+  }
+
   /// <summary>
   /// Permet de virer tout enfants et component (sauf le transform)
   /// </summary>
