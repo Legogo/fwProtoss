@@ -35,8 +35,9 @@ using UnityEngine.SceneManagement;
 
 namespace fwp.build
 {
-  using UnityEditor.Build.Reporting;
+#if UNITY_EDITOR
   using UnityEditor;
+  using UnityEditor.Build.Reporting;
 
   public class BuildHelperBase
   {
@@ -51,7 +52,7 @@ namespace fwp.build
 
     public BuildHelperBase(bool autorun = false, bool incVersion = true, bool openFolderOnSucess = false, DataBuildSettingsBridge paramData = null)
     {
-      
+
       //update data
       if (paramData != null) data = paramData;
       else data = getScriptableDataBuildSettings();
@@ -59,7 +60,7 @@ namespace fwp.build
       //if (data != null) applySettings(data.activeProfile);
 
       Debug.Log("starting build process");
-      
+
       auto_run = autorun;
       version_increment = incVersion;
       open_on_sucess = openFolderOnSucess;
@@ -68,7 +69,7 @@ namespace fwp.build
 
       process = preBuildProcess();
     }
-  
+
     /// <summary>
     /// update in editor
     /// </summary>
@@ -112,7 +113,7 @@ namespace fwp.build
       //buildPlayerOptions.scenes = new[] { "Assets/Scene1.unity", "Assets/Scene2.unity" };
       buildPlayerOptions.scenes = getScenePaths();
 
-    
+
       string path = getBuildPathFolder();
       if (!path.EndsWith("/")) path += "/";
 
@@ -120,7 +121,7 @@ namespace fwp.build
       path += "_" + VersionManager.getFormatedVersion('-'); // for android build
       path += "_" + PlayerSettings.Android.bundleVersionCode;
       path += "_" + HalperTime.getFullDate();
-       
+
       // [project]/build_path/build-name_version_build-number_fulldatetime
 
       if (!path.EndsWith(".apk")) path += ".apk";
@@ -128,7 +129,7 @@ namespace fwp.build
       Debug.Log("BuildHelper, saving build at : " + path);
 
       buildPlayerOptions.locationPathName = path;
-    
+
       //will setup android or ios based on unity build settings target platform
       buildPlayerOptions.target = EditorUserBuildSettings.activeBuildTarget;
 
@@ -147,7 +148,7 @@ namespace fwp.build
       //BuildPipeline.BuildPlayer(buildPlayerOptions);
 
       // https://docs.unity3d.com/ScriptReference/Build.Reporting.BuildSummary.html
-    
+
       BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
       BuildSummary summary = report.summary;
 
@@ -161,8 +162,9 @@ namespace fwp.build
         Debug.Log("Build failed");
       }
     }
-  
-    protected void onSuccess(BuildSummary summary, bool openFolder = false) {
+
+    protected void onSuccess(BuildSummary summary, bool openFolder = false)
+    {
 
       ulong bytes = summary.totalSize;
       ulong byteToMo = 1048576;
@@ -170,9 +172,9 @@ namespace fwp.build
       int size = (int)(bytes / byteToMo);
 
       Debug.Log("Build finished");
-      Debug.Log("  L version : <b>" + VersionManager.getFormatedVersion()+"</b>");
-      Debug.Log("  L result : " + summary.result+" | warnings : "+summary.totalWarnings+" | errors "+summary.totalErrors);
-      Debug.Log("  L platform : <b>"+summary.platform+"</b>");
+      Debug.Log("  L version : <b>" + VersionManager.getFormatedVersion() + "</b>");
+      Debug.Log("  L result : " + summary.result + " | warnings : " + summary.totalWarnings + " | errors " + summary.totalErrors);
+      Debug.Log("  L platform : <b>" + summary.platform + "</b>");
       Debug.Log("  L build time : " + summary.totalTime);
 
       switch (summary.result)
@@ -223,7 +225,7 @@ namespace fwp.build
 
     static protected string[] getScenePaths()
     {
-    
+
       List<string> sceneNames = new List<string>();
       int count = SceneManager.sceneCountInBuildSettings;
 
@@ -279,19 +281,19 @@ namespace fwp.build
       Debug.Log("~Globals~");
 
       data.version.applyCurrent(); // apply version
-      
+
       PlayerSettings.companyName = data.compagny_name;
       Debug.Log("  L companyName : " + PlayerSettings.companyName);
 
       //α,β,Ω
       string productName = data.product_name;
-      if(data.phase != BuildPhase.none && data.phase != BuildPhase.Ω)
+      if (data.phase != BuildPhase.none && data.phase != BuildPhase.Ω)
       {
-        productName += "("+data.phase+")";
+        productName += "(" + data.phase + ")";
       }
       PlayerSettings.productName = productName;
       Debug.Log("  L productName : " + PlayerSettings.productName);
-      
+
       PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, data.package_name);
       PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.iOS, data.package_name);
 
@@ -331,44 +333,18 @@ namespace fwp.build
 
     [MenuItem("Build/Build n Open")]
     public static void menu_build_open() { new BuildHelperBase(false, false, true); }
-  
+
     [MenuItem("Build/Build n Run (no-increment) %&x")]
     public static void menu_build_android() { new BuildHelperBase(true, false); }
 
     [MenuItem("Build/Build n Run (increment) %&c")]
     public static void menu_build_run_android() { new BuildHelperBase(true, true); }
 
-    
+
   }
 
 
 
-
+#endif
 }
 
-
-
-
-/*
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
-
-public class Builder : BuildHelper {
-
-  public Builder(bool run, bool inc) : base(run, inc)
-  { }
-
-  public override string getBuildName()
-  {
-    return "workingTitle";
-  }
-
-  public override string getBuildPathFolder()
-  {
-    return "Build/";
-  }
-
-}
-*/

@@ -15,7 +15,8 @@ public class DataBuildSettingVersion : ScriptableObject
   [Header("version")]
   public string version = "0.0.1";
   public int buildNumber = 1;
-  
+
+#if UNITY_EDITOR
   /// <summary>
   /// override and apply
   /// </summary>
@@ -56,33 +57,6 @@ public class DataBuildSettingVersion : ScriptableObject
     apply(getDataVersionInts(), buildNumber);
   }
 
-  /// <summary>
-  /// x.y.z
-  /// </summary>
-  /// <returns></returns>
-  public string getDataVersion()
-  {
-    //return VersionManager.getFormatedVersion(version);
-    return version;
-  }
-
-  /// <summary>
-  /// int[] [x],[y],[z]
-  /// </summary>
-  /// <returns></returns>
-  public int[] getDataVersionInts()
-  {
-    List<string> list = new List<string>();
-    list.AddRange(version.Split(VersionManager.versionSeparator));
-
-    List<int> output = new List<int>();
-    for (int i = 0; i < list.Count; i++)
-    {
-      output.Add(int.Parse(list[i]));
-    }
-    return output.ToArray();
-  }
-  
   public void incrementMajor()
   {
     int[] v = getDataVersionInts();
@@ -134,6 +108,35 @@ public class DataBuildSettingVersion : ScriptableObject
     buildNumber++;
 
     apply(v, buildNumber);
+  }
+
+#endif
+
+  /// <summary>
+  /// x.y.z
+  /// </summary>
+  /// <returns></returns>
+  public string getDataVersion()
+  {
+    //return VersionManager.getFormatedVersion(version);
+    return version;
+  }
+
+  /// <summary>
+  /// int[] [x],[y],[z]
+  /// </summary>
+  /// <returns></returns>
+  public int[] getDataVersionInts()
+  {
+    List<string> list = new List<string>();
+    list.AddRange(version.Split(VersionManager.versionSeparator));
+
+    List<int> output = new List<int>();
+    for (int i = 0; i < list.Count; i++)
+    {
+      output.Add(int.Parse(list[i]));
+    }
+    return output.ToArray();
   }
   
 }

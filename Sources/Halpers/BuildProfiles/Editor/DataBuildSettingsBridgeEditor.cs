@@ -5,6 +5,7 @@ using UnityEditor;
 
 namespace fwp.build
 {
+#if UNITY_EDITOR
   [CustomEditor(typeof(DataBuildSettingsBridge))]
   public class DataBuildSettingsBridgeEditor : Editor
   {
@@ -35,7 +36,6 @@ namespace fwp.build
         }
       }
       
-      
     }
 
 
@@ -60,5 +60,5 @@ namespace fwp.build
       prof.version.incrementFix();
     }
   }
-
+#endif
 }
