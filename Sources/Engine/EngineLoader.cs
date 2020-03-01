@@ -143,6 +143,12 @@ public class EngineLoader : MonoBehaviour
     {
       string sceneName = sceneNames[i];
 
+      if(sceneName.Length <= 0)
+      {
+        Debug.LogWarning("sceneName is empty ?");
+        continue;
+      }
+
       //do not load the current active scene
       if (doActiveSceneNameContains(sceneName))
       {

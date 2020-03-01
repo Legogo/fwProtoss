@@ -36,7 +36,12 @@ public class VersionManager : MonoBehaviour
   public const char versionSeparator = '.';
 
   float timer = 4f;
-  
+
+  private void Awake()
+  {
+    DontDestroyOnLoad(gameObject);
+  }
+
   private void Update()
   {
     timer -= Time.deltaTime;

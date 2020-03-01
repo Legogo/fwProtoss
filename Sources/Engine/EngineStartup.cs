@@ -106,7 +106,8 @@ public class EngineStartup : MonoBehaviour
 
   static public string isContextEngineCompatible()
   {
-    string[] filters = new string[] { "#", "network" };
+    //string[] filters = new string[] { "#", "network" };
+    string[] filters = new string[] { "#" };
 
     for (int i = 0; i < filters.Length; i++)
     {
