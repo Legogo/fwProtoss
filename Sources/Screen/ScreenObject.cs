@@ -46,7 +46,6 @@ public class ScreenObject : EngineObject
 
     //generic behavior, won't work for non sticky screens
     //hide();
-
   }
 
   protected override void setupEarly()
@@ -66,7 +65,9 @@ public class ScreenObject : EngineObject
       }
     }
 
-    hide();
+    //can't do that
+    //loading will trigger show before steup realy
+    //hide();
   }
 
   public void subscribeToPressedEvents(Action down, Action up, Action left, Action right)
