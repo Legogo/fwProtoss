@@ -223,7 +223,7 @@ namespace fwp.build
       return data.activeProfile.build_path;
     }
 
-    static protected string[] getScenePaths()
+    static public string[] getScenePaths()
     {
 
       List<string> sceneNames = new List<string>();
