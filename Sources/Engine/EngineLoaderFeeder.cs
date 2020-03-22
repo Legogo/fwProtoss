@@ -12,6 +12,8 @@ using UnityEditor;
 
 public class EngineLoaderFeeder : EngineLoaderFeederBase
 {
+  public bool add_camera;
+
   [Header("prefix resource-")]
   public string[] resource_names;
 
@@ -34,6 +36,8 @@ public class EngineLoaderFeeder : EngineLoaderFeederBase
   override protected string[] solveNames()
   {
     base.solveNames();
+    
+    if (add_camera) addWithPrefix("resource-", "camera");
 
     addWithPrefix("resource-", resource_names);
     addWithPrefix("ui-", ui_names);
