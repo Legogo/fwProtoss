@@ -20,6 +20,7 @@ public class EditorContextMenuToolsGit : MonoBehaviour
     HalperEditor.ClearConsole();
 
     string fullPath = Environment.CurrentDirectory;
+    Debug.Log(fullPath);
 
     //Debug.Log("opening gits from "+ fullPath);
     
@@ -29,8 +30,37 @@ public class EditorContextMenuToolsGit : MonoBehaviour
       HalperNatives.startCmd("git", "--cd=" + fullPath);
     }
 
+    //Directory.Exists(fullPath)
+
+    string dirAssets = Path.Combine(fullPath, "Assets");
+    string dirLib = Path.Combine(dirAssets, "lib");
+
+    if(Directory.Exists(dirLib))
+    {
+
+      string[] dirs = Directory.GetDirectories(dirLib);
+      foreach(string dir in dirs)
+      {
+        if (Directory.Exists(dir))
+        {
+          //int lastIndex = file.LastIndexOf('\\');
+          //string nm = file.Substring(file.LastIndexOf('\\'));
+
+          if(pathHasGitFolder(dir))
+          {
+            openGitFolderByPath(dir);
+          }
+          
+          //nm = nm.Substring(1); // remove last \
+          //if (nm.StartsWith("fw")) nm = nm.Substring(2); // remove fw
+
+          //openGitFolderByName(nm);
+        }
+      }
+    }
+
     //Debug.Log("seaching for other gits");
-    openGitFolderByName("protoss");
+    //openGitFolderByName("protoss");
   }
   
   static public void openGitFolderByName(string containsFolderName)
@@ -39,21 +69,24 @@ public class EditorContextMenuToolsGit : MonoBehaviour
 
     //searcg for protoss git folder and open it
     string path = getFolderPathContainingGit(fullPath, containsFolderName);
-    
+
     //Debug.Log("protoss : " + path);
 
-    if (path.Length > 0)
-    {
-      Debug.Log("git with name "+containsFolderName+" found and opened");
-      HalperNatives.startCmd("git", "--cd=" + path);
-    }
+    openGitFolderByPath(path);
+  }
+
+  static public void openGitFolderByPath(string path)
+  {
+
+    if (path.Length <= 0) Debug.LogWarning("no path given ?");
     else
     {
-      Debug.Log("no git folder with name : "+ containsFolderName);
+      Debug.Log("exec git command in : "+path);
+      HalperNatives.startCmd("git", "--cd=" + path);
     }
 
   }
-  
+
   static public bool pathHasGitFolder(string basePath)
   {
     //Debug.Log(basePath);
@@ -82,9 +115,6 @@ public class EditorContextMenuToolsGit : MonoBehaviour
   /// <summary>
   /// recurcively search for git folder
   /// </summary>
-  /// <param name="basePath"></param>
-  /// <param name="folderName"></param>
-  /// <returns></returns>
   static private string getFolderPathContainingGit(string basePath, string folderName)
   {
     //Debug.Log("path : " + basePath);
