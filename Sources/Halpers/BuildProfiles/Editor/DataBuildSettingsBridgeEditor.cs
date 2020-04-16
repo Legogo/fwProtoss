@@ -54,10 +54,10 @@ namespace fwp.build
     }
 
     [MenuItem("Version/Incr major.minor.X")]
-    static public void incFix()
+    static public string incFix()
     {
       DataBuildSettingProfile prof = BuildHelperBase.getActiveProfile();
-      prof.version.incrementFix();
+      return prof.version.incrementFix();
     }
   }
 #endif

@@ -91,7 +91,7 @@ public class DataBuildSettingVersion : ScriptableObject
     apply(v, buildNumber);
   }
 
-  public void incrementFix()
+  public string incrementFix()
   {
     int[] v = getDataVersionInts();
 
@@ -108,6 +108,8 @@ public class DataBuildSettingVersion : ScriptableObject
     buildNumber++;
 
     apply(v, buildNumber);
+
+    return getDataVersion();
   }
 
 #endif

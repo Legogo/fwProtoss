@@ -159,7 +159,6 @@ namespace fwp
 
     virtual protected void endOfAttack()
     {
-
       StopAllCoroutines();
 
       //_character.animController.onAnimEnd -= ownerAnimationDone;
