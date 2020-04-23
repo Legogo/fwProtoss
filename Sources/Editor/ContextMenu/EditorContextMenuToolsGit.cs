@@ -8,36 +8,29 @@ using fwp.halper;
 public class EditorContextMenuToolsGit : MonoBehaviour
 {
   //[MenuItem("Assets/git !#&%g")]
-  [MenuItem("Assets/git &%g")]
-  static protected void openGit()
+
+  [MenuItem("Assets/git filtered &%g")]
+  static protected void openGitFiltered()
   {
-    //string fullPath = Path.Combine(Environment.CurrentDirectory, "/YourSubDirectory/yourprogram.exe");
-    //string fullPath = getFolderPathContainingGit(Environment.CurrentDirectory);
+    openGit(new string[] { "Jsx" });
+  }
 
-    //start a git cmd within project context (../Assets)
-    //Debug.Log("base root git folder : " + fullPath);
+  [MenuItem("Assets/git any")]
+  static protected void openGitAny()
+  {
+    openGit();
+  }
 
-    HalperEditor.ClearConsole();
+  static protected void openGit(string[] filter = null)
+  {
+    openBaseGitFolder();
 
     string fullPath = Environment.CurrentDirectory;
-    Debug.Log(fullPath);
-
-    //Debug.Log("opening gits from "+ fullPath);
-    
-    if (pathHasGitFolder(fullPath))
-    {
-      Debug.Log("current path has git folder : opening");
-      HalperNatives.startCmd("git", "--cd=" + fullPath);
-    }
-
-    //Directory.Exists(fullPath)
-
     string dirAssets = Path.Combine(fullPath, "Assets");
     string dirLib = Path.Combine(dirAssets, "lib");
 
-    if(Directory.Exists(dirLib))
+    if (Directory.Exists(dirLib))
     {
-
       string[] dirs = Directory.GetDirectories(dirLib);
       foreach(string dir in dirs)
       {
@@ -48,7 +41,21 @@ public class EditorContextMenuToolsGit : MonoBehaviour
 
           if(pathHasGitFolder(dir))
           {
-            openGitFolderByPath(dir);
+            bool open = true;
+
+            for (int i = 0; i < filter.Length; i++)
+            {
+              if(dir.Contains(filter[i]))
+              {
+                open = false;
+              }
+            }
+            
+            if(open)
+            {
+              openGitFolderByPath(dir);
+            }
+
           }
           
           //nm = nm.Substring(1); // remove last \
@@ -63,6 +70,23 @@ public class EditorContextMenuToolsGit : MonoBehaviour
     //openGitFolderByName("protoss");
   }
   
+  static protected void openBaseGitFolder()
+  {
+    HalperEditor.ClearConsole();
+
+    string fullPath = Environment.CurrentDirectory;
+    Debug.Log(fullPath);
+
+    if (pathHasGitFolder(fullPath))
+    {
+      Debug.Log("current path has git folder : opening");
+      HalperNatives.startCmd("git", "--cd=" + fullPath);
+    }
+
+    //Directory.Exists(fullPath)
+
+  }
+
   static public void openGitFolderByName(string containsFolderName)
   {
     string fullPath = Environment.CurrentDirectory;

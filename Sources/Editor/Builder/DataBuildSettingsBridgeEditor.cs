@@ -19,22 +19,24 @@ namespace fwp.build
 
       if (GUILayout.Button("apply all settings"))
       {
-        handle.activeScenes.apply();
-        BuildHelperBase.applySettings();
+        Debug.LogWarning("not implem");
+        //handle.activeScenes.apply();
+        //BuildHelperBase.applySettings();
       }
 
       EditorGUILayout.Separator();
 
-      if(handle.profiles != null)
+      if(handle.availableScenesListing != null)
       {
-        for (int i = 0; i < handle.profiles.Length; i++)
+        for (int i = 0; i < handle.availableScenesListing.Length; i++)
         {
-          if (GUILayout.Button("apply " + handle.profiles[i].name))
+          if (GUILayout.Button("apply " + handle.availableScenesListing[i].name))
           {
-            handle.profiles[i].apply();
+            handle.availableScenesListing[i].apply();
           }
         }
       }
+      
       
     }
 
@@ -54,11 +56,13 @@ namespace fwp.build
     }
 
     [MenuItem("Version/Incr major.minor.X")]
-    static public string incFix()
+    static public void incFix()
     {
       DataBuildSettingProfile prof = BuildHelperBase.getActiveProfile();
-      return prof.version.incrementFix();
+      prof.version.incrementFix();
     }
   }
+
 #endif
+
 }

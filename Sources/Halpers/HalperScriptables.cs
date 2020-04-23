@@ -6,23 +6,29 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
-/*
-[CreateAssetMenu(menuName = "protoss/create DataClass", order = 100)]
-public class DataClass : ScriptableObject
+static public class HalperScriptables
 {
-}
-*/
-
-static public class HalperScriptables {
 
 #if UNITY_EDITOR
   static public T getScriptableObjectInEditor<T>(string nameEnd = "") where T : ScriptableObject
   {
-    string[] all = AssetDatabase.FindAssets("t:"+typeof(T).Name);
+    string nm = typeof(T).Name;
+    //Debug.Log(nm);
+
+    string[] all = AssetDatabase.FindAssets("t:"+nm);
+
+    if(all.Length <= 0)
+    {
+      Debug.LogWarning("no scriptable found for type " + nm);
+      return null;
+    }
+
     for (int i = 0; i < all.Length; i++)
     {
       Object obj = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(all[i]), typeof(T));
       T data = obj as T;
+
+      //Debug.Log(data);
 
       if (data == null) continue;
       if(nameEnd.Length > 0)
@@ -32,9 +38,10 @@ static public class HalperScriptables {
 
       return data;
     }
+
     Debug.LogWarning("can't locate scriptable of type " + typeof(T).Name + " (filter name ? " + nameEnd + ")");
     return null;
   }
-#endif
 
+#endif
 }

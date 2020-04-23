@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using System.Diagnostics;
 using System.IO;
 
 using UnityEngine.SceneManagement;
@@ -15,6 +14,7 @@ using UnityEditor;
 
 public class FwpBuilder
 {
+  /*
 #if UNITY_EDITOR
   string buildPath = "";
   string buildName = "";
@@ -36,6 +36,8 @@ public class FwpBuilder
   bool version_increment = false;
   bool open_on_sucess = false;
   bool dev_build = false;
+
+  public Action onDone;
 
   public FwpBuilder(bool devBuild = false, bool autorun = false, bool incVersion = true, bool openFolderOnSucess = false)
   {
@@ -167,10 +169,9 @@ public class FwpBuilder
 
     buildPath = Path.Combine(buildPath, buildName); // Build/chose_v
 
-    buildOptions.locationPathName = buildPath;
+    buildOptions.locationPathName = Path.Combine(buildPath, profile;
 
-    Debug.Log("BuildHelper, building ...");
-    Debug.Log(buildOptions.locationPathName);
+    Debug.Log("BuildHelper, building ... "+ buildOptions.locationPathName);
   }
 
   void solveBuildName(string baseName)
@@ -334,4 +335,6 @@ public class FwpBuilder
   static public string generateBuildsFolder() => generateOutputFolder(getBuildsFolderPath());
 
 #endif
+
+  */
 }
