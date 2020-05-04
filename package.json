@@ -1,8 +1,8 @@
 {
   "name": "com.andreberlemont.fwprotoss",
   "displayName": "AB Framework Protoss",
-  "version": "0.1.2",
-  "unity": "2018.3",
+  "version": "0.1.12",
+  "unity": "2019",
   "description": "framework of basic tools to make a game prototype",
   "license":"MIT",
 
