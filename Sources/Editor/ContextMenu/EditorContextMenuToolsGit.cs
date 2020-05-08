@@ -43,15 +43,18 @@ public class EditorContextMenuToolsGit : MonoBehaviour
           {
             bool open = true;
 
-            for (int i = 0; i < filter.Length; i++)
+            if(filter != null)
             {
-              if(dir.Contains(filter[i]))
+              for (int i = 0; i < filter.Length; i++)
               {
-                open = false;
+                if (dir.Contains(filter[i]))
+                {
+                  open = false;
+                }
               }
             }
-            
-            if(open)
+
+            if (open)
             {
               openGitFolderByPath(dir);
             }
