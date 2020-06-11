@@ -68,6 +68,8 @@ static public class HalperTransform {
   {
     tr.position = other.position;
     tr.rotation = other.rotation;
+
+    //Debug.Log(tr + " | " + other);
   }
 
   /// <summary>
