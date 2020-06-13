@@ -46,7 +46,7 @@ public class ScreenObject : EngineObject
 
     //generic behavior, won't work for non sticky screens
     //hide();
-    show();
+    //show();
   }
 
   protected override void setupEarly()
