@@ -7,7 +7,8 @@ using UnityEngine.Video;
 /// at the end of the video it will be asked to loop at a specific frame
 /// </summary>
 
-public class VideoPlayerLoop : VideoPlayerController {
+public class VideoPlayerLoop : VideoPlayerController
+{
 
   public int[] loopAtFrame;
 
@@ -15,9 +16,9 @@ public class VideoPlayerLoop : VideoPlayerController {
 
   public Action onVideoLoopFirstTime;
 
-  protected override void build()
+  protected override void Awake()
   {
-    base.build();
+    base.Awake();
 
     if(!videoPlayer.isLooping)
     {

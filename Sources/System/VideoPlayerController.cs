@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
+using halper.visibility;
 
-public class VideoPlayerController : EngineObject {
+public class VideoPlayerController : MonoBehaviour
+{
 
   public enum VideoState { IDLE, PLAY, STOP, SPAWN, PAUSED, END };
 
   public VideoClip[] clips;
 
-  protected MeshRenderer meshCanvas;
+  HelperVisibleMesh vMesh;
+
   public VideoPlayer videoPlayer;
   protected VideoState _state;
 
@@ -28,30 +31,28 @@ public class VideoPlayerController : EngineObject {
   protected long frameHead = 0;
   protected long lastFrame = 0;
 
-  protected override void build()
+  virtual protected void Awake()
   {
-    base.build();
-
-    //Debug.Log("build");
-
+    
     videoPlayer = GetComponent<VideoPlayer>();
     if (videoPlayer == null) Debug.LogError("no video player for " + name+" ?", transform);
 
     if(clips != null && clips.Length > 9) videoPlayer.clip = clips[0];
 
-    meshCanvas = transform.GetComponentInChildren<MeshRenderer>();
-    if (meshCanvas == null) Debug.LogError("no mesh canvas ?");
-    else Debug.Log(meshCanvas);
+    vMesh = (HelperVisibleMesh)HelperVisible.createVisibility(this, VisibilityMode.MESH);
 
-    videoPlayer.targetMaterialRenderer = meshCanvas;
+    MeshRenderer render = vMesh.getRender();
+    videoPlayer.targetMaterialRenderer = render;
 
-    Vector3 lScale =  meshCanvas.transform.localScale;
+    Vector3 lScale = render.transform.localScale;
     lScale *= scale;
-    meshCanvas.transform.localScale = lScale;
+    render.transform.localScale = lScale;
 
     //videoPlayer.loopPointReached += onLoop;
     //meshCanvas = HalperComponentsGenerics.getComponentContext<MeshRenderer>(transform, "canvas");
   }
+
+
 
   virtual protected void onLoop(VideoPlayer vp)
   {
@@ -62,10 +63,9 @@ public class VideoPlayerController : EngineObject {
 
   }
 
-  protected override void setup()
+  private void Start()
   {
-    base.setup();
-    visibility.hide();
+    vMesh.hide();
   }
   
   public void setupClipAndPlay(int index)
@@ -99,11 +99,6 @@ public class VideoPlayerController : EngineObject {
     Debug.Log(getStamp()+"    subscribed at frame " + frame+" on video player : "+name, transform);
   }
 
-  protected override VisibilityMode getVisibilityType()
-  {
-    return VisibilityMode.MESH;
-  }
-
   public void playDefaultClip()
   {
     videoPlayer.clip = clips[0];
@@ -123,10 +118,10 @@ public class VideoPlayerController : EngineObject {
     videoPlayer.frame = startAtFrame;
     frameHead = startAtFrame;
     lastFrame = startAtFrame;
-    
+
     //videoPlayer.playbackSpeed = 1f;
 
-    meshCanvas.enabled = false;
+    vMesh.hide();
 
     Debug.Log(getStamp() + "video controller is now playing : " + videoPlayer.clip.name+" , head = "+frameHead, transform);
     Debug.Log("  L " + videoPlayer.clip.name + " " + videoPlayer.frame + " / " + videoPlayer.frameCount);
@@ -169,15 +164,13 @@ public class VideoPlayerController : EngineObject {
 
     if (hideOnStop)
     {
-      if (meshCanvas != null) meshCanvas.enabled = false;
+      vMesh.hide();
     }
 
   }
 
-  public override void updateEngine()
+  private void Update()
   {
-    base.updateEngine();
-
     checkCanvasVisibility();
     solveSkippable();
 
@@ -302,9 +295,9 @@ public class VideoPlayerController : EngineObject {
     if (_state != VideoState.PLAY) return;
 
     //display canvas if it was hidden during for loading
-    if (videoPlayer.frame > 2 && !meshCanvas.enabled)
+    if (videoPlayer.frame > 2 && !vMesh.isVisible())
     {
-      meshCanvas.enabled = true;
+      vMesh.show();
     }
 
   }
@@ -351,9 +344,9 @@ public class VideoPlayerController : EngineObject {
     _state = VideoState.PLAY;
     Debug.Log(getStamp() + videoPlayer.clip.name+ " | <b>eventPlay</b> | at frame : " + videoPlayer.frame+" | total frames : "+videoPlayer.frameCount, transform);
 
-    visibility.show();
+    vMesh.show();
 
-    log("event play " + videoPlayer.clip.name+"("+videoPlayer.frameCount+")");
+    Debug.Log("event play " + videoPlayer.clip.name+"("+videoPlayer.frameCount+")");
 
     if (onPlay != null) onPlay();
   }
@@ -363,7 +356,7 @@ public class VideoPlayerController : EngineObject {
     _state = VideoState.STOP;
     Debug.Log(getStamp() + videoPlayer.clip.name + " | eventStop", transform);
 
-    log("event stop");
+    Debug.Log("event stop");
   }
 
   virtual protected void solveLooping()
@@ -388,7 +381,7 @@ public class VideoPlayerController : EngineObject {
 
       videoPlayer.Pause();
 
-      log("end > pauseatend (player is playing ? "+videoPlayer.isPlaying);
+      Debug.Log("end > pauseatend (player is playing ? "+videoPlayer.isPlaying);
 
       _state = VideoState.PAUSED;
     }
@@ -402,15 +395,15 @@ public class VideoPlayerController : EngineObject {
     if (onVideoEnd != null) onVideoEnd();
   }
 
-  protected override string getStamp()
+  protected string getStamp()
   {
     //return base.getStamp();
     return "<color=yellow>fwp VideoPlayer</color> | ";
   }
 
-  public override string toString()
+  public string stringify()
   {
-    string ct = base.toString();
+    string ct = string.Empty;
 
     ct = "[video controller]";
     ct += "\n  L state : " + _state;

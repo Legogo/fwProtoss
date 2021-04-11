@@ -3,34 +3,39 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UiTextScale : UiAnimation {
-
-  protected Text txt;
-
-  int originalFontSize = 10;
-
-  public int fontSizeTarget = 10;
-  
-  protected override void build()
-  {
-    base.build();
-
-    txt = GetComponent<Text>();
-
-    originalFontSize = txt.fontSize;
-  }
-
-  protected override void updateAnimationProcess()
+namespace ui
+{
+  public class UiTextScale : UiAnimation
   {
 
-    txt.fontSize = Mathf.FloorToInt(Mathf.Lerp(originalFontSize, fontSizeTarget, getProgress()));
-  }
-  
-  override public void reset()
-  {
-    base.reset();
+    protected Text txt;
 
-    txt.fontSize = originalFontSize;
+    int originalFontSize = 10;
+
+    public int fontSizeTarget = 10;
+
+    protected override void created()
+    {
+      base.created();
+
+      txt = GetComponent<Text>();
+
+      originalFontSize = txt.fontSize;
+    }
+
+    protected override void updateAnimationProcess()
+    {
+
+      txt.fontSize = Mathf.FloorToInt(Mathf.Lerp(originalFontSize, fontSizeTarget, getProgress()));
+    }
+
+    override public void reset()
+    {
+      base.reset();
+
+      txt.fontSize = originalFontSize;
+    }
+
   }
 
 }

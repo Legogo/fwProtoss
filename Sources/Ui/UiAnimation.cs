@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using halper.visibility;
 
 /// <summary>
 /// 2017-10-30
@@ -18,146 +19,134 @@ using System;
 /// animUpdate
 /// animEnd
 /// clean
-
-
+/// 
 //canvas doit etre choppé après le build
 //dans le cas de l'utilisation de ResourceManager un element d'UI va etre mit enfant du canvas de l'objet qui est dupliqué
 //il est donc pas déjà enfant au build()
-
 /// </summary>
 
-abstract public class UiAnimation : EngineObject
+namespace ui
 {
-  protected float animTimer = 0f;
-  public Action onAnimationDone;
+  using halper.visibility;
 
-  //protected Canvas canvas; // it shouldn't manage it's own canvas
-  protected RectTransform rec;
-  public HelperVisibleUi hVisibility;
-
-  public bool playOnSetup = false;
-  public bool loop = false;
-  public bool destroyOnDone = true;
-
-  [Header("basic")]
-  public float animationLength = 1f;
-  public AnimationCurve curve = AnimationCurve.Linear(0f,0f,1f,1f);
-  
-  protected override void build()
+  abstract public class UiAnimation : UiObject, scaffolder.iScaffDebug
   {
-    base.build();
-    rec = GetComponent<RectTransform>();
+    protected float animTimer = 0f;
+    public Action onAnimationDone;
 
-    //somehow MUST BE in build() and not setup()
-    setFreeze(true);
-  }
-  
-  protected override VisibilityMode getVisibilityType()
-  {
-    return VisibilityMode.UI;
-  }
+    //protected Canvas canvas; // it shouldn't manage it's own canvas
+    protected RectTransform rec;
+    public HelperVisibleUi hVisibility;
 
-  protected override void setupEarly()
-  {
-    base.setupEarly();
+    public bool playOnSetup = false;
+    public bool loop = false;
+    public bool destroyOnDone = true;
 
-    hVisibility = visibility as HelperVisibleUi;
-
-    if (playOnSetup) play();
-  }
-
-  public UiAnimation play()
-  {
-    reset();
-    setFreeze(false);
-
-    animTimer = 0f;
-
-    animStart();
-
-    //Debug.Log(name + " play !");
-    //Debug.Log("  L " + animTimer + " / " + animationLength);
-
-    return this;
-  }
-  
-  virtual public void reset()
-  {
-    animTimer = 0f;
-    setFreeze(true);
-  }
-
-  sealed public override void updateEngine()
-  {
-    base.updateEngine();
+    [Header("basic")]
+    public float animationLength = 1f;
+    public AnimationCurve curve = AnimationCurve.Linear(0f, 0f, 1f, 1f);
     
-    if (isFreezed()) return;
-
-    if(animTimer < animationLength)
+    override protected void created()
     {
-      animTimer += Time.deltaTime;
+      base.created();
 
-      //Debug.Log(name + " , " + animTimer+" / "+animationLength, transform);
+      rec = GetComponent<RectTransform>();
 
-      if(animTimer >= animationLength)
+      if (playOnSetup) play();
+    }
+
+    public UiAnimation play()
+    {
+      reset();
+
+      animTimer = 0f;
+
+      animStart();
+
+      //Debug.Log(name + " play !");
+      //Debug.Log("  L " + animTimer + " / " + animationLength);
+
+      return this;
+    }
+
+    virtual public void reset()
+    {
+      animTimer = 0f;
+    }
+
+    private void Update()
+    {
+      
+      if (animTimer < animationLength)
       {
-        animTimer = animationLength;
+        animTimer += Time.deltaTime;
 
-        updateAnimationProcess(); // one last time to match end state
+        //Debug.Log(name + " , " + animTimer+" / "+animationLength, transform);
 
-        animEnd();
-        return;
+        if (animTimer >= animationLength)
+        {
+          animTimer = animationLength;
+
+          updateAnimationProcess(); // one last time to match end state
+
+          animEnd();
+          return;
+        }
+      }
+
+      updateAnimationProcess();
+    }
+
+    abstract protected void updateAnimationProcess();
+
+    protected float getProgress()
+    {
+      //return Mathf.Lerp(0f, animationLength, animTimer);
+      return curve.Evaluate(animTimer / animationLength);
+    }
+
+    virtual protected void animStart()
+    {
+      gameObject.SetActive(true);
+    }
+
+    virtual protected void animEnd()
+    {
+      //if (ownerCanvas != null) ownerCanvas.enabled = false;
+
+      if (onAnimationDone != null) onAnimationDone();
+
+      if (loop)
+      {
+        play();
+      }
+
+      if (destroyOnDone)
+      {
+        GameObject.Destroy(gameObject);
       }
     }
 
-    updateAnimationProcess();
-  }
-
-  abstract protected void updateAnimationProcess();
-  
-  protected float getProgress()
-  {
-    //return Mathf.Lerp(0f, animationLength, animTimer);
-    return curve.Evaluate(animTimer / animationLength);
-  }
-
-  virtual protected void animStart() {
-    gameObject.SetActive(true);
-  }
-
-  virtual protected void animEnd() {
-    //if (ownerCanvas != null) ownerCanvas.enabled = false;
-
-    if (onAnimationDone != null) onAnimationDone();
-
-    if (loop)
+    virtual public void clean()
     {
-      play();
+      gameObject.SetActive(false);
     }
 
-    if (destroyOnDone)
+    static public void killAll()
     {
-      GameObject.Destroy(gameObject);
+      UiAnimation[] anims = GameObject.FindObjectsOfType<UiAnimation>();
+      for (int i = 0; i < anims.Length; i++)
+      {
+        anims[i].reset();
+      }
+    }
+
+    public string stringify()
+    {
+      string ct = string.Empty;
+      ct += "\ntimer : " + animTimer + " / " + animationLength;
+      return ct;
     }
   }
 
-  virtual public void clean() {
-    gameObject.SetActive(false);
-  }
-
-  static public void killAll()
-  {
-    UiAnimation[] anims = GameObject.FindObjectsOfType<UiAnimation>();
-    for (int i = 0; i < anims.Length; i++)
-    {
-      anims[i].reset();
-    }
-  }
-
-  public override string toString()
-  {
-    string ct = base.toString();
-    ct += "\ntimer : " + animTimer + " / " + animationLength;
-    return ct;
-  }
 }

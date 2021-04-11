@@ -6,29 +6,28 @@ using UnityEngine;
 /// pour facilement changer l'image d'un <Image> basé sur une liste
 /// </summary>
 
-public class UiImageSwapper : EngineObject {
-
-  public Sprite[] frames;
-
-  protected override VisibilityMode getVisibilityType()
+namespace ui
+{
+  public class UiImageSwapper : UiObject
   {
-    return VisibilityMode.UI;
-  }
+    public Sprite[] frames;
 
-  public void swap(string endName)
-  {
-    for (int i = 0; i < frames.Length; i++)
+    public void swap(string endName)
     {
-      if(frames[i].name.EndsWith(endName))
+      for (int i = 0; i < frames.Length; i++)
       {
-        swap(i);
-        return;
+        if (frames[i].name.EndsWith(endName))
+        {
+          swap(i);
+          return;
+        }
       }
     }
-  }
-  public void swap(int frameIdx)
-  {
-    (visibility as HelperVisibleUi).setSymbol(frames[frameIdx]);
+    public void swap(int frameIdx)
+    {
+      visirUi.setSymbol(frames[frameIdx]);
+    }
+
   }
 
 }

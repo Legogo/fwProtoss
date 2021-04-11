@@ -7,30 +7,33 @@ using UnityEngine;
 /// feed data then call "play()"
 /// </summary>
 
-public class UiMovement : UiAnimation
+namespace ui
 {
-  public UiMotionData data;
-  
-  public void feed(UiMotionData newData)
+  public class UiMovement : UiAnimation
   {
-    data = newData;
+    public UiMotionData data;
+
+    public void feed(UiMotionData newData)
+    {
+      data = newData;
+    }
+
+    public override void reset()
+    {
+      base.reset();
+      rec.setPixelPosition(data.origin);
+    }
+
+    protected override void updateAnimationProcess()
+    {
+      rec.setPixelPosition(Vector2.Lerp(data.origin, data.destination, getProgress()));
+    }
   }
 
-  public override void reset()
+  [Serializable]
+  public struct UiMotionData
   {
-    base.reset();
-    rec.setPixelPosition(data.origin);
+    public Vector2 origin;
+    public Vector2 destination;
   }
-
-  protected override void updateAnimationProcess()
-  {
-    rec.setPixelPosition(Vector2.Lerp(data.origin, data.destination, getProgress()));
-  }
-}
-
-[Serializable]
-public struct UiMotionData
-{
-  public Vector2 origin;
-  public Vector2 destination;
 }
