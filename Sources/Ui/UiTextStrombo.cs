@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UiTextStrombo : EngineObject {
+public class UiTextStrombo : MonoBehaviour
+{
 
   protected Text txt;
 
@@ -12,17 +13,14 @@ public class UiTextStrombo : EngineObject {
 
   protected float frame = 0;
 
-  protected override void build()
+  private void Awake()
   {
-    base.build();
-
     txt = GetComponent<Text>();
   }
 
-  public override void updateEngine()
+  private void Update()
   {
-    base.updateEngine();
-
+    
     if(frame > 0)
     {
       frame--;

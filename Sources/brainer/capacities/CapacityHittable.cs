@@ -65,7 +65,7 @@ namespace brainer
     private bool checkHitPlayer(CapacityAttack attackerCapa)
     {
       //si le collider de l'épée de l'attacker overlap pas avec mon collider (corps)
-      if (!overlap(getCollider(), attackerCapa.getWeapon().getMainCollider())) return false;
+      if (!overlap(getCollider(), attackerCapa.getCollider())) return false;
 
       Debug.Log(attackerCapa.getBrain().owner.name + " --ATTACK--> " + brain.owner.name);
     

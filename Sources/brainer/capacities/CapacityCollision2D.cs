@@ -13,10 +13,9 @@ using UnityEngine;
 
 namespace brainer
 {
-
-  public class CapacityCollision : BrainerLogicCapacity, scaffolder.iScaffDebug
+  public class CapacityCollision2D : BrainerLogicCapacity, scaffolder.iScaffDebug
   {
-    [HideInInspector] public CapacityCollision[] all; // all other objects in scenes
+    [HideInInspector] public CapacityCollision2D[] all; // all other objects in scenes
     [HideInInspector] public BoxCollider2D boxCollider;
     [HideInInspector] public Rect recBound = new Rect(); // expressed in world coordinates
 
@@ -65,7 +64,7 @@ namespace brainer
       recBound = new Rect();
       //destinationBounds = new Rect();
 
-      all = GameObject.FindObjectsOfType<CapacityCollision>();
+      all = GameObject.FindObjectsOfType<CapacityCollision2D>();
     }
 
     private void resetCollisionInfo()
@@ -77,9 +76,6 @@ namespace brainer
 
     }
 
-
-
-
     /* called on moveStep of capacity movement */
     public Vector2 checkCollisionRaycasts(Vector2 step)
     {
@@ -87,13 +83,7 @@ namespace brainer
       frame_h_step = frame_v_step = Vector2.zero;
       frame_last_step = step;
 
-      solveBounds();
-
-      //Debug.Log(destinationBounds.xMin + " , " + destinationBounds.xMax);
-
-      //offset
-      //destinationBounds.x += transform.position.x;
-      //destinationBounds.y += transform.position.y;
+      solveCollisionBounds(ref recBound, boxCollider);
 
       resetCollisionInfo();
 
@@ -245,26 +235,19 @@ namespace brainer
       return touch;
     }
 
-    public Rect solveBounds()
+    static public void solveCollisionBounds(ref Rect bound, BoxCollider2D collider)
     {
-      //Debug.Log(boxCollider.offset);
+      Vector3 ext = collider.bounds.extents;
 
-      float x = transform.position.x + boxCollider.offset.x;
+      float x = collider.bounds.center.x + collider.offset.x;
       //float x = transform.position.x;
-      recBound.xMin = x - boxCollider.bounds.extents.x;
-      recBound.xMax = x + boxCollider.bounds.extents.x;
+      bound.xMin = x - ext.x;
+      bound.xMax = x + ext.x;
 
-
-      float y = transform.position.y + boxCollider.offset.y;
+      float y = collider.bounds.center.y + collider.offset.y;
       //float y = transform.position.y;
-      recBound.yMin = y + boxCollider.bounds.extents.y;
-      recBound.yMax = y - boxCollider.bounds.extents.y;
-
-      //Debug.DrawLine(new Vector3(recBound.xMin, recBound.yMin, 0f), new Vector3(recBound.xMax, recBound.yMax), Color.white, 3f);
-
-      //drawBox(recBound, Color.white);
-
-      return recBound;
+      bound.yMin = y + ext.y;
+      bound.yMax = y - ext.y;
     }
 
     public int GetCollisionDirection

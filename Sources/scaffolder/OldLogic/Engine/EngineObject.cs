@@ -9,6 +9,7 @@ using UnityEditor;
 
 using inputeer;
 
+[System.Obsolete()]
 abstract public class EngineObject : MonoBehaviour
 {
   protected EngineManager _eManager;

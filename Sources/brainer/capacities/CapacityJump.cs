@@ -8,8 +8,8 @@ namespace brainer.capacity
 {
   abstract public class CapacityJump : BrainerLogicCapacity
   {
-    protected CapacityCollision _collision;
-    protected CapacityMovement _move;
+    protected CapacityCollision2D _collision;
+    protected CapacityMovementPlatformer _move;
 
     bool grounded = false;
     bool jumping = false;
@@ -18,8 +18,8 @@ namespace brainer.capacity
 
     public override void setupCapacity()
     {
-      _collision = brain.getCapacity<CapacityCollision>();
-      _move = brain.getCapacity<CapacityMovement>();
+      _collision = brain.getCapacity<CapacityCollision2D>();
+      _move = brain.getCapacity<CapacityMovementPlatformer>();
     }
 
     abstract protected bool pressJump();

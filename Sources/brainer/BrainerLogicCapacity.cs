@@ -33,10 +33,8 @@ namespace brainer
     /// </summary>
     virtual public void restartCapacity() { }
 
-    virtual public void update() { }
     virtual public void updateCapacity() { }
-    virtual public void updateCapacityLate() { }
-
+    
     public bool isLocked() => lockers.Count > 0;
     public void lockCapacity(MonoBehaviour locker)
     {

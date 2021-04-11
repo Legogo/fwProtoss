@@ -44,9 +44,14 @@ public class LocalizationManager
   public const string folder_localization = "localization/";
   public const string path_resource_localization = "Resources/" + folder_localization;
 
-  static public LocalizationManager manager;
+  static protected LocalizationManager manager;
 
-  [RuntimeInitializeOnLoadMethod]
+  static public LocalizationManager get()
+  {
+    if (manager == null) create();
+    return manager;
+  }
+
   static public LocalizationManager create()
   {
     manager = new LocalizationManager();

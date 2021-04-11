@@ -9,7 +9,7 @@ namespace brainer
     private bool _isActive = true;
 
     protected GameObject _owner;
-    protected capacity.CapacityMovement _movement;
+    protected capacity.CapacityMovement2D _movement;
 
     protected bool _once = false; // only one frame
     protected bool _applied = false; // already applied ? (one frame)
@@ -31,7 +31,7 @@ namespace brainer
     public void assignOwner(GameObject newOwner)
     {
       _owner = newOwner;
-      _movement = _owner.GetComponent<capacity.CapacityMovement>();
+      _movement = _owner.GetComponent<capacity.CapacityMovement2D>();
     }
 
     public string Name

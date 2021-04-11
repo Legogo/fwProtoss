@@ -66,14 +66,6 @@ namespace brainer
       }
     }
 
-    virtual protected void updateLate()
-    {
-      for (int i = 0; i < capacities.Count; i++)
-      {
-        capacities[i].updateCapacityLate();
-      }
-    }
-
     public void subCapacity(BrainerLogicCapacity capa)
     {
       capacities.Add(capa);

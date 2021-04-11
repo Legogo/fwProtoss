@@ -1,94 +1,73 @@
 ﻿using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace brainer.capacity
 {
-  public class CapacityTopDownMovement : CapacityMovement
+  public class CapacityTopDownMovement : CapacityMovement2D
   {
-    protected Vector2 direction;
-    protected Vector2 solvedDirection; // [0,1]
+    public TopDownMovementData destinationOverride;
 
-    protected float progressiveSpeed = 0f;
-    protected float clampMagnitudeSpeed = 1f;
+    Vector2 _motion;
 
-    public float moveSpeed = 1f;
-    public bool useDefaultInput = true;
-
-    //InputKeyTopDown _inputLocal;
-    Vector2 move = Vector2.zero;
-
-    GameSpace _gameSpace;
-
-    public override void setupCapacity()
+    public void injectInputs(bool left, bool right, bool up, bool down, float speed = 1f)
     {
-      lastDirection = Vector2.right;
+      if (left) _motion.x = -1f;
+      else if (right) _motion.x = 1f;
 
-      setup(0f, 1f);
-
-      if (useDefaultInput)
-      {
-        //_inputLocal = _owner.input.get<InputKeyTopDown>();
-      }
+      if (up) _motion.y = 1f;
+      else if (down) _motion.y = -1f;
       
-      //Debug.Log(_inputLocal + " " + _owner.name, transform);
+      _motion.Normalize();
 
-      _gameSpace = GameSpace.get();
+      _motion *= speed;
     }
 
-    public CapacityTopDownMovement setup(float progressiveSpeed, float clampSpeed)
+    protected override Vector2 solveMotion()
     {
-      this.progressiveSpeed = progressiveSpeed;
-      this.clampMagnitudeSpeed = clampSpeed;
-      return this;
-    }
-
-    public override void updateCapacity()
-    {
-      //use of force and velocity ?
-      base.updateCapacity(); // this was disabled ... 
-
-      //direction.x = direction.y = 0f;
-
-      direction = getInputMovement();
-
-      //Debug.Log(direction);
-
-      if (progressiveSpeed == 0f)
+      if (destinationOverride != null)
       {
-        solvedDirection = direction;
-      }
-      else
-      {
-        solvedDirection.x = Mathf.MoveTowards(solvedDirection.x, direction.x, progressiveSpeed);
-        solvedDirection.y = Mathf.MoveTowards(solvedDirection.y, direction.y, progressiveSpeed);
-        solvedDirection = Vector2.ClampMagnitude(solvedDirection, clampMagnitudeSpeed);
+        return destinationOverride.getDestination() - (Vector2)_pivot.position;
       }
 
-      if (direction.sqrMagnitude > 0f) lastDirection = direction;
-
-      instantVelocity += solvedDirection * moveSpeed;
-      
-      //clamp in screen
-      //if (_gameSpace != null) brain.forceWithinBounds(_gameSpace.offsetSpace);
+      return _motion;
     }
-    
-    virtual protected Vector2 getInputMovement()
+  }
+
+
+  /// <summary>
+  /// un ordre de déplacement
+  /// AutoMove toward
+  /// </summary>
+  public class TopDownMovementData
+  {
+    int uid;
+    public Transform destinationTr;
+    public Vector3 destinationPt;
+
+    public TopDownMovementData()
     {
-      move.x = move.y = 0f;
-      
-      /*
-      if(_inputLocal != null)
-      {
-        if (_inputLocal.pressing_up()) move.y = 1f;
-        else if (_inputLocal.pressing_down()) move.y = -1f;
-
-        if (_inputLocal.pressing_left()) move.x = -1f;
-        else if (_inputLocal.pressing_right()) move.x = 1f;
-      }
-      */
-
-      return move;
+      uid = Random.Range(0, 999999);
     }
-    
+
+    /// <summary>
+    /// has a specific destination (not just a direction)
+    /// </summary>
+    /// <returns></returns>
+    public bool hasDestination()
+    {
+      if (destinationTr != null) return true;
+      if (destinationPt.sqrMagnitude != 0f) return true;
+      return false;
+    }
+
+    public Vector2 getDestination()
+    {
+      if (destinationTr != null) return destinationTr.position;
+      return destinationPt;
+    }
+
+    public int getUid() { return uid; }
   }
 
 }

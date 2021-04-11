@@ -16,12 +16,12 @@ namespace brainer.capacity
   {
     //protected InputKeyAim _inputAim;
 
-    protected CapacityMovement _move;
+    protected CapacityMovement2D _move;
     protected float _angle = 0f;
 
     public override void setupCapacity()
     {
-      _move = brain.getCapacity<CapacityMovement>();
+      _move = brain.getCapacity<CapacityMovement2D>();
     }
 
     public override void updateCapacity()
@@ -77,8 +77,6 @@ namespace brainer.capacity
 
       return angle;
     }
-
-    public override void updateCapacityLate() { }
 
   }
 

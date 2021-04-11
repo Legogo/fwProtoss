@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DebugDisplayContent : EngineObject {
+public class DebugDisplayContent : MonoBehaviour
+{
 
   public bool startVisible = true;
   protected bool visible = false;
@@ -19,9 +20,8 @@ public class DebugDisplayContent : EngineObject {
 
   private Rect view;
 
-  protected override void build()
+  private void Awake()
   {
-    base.build();
     
     view = new Rect(offset.x, offset.y, Screen.width, Screen.height);
 

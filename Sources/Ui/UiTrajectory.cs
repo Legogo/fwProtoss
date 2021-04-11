@@ -6,190 +6,190 @@ using UnityEngine;
 /// https://answers.unity.com/questions/606720/drawing-projectile-trajectory.html
 /// </summary>
 
-public class UiTrajectory : EngineObject {
-  
-  LineRenderer lineRender;
-  float gapFactor = 5f;
-
-  //Vector3 origin;
-  Vector3 pt = Vector3.zero;
-  List<Vector3> pts = new List<Vector3>();
-  Material mat;
-
-  //FthArena fthArena;
-
-  public LayerMask raycastLayer;
-
-  protected override void build()
+namespace ui
+{
+  public class UiTrajectory : UiObject
   {
-    base.build();
-    lineRender = gameObject.GetComponent<LineRenderer>();
-    mat = lineRender.material;
-    lineRender.material = mat;
-    //lineRender.positionCount = maxVerts;
-  }
 
-  protected override void setup()
-  {
-    base.setup();
-    //fthArena = ArenaManager.get<FthArena>();
-  }
+    LineRenderer lineRender;
+    float gapFactor = 5f;
 
-  public void show()
-  {
-    lineRender.enabled = true;
-  }
+    //Vector3 origin;
+    Vector3 pt = Vector3.zero;
+    List<Vector3> pts = new List<Vector3>();
+    Material mat;
 
-  public void hide()
-  {
-    lineRender.enabled = false;
-  }
-  
-  public void drawTrajectory(Vector3 startPosition, Vector3 startVelocity)
-  {
-    lineRender.transform.position = startPosition;
+    //FthArena fthArena;
 
-    solveAllPoints(startVelocity);
+    public LayerMask raycastLayer;
 
-    //Debug.Log(pts.Count);
-
-    lineRender.positionCount = pts.Count;
-    for (int i = 0; i < pts.Count; i++)
+    protected override void created()
     {
-      lineRender.SetPosition(i, pts[i]);
+      base.created();
+
+      lineRender = gameObject.GetComponent<LineRenderer>();
+      mat = lineRender.material;
+      lineRender.material = mat;
+      //lineRender.positionCount = maxVerts;
     }
-    
-    show();
-  }
 
-  public override void updateEngine()
-  {
-    base.updateEngine();
-
-    if (!lineRender.enabled) return;
-
-    Vector2 offset = mat.GetTextureOffset("_MainTex");
-    offset.x -= Time.deltaTime * 1.5f;
-    mat.SetTextureOffset("_MainTex", offset);
-  }
-
-  protected void solveAllPoints(Vector3 startVelocity)
-  {
-    //origin = startPosition;
-
-    Vector3 pos = Vector3.zero; // position are local not world based
-    Vector3 vel = startVelocity;
-    Vector3 grav = getGravityFactor();
-    Vector3 prev = pos;
-    //Vector3 diff;
-
-    float totalMagnitude = 0f;
-    float magn = 0f;
-
-    pt = pos;
-
-    pts.Clear();
-    pts.Add(pt);
-
-    int count = 0;
-
-    //lineRender.SetPosition(0, pos);
-
-    //Debug.Log("starting at " + pos);
-
-    int safe = 999;
-    bool foundEnd = false;
-    while (safe > 0 && !foundEnd)
+    public void show()
     {
-      //next velocity
-      vel = vel + grav * Time.fixedDeltaTime * gapFactor;
+      lineRender.enabled = true;
+    }
 
-      //next position based on new velocity
-      pos = pos + vel * Time.fixedDeltaTime * gapFactor;
+    public void hide()
+    {
+      lineRender.enabled = false;
+    }
 
-      //diff = pos - prev;
+    public void drawTrajectory(Vector3 startPosition, Vector3 startVelocity)
+    {
+      lineRender.transform.position = startPosition;
 
-      pts.Add(pos);
-      
-      Vector3 diff = pos - prev;
-      magn = diff.magnitude;
+      solveAllPoints(startVelocity);
 
-      totalMagnitude += magn;
+      //Debug.Log(pts.Count);
 
-      count++;
-
-      //seulement en descente
-      if (prev.y > pos.y)
+      lineRender.positionCount = pts.Count;
+      for (int i = 0; i < pts.Count; i++)
       {
-        foundEnd = isEndOfLine(prev, pos, magn);
-        //Debug.Log("eol : " + count + " at " + pos);
+        lineRender.SetPosition(i, pts[i]);
       }
-      
-      prev = pos;
 
-      safe--;
+      show();
     }
 
-    //mat.SetTextureOffset("_MainTex", new Vector2(totalMagnitude * 0.5f, 1f));
-
-    if (safe <= 0) Debug.LogError("safe!");
-
-  }
-
-  virtual protected bool isEndOfLine(Vector3 from, Vector3 to, float magn)
-  {
-    if (to.y < -40f)
+    protected override void updateUi()
     {
-      //Debug.Log("line went under world");
-      return true;
+      base.updateUi();
+
+      if (!lineRender.enabled) return;
+
+      Vector2 offset = mat.GetTextureOffset("_MainTex");
+      offset.x -= Time.deltaTime * 1.5f;
+      mat.SetTextureOffset("_MainTex", offset);
     }
-    
-    RaycastHit hit;
 
-    //Debug.DrawLine(from, to, Color.black, 0.5f);
-
-    //local -> global
-    from += transform.position;
-    to += transform.position;
-
-    //if (Physics.Raycast(point, Vector3.down, out hit, 100f, raycastLayer))
-    if (Physics.SphereCast(from, 0.05f, Vector3.down, out hit, magn, raycastLayer))
+    protected void solveAllPoints(Vector3 startVelocity)
     {
-      Debug.DrawLine(from, hit.point, Color.red, 0.5f);
-      //Debug.Log(from + " | pt : " + hit.point + " | distance : " + hit.distance);
-      return true;
+      //origin = startPosition;
+
+      Vector3 pos = Vector3.zero; // position are local not world based
+      Vector3 vel = startVelocity;
+      Vector3 grav = getGravityFactor();
+      Vector3 prev = pos;
+      //Vector3 diff;
+
+      float totalMagnitude = 0f;
+      float magn = 0f;
+
+      pt = pos;
+
+      pts.Clear();
+      pts.Add(pt);
+
+      int count = 0;
+
+      //lineRender.SetPosition(0, pos);
+
+      //Debug.Log("starting at " + pos);
+
+      int safe = 999;
+      bool foundEnd = false;
+      while (safe > 0 && !foundEnd)
+      {
+        //next velocity
+        vel = vel + grav * Time.fixedDeltaTime * gapFactor;
+
+        //next position based on new velocity
+        pos = pos + vel * Time.fixedDeltaTime * gapFactor;
+
+        //diff = pos - prev;
+
+        pts.Add(pos);
+
+        Vector3 diff = pos - prev;
+        magn = diff.magnitude;
+
+        totalMagnitude += magn;
+
+        count++;
+
+        //seulement en descente
+        if (prev.y > pos.y)
+        {
+          foundEnd = isEndOfLine(prev, pos, magn);
+          //Debug.Log("eol : " + count + " at " + pos);
+        }
+
+        prev = pos;
+
+        safe--;
+      }
+
+      //mat.SetTextureOffset("_MainTex", new Vector2(totalMagnitude * 0.5f, 1f));
+
+      if (safe <= 0) Debug.LogError("safe!");
+
     }
 
-    return false;
-  }
+    virtual protected bool isEndOfLine(Vector3 from, Vector3 to, float magn)
+    {
+      if (to.y < -40f)
+      {
+        //Debug.Log("line went under world");
+        return true;
+      }
 
-  protected RaycastHit raycastFromPosition(Vector3 pt)
-  {
-    
-    return default(RaycastHit);
-  }
+      RaycastHit hit;
 
-  virtual public void solveLastPoint(Vector3 pos)
-  { }
+      //Debug.DrawLine(from, to, Color.black, 0.5f);
 
-  virtual public Vector3 getGravityFactor()
-  {
-    return Physics.gravity;
-  }
+      //local -> global
+      from += transform.position;
+      to += transform.position;
+
+      //if (Physics.Raycast(point, Vector3.down, out hit, 100f, raycastLayer))
+      if (Physics.SphereCast(from, 0.05f, Vector3.down, out hit, magn, raycastLayer))
+      {
+        Debug.DrawLine(from, hit.point, Color.red, 0.5f);
+        //Debug.Log(from + " | pt : " + hit.point + " | distance : " + hit.distance);
+        return true;
+      }
+
+      return false;
+    }
+
+    protected RaycastHit raycastFromPosition(Vector3 pt)
+    {
+
+      return default(RaycastHit);
+    }
+
+    virtual public void solveLastPoint(Vector3 pos)
+    { }
+
+    virtual public Vector3 getGravityFactor()
+    {
+      return Physics.gravity;
+    }
 
 #if UNITY_EDITOR
-  private void OnDrawGizmos()
-  {
-    if (pts == null) return;
-    if (pts.Count <= 0) return;
-
-    for (int i = 0; i < pts.Count; i++)
+    private void OnDrawGizmos()
     {
-      Gizmos.DrawSphere(transform.position + pts[i], 0.1f);
-    }
+      if (pts == null) return;
+      if (pts.Count <= 0) return;
 
-    Debug.DrawLine(transform.position + pts[0], transform.position + pts[pts.Count - 1], Color.black);
-  }
+      for (int i = 0; i < pts.Count; i++)
+      {
+        Gizmos.DrawSphere(transform.position + pts[i], 0.1f);
+      }
+
+      Debug.DrawLine(transform.position + pts[0], transform.position + pts[pts.Count - 1], Color.black);
+    }
 #endif
+
+  }
 
 }
