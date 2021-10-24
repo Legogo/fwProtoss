@@ -4,67 +4,54 @@ using UnityEngine;
 
 namespace scaffolder
 {
-  static class Scaffolding
-  {
-    static public bool loading = false;
-  }
-
-  abstract public class ScaffGround : MonoBehaviour
-  {
-    private void Awake()
+    /// <summary>
+    /// manager
+    /// </summary>
+    static class ScaffoldingMgr
     {
-      build();
-    }
-    virtual protected void build()
-    { }
-
-    IEnumerator Start()
-    {
-      enabled = false;
-      
-      while (Scaffolding.loading) yield return null;
-
-      setupEarly();
-      yield return null;
-      setup();
-      yield return null;
-      setupLate();
-      yield return null;
-      enabled = true;
+        static public bool loading = false;
     }
 
-    virtual protected void setupEarly()
-    { }
-    virtual protected void setup()
-    { }
-    virtual protected void setupLate()
-    { }
-
-    private void OnDestroy()
+    /// <summary>
+    /// entered a level / arena
+    /// </summary>
+    public interface iScaffGameplay
     {
-      destroy();
+        void gpSetup();
+        void gpRestart();
+
+        void gpUpdate();
+        void gpUpdateLate();
+
+        void gpEnd();
     }
-    virtual protected void destroy()
-    { }
 
-  }
+    public interface iScaffMenu
+    {
+        void menuUpdate();
+    }
 
-  /// <summary>
-  /// entered a level / arena
-  /// </summary>
-  public interface iScaffIngame
-  {
-    void ingameSetup();
-    void ingameRestart();
-    
-    void ingameUpdate();
-    void ingameUpdateLate();
+    public interface iScaffDebug
+    {
+        string stringify();
+    }
 
-    void ingameEnd();
-  }
 
-  public interface iScaffDebug
-  {
-    string stringify();
-  }
+    /// <summary>
+    /// obscelete~
+    /// must be public, not great
+    /// </summary>
+    public interface ScaffoldingObject
+    {
+        abstract void build();
+
+        abstract bool isEngineerWorking();
+
+        abstract void setupEarly();
+        abstract void setup();
+        abstract void setupLate();
+
+        abstract void update();
+    }
+
 }

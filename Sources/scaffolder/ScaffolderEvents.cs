@@ -21,6 +21,7 @@ namespace scaffolder
       if (!events.ContainsKey(name)) events.Add(name, default(T));
       return events[name] as T;
     }
+
     /* if params are T on event creation */
     static public LogicEvent createEvent(string name, LogicEvent newEvent)
     {

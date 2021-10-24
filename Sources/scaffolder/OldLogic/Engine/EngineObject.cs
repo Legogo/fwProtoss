@@ -10,7 +10,7 @@ using UnityEditor;
 using inputeer;
 
 [System.Obsolete()]
-abstract public class EngineObject : MonoBehaviour
+abstract public class EngineObject : MonoBehaviour, iInputeerCandidate
 {
   protected EngineManager _eManager;
 
@@ -267,10 +267,6 @@ abstract public class EngineObject : MonoBehaviour
     if (logTarget == null) logTarget = transform;
     Debug.Log(GetType() + " | " + data, logTarget);
   }
-  
 
-
-
-
-
+    public MonoBehaviour getMono() => this;
 }
