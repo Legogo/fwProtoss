@@ -52,6 +52,7 @@ namespace brainer.capacity
             _pivot = brain.tr; // OWNER
 
             _collision = brain.getCapacity<CapacityCollision2D>();
+            if (_collision == null) Debug.LogWarning("movement has no data for collision");
         }
 
         public override void restartCapacity()
@@ -66,20 +67,33 @@ namespace brainer.capacity
         /// </summary>
         abstract protected Vector2 solveMotion();
 
-        public override void updateCapacity()
+        virtual protected void solveInputs()
+        { }
+
+        sealed public override void updateCapacity()
         {
             base.updateCapacity();
 
+            solveInputs();
+
             Vector2 inputMotion = solveMotion();
 
-            //Debug.Log(inputMotion);
+            //Debug.Log("motion ? "+inputMotion);
 
             motionInfo.direction = inputMotion.normalized;
             motionInfo.speed = inputMotion.magnitude;
 
+            //dat
             movementInfo.origin = _pivot.position;
-            movementInfo.destination = checkStepCollision(getMotionStep());
+
+            //actual step, using speed & dlt time
+            Vector2 step = getMotionStep();
+            movementInfo.destination = checkStepCollision(step);
+
+            //dat
             movementInfo.delta = movementInfo.destination - movementInfo.origin;
+
+            //Debug.Log(movementInfo.delta);
 
             _pivot.position = movementInfo.destination; // apply
         }
@@ -91,19 +105,24 @@ namespace brainer.capacity
 
         protected Vector2 checkStepCollision(Vector2 step)
         {
-            Vector2 originOfMovement = _pivot.position;
-            Vector2 nextPosition = originOfMovement;
+            Vector2 nextPosition;
 
             //cannot collide
             if (_collision != null && _collision.isCollidable())
             {
-                //Debug.Log(name + " , " + step);
+                Debug.Log("origin");Debug.Log(_pivot.position);
+
+                //returns the center of the collision box
                 nextPosition = _collision.checkCollisionRaycasts(step);
+
+                Debug.Log("next"); Debug.Log(nextPosition);
             }
             else
             {
-                nextPosition = originOfMovement + step;
+                nextPosition = (Vector2)_pivot.position + step;
             }
+
+            
 
             return nextPosition;
         }
