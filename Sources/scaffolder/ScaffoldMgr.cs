@@ -10,6 +10,8 @@ namespace scaffolder
     /// </summary>
     public class ScaffoldMgr : ScaffGround
     {
+        static public bool loading = true;
+
         static public ScaffoldMgr mgr;
 
         List<iScaffMenu> uiCandids = new List<iScaffMenu>(); // all menu/ui objects
@@ -22,6 +24,8 @@ namespace scaffolder
         {
             base.build();
             mgr = this;
+
+            Debug.Log(GetType() + " exists !");
         }
 
         public void sub(iScaffMenu elmt)

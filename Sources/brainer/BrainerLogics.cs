@@ -8,7 +8,7 @@ namespace brainer
     /// <summary>
     /// Le bridge qui gère et update les capacities
     /// </summary>
-    public abstract class BrainerLogics : scaffolder.iScaffGameplay
+    public abstract class BrainerLogics
     {
         //must manage coroutines
         public MonoBehaviour owner; // get
@@ -26,51 +26,41 @@ namespace brainer
             capacities.Clear();
             capacities.AddRange(owner.GetComponentsInChildren<BrainerLogicCapacity>());
 
-            //setup
-            for (int i = 0; i < capacities.Count; i++)
+            if (capacities.Count <= 0) Debug.LogWarning("brain on " + owner + " has no capacs ?");
+            else
             {
-                capacities[i].assign(this);
+                Debug.Log("brain of " + owner.name + " assign to x" + capacities.Count + " kappas");
+
+                //setup
+                for (int i = 0; i < capacities.Count; i++)
+                {
+                    capacities[i].assign(this);
+                }
             }
+            
         }
 
-        public void ingameRestart()
-        {
-            for (int i = 0; i < capacities.Count; i++) capacities[i].restartCapacity();
-        }
-
-        //public Transform getBrainTransform() => owner.transform;
-
-        /* after scenes load */
-        protected void setupCapacities()
-        {
-        }
-
-        public void subCapacity(BrainerLogicCapacity capa)
-        {
-            capacities.Add(capa);
-        }
-
-        public void unsubCapacity(BrainerLogicCapacity capa)
-        {
-            capacities.Remove(capa);
-        }
-
+        /// <summary>
+        /// les capacities sont ref quand le brain boot
+        /// </summary>
         public T getCapacity<T>() where T : BrainerLogicCapacity
         {
             return (T)capacities.FirstOrDefault(x => x != null && typeof(T).IsAssignableFrom(x.GetType()));
         }
 
-        virtual public void gpSetup()
+        virtual public void brainSetup()
         {
             //Debug.Log(GetType() + " , "+ name+" , setup capacs !");
             for (int i = 0; i < capacities.Count; i++) capacities[i].setupCapacityEarly();
             for (int i = 0; i < capacities.Count; i++) capacities[i].setupCapacity();
         }
 
-        virtual public void gpRestart()
-        { }
+        virtual public void brainRestart()
+        {
+            for (int i = 0; i < capacities.Count; i++) capacities[i].restartCapacity();
+        }
 
-        virtual public void gpUpdate()
+        virtual public void brainUpdate()
         {
             for (int i = 0; i < capacities.Count; i++)
             {
@@ -78,15 +68,7 @@ namespace brainer
             }
         }
 
-        virtual public void gpUpdateLate()
-        { }
-
-        virtual public void gpEnd()
-        {
-            clean();
-        }
-
-        virtual public void clean()
+        virtual public void brainClean()
         {
             for (int i = 0; i < capacities.Count; i++) capacities[i].clean();
         }

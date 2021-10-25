@@ -121,7 +121,7 @@ namespace halper.visibility
       {
         while (timer < duration)
         {
-          timer += GameTime.deltaTime;
+          timer += scaffolder.pocEngine.GameTime.deltaTime;
 
           float lerp = timer / duration;
           Debug.Log("  L fading progress : " + lerp + " to " + target);

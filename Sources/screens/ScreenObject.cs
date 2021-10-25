@@ -83,12 +83,12 @@ public class ScreenObject : scaffolder.ScaffGround, scaffolder.iScaffMenu, scaff
     {
         if (moveTimerDelay > 0f)
         {
-            moveTimerDelay -= GameTime.deltaTime;
+            moveTimerDelay -= scaffolder.pocEngine.GameTime.deltaTime;
         }
 
         if (notInteractiveTimer > 0f)
         {
-            notInteractiveTimer -= GameTime.deltaTime;
+            notInteractiveTimer -= scaffolder.pocEngine.GameTime.deltaTime;
             return;
         }
 

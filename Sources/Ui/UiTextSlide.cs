@@ -127,7 +127,7 @@ namespace ui
     /// <returns></returns>
     static public UiTextSlide create(string typeResource)
     {
-      return ResourceManager.getDuplicate<UiTextSlide>(typeResource);
+      return scaffolder.pocEngine.ResourceManager.getDuplicate<UiTextSlide>(typeResource);
       //GameObject obj = GameObject.Instantiate(Resources.Load(typeResource)) as GameObject;
       //return obj.GetComponent<UiTextSlide>();
     }

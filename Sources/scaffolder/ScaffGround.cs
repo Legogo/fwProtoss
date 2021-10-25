@@ -18,11 +18,15 @@ namespace scaffolder
         virtual protected void build()
         { }
 
-        IEnumerator Start()
+        private IEnumerator Start()
         {
+            Debug.Log(name + " is checking for loading ...");
+
             enabled = false;
 
-            while (ScaffoldingMgr.loading) yield return null;
+            while (scaffolder.ScaffoldMgr.loading) yield return null;
+
+            Debug.Log(name + " is done loading, setuping ...");
 
             setupEarly();
             yield return null;

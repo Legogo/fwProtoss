@@ -5,25 +5,17 @@ using UnityEngine;
 namespace scaffolder
 {
     /// <summary>
-    /// manager
-    /// </summary>
-    static class ScaffoldingMgr
-    {
-        static public bool loading = false;
-    }
-
-    /// <summary>
     /// entered a level / arena
     /// </summary>
     public interface iScaffGameplay
     {
-        void gpSetup();
-        void gpRestart();
+        void gpSetup(); // called when round is setuping
+        void gpRestart(); // called when round is ready and booting
 
-        void gpUpdate();
+        void gpUpdate(); // each frame after restart
         void gpUpdateLate();
 
-        void gpEnd();
+        void gpEnd(); // when round ends
     }
 
     public interface iScaffMenu

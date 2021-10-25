@@ -7,8 +7,6 @@ using UnityEngine;
 namespace brainer
 {
     /// <summary>
-    /// This is base for a brain capacity
-    /// 
     /// Some specific capacity that an LogicItem can have
     /// It's updated by it's owner
     /// capacities are mono to get param in inspector
@@ -19,10 +17,14 @@ namespace brainer
 
         List<MonoBehaviour> lockers = new List<MonoBehaviour>();
 
+        /// <summary>
+        /// this kappa is already sub to brain
+        /// that's how brain is calling this function
+        /// </summary>
         public void assign(BrainerLogics brain)
         {
             this.brain = brain;
-            this.brain.subCapacity(this);
+            //this.brain.subCapacity(this);
         }
 
         virtual public void setupCapacityEarly() { }
@@ -55,9 +57,7 @@ namespace brainer
         { }
 
         private void OnDestroy()
-        {
-            brain.unsubCapacity(this);
-        }
+        { }
 
         public bool hasSameBrain(BrainerLogics other) => brain == other;
         public BrainerLogics getBrain() => brain;
