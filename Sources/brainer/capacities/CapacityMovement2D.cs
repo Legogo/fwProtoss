@@ -110,12 +110,12 @@ namespace brainer.capacity
             //cannot collide
             if (_collision != null && _collision.isCollidable())
             {
-                Debug.Log("origin");Debug.Log(_pivot.position);
+                //Debug.Log("origin");Debug.Log(_pivot.position);
 
                 //returns the center of the collision box
                 nextPosition = _collision.checkCollisionRaycasts(step);
 
-                Debug.Log("next"); Debug.Log(nextPosition);
+                //Debug.Log("next"); Debug.Log(nextPosition);
             }
             else
             {

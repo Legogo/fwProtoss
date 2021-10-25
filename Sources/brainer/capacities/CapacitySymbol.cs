@@ -1,69 +1,72 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using halper.visibility;
 using System.Linq;
+using halper.visibility;
 
+/// <summary>
+/// bridge tools for animator & visibility
+/// </summary>
 abstract public class CapacitySymbol : brainer.BrainerLogicCapacity, iVisibilityCandidate
 {
-  abstract public halper.visibility.VisibilityMode getVisibilityMode();
+    abstract public VisibilityMode getVisibilityMode();
 
-  public HelperVisible visir;
+    public HelperVisible visir;
 
-  protected Animator _anim;
+    protected Animator _anim;
 
-  public override void setupCapacity()
-  {
-    base.setupCapacity();
+    public override void setupCapacity()
+    {
+        base.setupCapacity();
 
-    assignSymbolPivot(brain.owner.transform);
-  }
+        assignSymbolPivot(brain.owner.transform);
+    }
 
-  public void assignSymbolPivot(Transform pivot)
-  {
-    visir = HelperVisible.createVisibility(brain.owner, getVisibilityMode());
-    _anim = brain.owner.GetComponentsInChildren<Animator>().FirstOrDefault();
-  }
+    public void assignSymbolPivot(Transform pivot)
+    {
+        visir = HelperVisible.createVisibility(brain.owner, getVisibilityMode());
+        _anim = brain.owner.GetComponentsInChildren<Animator>().FirstOrDefault();
+    }
 
-  public override void updateCapacity()
-  {
-    base.updateCapacity();
+    public override void updateCapacity()
+    {
+        base.updateCapacity();
 
-    if(_anim != null) updateAnimation();
-  }
+        if (_anim != null) updateAnimation();
+    }
 
-  virtual protected void updateAnimation()
-  { }
+    virtual protected void updateAnimation()
+    { }
 
-  public void playAnimOfName(string animName)
-  {
-    //Debug.Log(name+" playing " + animName);
+    public void playAnimOfName(string animName)
+    {
+        //Debug.Log(name+" playing " + animName);
 
-    if (_anim == null) return;
+        if (_anim == null) return;
 
-    _anim.Play(animName);
-  }
+        _anim.Play(animName);
+    }
 
-  public bool isPlaying(string animName)
-  {
-    if (_anim == null) return false;
-    AnimatorStateInfo state = _anim.GetCurrentAnimatorStateInfo(0);
-    if (state.IsName(animName)) return true;
-    return false;
-  }
+    public bool isPlaying(string animName)
+    {
+        if (_anim == null) return false;
+        AnimatorStateInfo state = _anim.GetCurrentAnimatorStateInfo(0);
+        if (state.IsName(animName)) return true;
+        return false;
+    }
 
-  public void show()
-  {
-    visir.show();
-  }
+    public void show()
+    {
+        visir.show();
+    }
 
-  public void hide()
-  {
-    visir.hide();
-  }
+    public void hide()
+    {
+        visir.hide();
+    }
 
-  public Vector2 getFacingDirection()
-  {
-    return Vector2.zero;
-  }
+    public Vector2 getFacingDirection()
+    {
+        return Vector2.zero;
+    }
 }
