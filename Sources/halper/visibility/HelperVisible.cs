@@ -236,6 +236,8 @@ namespace halper.visibility
         {
             HelperVisible visibility = null;
 
+            Debug.Assert(mono != null, "need mono here");
+
             switch (mode)
             {
                 case VisibilityMode.SPRITE: visibility = new HelperVisibleSprite(mono); break;

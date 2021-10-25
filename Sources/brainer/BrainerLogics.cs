@@ -36,7 +36,16 @@ namespace brainer
         /// </summary>
         public T getCapacity<T>() where T : BrainerLogicCapacity
         {
-            return (T)capacities.FirstOrDefault(x => x != null && typeof(T).IsAssignableFrom(x.GetType()));
+            T tar = (T)capacities.FirstOrDefault(x => x != null && typeof(T).IsAssignableFrom(x.GetType()));
+            if (tar != null) return tar;
+
+            tar = tr.GetComponentInChildren<T>();
+            if(tar != null)
+            {
+                subKappa(tar);
+            }
+            
+            return tar;
         }
 
         virtual public void brainSetup()
