@@ -13,22 +13,26 @@ namespace brainer
     /// </summary>
     abstract public class BrainerLogicCapacity : MonoBehaviour
     {
-        protected BrainerLogics brain; // to fetch other capac
+        protected iBrainCandidate owner; // to fetch other capac
+        protected BrainerLogics brain;
 
         List<MonoBehaviour> lockers = new List<MonoBehaviour>();
 
-        /// <summary>
-        /// this kappa is already sub to brain
-        /// that's how brain is calling this function
-        /// </summary>
-        public void assign(BrainerLogics brain)
+        private void Awake()
         {
-            this.brain = brain;
-            //this.brain.subCapacity(this);
+            owner = GetComponentInParent<iBrainCandidate>();
+            Debug.Assert(owner != null);
+
+            brain = owner.getBrain();
+            Debug.Assert(brain != null);
+
+            brain.subKappa(this);
         }
 
         virtual public void setupCapacityEarly() { }
-        virtual public void setupCapacity() { }
+        virtual public void setupCapacity()
+        {
+        }
 
         /// <summary>
         /// reboot all params

@@ -13,26 +13,38 @@ using System;
 
 namespace inputeer
 {
-  public class InputKeyBridge
-  {
-    protected Dictionary<Type, InputKeySchematic> list = new Dictionary<Type, InputKeySchematic>();
-
-    public T get<T>() where T : InputKeySchematic
+    //[System.Obsolete()]
+    public class InputKeyBridge
     {
-      if (list.ContainsKey(typeof(T))) return list[typeof(T)] as T;
+        protected Dictionary<Type, InputKeySchematic> list = new Dictionary<Type, InputKeySchematic>();
 
-      T ik = (T)Activator.CreateInstance(typeof(T));
-      list.Add(typeof(T), ik as InputKeySchematic);
-      //Debug.Log("created : " + ik);
+        public T get<T>() where T : InputKeySchematic
+        {
+            if (list.ContainsKey(typeof(T))) return list[typeof(T)] as T;
 
-      return ik;
+            T ik = (T)Activator.CreateInstance(typeof(T));
+            list.Add(typeof(T), ik as InputKeySchematic);
+            
+            Debug.Log("{inputeer}::created : " + ik);
+
+            return ik;
+        }
+
+        public void remove<T>() where T : InputKeySchematic
+        {
+            if (!list.ContainsKey(typeof(T))) return;
+            list.Remove(typeof(T));
+        }
+
+        public void update()
+        {
+            //Debug.Log("{inputeer:bridge} update x" + list.Count);
+
+            foreach(var kp in list)
+            {
+                kp.Value.update();
+            }
+        }
+
     }
-
-    public void remove<T>() where T : InputKeySchematic
-    {
-      if (!list.ContainsKey(typeof(T))) return;
-      list.Remove(typeof(T));
-    }
-
-  }
 }

@@ -7,37 +7,28 @@ namespace brainer
 {
     /// <summary>
     /// Le bridge qui gère et update les capacities
+    /// Le lien entre un objet du jeu et ses capacités
     /// </summary>
-    public abstract class BrainerLogics
+    public class BrainerLogics : MonoBehaviour
     {
-        //must manage coroutines
-        public MonoBehaviour owner; // get
+        public iBrainCandidate owner;
         public Transform tr; // pivot ?
 
         //capacities will subscribe to this List on their constructor
         protected List<BrainerLogicCapacity> capacities = new List<BrainerLogicCapacity>();
 
-        public BrainerLogics(MonoBehaviour owner)
+        public void assign(iBrainCandidate owner)
         {
             this.owner = owner;
-            tr = owner.transform;
 
-            //fetch all capac
-            capacities.Clear();
-            capacities.AddRange(owner.GetComponentsInChildren<BrainerLogicCapacity>());
+            MonoBehaviour mono = owner as MonoBehaviour;
+            if (mono != null) tr = mono.transform;
+        }
 
-            if (capacities.Count <= 0) Debug.LogWarning("brain on " + owner + " has no capacs ?");
-            else
-            {
-                Debug.Log("brain of " + owner.name + " assign to x" + capacities.Count + " kappas");
-
-                //setup
-                for (int i = 0; i < capacities.Count; i++)
-                {
-                    capacities[i].assign(this);
-                }
-            }
-            
+        public void subKappa(BrainerLogicCapacity kappa)
+        {
+            if (capacities.IndexOf(kappa) > -1) return;
+            capacities.Add(kappa);
         }
 
         /// <summary>
@@ -64,6 +55,7 @@ namespace brainer
         {
             for (int i = 0; i < capacities.Count; i++)
             {
+                //if (!capacities[i].enabled) continue;
                 capacities[i].updateCapacity();
             }
         }
@@ -73,35 +65,10 @@ namespace brainer
             for (int i = 0; i < capacities.Count; i++) capacities[i].clean();
         }
 
-        /*
-        public void forceWithinBounds(Rect boundsClamp)
-        {
-          if (visibility == null) Debug.LogWarning("asking for bounds clamping but no visible module");
-
-          Rect localRec = visibility.getWorldBounds();
-          float gap = 0f;
-
-          //Debug.Log(localRec);
-          //Debug.Log(boundsClamp);
-
-          gap = boundsClamp.xMax - localRec.xMax;
-          if (gap < 0f) transform.position += Vector3.right * gap;
-
-          gap = boundsClamp.xMin - localRec.xMin;
-          //Debug.Log(boundsClamp.xMin + " - " + localRec.xMin + " = xmin " + gap);
-          if (gap > 0f) transform.position += Vector3.right * gap;
-
-          gap = boundsClamp.yMax - localRec.yMax;
-          //Debug.Log(boundsClamp.yMax+" - "+localRec.yMax+" = ymax " + gap);
-          if (gap < 0f) transform.position += Vector3.up * gap;
-
-          gap = boundsClamp.yMin - localRec.yMin;
-          //Debug.Log(boundsClamp.yMin + " - " + localRec.yMin + " = ymin " + gap);
-          if (gap > 0f) transform.position += Vector3.up * gap;
-
-        }
-        */
-
     }
 
+    public interface iBrainCandidate
+    {
+        BrainerLogics getBrain();
+    }
 }

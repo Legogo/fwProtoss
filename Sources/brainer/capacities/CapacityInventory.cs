@@ -47,7 +47,7 @@ namespace brainer.capacity
         addItem(ii);
       }
 
-      Debug.Log(brain.owner.name + "  added " + ii.getId() + " x" + ii.getQuantity(), transform);
+      //Debug.Log(brain.owner.name + "  added " + ii.getId() + " x" + ii.getQuantity(), transform);
 
       return ii;
     }

@@ -23,7 +23,7 @@ namespace halper.visibility
             if (_spriteRenderDefault == null) _spriteRenderDefault = _t.GetComponentInChildren<SpriteRenderer>();
             _spriteRenders = HalperComponentsGenerics.getComponents<SpriteRenderer>(_t);
 
-            Debug.Log(_t.name + " has x" + _spriteRenders.Length + " sprites", _t);
+            //Debug.Log(_t.name + " has x" + _spriteRenders.Length + " sprites", _t);
         }
 
         protected override Transform fetchCarrySymbol()

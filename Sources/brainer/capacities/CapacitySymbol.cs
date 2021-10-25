@@ -19,13 +19,13 @@ abstract public class CapacitySymbol : brainer.BrainerLogicCapacity, iVisibility
     {
         base.setupCapacity();
 
-        assignSymbolPivot(brain.owner.transform);
+        assignSymbolPivot(brain.tr);
     }
 
     public void assignSymbolPivot(Transform pivot)
     {
-        visir = HelperVisible.createVisibility(brain.owner, getVisibilityMode());
-        _anim = brain.owner.GetComponentsInChildren<Animator>().FirstOrDefault();
+        visir = HelperVisible.createVisibility(brain, getVisibilityMode());
+        _anim = brain.GetComponentsInChildren<Animator>().FirstOrDefault();
     }
 
     public override void updateCapacity()

@@ -47,7 +47,7 @@ namespace brainer
         public override void setupCapacity()
         {
             boxCollider = gameObject.GetComponent<BoxCollider2D>(); // default
-            if (boxCollider == null) boxCollider = brain.owner.GetComponentInChildren<BoxCollider2D>(); // first in owner
+            if (boxCollider == null) boxCollider = brain.GetComponentInChildren<BoxCollider2D>(); // first in owner
 
             if (boxCollider == null)
             {

@@ -49,7 +49,7 @@ namespace brainer.capacity
         {
             base.setupCapacity();
 
-            _pivot = brain.tr; // OWNER
+            _pivot = brain.tr;
 
             _collision = brain.getCapacity<CapacityCollision2D>();
             if (_collision == null) Debug.LogWarning("movement has no data for collision");
