@@ -18,36 +18,6 @@ static public class GlobalSettingsSystem {
   public const string ppref_fullscreen = "ppref_fullscreen";
   public const string ppref_resolution = "ppref_resolution";
   
-  static public void setupTraceLog()
-  {
-    EngineManager em = EngineManager.get();
-    if(em != null)
-    {
-      Application.SetStackTraceLogType(LogType.Log, em.normal);
-      Application.SetStackTraceLogType(LogType.Warning, em.warning);
-      Application.SetStackTraceLogType(LogType.Error, em.error);
-      
-      if(!Application.isEditor)
-      {
-        //preset
-        //do be too wordy on smartphones
-        if (em.mobile_logs_preset && Application.isMobilePlatform)
-        {
-          Application.SetStackTraceLogType(LogType.Log, StackTraceLogType.None);
-          Application.SetStackTraceLogType(LogType.Warning, StackTraceLogType.ScriptOnly);
-          Application.SetStackTraceLogType(LogType.Error, StackTraceLogType.ScriptOnly);
-        }
-      }
-    }
-
-    Debug.Log("trace logs setup");
-    Debug.Log("  L log  " + Application.GetStackTraceLogType(LogType.Log));
-    Debug.Log("  L warning  " + Application.GetStackTraceLogType(LogType.Warning));
-    Debug.Log("  L error  " + Application.GetStackTraceLogType(LogType.Error));
-
-    //GlobalSettingsVolume.setupVolumes();
-  }
-  
   static public string getSystemInfo() {
     string str = "<color=red>SYSTEM INFO</color>";
 
