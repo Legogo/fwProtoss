@@ -9,26 +9,34 @@ namespace brainer
     /// Le bridge qui gère et update les capacities
     /// Le lien entre un objet du jeu et ses capacités
     /// </summary>
-    public class BrainerLogics : MonoBehaviour
+    public class BrainerLogics
     {
         public iBrainCandidate owner;
+
+        public MonoBehaviour mono;
+        //public GameObject go;
         public Transform tr; // pivot ?
 
         //capacities will subscribe to this List on their constructor
         protected List<BrainerLogicCapacity> capacities = new List<BrainerLogicCapacity>();
 
-        public void assign(iBrainCandidate owner)
+        public BrainerLogics(iBrainCandidate owner)
         {
             this.owner = owner;
 
-            MonoBehaviour mono = owner as MonoBehaviour;
-            if (mono != null) tr = mono.transform;
+            mono = owner as MonoBehaviour;
+            Debug.Assert(mono != null, "nop");
+
+            tr = mono.transform;
         }
 
         public void subKappa(BrainerLogicCapacity kappa)
         {
             if (capacities.IndexOf(kappa) > -1) return;
+
             capacities.Add(kappa);
+
+            kappa.setupCapacity();
         }
 
         /// <summary>
@@ -39,39 +47,22 @@ namespace brainer
             T tar = (T)capacities.FirstOrDefault(x => x != null && typeof(T).IsAssignableFrom(x.GetType()));
             if (tar != null) return tar;
 
-            tar = tr.GetComponentInChildren<T>();
-            if(tar != null)
+            //Debug.Assert(tar != null, mono.name+" has no "+ typeof(T));
+
+            //force fetch ref
+            if(tar == null)
             {
-                subKappa(tar);
+                tar = tr.GetComponentInChildren<T>();
+
+                //do not sub this capa, it will be subbed when setuping in awake
             }
-            
+
             return tar;
-        }
-
-        virtual public void brainSetup()
-        {
-            //Debug.Log(GetType() + " , "+ name+" , setup capacs !");
-            for (int i = 0; i < capacities.Count; i++) capacities[i].setupCapacityEarly();
-            for (int i = 0; i < capacities.Count; i++) capacities[i].setupCapacity();
-        }
-
-        virtual public void brainRestart()
-        {
-            for (int i = 0; i < capacities.Count; i++) capacities[i].restartCapacity();
         }
 
         virtual public void brainUpdate()
         {
-            for (int i = 0; i < capacities.Count; i++)
-            {
-                //if (!capacities[i].enabled) continue;
-                capacities[i].updateCapacity();
-            }
-        }
-
-        virtual public void brainClean()
-        {
-            for (int i = 0; i < capacities.Count; i++) capacities[i].clean();
+            for (int i = 0; i < capacities.Count; i++) capacities[i].updateCapacity();
         }
 
     }

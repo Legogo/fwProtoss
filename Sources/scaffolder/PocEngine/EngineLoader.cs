@@ -121,7 +121,9 @@ namespace scaffolder.pocEngine
             while (queries.IndexOf(co) > -1) yield return null;
 
             //NEEDED
+#if poc
             EngineManager.create();
+#endif
 
             Scene sc = SceneManager.GetActiveScene();
             cleanScene(sc);

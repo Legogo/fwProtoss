@@ -3,10 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-
 using inputeer;
 
 namespace scaffolder.pocEngine
@@ -48,11 +44,12 @@ namespace scaffolder.pocEngine
             //si le manager recoit l'event de fin de loading après que Start soit exec
             //yield return null;
 
-            //usually objects startup their dependencies in the onEngineSceneLoaded
-            //so if the object as other monobehavior generated at the same time (same Resource object) engine needs a frame to have all dependencies finish their build() process
+//usually objects startup their dependencies in the onEngineSceneLoaded
+//so if the object as other monobehavior generated at the same time (same Resource object) engine needs a frame to have all dependencies finish their build() process
 
-            //Debug.Log(GetType() + " <b>" + name + "</b> START", gameObject);
+//Debug.Log(GetType() + " <b>" + name + "</b> START", gameObject);
 
+#if poc
             if (EngineLoader.compatibility)
             {
                 //attendre que le l'engine ai démarré
@@ -60,6 +57,7 @@ namespace scaffolder.pocEngine
                 while (EngineManager.get() == null) yield return null;
                 while (EngineManager.isLoading()) yield return null;
             }
+#endif
 
             //si le manager recoit l'event de fin de loading après que Start soit exec
             //il y aura un UPDATE de l'engine avant de repasser par ici et de setup l'objet
@@ -153,8 +151,10 @@ namespace scaffolder.pocEngine
         /* called by onEngineSceneLoaded, fetch something in dependencies that are now ready to be fetched */
         virtual protected void setup()
         {
+#if poc
             //link to engine to be updated
             EngineManager.subscribe(this); // to have updates functions working
+#endif
         }
 
         virtual protected void setupLate()
@@ -218,9 +218,11 @@ namespace scaffolder.pocEngine
 
         virtual protected void destroy()
         {
+#if poc
             //Debug.Log(name + " destroy() ", gameObject);
             //if (eos.IndexOf(this) > -1) eos.Remove(this);
             EngineManager.unsubscribe(this);
+#endif
         }
 
         /// <summary>

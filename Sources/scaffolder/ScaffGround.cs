@@ -10,16 +10,31 @@ namespace scaffolder
     /// </summary>
     abstract public class ScaffGround : MonoBehaviour
     {
+        bool _early;
+        bool _ready;
+
         private void Awake()
         {
             build();
         }
 
         virtual protected void build()
-        { }
+        { 
+            if(!ScaffoldMgr.loading)
+            {
+                setupEarly();
+            }
+        }
 
-        private IEnumerator Start()
+        void Start()
         {
+            StartCoroutine(processStart());
+        }
+
+        IEnumerator processStart()
+        {
+            Debug.Assert(_ready == false, "nop");
+
             Debug.Log(name + " is checking for loading ...");
 
             enabled = false;
@@ -28,7 +43,8 @@ namespace scaffolder
 
             Debug.Log(name + " is done loading, setuping ...");
 
-            setupEarly();
+            if(!_early) setupEarly();
+
             yield return null;
             setup();
             yield return null;
@@ -38,12 +54,25 @@ namespace scaffolder
             enabled = true;
         }
 
+        /// <summary>
+        /// if generated at runtime, called during build()
+        /// </summary>
         virtual protected void setupEarly()
-        { }
+        {
+            Debug.Assert(_early == false, "nop");
+            _early = true;
+        }
+
+        /// <summary>
+        /// will be called during Start() frame
+        /// </summary>
         virtual protected void setup()
         { }
+
         virtual protected void setupLate()
-        { }
+        {
+            _ready = true;
+        }
 
         private void OnDestroy()
         {

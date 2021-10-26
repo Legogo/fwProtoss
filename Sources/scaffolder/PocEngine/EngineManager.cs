@@ -12,7 +12,7 @@ namespace scaffolder.pocEngine
 {
     public class EngineManager : MonoBehaviour
     {
-
+#if poc
         static public void create()
         {
             EngineManager em = GameObject.FindObjectOfType<EngineManager>();
@@ -257,6 +257,8 @@ namespace scaffolder.pocEngine
             if (_manager == null) _manager = GameObject.FindObjectOfType<EngineManager>();
             return _manager;
         }
+#endif
+
     }
 
 }

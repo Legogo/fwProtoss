@@ -26,13 +26,20 @@ namespace brainer
             brain = owner.getBrain();
             Debug.Assert(brain != null);
 
+            buildCapacity();
+
+            //this will trigged setup
             brain.subKappa(this);
         }
 
-        virtual public void setupCapacityEarly() { }
+        /// <summary>
+        /// at this point brain is present and this kappa is NOT subbed yet
+        /// </summary>
+        virtual protected void buildCapacity()
+        { }
+
         virtual public void setupCapacity()
-        {
-        }
+        { }
 
         /// <summary>
         /// reboot all params

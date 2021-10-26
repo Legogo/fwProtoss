@@ -67,7 +67,7 @@ namespace brainer
       //si le collider de l'épée de l'attacker overlap pas avec mon collider (corps)
       if (!overlap(getCollider(), attackerCapa.getCollider())) return false;
 
-      Debug.Log(attackerCapa.getBrain().name + " --ATTACK--> " + brain.name);
+      Debug.Log(attackerCapa.getBrain().tr.name + " --ATTACK--> " + brain.tr.name);
     
       return true;
     }

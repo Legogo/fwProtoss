@@ -30,7 +30,7 @@ namespace brainer
       health -= pwr;
       if (health < 0f) health = 0f;
 
-      Debug.Log(brain.name + " took <b>" + pwr + " dmg</b> and now has <b>" + health + " hp</b>");
+      Debug.Log(brain.tr.name + " took <b>" + pwr + " dmg</b> and now has <b>" + health + " hp</b>");
 
     }
 

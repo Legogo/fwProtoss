@@ -37,9 +37,9 @@ namespace brainer
         private Vector2 frame_v_step;
         private Vector2 frame_last_step;
 
-        public override void setupCapacityEarly()
+        protected override void buildCapacity()
         {
-            base.setupCapacityEarly();
+            base.buildCapacity();
 
             _t = transform;
         }
@@ -47,7 +47,7 @@ namespace brainer
         public override void setupCapacity()
         {
             boxCollider = gameObject.GetComponent<BoxCollider2D>(); // default
-            if (boxCollider == null) boxCollider = brain.GetComponentInChildren<BoxCollider2D>(); // first in owner
+            if (boxCollider == null) boxCollider = brain.tr.GetComponentInChildren<BoxCollider2D>(); // first in owner
 
             if (boxCollider == null)
             {
