@@ -15,6 +15,14 @@ abstract public class CapacitySymbol : brainer.BrainerLogicCapacity, iVisibility
 
     protected Animator _anim;
 
+    protected override void buildCapacity()
+    {
+        base.buildCapacity();
+
+        Debug.Assert(owner != null, GetType() + ":" + name);
+        visir = HelperVisible.createVisibility(owner as MonoBehaviour, getVisibilityMode());
+    }
+
     public override void setupCapacity()
     {
         base.setupCapacity();
@@ -24,9 +32,8 @@ abstract public class CapacitySymbol : brainer.BrainerLogicCapacity, iVisibility
 
     public void assignSymbolPivot()
     {
-        Debug.Assert(owner != null, GetType() + ":" + name);
 
-        visir = HelperVisible.createVisibility(owner as MonoBehaviour, getVisibilityMode());
+        
         _anim = brain.tr.GetComponentsInChildren<Animator>().FirstOrDefault();
     }
 

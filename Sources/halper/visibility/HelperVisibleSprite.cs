@@ -122,6 +122,8 @@ namespace halper.visibility
                 //_spriteRenders[i].sortingLayerID = order;
                 //_spriteRenders[i].renderingLayerMask = (uint)order;
             }
+
+            //Debug.Log("updated zorder of " + _spriteRenders[0].transform.name + " to " + order);
         }
 
     }

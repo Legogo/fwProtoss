@@ -28,7 +28,11 @@ namespace brainer
 
             buildCapacity();
 
-            //this will trigged setup
+        }
+
+        private void Start()
+        {
+            //this will trigged setup (after build)
             brain.subKappa(this);
         }
 
