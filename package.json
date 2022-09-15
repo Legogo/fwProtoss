@@ -1,28 +1,20 @@
 {
-  "name": "com.andreberlemont.fwprotoss",
-  "displayName": "AB Framework Protoss",
-  "version": "0.2.1",
-  "unity": "2020",
+  "name": "com.ab.fwp.engine",
+  "version": "0.5.2",
+  "displayName": "ab:engine",
   "description": "framework of basic tools to make a game prototype",
-  "license":"MIT",
-
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mob-sakai/UpmGitExtension.git"
-  },
-  "src":"Assets/Lib/fwProtoss",
-
   "keywords": [
     "prototype",
     "framework"
   ],
-  "category":"Unity",
-
-  "author": {
-    "name": "André Berlemont",
-    "email": "andre.berlemont@gmail.com",
-    "url": "https://www.andreberlemont.com"
+  "category": "tools",
+  "repository": {
+    "url": "https://github.com/Legogo/fwProtoss.git",
+    "type": "git"
   },
-  "dependencies": {
+  "author": {
+    "name": "Andrei Berloni",
+    "email": "dev@andreberlemont.com",
+    "url": "http://www.andreberlemont.com"
   }
 }
