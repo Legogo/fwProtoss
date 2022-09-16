@@ -23,8 +23,8 @@ namespace fwp.engine.scaffolder.engineer
 
         static protected EngineStartup eStartupInstance = null;
 
-        [RuntimeInitializeOnLoadMethod]
-        static protected void create()
+        //[RuntimeInitializeOnLoadMethod]
+        static public void create()
         {
             string filter = isContextEngineCompatible();
 
