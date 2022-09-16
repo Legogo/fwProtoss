@@ -19,8 +19,8 @@ namespace fwp.engine.scaffolder
         }
 
         virtual protected void build()
-        { 
-            if(!ScaffoldMgr.loading)
+        {
+            if (!ScaffoldMgr.loading)
             {
                 setupEarly();
             }
@@ -28,6 +28,8 @@ namespace fwp.engine.scaffolder
 
         void Start()
         {
+            enabled = false;
+
             StartCoroutine(processStart());
         }
 
@@ -37,13 +39,11 @@ namespace fwp.engine.scaffolder
 
             Debug.Log(name + " is checking for loading ...");
 
-            enabled = false;
-
             while (scaffolder.ScaffoldMgr.loading) yield return null;
 
             Debug.Log(name + " is done loading, setuping ...");
 
-            if(!_early) setupEarly();
+            if (!_early) setupEarly();
 
             yield return null;
             setup();
