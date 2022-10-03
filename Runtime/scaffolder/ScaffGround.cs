@@ -8,7 +8,7 @@ namespace fwp.engine.scaffolder
     /// not meant to be updatable
     /// use classes from Ingame/Menu logic instead
     /// </summary>
-    abstract public class ScaffGround : MonoBehaviour
+    abstract public class ScaffGround : MonoBehaviour, iScaffLog
     {
         bool _early;
         bool _ready;
@@ -39,7 +39,7 @@ namespace fwp.engine.scaffolder
 
             Debug.Log(name + " is checking for loading ...");
 
-            while (scaffolder.ScaffoldMgr.loading) yield return null;
+            while (ScaffoldMgr.loading) yield return null;
 
             Debug.Log(name + " is done loading, setuping ...");
 
@@ -81,6 +81,22 @@ namespace fwp.engine.scaffolder
         virtual protected void destroy()
         { }
 
+        public string getStamp()
+        {
+            return GetType().ToString();
+        }
+
+        public string getColoredStamp(string hex)
+        {
+            return "<color=" + getStampColor() + ">" + getStamp() + "</color>";
+        }
+
+        virtual protected string getStampColor() => "gray";
+
+        virtual public string stringify()
+        {
+            return getStamp();
+        }
     }
 
 }

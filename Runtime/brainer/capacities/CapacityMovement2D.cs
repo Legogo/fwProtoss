@@ -13,7 +13,7 @@ namespace brainer.capacity
     /// basic 2D movement
     /// must NOT BE specific to platformer OR topdown
     /// </summary>
-    abstract public class CapacityMovement2D : BrainerLogicCapacity, iScaffDebug
+    abstract public class CapacityMovement2D : BrainerLogicCapacity, iScaffLog
     {
         public struct MovementData
         {
@@ -147,8 +147,10 @@ namespace brainer.capacity
 
         public float getHorizontalDirection() => motionInfo.direction.x;
 
+        public string getStamp() => GetType().ToString();
+
         protected string ct = string.Empty;
-        virtual public string stringify()
+        public string stringify()
         {
             ct = GetType().ToString();
 

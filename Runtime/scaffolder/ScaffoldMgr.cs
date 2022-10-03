@@ -14,8 +14,7 @@ namespace fwp.engine.scaffolder
 
         static public ScaffoldMgr mgr;
 
-        List<iScaffMenu> uiCandids = new List<iScaffMenu>(); // all menu/ui objects
-        List<iScaffGameplay> ingCandids = new List<iScaffGameplay>(); // all object gameplay
+        List<ScaffGroundUpdate> ingCandids = new List<ScaffGroundUpdate>(); // all object gameplay
 
         public enum IngameState { OFF, PRIMED, LIVE, END };
         IngameState state;
@@ -28,73 +27,26 @@ namespace fwp.engine.scaffolder
             Debug.Log(GetType() + " exists !");
         }
 
-        public void sub(iScaffMenu elmt)
+        public void sub(ScaffGroundUpdate candid)
         {
-            if (uiCandids.IndexOf(elmt) < 0) uiCandids.Add(elmt);
+            if (ingCandids.IndexOf(candid) < 0) ingCandids.Add(candid);
         }
-        public void unsub(iScaffMenu elmt)
+        public void unsub(ScaffGroundUpdate candid)
         {
-            uiCandids.Remove(elmt);
-        }
-
-        public void sub(iScaffGameplay elmt)
-        {
-            if (ingCandids.IndexOf(elmt) < 0) ingCandids.Add(elmt);
-        }
-        public void unsub(iScaffGameplay elmt)
-        {
-            ingCandids.Remove(elmt);
+            ingCandids.Remove(candid);
         }
 
         void Update()
         {
-            for (int i = 0; i < uiCandids.Count; i++)
-            {
-                uiCandids[i].menuUpdate();
-            }
-
             if (state != IngameState.LIVE) return;
 
             for (int i = 0; i < ingCandids.Count; i++)
             {
-                ingCandids[i].gpUpdate();
-            }
-
-            for (int i = 0; i < ingCandids.Count; i++)
-            {
-                ingCandids[i].gpUpdateLate();
+                if(ingCandids[i].canUpdate())
+                    ingCandids[i].update();
             }
         }
 
-        public void roundSetup()
-        {
-            for (int i = 0; i < ingCandids.Count; i++)
-            {
-                ingCandids[i].gpSetup();
-            }
-
-            state = IngameState.PRIMED;
-        }
-
-        public void roundRestart()
-        {
-            for (int i = 0; i < ingCandids.Count; i++)
-            {
-                ingCandids[i].gpRestart();
-            }
-
-            state = IngameState.LIVE;
-        }
-
-        public void roundEnd()
-        {
-            state = IngameState.END;
-
-            for (int i = 0; i < ingCandids.Count; i++)
-            {
-                ingCandids[i].gpEnd();
-            }
-        }
     }
 
 }

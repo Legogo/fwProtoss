@@ -12,7 +12,7 @@ namespace fwp.engine
 {
     using fwp.engine.scaffolder;
 
-    public class ScreenObject : ScaffGround, iScaffMenu, iScaffDebug
+    public class ScreenObject : ScaffGround, iScaffLog
     {
         public ScreensManager.ScreenType type;
 
@@ -87,12 +87,12 @@ namespace fwp.engine
         {
             if (moveTimerDelay > 0f)
             {
-                moveTimerDelay -= scaffolder.pocEngine.GameTime.deltaTime;
+                moveTimerDelay -= Time.deltaTime;
             }
 
             if (notInteractiveTimer > 0f)
             {
-                notInteractiveTimer -= scaffolder.pocEngine.GameTime.deltaTime;
+                notInteractiveTimer -= Time.deltaTime;
                 return;
             }
 
@@ -276,11 +276,6 @@ namespace fwp.engine
             ScreensManager.open(ScreensManager.ScreenNames.home);
         }
 
-        public string stringify()
-        {
-            return "\n  isVisible ? " + isVisible() + "\n  canvas count ? " + _canvas.Length;
-        }
-
         public string extractName()
         {
             string[] split = name.Split('_'); // (screen_xxx)
@@ -293,10 +288,11 @@ namespace fwp.engine
             return screen.getCanvas(canvasName);
         }
 
-        virtual protected string getStamp()
+        override public string stringify()
         {
-            return "<color=white>ScreenObject</color> | ";
+            return "\n  isVisible ? " + isVisible() + "\n  canvas count ? " + _canvas.Length;
         }
 
+        protected override string getStampColor() => "white";
     }
 }

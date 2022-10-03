@@ -9,6 +9,8 @@ using UnityEngine.UI;
 
 namespace fwp.engine.ui
 {
+    using fwp.engine.scaffolder.engineer;
+
     public class UiTextSlide : UiAnimation
     {
         protected Vector3 origin;
@@ -127,7 +129,7 @@ namespace fwp.engine.ui
         /// <returns></returns>
         static public UiTextSlide create(string typeResource)
         {
-            return scaffolder.pocEngine.ResourceManager.getDuplicate<UiTextSlide>(typeResource);
+            return ResourceManager.getDuplicate<UiTextSlide>(typeResource);
             //GameObject obj = GameObject.Instantiate(Resources.Load(typeResource)) as GameObject;
             //return obj.GetComponent<UiTextSlide>();
         }

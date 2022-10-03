@@ -52,7 +52,7 @@ namespace fwp.engine
                 last = obj;
             }
 
-            iScaffDebug[] list = getCandidates();
+            iScaffLog[] list = getCandidates();
             if (list.Length <= 0) return;
 
             List<string> newOptions = new List<string>();
@@ -72,13 +72,13 @@ namespace fwp.engine
             }
         }
 
-        iScaffDebug[] getCandidates()
+        iScaffLog[] getCandidates()
         {
             MonoBehaviour[] tmp = GameObject.FindObjectsOfType<MonoBehaviour>();
-            List<iScaffDebug> output = new List<iScaffDebug>();
+            List<iScaffLog> output = new List<iScaffLog>();
             for (int i = 0; i < tmp.Length; i++)
             {
-                iScaffDebug inst = tmp[i] as iScaffDebug;
+                iScaffLog inst = tmp[i] as iScaffLog;
                 if (inst != null) output.Add(inst);
             }
             return output.ToArray();

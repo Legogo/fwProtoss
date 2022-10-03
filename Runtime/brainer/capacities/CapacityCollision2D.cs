@@ -15,7 +15,7 @@ namespace brainer
 {
     using fwp.engine.scaffolder;
 
-    public class CapacityCollision2D : BrainerLogicCapacity, iScaffDebug
+    public class CapacityCollision2D : BrainerLogicCapacity, iScaffLog
     {
         [HideInInspector] public CapacityCollision2D[] all; // all other objects in scenes
         [HideInInspector] public BoxCollider2D boxCollider;
@@ -350,6 +350,8 @@ namespace brainer
         {
             return label + " ? " + val;
         }
+
+        public string getStamp() => GetType().ToString();
 
         public string stringify()
         {
