@@ -4,10 +4,14 @@ using UnityEngine;
 
 namespace fwp.engine.mod
 {
-    abstract public class ModBase : MonoBehaviour
+    using fwp.engine.scaffolder;
+
+    abstract public class ModBase : ScaffGroundUpdate
     {
-        private void Awake()
+        protected override void build()
         {
+            base.build();
+
             _manager = this;
         }
 

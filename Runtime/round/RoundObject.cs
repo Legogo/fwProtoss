@@ -8,6 +8,9 @@ namespace fwp.engine.round
 
     public class RoundObject : ScaffGroundUpdate
     {
-
+        virtual protected bool canUpdateRound()
+        {
+            return true;
+        }
     }
 }
