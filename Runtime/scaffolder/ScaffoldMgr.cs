@@ -10,43 +10,40 @@ namespace fwp.engine.scaffolder
     /// </summary>
     public class ScaffoldMgr : ScaffGround
     {
-        static public bool loading = true;
-
-        static public ScaffoldMgr mgr;
-
-        List<ScaffGroundUpdate> ingCandids = new List<ScaffGroundUpdate>(); // all object gameplay
-
-        public enum IngameState { OFF, PRIMED, LIVE, END };
-        IngameState state;
+        List<iScaffUpdate> ingCandids = new List<iScaffUpdate>(); // all object gameplay
 
         protected override void build()
         {
             base.build();
             mgr = this;
-
-            Debug.Log(GetType() + " exists !");
         }
 
-        public void sub(ScaffGroundUpdate candid)
+        public void sub(iScaffUpdate candid)
         {
             if (ingCandids.IndexOf(candid) < 0) ingCandids.Add(candid);
         }
-        public void unsub(ScaffGroundUpdate candid)
+        public void unsub(iScaffUpdate candid)
         {
             ingCandids.Remove(candid);
         }
 
         void Update()
         {
-            if (state != IngameState.LIVE) return;
-
             for (int i = 0; i < ingCandids.Count; i++)
             {
-                if(ingCandids[i].canUpdate())
-                    ingCandids[i].update();
+                ingCandids[i].update();
             }
         }
 
+        static ScaffoldMgr mgr;
+        static public ScaffoldMgr get()
+        {
+            if(mgr == null)
+            {
+                mgr = new GameObject("{scaffolder}").AddComponent<ScaffoldMgr>();
+            }
+            return mgr;
+        }
     }
 
 }

@@ -11,6 +11,10 @@ namespace fwp.engine.scaffolder.engineer
 
         const string OUTPUT_STAMP_NULL = "[null]";
 
+        static public string getStamp(Type typ)
+        {
+            return $"({Time.frameCount}){getStampColored(typ)}";
+        }
         static public string getStamp(MonoBehaviour mono)
         {
             return getStamp(mono);
@@ -27,7 +31,12 @@ namespace fwp.engine.scaffolder.engineer
                 return Time.frameCount + " ? " + OUTPUT_STAMP_NULL;
             }
 
-            return Time.frameCount + " <color=" + color + ">" + obj.GetType() + "</color> | <b>" + obj.name + "</b> | ";
+            return $"({Time.frameCount}){getStampColored(obj.GetType(), obj.name)}";
+        }
+
+        static public string getStampColored(Type typ, string color = "#ccc", string name = "")
+        {
+            return $"<color={color}>{typ.ToString()}</color>@{name}";
         }
 
         static public void log(string data, MonoBehaviour logTarget = null)

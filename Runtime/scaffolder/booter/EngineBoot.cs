@@ -5,7 +5,9 @@ using UnityEngine;
 namespace fwp.engine.scaffolder.engineer
 {
     /// <summary>
-    /// pour gérer les callbacks lié au lancemnet du moteur
+    /// element to override to react to booting process
+    /// 
+    /// create your own version and call boot somehow
     /// </summary>
     abstract public class EngineBoot : MonoBehaviour
     {
@@ -14,12 +16,23 @@ namespace fwp.engine.scaffolder.engineer
             DontDestroyOnLoad(gameObject);
         }
 
-        //abstract public void boot();
+        /// <summary>
+        /// entry point to trigger engine loading process
+        /// </summary>
+        virtual public void boot()
+        {
+            EngineStartup.create();
+        }
 
         /// <summary>
         /// this is called when engine is done loading basic stuff
         /// </summary>
         abstract public void loadingCompleted();
+
+        static public bool isLoading()
+        {
+            return EngineStartup.instanceExist();
+        }
     }
 
 }

@@ -10,35 +10,35 @@ using System;
 /// </summary>
 namespace fwp.engine.scaffolder
 {
-  static public class ScaffolderEvents
-  {
-
-    static public Dictionary<string, LogicEvent> events = new Dictionary<string, LogicEvent>();
-
-    /* basic declaration */
-    static public T createEvent<T>(string name) where T : LogicEvent
+    static public class ScaffolderEvents
     {
-      if (!events.ContainsKey(name)) events.Add(name, default(T));
-      return events[name] as T;
+
+        static public Dictionary<string, LogicEvent> events = new Dictionary<string, LogicEvent>();
+
+        /* basic declaration */
+        static public T createEvent<T>(string name) where T : LogicEvent
+        {
+            if (!events.ContainsKey(name)) events.Add(name, default(T));
+            return events[name] as T;
+        }
+
+        /* if params are T on event creation */
+        static public LogicEvent createEvent(string name, LogicEvent newEvent)
+        {
+            if (!events.ContainsKey(name)) events.Add(name, newEvent);
+            return events[name];
+        }
+
     }
 
-    /* if params are T on event creation */
-    static public LogicEvent createEvent(string name, LogicEvent newEvent)
+    public class LogicEvent
     {
-      if (!events.ContainsKey(name)) events.Add(name, newEvent);
-      return events[name];
+        public string name = "";
     }
 
-  }
-
-  public class LogicEvent
-  {
-    public string name = "";
-  }
-
-  public class LogicEventController : LogicEvent
-  {
-    public Action<int> onControllerConnected;
-    public Action<int> onControllerDisconnected;
-  }
+    public class LogicEventController : LogicEvent
+    {
+        public Action<int> onControllerConnected;
+        public Action<int> onControllerDisconnected;
+    }
 }

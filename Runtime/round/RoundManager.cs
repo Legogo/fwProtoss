@@ -17,8 +17,6 @@ namespace fwp.engine.round
             void roundLaunch();
             void roundUpdate();
             void roundEnd();
-
-            bool roundCanUpdate();
         }
 
         public enum eRoundStates { RESTART = 0, LIVE = 1, POST_LIVE = 2, END = 3 };
@@ -83,8 +81,7 @@ namespace fwp.engine.round
             {
                 for (int i = 0; i < candidates.Length; i++)
                 {
-                    if(candidates[i].roundCanUpdate())
-                        candidates[i].roundUpdate();
+                    candidates[i].roundUpdate();
                 }
             }
         }

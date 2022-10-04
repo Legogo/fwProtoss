@@ -4,9 +4,14 @@ using UnityEngine;
 
 namespace fwp.engine.scaffolder
 {
+    using fwp.engine.scaffolder.engineer;
+
     /// <summary>
     /// not meant to be updatable
     /// use classes from Ingame/Menu logic instead
+    /// 
+    /// if created at runtime, early() is done right away
+    /// setup() and late() will be done in the next frames
     /// </summary>
     abstract public class ScaffGround : MonoBehaviour, iScaffLog
     {
@@ -20,7 +25,7 @@ namespace fwp.engine.scaffolder
 
         virtual protected void build()
         {
-            if (!ScaffoldMgr.loading)
+            if (!EngineBoot.isLoading())
             {
                 setupEarly();
             }
@@ -35,23 +40,22 @@ namespace fwp.engine.scaffolder
 
         IEnumerator processStart()
         {
-            Debug.Assert(_ready == false, "nop");
+            Debug.Assert(!_ready, "nop");
 
-            Debug.Log(name + " is checking for loading ...");
+            //Debug.Log(name + " is checking for loading ...");
 
-            while (ScaffoldMgr.loading) yield return null;
+            while (EngineBoot.isLoading()) yield return null;
 
-            Debug.Log(name + " is done loading, setuping ...");
+            //Debug.Log(name + " is done loading, setuping ...");
 
+            // not twice
             if (!_early) setupEarly();
 
             yield return null;
             setup();
+
             yield return null;
             setupLate();
-            yield return null;
-
-            enabled = true;
         }
 
         /// <summary>
@@ -72,6 +76,8 @@ namespace fwp.engine.scaffolder
         virtual protected void setupLate()
         {
             _ready = true;
+
+            enabled = true;
         }
 
         private void OnDestroy()

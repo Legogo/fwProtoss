@@ -10,4 +10,9 @@ namespace fwp.engine.scaffolder
         string stringify();
     }
 
+    public interface iScaffUpdate
+    {
+        void update();
+    }
+
 }

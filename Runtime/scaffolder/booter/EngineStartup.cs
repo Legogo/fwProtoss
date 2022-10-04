@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 /// <summary>
-/// WON'T AUTO BOOT in some scenes (precheck and prefix ~#)
+/// WON'T AUTO BOOT
 /// 
 /// create
 /// load engine
@@ -26,26 +26,22 @@ namespace fwp.engine.scaffolder.engineer
         //[RuntimeInitializeOnLoadMethod]
         static public void create()
         {
-            string filter = isContextEngineCompatible();
-
-            if (filter.Length > 0)
+            if (eStartupInstance != null)
             {
-                Debug.LogWarning("won't load engine here : scene starts with prefix : <b>" + filter + "</b>");
-
-                //EngineManager.create();
-
+                Debug.LogWarning($"engineer startup is already running ?");
                 return;
             }
 
-            init();
-        }
+            compatibility = isContextEngineCompatible();
 
-        static public void init()
-        {
-            compatibility = true;
-            Debug.Log("{engineer} is ON");
+            if (!compatibility)
+            {
+                string filter = getContextEngineCompatibility();
+                Debug.LogWarning($"won't load engineer here : scene starts with prefix : <b>" + filter + "</b>");
+                return;
+            }
 
-            if (eStartupInstance != null) return;
+            Debug.Log($"engineer is ON ; creating startup object");
 
             eStartupInstance = new GameObject("[startup]").AddComponent<EngineStartup>();
             eStartupInstance.startupProcess();
@@ -58,6 +54,7 @@ namespace fwp.engine.scaffolder.engineer
 
         public void startupProcess()
         {
+            Debug.Assert(compatibility, $"{getStamp()} compatibility should be true here");
 
             //don't load engine on guide scenes (starting with ~)
             if (EngineLoader.doActiveSceneNameContains("~", true))
@@ -68,7 +65,7 @@ namespace fwp.engine.scaffolder.engineer
 
             if (!EngineLoader.hasAnyScenesInBuildSettings())
             {
-                Debug.Log(getStamp() + "can't load ?");
+                Debug.Log($"{getStamp()} can't load ?");
             }
 
             StartCoroutine(processStartup());
@@ -78,7 +75,7 @@ namespace fwp.engine.scaffolder.engineer
         {
             Coroutine co = null;
 
-            Debug.Log(getStamp() + " process startup, frame : " + Time.frameCount);
+            Debug.Log($"{getStamp()} process startup, frame : " + Time.frameCount);
 
             //leave a few frame for loading screen to be created and displayed
             //Scene are not flagged as loaded during frame 1
@@ -86,25 +83,13 @@ namespace fwp.engine.scaffolder.engineer
             yield return null;
             yield return null;
 
-            //EngineLoader.loadScene("screen-loading");
-            //ScreenLoading.create(false);
-            ScreenLoading.showLoadingScreen();
-
-            //Debug.Log(getStamp() + " waiting for loading screen");
-            //attendre l'écran de loading
-            //while (ScreenLoading.get() == null) yield return null;
-
-            //Debug.Log(getStamp() + " loading screen should be visible, frame : " + Time.frameCount);
-
             string engineSceneName = EngineLoader.prefixResource + "engine";
-
-            //Debug.Log(getStamp() + " triggering feeders ...");
 
             // then we load engine, to get the feeder script
             co = EngineLoader.loadScenes(new string[] { engineSceneName },
               delegate () { co = null; });
 
-            Debug.Log(getStamp() + " waiting for engine scene ...");
+            Debug.Log($"{getStamp()} waiting for engine scene ...");
 
             while (co != null) yield return null;
 
@@ -117,13 +102,13 @@ namespace fwp.engine.scaffolder.engineer
             Debug.Assert(engineScene.IsValid());
 
             while (!engineScene.isLoaded) yield return null;
-            yield return null;
 
-            Debug.Log(getStamp() + " triggering feeders ...");
+            Debug.Log($"{getStamp()} triggering feeders ...");
 
             // les feeders qui sont déjà présents quand on lance le runtime (pas par un load)
             EngineLoaderFeederBase[] feeders = GameObject.FindObjectsOfType<EngineLoaderFeederBase>();
-            Debug.Log(getStamp() + " " + feeders.Length + " feeders still running");
+            Debug.Log($"{getStamp()} {feeders.Length} feeders still running");
+
             for (int i = 0; i < feeders.Length; i++)
             {
                 //feeders[i].feed(gameObject.scene);
@@ -133,7 +118,7 @@ namespace fwp.engine.scaffolder.engineer
             //tant qu'on a des loaders qui tournent ...
             while (EngineLoader.areAnyLoadersRunning()) yield return null;
 
-            Debug.Log(getStamp() + " is done at frame " + Time.frameCount + ", removing gameobject");
+            Debug.Log($"{getStamp()} is done at frame " + Time.frameCount + ", removing gameobject");
 
             if (engineScene.rootCount <= 0)
             {
@@ -143,7 +128,7 @@ namespace fwp.engine.scaffolder.engineer
             EngineBoot booter = GameObject.FindObjectOfType<EngineBoot>();
             if(booter == null)
             {
-                Debug.LogWarning(getStamp() + " no booter found ?");
+                Debug.LogWarning($"{getStamp()} no booter found ?");
             }
             else
             {
@@ -152,18 +137,18 @@ namespace fwp.engine.scaffolder.engineer
 
             yield return null;
 
-            //temp
-            ScreenLoading.hideLoadingScreen();
-
-            yield return null;
-
             GameObject.Destroy(gameObject);
         }
 
-        static public string isContextEngineCompatible()
+        static public bool isContextEngineCompatible()
         {
-            string[] filters = new string[] { "~", "#", "network", "precheck" };
+            return getContextEngineCompatibility().Length <= 0;
+        }
 
+        static string[] filters = new string[] { "~", "#", "network", "precheck" };
+
+        static string getContextEngineCompatibility()
+        {
             for (int i = 0; i < filters.Length; i++)
             {
                 if (EngineLoader.doActiveSceneNameContains(filters[i], true))
@@ -172,10 +157,10 @@ namespace fwp.engine.scaffolder.engineer
                 }
             }
 
-            return "";
+            return string.Empty;
         }
 
-        string getStamp()
+        public string getStamp()
         {
             return "<color=#081365>" + GetType().ToString() + "</color>";
         }
