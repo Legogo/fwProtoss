@@ -2,14 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/*
- * Le ModBase manipule le RoundState pour communiquer avec les autres objets
- * */
-
 namespace fwp.engine.mod
 {
-    using fwp.engine.scaffolder;
-
     abstract public class ModBase : MonoBehaviour
     {
         private void Awake()
