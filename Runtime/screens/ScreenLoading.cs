@@ -7,7 +7,7 @@ using UnityEngine.UI;
 /// to call loading screen before everything else put <EngineLoadingScreenFeeder> in startup scene
 /// </summary>
 
-namespace fwp.engine
+namespace fwp.engine.screens
 {
     using fwp.engine.scaffolder.engineer;
     using fwp.halpers;

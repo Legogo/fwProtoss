@@ -10,6 +10,8 @@ namespace fwp.engine.scaffolder
     /// </summary>
     abstract public class ScaffGroundUpdate : ScaffGround, iScaffUpdate
     {
+        static ListUpdater<iScaffUpdate> _scaffUpdater;
+
         protected override void setupLate()
         {
             base.setupLate();
@@ -19,8 +21,10 @@ namespace fwp.engine.scaffolder
 
         protected void subUpdate(bool sub)
         {
-            if (sub) ScaffoldMgr.get().sub(this);
-            else ScaffoldMgr.get().unsub(this);
+            if (_scaffUpdater == null) _scaffUpdater = new ListUpdater<iScaffUpdate>();
+
+            if (sub) _scaffUpdater.sub(this);
+            else _scaffUpdater.unsub(this);
         }
 
         /// <summary>
@@ -30,14 +34,11 @@ namespace fwp.engine.scaffolder
         public void update()
         {
             if (!canUpdate()) return;
-            update(Time.deltaTime);
+            scaffUpdate(Time.deltaTime);
         }
 
-        virtual protected void update(float dt)
-        {
-
-        }
-
+        abstract protected void scaffUpdate(float dt);
+        
         virtual public bool canUpdate() => enabled;
     }
 }

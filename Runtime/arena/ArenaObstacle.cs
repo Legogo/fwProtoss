@@ -5,14 +5,16 @@ using System.Collections;
 /// to manage collision with gameplay entities
 /// </summary>
 
-namespace fwp.engine.arena
+namespace fwp.arena
 {
     public class ArenaObstacle : ArenaObject
     {
         public BoxCollider2D[] _colliders;
 
-        protected override void roundRestart()
+        public override void modRestarted()
         {
+            base.modRestarted();
+
             _colliders = transform.Find("collision").GetComponents<BoxCollider2D>();
         }
 

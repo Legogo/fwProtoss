@@ -10,9 +10,8 @@ namespace fwp.engine.scaffolder
         string stringify();
     }
 
-    public interface iScaffUpdate
+    public interface iScaffUpdate : iListCandidate
     {
-        void update();
     }
 
 }

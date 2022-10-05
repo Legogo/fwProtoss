@@ -6,7 +6,7 @@ using UnityEngine;
   for an object to receive collision events with arena obstacles
 */
 
-namespace fwp.engine.arena
+namespace fwp.arena
 {
     public interface iArenaGameplayEntity
     {

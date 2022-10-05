@@ -8,7 +8,7 @@ using UnityEngine.UI;
 /// updateVisible,updateNotVisible
 /// </summary>
 
-namespace fwp.engine
+namespace fwp.engine.screens
 {
     using fwp.engine.scaffolder;
 

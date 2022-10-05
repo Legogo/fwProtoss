@@ -80,14 +80,24 @@ namespace fwp.engine.scaffolder
             enabled = true;
         }
 
+        [ContextMenu("destroy")]
         private void OnDestroy()
         {
-            destroy();
+            onDestroy();
         }
-        virtual protected void destroy()
+
+        /// <summary>
+        /// only the component
+        /// </summary>
+        public void destroy()
+        {
+            GameObject.Destroy(this);
+        }
+
+        virtual protected void onDestroy()
         { }
 
-        public string getStamp()
+        virtual public string getStamp()
         {
             return GetType().ToString();
         }
@@ -103,6 +113,8 @@ namespace fwp.engine.scaffolder
         {
             return getStamp();
         }
+
+        public bool isReady() => _ready;
     }
 
 }

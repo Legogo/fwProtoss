@@ -6,7 +6,7 @@ using UnityEngine;
 /// to define spawns for gameplay entities
 /// </summary>
 
-namespace fwp.engine.arena
+namespace fwp.arena
 {
     public class ArenaSpawn : MonoBehaviour
     {

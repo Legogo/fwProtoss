@@ -3,17 +3,17 @@ using System.Collections.Generic;
 
 namespace fwp.engine.camera
 {
-    using fwp.engine.arena;
+    using fwp.arena;
     using fwp.engine.mod;
+
+    public interface iCameraTarget
+    {
+        bool isCameraTarget();
+        Vector3 getPosition();
+    }
 
     abstract public class CameraDynamicZoom : ArenaObject
     {
-        public interface iCameraTarget
-        {
-            bool isCameraTarget();
-            Vector3 getPosition();
-        }
-
         protected Camera cam;
 
         protected Vector3 mid = Vector3.zero;
@@ -41,12 +41,10 @@ namespace fwp.engine.camera
             if (cam == null) Debug.LogError("no cam");
         }
 
-        protected override void roundRestart()
+        public override void modRestarted()
         {
-            event_recountTargets();
-        }
-        protected override void roundLaunch()
-        {
+            base.modRestarted();
+
             event_recountTargets();
         }
 
@@ -63,10 +61,9 @@ namespace fwp.engine.camera
             //for (int i = 0; i < targets.Length; i++) Debug.Log("  " + targets[i].transform.name, targets[i].transform);
         }
 
-        protected override void roundUpdate()
+        protected override void arenaUpdate()
         {
-            //solve points at camera corners
-            //ScreenLimits.resize();
+            base.arenaUpdate();
 
             if (targets == null) return;
 

@@ -6,27 +6,86 @@ namespace fwp.engine.mod
 {
     using fwp.engine.scaffolder;
 
-    abstract public class ModBase : ScaffGroundUpdate
+    /// <summary>
+    /// state owner
+    /// this auto update after launch() is called
+    /// </summary>
+    public class ModBase : ScaffGround
     {
-        protected override void build()
+        public interface ModObject : iListCandidate
         {
-            base.build();
-
-            _manager = this;
+            void modRestarted();
+            void modEnded();
         }
 
-        static protected ModBase _manager;
-        static public ModBase getMod() { return _manager; }
-        static public T getMod<T>() where T : ModBase
+        Coroutine coActive = null;
+
+        public ListUpdater<ModObject> updater;
+
+        void Awake()
         {
-            if (_manager == null)
+            updater = new ListUpdater<ModObject>();
+
+            create();
+        }
+
+        virtual protected void create()
+        { }
+
+        virtual public void modRestart()
+        {
+            for (int i = 0; i < updater.candidates.Count; i++)
             {
-                _manager = GameObject.FindObjectOfType<T>();
-                //if (_manager != null) Debug.Log("<color=yellow>ref game mod is " + _manager.GetType() + "</color>");
-                //else Debug.LogWarning("no mods");
+                updater.candidates[i].modRestarted();
+            }
+        }
+        
+        public void launch()
+        {
+            modLaunch();
+
+            if (coActive != null) return;
+            coActive = StartCoroutine(processActive());
+        }
+
+        virtual protected void modLaunch()
+        { }
+
+        IEnumerator processActive()
+        {
+            while (isModDone())
+            {
+                modUpdate();
+                yield return null;
             }
 
-            return (T)_manager;
+            modEnded();
+        }
+
+        virtual protected void modUpdate()
+        {
+            for (int i = 0; i < updater.candidates.Count; i++)
+            {
+                updater.candidates[i].update();
+            }
+        }
+
+        virtual public bool isModDone()
+        {
+            return true;
+        }
+
+        virtual protected void modEnded()
+        {
+            for (int i = 0; i < updater.candidates.Count; i++)
+            {
+                updater.candidates[i].modEnded();
+            }
+        }
+
+        static public T getMod<T>() where T : ModBase
+        {
+            return GameObject.FindObjectOfType<T>();
         }
 
     }
