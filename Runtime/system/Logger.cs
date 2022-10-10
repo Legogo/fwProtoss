@@ -7,17 +7,11 @@ using UnityEngine;
 /// https://answers.unity.com/questions/877553/debuglog-override.html
 /// </summary>
 
-public class Logger {
+public class Logger
+{
+    static private void log(string logString, string stackTrace, LogType type)
+    {
 
-  [RuntimeInitializeOnLoadMethod]
-  static private void create()
-  {
-    //Application.logMessageReceived += log;
-  }
-	
-  static private void log(string logString, string stackTrace, LogType type)
-  {
-
-  }
+    }
 
 }

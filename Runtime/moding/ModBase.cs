@@ -24,12 +24,14 @@ namespace fwp.engine.mod
 
         void Awake()
         {
+            Debug.Log(getStamp() + " Awake()");
+
             updater = new ListUpdater<ModObject>();
 
-            create();
+            modCreate();
         }
 
-        virtual protected void create()
+        virtual protected void modCreate()
         { }
 
         virtual public void modRestart()
@@ -49,7 +51,9 @@ namespace fwp.engine.mod
         }
 
         virtual protected void modLaunch()
-        { }
+        {
+            Debug.Log(getStamp() + "| now live");
+        }
 
         IEnumerator processActive()
         {
@@ -81,6 +85,11 @@ namespace fwp.engine.mod
             {
                 updater.candidates[i].modEnded();
             }
+        }
+
+        public override string getStamp()
+        {
+            return "[mod]"+base.getStamp();
         }
 
         static public T getMod<T>() where T : ModBase

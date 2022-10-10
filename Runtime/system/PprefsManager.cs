@@ -2,25 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-static public class PprefsManager {
+static public class PprefsManager
+{
+    const string ppref_uniq = "ppref_uniq";
 
-  const string ppref_uniq = "ppref_uniq";
+    static public string uniq = "";
 
-  static public string uniq = "";
+    static public void create()
+    {
+        uniq = ppGet(ppref_uniq, HalperNatives.generateUniqId());
+    }
 
-  [RuntimeInitializeOnLoadMethod]
-  static public void create()
-  {
-    uniq = ppGet(ppref_uniq, HalperNatives.generateUniqId());
-  }
-
-  static public void ppSet(string id, string val)
-  {
-    PlayerPrefs.SetString(id, val);
-    PlayerPrefs.Save();
-  }
-  static public string ppGet(string id, string defaultValue = "")
-  {
-    return PlayerPrefs.GetString(id, defaultValue);
-  }
+    static public void ppSet(string id, string val)
+    {
+        PlayerPrefs.SetString(id, val);
+        PlayerPrefs.Save();
+    }
+    static public string ppGet(string id, string defaultValue = "")
+    {
+        return PlayerPrefs.GetString(id, defaultValue);
+    }
 }
