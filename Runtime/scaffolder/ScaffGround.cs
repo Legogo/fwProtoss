@@ -18,8 +18,9 @@ namespace fwp.engine.scaffolder
         bool _early;
         bool _ready;
 
-        private void Awake()
+        protected void Awake()
         {
+            _stampColor = solveStampColor();
             build();
         }
 
@@ -99,15 +100,12 @@ namespace fwp.engine.scaffolder
 
         virtual public string getStamp()
         {
+            if(_stampColor.Length > 0) return $"<color={_stampColor}>{GetType()}</color>";
             return GetType().ToString();
         }
 
-        public string getColoredStamp(string hex)
-        {
-            return "<color=" + getStampColor() + ">" + getStamp() + "</color>";
-        }
-
-        virtual protected string getStampColor() => "gray";
+        string _stampColor = string.Empty;
+        virtual protected string solveStampColor() => "gray";
 
         virtual public string stringify()
         {

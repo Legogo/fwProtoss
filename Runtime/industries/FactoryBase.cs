@@ -17,6 +17,8 @@ abstract public class FactoryBase
 	{
 		_factoryTargetType = GetType();
 
+        IndusReferenceMgr.injectTypes(new System.Type[] { _factoryTargetType });
+
 		if (!Application.isPlaying) refresh();
 	}
 
@@ -41,7 +43,7 @@ abstract public class FactoryBase
     //abstract public System.Type getChildrenType();
 
     public bool hasCandidates() => actives.Count > 0 || inactives.Count > 0;
-    public bool hasCandidates(int countCheck) => actives.Count + inactives.Count > countCheck;
+    public bool hasCandidates(int countCheck) => (actives.Count + inactives.Count) >= countCheck;
 
     public List<IFactoryObject> getActives()
     {
@@ -99,12 +101,13 @@ abstract public class FactoryBase
         //Debug.Log("newly created object " + go.name, go);
 
         IFactoryObject candidate = go.GetComponent<IFactoryObject>();
-        
+        Debug.Assert(candidate != null, $"no candidate on {go} ?? generated object is not factory compatible", go);
+
         inactives.Add(candidate);
 
         //for refs list
         //IndusReferenceMgr.refreshGroupByType(factoryTargetType);
-        IndusReferenceMgr.injectObject(candidate);
+        //IndusReferenceMgr.injectObject(candidate);
 
         return candidate;
     }
@@ -188,10 +191,13 @@ abstract public class FactoryBase
     /// </summary>
     public void inject(IFactoryObject candid)
     {
-        if (actives.IndexOf(candid) < 0) actives.Add(candid);
         inactives.Remove(candid);
 
-		Debug.Log(getStamp() + " :: inject :: " + candid + " :: ↑" + actives.Count + "/ ↓" + inactives.Count);
+        if (actives.IndexOf(candid) < 0)
+        {
+            actives.Add(candid);
+            Debug.Log(getStamp() + " :: inject :: " + candid + " :: ↑" + actives.Count + "/ ↓" + inactives.Count);
+        }
     }
 
     /// <summary>

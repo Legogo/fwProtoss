@@ -18,7 +18,7 @@ namespace fwp.engine.screens
         static public ScreenWrapper call(string screenName)
         {
             GameObject obj = new GameObject("~sw-" + screenName);
-            return obj.AddComponent<ScreenWrapper>();
+            return obj.AddComponent<ScreenWrapper>().setup(screenName);
         }
 
         ScreenObject screen;
@@ -26,32 +26,29 @@ namespace fwp.engine.screens
         Action onLoaded;
         Action onEnded;
 
-        public ScreenWrapper setup(string nm, Action onLoaded, Action onEnded)
+        public ScreenWrapper setup(string nm, Action onLoaded = null, Action onEnded = null)
         {
             this.onLoaded = onLoaded;
             this.onEnded = onEnded;
 
-            StartCoroutine(processLoading(nm));
+            StartCoroutine(processWrapper(nm));
 
             return this;
         }
 
-        IEnumerator processLoading(string nm)
+        IEnumerator processWrapper(string nm)
         {
             screen = ScreensManager.open(nm, () =>
             {
                 this.screen = ScreensManager.getScreen(nm);
             });
 
+            // wait for the screen
             while (screen == null) yield return null;
 
             this.onLoaded?.Invoke();
 
-            StartCoroutine(processOpened());
-        }
-
-        IEnumerator processOpened()
-        {
+            // wait for screen to close
             while(this.screen != null) yield return null;
 
             this.onEnded?.Invoke();

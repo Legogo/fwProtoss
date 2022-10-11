@@ -18,7 +18,21 @@ static public class IndusReferenceMgr
 
     static public void injectTypes(Type[] types)
     {
-        possibleTypes = types;
+        if (possibleTypes == null) possibleTypes = new Type[0];
+
+        List<Type> output = new List<Type>();
+        for (int i = 0; i < types.Length; i++)
+        {
+            bool found = false;
+            for (int j = 0; j < possibleTypes.Length; j++)
+            {
+                if (found) continue;
+                if (types[i] == possibleTypes[j]) found = true;
+            }
+            if (!found) output.Add(types[i]);
+        }
+
+        possibleTypes = output.ToArray();
     }
 
     /// <summary>
@@ -80,6 +94,10 @@ static public class IndusReferenceMgr
         return false;
     }
 
+    /// <summary>
+    /// get all mono and inject all object of given type into facebook
+    /// </summary>
+    /// <param name="tar"></param>
     static public void refreshGroupByType(Type tar)
     {
         //Debug.Log($"~facto: called refreshing of indus refs <{tar}>");
@@ -104,6 +122,8 @@ static public class IndusReferenceMgr
     /// </summary>
     static public void refreshAll(Type[] tars)
     {
+        if (tars == null) return;
+
         for (int i = 0; i < tars.Length; i++)
         {
             refreshGroupByType(tars[i]);
@@ -153,30 +173,40 @@ static public class IndusReferenceMgr
     }
 
     static public void injectObject(IIndusReference target)
-	{
-		for (int i = 0; i < possibleTypes.Length; i++)
-		{
+    {
+        Debug.Assert(target != null);
+
+        if (possibleTypes == null)
+        {
+            Debug.LogWarning("can't inject " + target);
+            return;
+        }
+
+        /*
+        for (int i = 0; i < possibleTypes.Length; i++)
+        {
             //if(target.GetType().IsAssignableFrom(possibleTypes[i]))
             if (possibleTypes[i].IsAssignableFrom(target.GetType()))
-			{
+            {
                 refreshGroupByType(possibleTypes[i]);
             }
-		}
-
-        BrainBase brainBase = target as BrainBase;
-        if(brainBase != null)
-        {
-            List<KappaBase> kappas = brainBase.getAllKappas();
-            for(int i=0; i<kappas.Count; i++)
-            {
-                IIndusReference iRef = kappas[i] as IIndusReference;
-                if (iRef != null)
-                {
-                    injectObject(iRef);
-                }
-            }
         }
-	}
+        */
+
+        Type typ = target.GetType();
+
+        if (!facebook.ContainsKey(typ))
+        {
+            Debug.LogWarning("can't add " + target + " to facebook, type is not declared");
+            return;
+        }
+
+        if (facebook[typ].IndexOf(target) < 0)
+        {
+            facebook[typ].Add(target);
+            Debug.Log($"facebook[{typ}] x{facebook[typ].Count}");
+        }
+    }
 
     /// <summary>
     /// add a specific type and its solved list to facebook
@@ -215,24 +245,24 @@ static public class IndusReferenceMgr
 
         bool _checkFoundType = false;
 
-        foreach(var kp in facebook)
+        foreach (var kp in facebook)
         {
             //Debug.Log(kp.Key + " VS " + typeof(T));
 
             //if (typeof(T).IsAssignableFrom(kp.Key.GetType()))
             //if(kp.Key.GetType().IsAssignableFrom(typeof(T)))
-            if(kp.Key == typeof(T))
+            if (kp.Key == typeof(T))
             {
                 _checkFoundType = true;
 
                 for (int i = 0; i < kp.Value.Count; i++)
                 {
                     //output.AddRange(kp.Value[i]);
-                    if(kp.Value[i] != null)
-					{
+                    if (kp.Value[i] != null)
+                    {
                         // filter disabled gameobjects
                         MonoBehaviour mono = kp.Value[i] as MonoBehaviour;
-                        if(mono != null)
+                        if (mono != null)
                         {
                             if (!mono.gameObject.activeSelf) continue;
                         }
@@ -243,10 +273,10 @@ static public class IndusReferenceMgr
             }
         }
 
-        if(!_checkFoundType)
-		{
+        if (!_checkFoundType)
+        {
             Debug.LogWarning($"didn't find type:{typeof(T)} in facebook (out of x{facebook.Count})");
-		}
+        }
 
         return output;
     }
@@ -265,7 +295,7 @@ static public class IndusReferenceMgr
 
             dst = Vector2.Distance(mono.transform.position, position);
 
-            if(dst < min)
+            if (dst < min)
             {
                 min = dst;
                 closest = mono as IIndusReference;

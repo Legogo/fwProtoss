@@ -22,28 +22,47 @@ namespace fwp.engine.mod
 
         public ListUpdater<ModObject> updater;
 
-        void Awake()
+        protected override void build()
         {
-            Debug.Log(getStamp() + " Awake()");
+            base.build();
 
             updater = new ListUpdater<ModObject>();
 
             modCreate();
         }
 
+        /// <summary>
+        /// build mod, one time, on startup
+        /// </summary>
         virtual protected void modCreate()
-        { }
+        {
+            Debug.Log(getStamp() + " create()");
+        }
 
+        /// <summary>
+        /// setup the mod
+        /// </summary>
         virtual public void modRestart()
         {
-            for (int i = 0; i < updater.candidates.Count; i++)
+            Debug.Log(getStamp() + " restart()");
+            
+            if(updater != null)
             {
-                updater.candidates[i].modRestarted();
+                for (int i = 0; i < updater.candidates.Count; i++)
+                {
+                    updater.candidates[i].modRestarted();
+                }
             }
+            
         }
         
+        /// <summary>
+        /// starts !
+        /// </summary>
         public void launch()
         {
+            Debug.Log(getStamp() + " launch()");
+
             modLaunch();
 
             if (coActive != null) return;
@@ -52,7 +71,6 @@ namespace fwp.engine.mod
 
         virtual protected void modLaunch()
         {
-            Debug.Log(getStamp() + "| now live");
         }
 
         IEnumerator processActive()
@@ -68,10 +86,14 @@ namespace fwp.engine.mod
 
         virtual protected void modUpdate()
         {
-            for (int i = 0; i < updater.candidates.Count; i++)
+            if(updater != null)
             {
-                updater.candidates[i].update();
+                for (int i = 0; i < updater.candidates.Count; i++)
+                {
+                    updater.candidates[i].update();
+                }
             }
+            
         }
 
         virtual public bool isModDone()
@@ -81,21 +103,24 @@ namespace fwp.engine.mod
 
         virtual protected void modEnded()
         {
-            for (int i = 0; i < updater.candidates.Count; i++)
-            {
-                updater.candidates[i].modEnded();
-            }
-        }
+            Debug.Log(getStamp() + " ended()");
 
-        public override string getStamp()
-        {
-            return "[mod]"+base.getStamp();
+            if(updater != null)
+            {
+                for (int i = 0; i < updater.candidates.Count; i++)
+                {
+                    updater.candidates[i].modEnded();
+                }
+            }
+            
         }
 
         static public T getMod<T>() where T : ModBase
         {
             return GameObject.FindObjectOfType<T>();
         }
+
+        protected override string solveStampColor()  => "orange";
 
     }
 

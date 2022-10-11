@@ -16,11 +16,11 @@ namespace fwp.engine.screens
         public enum ScreenType
         {
             menu,
-            ingame
+            overlay // ingame overlays
         }
 
         //usual screen names
-        public enum ScreenNames
+        public enum ScreenNameGenerics
         {
             home, // home menu
             ingame, // ingame interface (ui)
@@ -53,7 +53,7 @@ namespace fwp.engine.screens
             return screens.Select(x => x).Where(x => !x.sticky && x.isVisible()).FirstOrDefault();
         }
 
-        static public ScreenObject getScreen(ScreenNames nm)
+        static public ScreenObject getScreen(ScreenNameGenerics nm)
         {
             return getScreen(nm.ToString());
         }
@@ -88,8 +88,8 @@ namespace fwp.engine.screens
             }
         }
 
-        static public ScreenObject open(ScreenNames nm, string filter = "") { return open(nm.ToString(), filter); }
-        static public ScreenObject open(string nm, Action onComplete) { return open(nm, "", onComplete); }
+        static public ScreenObject open(ScreenNameGenerics nm, string filter = "") { return open(nm.ToString(), filter); }
+        static public ScreenObject open(string nm, Action onComplete) { return open(nm, string.Empty, onComplete); }
 
         /// <summary>
         /// best practice : should never call a screen by name but create a contextual enum
@@ -167,10 +167,10 @@ namespace fwp.engine.screens
 
         }
 
-        static public void close(ScreenNames scName) { close(scName.ToString()); }
+        static public void close(ScreenNameGenerics scName) { close(scName.ToString()); }
         static public void close(string scName) { close(scName, "", false); }
-        static public void close(ScreenNames scName, bool force = false) { close(scName.ToString(), "", force); }
-        static public void close(ScreenNames scName, string filter = "", bool force = false) { close(scName.ToString(), filter, force); }
+        static public void close(ScreenNameGenerics scName, bool force = false) { close(scName.ToString(), "", force); }
+        static public void close(ScreenNameGenerics scName, string filter = "", bool force = false) { close(scName.ToString(), filter, force); }
 
         /// <summary>
         /// </summary>
@@ -234,8 +234,8 @@ namespace fwp.engine.screens
         static public void callPauseScreen(bool state, string filter = "")
         {
 
-            if (state) ScreensManager.open(ScreensManager.ScreenNames.pause, filter);
-            else ScreensManager.close(ScreensManager.ScreenNames.pause, filter);
+            if (state) ScreensManager.open(ScreensManager.ScreenNameGenerics.pause, filter);
+            else ScreensManager.close(ScreensManager.ScreenNameGenerics.pause, filter);
 
         }
 

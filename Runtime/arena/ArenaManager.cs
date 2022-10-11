@@ -9,11 +9,27 @@ namespace fwp.arena
     /// </summary>
     abstract public class ArenaManager : MonoBehaviour
     {
+        ArenaSpawn[] spawns;
         Bounds bnd;
 
         private void Awake()
         {
             bnd = solveBounds();
+
+            spawns = GameObject.FindObjectsOfType<ArenaSpawn>();
+        }
+
+        public Transform getSpawn(int playerIndex)
+        {
+            if (!hasSpawns()) return null;
+            if (spawns.Length > playerIndex) return spawns[playerIndex].transform;
+            return null;
+        }
+
+        public bool hasSpawns()
+        {
+            if (spawns == null) return false;
+            return spawns.Length > 0;
         }
 
         abstract protected Bounds solveBounds();

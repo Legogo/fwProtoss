@@ -273,7 +273,7 @@ namespace fwp.engine.screens
         {
             Debug.Log(getStamp() + " calling <b>home screen</b>");
 
-            ScreensManager.open(ScreensManager.ScreenNames.home);
+            ScreensManager.open(ScreensManager.ScreenNameGenerics.home);
         }
 
         public string extractName()
@@ -293,6 +293,6 @@ namespace fwp.engine.screens
             return "\n  isVisible ? " + isVisible() + "\n  canvas count ? " + _canvas.Length;
         }
 
-        protected override string getStampColor() => "white";
+        protected override string solveStampColor() => "white";
     }
 }
