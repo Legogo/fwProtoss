@@ -94,15 +94,17 @@ namespace fwp.engine.scaffolder
 
         }
 
-        [ContextMenu("destroy")]
         private void OnDestroy()
         {
+            if (!Application.isPlaying) return;
+
             onDestroy();
         }
 
         /// <summary>
         /// only the component
         /// </summary>
+        [ContextMenu("destroy")]
         public void destroy()
         {
             GameObject.Destroy(this);

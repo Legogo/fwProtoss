@@ -29,20 +29,22 @@ namespace fwp.engine
         public void sub(T candid)
         {
             if (candidates.IndexOf(candid) < 0) candidates.Add(candid);
+            setActive(true);
         }
 
         public void unsub(T candid)
         {
             candidates.Remove(candid);
+            setActive(false);
         }
 
         public void setActive(bool active)
         {
-            if(active)
+            if(active && coActive == null)
             {
                 coActive = mono.StartCoroutine(processActive());
             }
-            else
+            else if(!active && coActive != null)
             {
                 mono.StopCoroutine(coActive);
                 coActive = null;
@@ -55,6 +57,8 @@ namespace fwp.engine
 
             while (true)
             {
+                //Debug.Log(GetType() + " updating x" + candidates.Count);
+                
                 for (int i = 0; i < candidates.Count; i++)
                 {
                     candidates[i].update();

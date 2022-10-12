@@ -12,7 +12,7 @@ namespace fwp.engine.camera
         Vector3 getPosition();
     }
 
-    abstract public class CameraDynamicZoom : ArenaObject
+    abstract public class CameraDynamicZoom : scaffolder.ScaffGroundUpdate
     {
         protected Camera cam;
 
@@ -24,13 +24,15 @@ namespace fwp.engine.camera
 
         protected float camOrthoSizeMinimum = 6f;
 
-        Vector3 midTarget = Vector3.zero;
+        [ReadOnly]
+        public Vector3 midTarget = Vector3.zero;
+
         public float targetOrtho = 6f;
 
         [ReadOnly]
         public Vector2 diff; // to help solving middle of the screen, vec WxH
 
-        public iCameraTarget[] targets;
+        List<iCameraTarget> targets = new List<iCameraTarget>();
 
         protected override void setupLate()
         {
@@ -41,33 +43,25 @@ namespace fwp.engine.camera
             if (cam == null) Debug.LogError("no cam");
         }
 
-        public override void arenaRestart()
+        public void addTarget(iCameraTarget tar)
         {
-            base.arenaRestart();
+            if (targets.Contains(tar)) return;
+            targets.Add(tar);
 
-            event_recountTargets();
+            Debug.Log(getStamp() + " has now x" + targets.Count + " targets", this);
         }
 
-        virtual protected iCameraTarget[] getTargets()
+        public void remTarget(iCameraTarget tar)
         {
-            return null;
+            if (!targets.Contains(tar)) return;
+            targets.Remove(tar);
         }
 
-        public void event_recountTargets()
+        protected override void scaffUpdate(float dt)
         {
-            targets = getTargets();
+            if (targets.Count <= 0) return;
 
-            //Debug.Log(GetType() + " count " + targets.Length + " targets");
-            //for (int i = 0; i < targets.Length; i++) Debug.Log("  " + targets[i].transform.name, targets[i].transform);
-        }
-
-        public override void arenaUpdate()
-        {
-            base.arenaUpdate();
-
-            if (targets == null) return;
-
-            //for (int i = 0; i < targets.Length; i++) Debug.Log(targets[i].isCameraTarget() + " ? "+targets[i].transform.position);
+            //Debug.Log("update x" + targets.Count);
 
             solve_min_max();
 
@@ -79,7 +73,7 @@ namespace fwp.engine.camera
         int countValidTargets()
         {
             int count = 0;
-            for (int i = 0; i < targets.Length; i++)
+            for (int i = 0; i < targets.Count; i++)
             {
                 if (targets[i].isCameraTarget()) count++;
             }
@@ -99,7 +93,7 @@ namespace fwp.engine.camera
             float maxX = -10000000f;
             float maxY = -1000000f;
 
-            for (int i = 0; i < targets.Length; i++)
+            for (int i = 0; i < targets.Count; i++)
             {
                 if (!targets[i].isCameraTarget()) continue;
 
@@ -161,7 +155,7 @@ namespace fwp.engine.camera
             // zoom
             //float currentOrthoSize = cam.orthographicSize;
 
-            float ratio = Camera.main.aspect;
+            float ratio = cam.aspect;
             //Debug.Log(ratio);
             //w2 x h2 == ortho 3
             //w13 x h8 == ortho 6
@@ -195,20 +189,20 @@ namespace fwp.engine.camera
         Vector3 middleAvg()
         {
 
-            if (targets.Length <= 0) return Vector3.zero;
+            if (targets.Count <= 0) return Vector3.zero;
 
             add.x = 0f;
             add.y = 0f;
 
-            for (int i = 0; i < targets.Length; i++)
+            for (int i = 0; i < targets.Count; i++)
             {
                 if (targets[i] == null) continue;
 
                 add += targets[i].getPosition();
             }
 
-            add.x = add.x / targets.Length;
-            add.y = add.y / targets.Length;
+            add.x = add.x / targets.Count;
+            add.y = add.y / targets.Count;
             add.z = 0f;
 
             return add;
@@ -231,9 +225,9 @@ namespace fwp.engine.camera
 
             Gizmos.color = Color.red;
             if (targets == null) return;
-            if (targets.Length <= 0) return;
+            if (targets.Count <= 0) return;
 
-            for (int i = 0; i < targets.Length; i++)
+            for (int i = 0; i < targets.Count; i++)
             {
                 if (targets[i] == null) continue;
                 Gizmos.DrawCube(targets[i].getPosition(), Vector3.one * 0.2f);
