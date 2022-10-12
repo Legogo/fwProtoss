@@ -17,7 +17,7 @@ abstract public class KappaBase : ScaffGround
     {
         base.build();
 
-        checkSub();
+        checkSub(); // solve brain & sub
     }
 
     /// <summary>
@@ -65,6 +65,11 @@ abstract public class KappaBase : ScaffGround
     virtual protected void onFreeze(bool freezed)
     { }
 
+    /// <summary>
+    /// solve brain
+    /// &
+    /// sub to brain
+    /// </summary>
     virtual protected void checkSub()
     {
         //pas besoin de refaire

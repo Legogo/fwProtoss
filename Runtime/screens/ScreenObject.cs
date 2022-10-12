@@ -3,101 +3,62 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-/// <summary>
-/// show,hide
-/// updateVisible,updateNotVisible
-/// </summary>
-
 namespace fwp.engine.screens
 {
     using fwp.engine.scaffolder;
 
+    /// <summary>
+    /// show,hide
+    /// updateVisible,updateNotVisible
+    /// 
+    /// visibility is based on activation/deactivation of first child of this component
+    /// to use canvases see ScreenUi
+    /// </summary>
     public class ScreenObject : ScaffGround, iScaffLog
     {
         public ScreensManager.ScreenType type;
 
-        public bool useUiCamera = false;
+        public bool verbose = false;
+        public ScreensManager.ScreenTags[] tags;
+
+        [Tooltip("won't be hidden for specific ingame situations")]
         public bool sticky = false; // can't be hidden
+
         public bool dontHideOtherOnShow = false; // won't close other non sticky screen when showing
 
-        protected Canvas[] _canvas;
-        protected RectTransform _rt;
-
-        protected float notInteractiveTimer = 0f;
-
-        float moveTimerDelayTime = 0.1f;
-        float moveTimerDelay = 0f;
-
-        protected Action onPressedDown;
-        protected Action onPressedUp;
-        protected Action onPressedLeft;
-        protected Action onPressedRight;
+        ScreenNav nav;
 
         protected override void build()
         {
             base.build();
 
-            _canvas = transform.GetComponentsInChildren<Canvas>();
-            if (_canvas == null) Debug.LogError("no canvas ?");
-
-            _rt = GetComponent<RectTransform>();
-
-            //if (_canvas == null) Debug.LogError("wat ?");
-
-            // / ! \
-            //hide() will trigger modif of other component that are catched during build()
-
-            //generic behavior, won't work for non sticky screens
-            //hide();
-
+            ScreensManager.subScreen(this);
         }
 
-        protected override void setupEarly()
+        public void subNavDirection(Action down, Action up, Action left, Action right)
         {
-            base.setupEarly();
+            if (nav == null) nav = new ScreenNav();
 
-            getCanvas();
-
-            if (useUiCamera)
-            {
-                Camera uiCam = qh.gc<Camera>("camera-ui");
-                Canvas canvas = getCanvas();
-                if (canvas.renderMode == RenderMode.ScreenSpaceOverlay)
-                {
-                    canvas.renderMode = RenderMode.ScreenSpaceCamera;
-                    canvas.worldCamera = uiCam;
-                }
-            }
-
-            hide();
+            if (down != null)   nav.onPressedDown += down;
+            if (up != null)     nav.onPressedUp += up;
+            if (left != null)   nav.onPressedLeft += left;
+            if (right != null)  nav.onPressedRight += right;
         }
 
-        public void subscribeToPressedEvents(Action down, Action up, Action left, Action right)
+        public void subSkip(Action skip)
         {
-            if (down != null) onPressedDown += down;
-            if (up != null) onPressedUp += up;
-            if (left != null) onPressedLeft += left;
-            if (right != null) onPressedRight += right;
+            if (nav == null) nav = new ScreenNav();
+            nav.onBack += skip;
         }
 
         virtual public void reset()
         { }
 
+        /// <summary>
+        /// update entry point
+        /// </summary>
         virtual public void menuUpdate()
         {
-            if (moveTimerDelay > 0f)
-            {
-                moveTimerDelay -= Time.deltaTime;
-            }
-
-            if (notInteractiveTimer > 0f)
-            {
-                notInteractiveTimer -= Time.deltaTime;
-                return;
-            }
-
-            //Debug.Log(name + " update " + canUpdate()+" and is visible ? "+isVisible());
-
             if (isVisible()) updateScreenVisible();
             else updateScreenNotVisible();
         }
@@ -105,101 +66,40 @@ namespace fwp.engine.screens
         virtual protected void updateScreenNotVisible() { }
         virtual protected void updateScreenVisible()
         {
-            update_input_keyboard();
-        }
-
-        protected void update_input_keyboard()
-        {
-            if (moveTimerDelay <= 0f)
-            {
-                if (Input.GetKeyUp(KeyCode.UpArrow)) pressed_up();
-                if (Input.GetKeyUp(KeyCode.DownArrow)) pressed_down();
-                if (Input.GetKeyUp(KeyCode.LeftArrow)) pressed_left();
-                if (Input.GetKeyUp(KeyCode.RightArrow)) pressed_right();
-            }
-
-            if (Input.GetKeyUp(KeyCode.Escape)) action_back();
-        }
-
-        virtual protected void pressed_up() { resetTimerDelay(); if (onPressedUp != null) onPressedUp(); }
-        virtual protected void pressed_down() { resetTimerDelay(); if (onPressedDown != null) onPressedDown(); }
-        virtual protected void pressed_left() { resetTimerDelay(); if (onPressedLeft != null) onPressedLeft(); }
-        virtual protected void pressed_right() { resetTimerDelay(); if (onPressedRight != null) onPressedRight(); }
-
-        protected bool isDelaying()
-        {
-            return moveTimerDelay > 0f;
-        }
-        protected void resetTimerDelay()
-        {
-            moveTimerDelay = moveTimerDelayTime;
+            nav?.update();
         }
 
         virtual protected void action_back() { }
 
-        public Canvas getCanvas()
+        virtual protected void toggleVisible(bool flag)
         {
-            return _canvas[0];
-        }
-        public Canvas getCanvas(string nm)
-        {
-            for (int i = 0; i < _canvas.Length; i++)
-            {
-                if (_canvas[i].name.Contains(nm)) return _canvas[i];
-            }
-            Debug.LogWarning("~ScreenObject~ getCanvas() no canvas named <b>" + nm + "</b>");
-            return null;
+            transform.GetChild(0).gameObject.SetActive(flag);
         }
 
-        public void setCanvasVisibility(string nm, bool flag)
-        {
-            for (int i = 0; i < _canvas.Length; i++)
-            {
-                if (_canvas[i].name.Contains(nm))
-                {
-                    //Debug.Log("  L found canvas '"+nm+"' => visibility to "+flag);
-                    _canvas[i].enabled = flag;
-                }
-            }
-        }
-
-        protected void toggleVisible(bool flag)
-        {
-
-            //si le scriptorder fait que le ScreenObject arrive après le Screenmanager ...
-            if (_canvas == null) setup();
-
-            if (_canvas == null) Debug.LogError("no canvas ? for " + name, gameObject);
-
-            //Debug.Log("toggle screen " + name + " visibility to " + flag + " | " + _canvas.Length + " canvas");
-
-            //Debug.Log(name + " visibility ? " + flag+" for "+_canvas.Length+" canvas");
-
-            //show all canvas of screen
-            for (int i = 0; i < _canvas.Length; i++)
-            {
-                //Debug.Log(name + "  " + _canvas[i].name);
-                if (_canvas[i].enabled != flag)
-                {
-                    //Debug.Log("  L canvas " + _canvas[i].name + " toggle to " + flag);
-                    _canvas[i].enabled = flag;
-                }
-            }
-
-            //Debug.Log(name+" , "+flag, gameObject);
-        }
-
-        [ContextMenu("show")]
-        protected void ctxm_show() { show(); }
+        [ContextMenu("show instant")]
+        protected void ctxm_show() { showInstant(); }
 
         [ContextMenu("hide")]
         protected void ctxm_hide() { forceHide(); }
 
-        virtual public void show()
+        /// <summary>
+        /// when loaded
+        /// </summary>
+        virtual public void onScreenLoaded()
         {
-            //Debug.Log(getStamp()+" show screen : "+name);
+            showInstant(); // default is opening
+        }
 
-            notInteractiveTimer = 0.2f; // to kill interactive frame offset
+        public void show() => showInstant();
+        public void hide() => hideInstant();
+
+        /// <summary>
+        /// when already loaded but asking to be shown
+        /// </summary>
+        public void showInstant()
+        {
+            //Debug.Log(getStamp() + " show " + name);
+            nav?.resetTimerNoInteraction();
 
             transform.position = Vector3.zero;
 
@@ -208,7 +108,10 @@ namespace fwp.engine.screens
             //Debug.Log(name + " -> show");
         }
 
-        virtual public void hide()
+        /// <summary>
+        /// this is virtual, another screen might do something different
+        /// </summary>
+        public void hideInstant()
         {
             //Debug.Log("  <color=white>hide()</color> <b>" + name + "</b>");
 
@@ -221,19 +124,27 @@ namespace fwp.engine.screens
             forceHide();
         }
 
-        public void forceHide()
+        /// <summary>
+        /// returns true if actually toggled
+        /// </summary>
+        /// <returns></returns>
+        public bool forceHide()
         {
-            //Debug.Log("  <color=white>forceHide()</color> <b>" + name + "</b>");
+            if (isVisible())
+            {
+                //dans le cas où y a pas que des canvas
+                //ou qu'il y a une seule camera ppale et qu'il faut aligner les choses à 0f
+                transform.position = Vector3.down * 3000f;
 
-            //dans le cas où y a pas que des canvas
-            //ou qu'il y a une seule camera ppale et qu'il faut aligner les choses à 0f
-            transform.position = Vector3.down * 3000f;
+                toggleVisible(false);
 
-            toggleVisible(false);
+                return true;
+            }
 
-            //Debug.Log(name + " -> forceHide");
+            return false;
         }
 
+        public void unload() => unload(false);
         public void unload(bool force = false)
         {
             if (!force && sticky)
@@ -252,13 +163,11 @@ namespace fwp.engine.screens
             SceneManager.UnloadSceneAsync(nm);
         }
 
-        public bool isVisible()
+        public bool isInteractive() => nav != null;
+
+        virtual public bool isVisible()
         {
-            for (int i = 0; i < _canvas.Length; i++)
-            {
-                if (_canvas[i].enabled) return true;
-            }
-            return false;
+            return transform.GetChild(0).gameObject.activeSelf;
         }
 
         public void act_button(Button clickedButton)
@@ -282,17 +191,26 @@ namespace fwp.engine.screens
             return split[1].Substring(0, split[1].Length - 1); // remove ')'
         }
 
-        static public Canvas getCanvas(string screenName, string canvasName)
+        public bool isScreenOfSceneName(string nm)
         {
-            ScreenObject screen = ScreensManager.getScreen(screenName);
-            return screen.getCanvas(canvasName);
+            return gameObject.scene.name.EndsWith(nm);
         }
+
+        private void OnDestroy()
+        {
+            onScreenDestruction();
+            ScreensManager.unsubScreen(this);
+        }
+
+        virtual protected void onScreenDestruction()
+        { }
 
         override public string stringify()
         {
-            return "\n  isVisible ? " + isVisible() + "\n  canvas count ? " + _canvas.Length;
+            return "\n  isVisible ? " + isVisible();
         }
 
         protected override string solveStampColor() => "white";
+
     }
 }

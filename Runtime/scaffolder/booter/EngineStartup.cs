@@ -15,6 +15,8 @@ using UnityEngine.SceneManagement;
 
 namespace fwp.engine.scaffolder.engineer
 {
+    using fwp.engine.scenes;
+
     public class EngineStartup : MonoBehaviour
     {
         // permet de savoir si le moteur est actif
@@ -57,13 +59,13 @@ namespace fwp.engine.scaffolder.engineer
             Debug.Assert(compatibility, $"{getStamp()} compatibility should be true here");
 
             //don't load engine on guide scenes (starting with ~)
-            if (EngineLoader.doActiveSceneNameContains("~", true))
+            if (SceneLoader.doActiveSceneNameContains("~", true))
             {
                 Debug.LogWarning("<color=red><b>guide scene</b> not loading engine here</color>");
                 return;
             }
 
-            if (!EngineLoader.hasAnyScenesInBuildSettings())
+            if (!SceneLoader.hasAnyScenesInBuildSettings())
             {
                 Debug.Log($"{getStamp()} can't load ?");
             }
@@ -73,7 +75,7 @@ namespace fwp.engine.scaffolder.engineer
 
         IEnumerator processStartup()
         {
-            Coroutine co = null;
+            //Coroutine co = null;
 
             Debug.Log($"{getStamp()} process startup, frame : " + Time.frameCount);
 
@@ -83,15 +85,14 @@ namespace fwp.engine.scaffolder.engineer
             yield return null;
             yield return null;
 
-            string engineSceneName = EngineLoader.prefixResource + "engine";
+            string engineSceneName = SceneLoader.prefixResource + "engine";
 
             // then we load engine, to get the feeder script
-            co = EngineLoader.loadScenes(new string[] { engineSceneName },
-              delegate () { co = null; });
+            var loader = SceneLoader.loadScene(engineSceneName);
 
             Debug.Log($"{getStamp()} waiting for engine scene ...");
 
-            while (co != null) yield return null;
+            while (loader != null) yield return null;
 
             //NEEDED if not present
             //must be created after the (existing ?) engine scene is loaded (doublon)
@@ -106,7 +107,7 @@ namespace fwp.engine.scaffolder.engineer
             Debug.Log($"{getStamp()} triggering feeders ...");
 
             // les feeders qui sont déjà présents quand on lance le runtime (pas par un load)
-            EngineLoaderFeederBase[] feeders = GameObject.FindObjectsOfType<EngineLoaderFeederBase>();
+            SceneLoaderFeederBase[] feeders = GameObject.FindObjectsOfType<SceneLoaderFeederBase>();
             Debug.Log($"{getStamp()} {feeders.Length} feeders still running");
 
             for (int i = 0; i < feeders.Length; i++)
@@ -116,7 +117,7 @@ namespace fwp.engine.scaffolder.engineer
             }
 
             //tant qu'on a des loaders qui tournent ...
-            while (EngineLoader.areAnyLoadersRunning()) yield return null;
+            while (SceneLoader.areAnyLoadersRunning()) yield return null;
 
             Debug.Log($"{getStamp()} is done at frame " + Time.frameCount + ", removing gameobject");
 
@@ -151,7 +152,7 @@ namespace fwp.engine.scaffolder.engineer
         {
             for (int i = 0; i < filters.Length; i++)
             {
-                if (EngineLoader.doActiveSceneNameContains(filters[i], true))
+                if (SceneLoader.doActiveSceneNameContains(filters[i], true))
                 {
                     return filters[i];
                 }

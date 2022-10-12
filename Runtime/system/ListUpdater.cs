@@ -52,12 +52,16 @@ namespace fwp.engine
 
         IEnumerator processActive()
         {
+            Debug.Log(GetType() + " started on "+mono, mono);
+
             while (true)
             {
                 for (int i = 0; i < candidates.Count; i++)
                 {
                     candidates[i].update();
                 }
+
+                yield return null;
             }
         }
 

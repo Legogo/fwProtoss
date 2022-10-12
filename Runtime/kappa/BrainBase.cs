@@ -28,6 +28,8 @@ abstract public class BrainBase : ScaffGroundUpdate
     {
         base.setup();
 
+        Debug.Log($"#{getStamp()} setuping x{kappas.Count} kappas");
+
         for (int i = 0; i < kappas.Count; i++)
         {
             kappas[i].brainReady(this);
@@ -85,19 +87,28 @@ abstract public class BrainBase : ScaffGroundUpdate
         }
     }
 
+    /// <summary>
+    /// before kappas
+    /// </summary>
     virtual protected void brainUpdate()
-    { }
+    {
+    }
 
     public void subKappa(KappaBase capa)
     {
         if (kappas.IndexOf(capa) > 0) return;
         kappas.Add(capa);
+
+        Debug.Log(getStamp() + " subbed capa : " + capa, capa);
     }
 
     public void unsubKappa(KappaBase capa)
     {
         if (kappas.IndexOf(capa) < 0) return;
         kappas.Remove(capa);
+
+
+        Debug.Log(getStamp() + " un-subbed capa : " + capa, capa);
     }
 
     /// <summary>

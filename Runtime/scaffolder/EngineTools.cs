@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-
-namespace fwp.engine.scaffolder.engineer
+namespace fwp.engine.scaffolder
 {
     public class EngineTools
     {

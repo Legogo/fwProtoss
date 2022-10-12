@@ -10,6 +10,7 @@ namespace fwp.engine.scaffolder
     /// </summary>
     abstract public class ScaffGroundUpdate : ScaffGround, iScaffUpdate
     {
+        //generic update for all scaff updatables
         static ListUpdater<iScaffUpdate> _scaffUpdater;
 
         protected override void setupLate()
@@ -33,6 +34,8 @@ namespace fwp.engine.scaffolder
         /// </summary>
         public void update()
         {
+            //Debug.Log(getStamp() + " update()");
+
             if (!canUpdate()) return;
             scaffUpdate(Time.deltaTime);
         }

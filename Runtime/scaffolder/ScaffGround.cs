@@ -15,12 +15,16 @@ namespace fwp.engine.scaffolder
     /// </summary>
     abstract public class ScaffGround : MonoBehaviour, iScaffLog
     {
+        bool _debugScene;
         bool _early;
         bool _ready;
 
         protected void Awake()
         {
             _stampColor = solveStampColor();
+
+            _debugScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene() == gameObject.scene;
+
             build();
         }
 
@@ -57,6 +61,9 @@ namespace fwp.engine.scaffolder
 
             yield return null;
             setupLate();
+
+            yield return null;
+            if(_debugScene) setupDebug();
         }
 
         /// <summary>
@@ -79,6 +86,11 @@ namespace fwp.engine.scaffolder
             _ready = true;
 
             enabled = true;
+        }
+
+        virtual protected void setupDebug()
+        {
+
         }
 
         [ContextMenu("destroy")]

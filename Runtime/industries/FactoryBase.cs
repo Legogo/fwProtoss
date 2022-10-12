@@ -24,6 +24,8 @@ abstract public class FactoryBase
 
     public void refresh()
 	{
+        Debug.Log(getStamp() + " refresh");
+
         actives.Clear();
         inactives.Clear();
 
@@ -211,6 +213,8 @@ abstract public class FactoryBase
 
     public void recycleAll()
 	{
+        Debug.Log(getStamp() + " recycleAll");
+
         List<IFactoryObject> cands = new List<IFactoryObject>();
         cands.AddRange(actives);
 
@@ -222,12 +226,7 @@ abstract public class FactoryBase
         Debug.Assert(actives.Count <= 0);
 	}
 
-    string getStamp() => getStampHexColored(this, "3333aa");
-
-    static string getStampHexColored(object target, string color)
-    {
-        return "<color=#" + color + ">" + target.GetType() + "</color>";
-    }
+    string getStamp() => "<color=#3333aa>" + GetType() + "</color>";
 
 }
 

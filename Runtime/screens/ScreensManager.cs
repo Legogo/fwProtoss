@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Linq;
+using UnityEngine.SceneManagement;
+using fwp.engine.scenes;
 
 namespace fwp.engine.screens
 {
-    using fwp.engine.scaffolder.engineer;
-
     public class ScreensManager
     {
 
@@ -19,6 +19,15 @@ namespace fwp.engine.screens
             overlay // ingame overlays
         }
 
+        /// <summary>
+        /// cumulative states for screens
+        /// </summary>
+        public enum ScreenTags
+        {
+            pauseIngameUpdate, // screen that pauses gameplay
+            blockIngameInput // screen that lock inputs
+        };
+
         //usual screen names
         public enum ScreenNameGenerics
         {
@@ -28,6 +37,28 @@ namespace fwp.engine.screens
             result, // end of round screen, result of round
             loading
         };
+
+        static public void subScreen(ScreenObject so)
+        {
+            if (screens == null) screens = new List<ScreenObject>();
+
+            if (screens.IndexOf(so) < 0)
+            {
+                //Debug.Log(so.name + " is now subscribed to screens");
+                screens.Add(so);
+            }
+        }
+
+        static public void unsubScreen(ScreenObject so)
+        {
+            if (screens.IndexOf(so) > -1)
+            {
+                //Debug.Log(so.name + " is now removed from screens (screen destroy)");
+                screens.Remove(so);
+
+                //UiSelectableBrain.brain.eventResetSelection(true); // screen unsub-ed
+            }
+        }
 
         static protected void fetchScreens()
         {
@@ -51,6 +82,47 @@ namespace fwp.engine.screens
         {
             if (screens == null) return null;
             return screens.Select(x => x).Where(x => !x.sticky && x.isVisible()).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// returns NON-STICKY visible screen
+        /// </summary>
+        /// <returns></returns>
+        static public ScreenObject getFirstOpenedScreen()
+        {
+            //fetchScreens();
+
+            for (int i = 0; i < screens.Count; i++)
+            {
+                if (!screens[i].sticky && screens[i].isVisible())
+                {
+                    return screens[i];
+                }
+            }
+
+            return null;
+            //return screens.Select(x => x).Where(x => !x.sticky && x.isVisible()).FirstOrDefault();
+        }
+
+        static public List<ScreenObject> getLoadedScreens()
+        {
+            return screens;
+        }
+
+        /// <summary>
+        /// si un screen visible contient "nm"
+        /// </summary>
+        static public bool isAScreenContainNameOpened(string nm)
+        {
+            List<ScreenObject> sos = getLoadedScreens();
+            for (int i = 0; i < sos.Count; i++)
+            {
+                if (sos[i].isVisible())
+                {
+                    if (sos[i].name.Contains(nm)) return true;
+                }
+            }
+            return false;
         }
 
         static public ScreenObject getScreen(ScreenNameGenerics nm)
@@ -88,22 +160,34 @@ namespace fwp.engine.screens
             }
         }
 
+        static bool checkCompatibility(string nm)
+        {
+            string[] nms = System.Enum.GetNames(typeof(ScreenType));
+            for (int i = 0; i < nms.Length; i++)
+            {
+                if (nm.StartsWith(nms[i])) return true;
+            }
+
+            Debug.LogWarning("given screen " + nm + " is not compatible with screen logic ; must start with type in name");
+
+            return false;
+        }
+
         static public ScreenObject open(ScreenNameGenerics nm, string filter = "") { return open(nm.ToString(), filter); }
-        static public ScreenObject open(string nm, Action onComplete) { return open(nm, string.Empty, onComplete); }
+        static public ScreenObject open(string nm, Action<ScreenObject> onComplete) { return open(nm, string.Empty, onComplete); }
 
         /// <summary>
         /// best practice : should never call a screen by name but create a contextual enum
         /// this function won't return a screen that is not already loaded
         /// </summary>
-        static public ScreenObject open(string nm, string filterName = "", Action onComplete = null)
+        static public ScreenObject open(string nm, string filterName = "", Action<ScreenObject> onComplete = null)
         {
             Debug.Log("ScreensManager | opening screen of name : <b>" + nm + "</b> , filter ? " + filterName);
 
-            // -- removing startup "screen-" prefix
-            string prefix = "screen-";
-            if (nm.StartsWith(prefix))
+            if(!checkCompatibility(nm))
             {
-                nm = nm.Substring(prefix.Length, nm.Length - prefix.Length);
+                onComplete?.Invoke(null);
+                return null;
             }
 
             ScreenObject so = getScreen(nm);
@@ -118,8 +202,11 @@ namespace fwp.engine.screens
             loadMissingScreen(nm, delegate (ScreenObject loadedScreen)
             {
                 Debug.Log("  ... missing screen '" + nm + "' is now loaded, opening");
-                changeScreenVisibleState(nm, true, filterName);
-                if (onComplete != null) onComplete();
+
+                loadedScreen.onScreenLoaded();
+                //changeScreenVisibleState(nm, true, filterName);
+
+                onComplete?.Invoke(loadedScreen);
             });
 
             return null;
@@ -152,17 +239,17 @@ namespace fwp.engine.screens
                     //do nothing with filtered screen
                     if (containsFilter.Length > 0 && screens[i].name.Contains(containsFilter)) continue;
 
-                    screens[i].hide();
+                    screens[i].hideInstant();
                     //Debug.Log("  L "+screens[i].name + " hidden");
                 }
 
             }
 
-            if (state) selected.show();
+            if (state) selected.showInstant();
             else
             {
                 if (force) selected.forceHide();
-                else selected.hide(); // stickies won't hide
+                else selected.hideInstant(); // stickies won't hide
             }
 
         }
@@ -201,21 +288,23 @@ namespace fwp.engine.screens
         {
             ScreenLoading.showLoadingScreen();
 
-            //re-add "screen-" prefix if missing
-            string fullName = screenName;
-            if (!fullName.StartsWith("screen-")) fullName = "screen-" + fullName;
+            if(!checkCompatibility(screenName))
+            {
+                onComplete?.Invoke(null);
+                return;
+            }
 
             // first search if already exists
-            ScreenObject so = getScreen(fullName);
+            ScreenObject so = getScreen(screenName);
             if (so != null)
             {
                 onComplete(so);
                 return;
             }
 
-            Debug.Log("screen to open : <b>" + fullName + "</b> is not loaded");
+            Debug.Log("screen to open : <b>" + screenName + "</b> is not loaded");
 
-            EngineLoader.queryScene(fullName, delegate ()
+            SceneLoader.queryScene(screenName, delegate (Scene sc)
             {
                 so = getScreen(screenName);
                 if (so == null)

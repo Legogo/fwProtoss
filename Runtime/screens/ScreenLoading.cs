@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace fwp.engine.screens
 {
-    using fwp.engine.scaffolder.engineer;
+    using fwp.engine.scenes;
     using fwp.halpers;
 
     public class ScreenLoading : ScreenObject
@@ -20,14 +20,14 @@ namespace fwp.engine.screens
         Camera cam;
         public Text txt;
 
-        [RuntimeInitializeOnLoadMethod]
+        //[RuntimeInitializeOnLoadMethod]
         static public void runetimeInit()
         {
             //to make sure loading screen exist
 
             string scName = "screen-loading";
 
-            if (!EngineLoader.isSceneAdded(scName) && HalperScene.checkIfCanBeLoaded(scName))
+            if (!SceneLoader.isSceneAdded(scName) && HalperScene.checkIfCanBeLoaded(scName))
             {
                 SceneManager.LoadSceneAsync(scName, LoadSceneMode.Additive);
             }

@@ -11,11 +11,11 @@ using Random = UnityEngine.Random;
 /// Puis se détruire
 /// </summary>
 
-namespace fwp.engine.scaffolder.engineer
+namespace fwp.engine.scenes
 {
-    public class EngineLoader : MonoBehaviour
+    public class SceneLoader : MonoBehaviour
     {
-        static public List<EngineLoader> loaders = new List<EngineLoader>();
+        static public List<SceneLoader> loaders = new List<SceneLoader>();
 
         protected List<Coroutine> queries = new List<Coroutine>();
 
@@ -33,12 +33,12 @@ namespace fwp.engine.scaffolder.engineer
             loaders.Remove(this);
         }
 
-        static protected EngineLoader createLoader()
+        static protected SceneLoader createLoader()
         {
             GameObject go = new GameObject("[loader(" + Random.Range(0, 1000) + ")]");
             DontDestroyOnLoad(go);
 
-            return go.AddComponent<EngineLoader>();
+            return go.AddComponent<SceneLoader>();
         }
 
         static protected bool checkForFilteredScenes()
@@ -77,31 +77,35 @@ namespace fwp.engine.scaffolder.engineer
         {
             ///// feeder, additionnal scenes (from feeder script)
             GameObject[] roots = scene.GetRootGameObjects();
-            List<EngineLoaderFeederBase> feeders = new List<EngineLoaderFeederBase>();
+            List<SceneLoaderFeederBase> feeders = new List<SceneLoaderFeederBase>();
             for (int i = 0; i < roots.Length; i++)
             {
-                feeders.AddRange(roots[i].GetComponentsInChildren<EngineLoaderFeederBase>());
+                feeders.AddRange(roots[i].GetComponentsInChildren<SceneLoaderFeederBase>());
             }
 
-            for (int i = 0; i < feeders.Count; i++)
+            if (feeders.Count > 0)
             {
-                feeders[i].feed();
-            }
-
-            bool done = false;
-            do
-            {
-                done = true;
+                //start
                 for (int i = 0; i < feeders.Count; i++)
                 {
-                    if (feeders[i] != null) done = false;
+                    feeders[i].feed();
                 }
-                yield return null;
-            } while (!done);
 
-            yield return null;
+                Debug.Log("waiting for x" + feeders.Count + " feeders");
 
-            if (onFeedersCompleted != null) onFeedersCompleted();
+                bool done = false;
+                while (!done)
+                {
+                    done = true;
+                    for (int i = 0; i < feeders.Count; i++)
+                    {
+                        if (feeders[i] != null) done = false;
+                    }
+                    yield return null;
+                }
+            }
+
+            onFeedersCompleted?.Invoke();
         }
 
         public Coroutine asyncUnloadScenes(string[] sceneNames, Action onComplete = null)
@@ -119,10 +123,20 @@ namespace fwp.engine.scaffolder.engineer
                 Debug.Assert(sceneNames[i].Length > 0, "can't unload given empty scene name");
 
                 Scene sc = SceneManager.GetSceneByName(sceneNames[i]);
+
+                if (!sc.IsValid())
+                {
+                    Debug.LogWarning(sceneNames[i] + " not valid ?");
+                    continue;
+                }
+
                 if (!sc.isLoaded)
                 {
                     Debug.LogWarning(sceneNames[i] + " is not loaded ?");
+                    continue;
                 }
+
+                Debug.Log($"  now unloading {sceneNames[i]} ...");
 
                 AsyncOperation async = SceneManager.UnloadSceneAsync(sceneNames[i]);
                 if (async == null)
@@ -149,14 +163,20 @@ namespace fwp.engine.scaffolder.engineer
             GameObject.Destroy(gameObject);
         }
 
-        public Coroutine asyncLoadScenes(string[] sceneNames, Action onComplete = null)
+        public Coroutine asyncLoadScenes(string[] sceneNames, Action<Scene[]> onComplete = null)
         {
             return StartCoroutine(processLoadScenes(sceneNames, onComplete));
         }
 
-        IEnumerator processLoadScenes(string[] sceneNames, Action onComplete = null)
+        IEnumerator processLoadScenes(string[] sceneNames, Action<Scene[]> onComplete = null)
         {
             //Debug.Log(getStamp() + " ... processing " + sceneNames.Length + " scenes", transform);
+
+            //unity flags scenes as loaded after frame 1
+            //need to wait for when the scene is already present
+            while (Time.frameCount < 2) yield return null;
+
+            List<string> filtered = new List<string>();
 
             for (int i = 0; i < sceneNames.Length; i++)
             {
@@ -180,19 +200,53 @@ namespace fwp.engine.scaffolder.engineer
                     continue;
                 }
 
-                bool currentlyLoading = getLoadingScene(sceneName) != null;
+                filtered.Add(sceneName);
+            }
 
-                if (currentlyLoading)
+            List<Scene> output = new List<Scene>();
+            for (int i = 0; i < filtered.Count; i++)
+            {
+                string sceneName = filtered[i];
+                Scene? tarSCene = getLoadingScene(sceneName);
+
+                if (tarSCene != null)
                 {
                     Debug.LogWarning("  <b>" + sceneName + "</b> is currently loading, skipping loading of that scene");
+
+                    output.Add(tarSCene.Value);
+
                     continue;
                 }
 
-                IEnumerator process = processLoadScene(sceneNames[i]);
-                while (process.MoveNext()) yield return null;
+                StartCoroutine(processLoadScene(filtered[i], (Scene sc) =>
+                {
+                    output.Add(sc);
 
-                Debug.Log(getStamp() + "  L " + sceneNames[i] + " is <b>done loading</b>");
+                    Debug.Log("   ... " + sc.name + " is done (" + output.Count + "/" + filtered.Count + ")");
+                }));
+
             }
+
+            if (output.Count != filtered.Count)
+            {
+                Debug.Log(getStamp() + " still waiting for scenes to be loaded ... (" + output.Count + "/" + filtered.Count + ")");
+
+                while (output.Count != filtered.Count)
+                {
+                    int diff = filtered.Count - output.Count;
+                    Debug.Log(getStamp() + " ... remaining x" + diff);
+
+                    int count = output.Count;
+                    while (count == output.Count)
+                    {
+                        yield return null;
+                    }
+
+                    yield return null;
+                }
+            }
+
+            Debug.Log(getStamp() + " is <b>done loading</b>", this);
 
             //needed so that all new objects loaded have time to exec build()
             //ca fait un effet de bord quand on unload le screen dans la frame où il est généré
@@ -200,20 +254,22 @@ namespace fwp.engine.scaffolder.engineer
             //avant qu'on setup des trucs dans l'écran faut que tlm ai fait son build
             yield return null;
 
-            if (onComplete != null) onComplete();
+            if (onComplete != null) onComplete(output.ToArray());
 
             GameObject.Destroy(gameObject);
         }
 
-        IEnumerator processLoadScene(string sceneLoad, Action onComplete = null)
+        IEnumerator processLoadScene(string sceneLoad, Action<Scene> onComplete = null)
         {
             //can't reload same scene
             //if (isSceneOfName(sceneLoad)) yield break;
 
+            name += "-" + sceneLoad;
+
             if (!checkIfInBuildSettings(sceneLoad))
             {
                 Debug.LogWarning("asked to load <b>" + sceneLoad + "</b> but this scene is <color=red><b>not added to BuildSettings</b></color>");
-                if (onComplete != null) onComplete();
+                if (onComplete != null) onComplete(SceneManager.GetSceneByName(sceneLoad));
                 yield break;
             }
 
@@ -228,16 +284,14 @@ namespace fwp.engine.scaffolder.engineer
                 //Debug.Log(sceneLoad + " "+async.progress);
             }
 
-            //Debug.Log(getStamp() + "  L <b>" + sceneLoad + "</b> async is done ... ");
+            Debug.Log(getStamp() + "  L <b>" + sceneLoad + "</b> async is done ... ");
 
             Scene sc = SceneManager.GetSceneByName(sceneLoad);
             while (!sc.isLoaded) yield return null;
 
-            //Debug.Log(getStamp() + "  L <b>" + sceneLoad + "</b> at loaded state ... ");
+            Debug.Log(getStamp() + "  L <b>" + sceneLoad + "</b> at loaded state ... ");
 
             cleanScene(sc);
-
-            //Debug.Log(getStamp() + "  L <b>" + sceneLoad + "</b> solving feeders ... ");
 
             Coroutine feeders = solveFeeders(sc, delegate ()
             {
@@ -249,25 +303,33 @@ namespace fwp.engine.scaffolder.engineer
 
             //ResourceManager.reload(); // add resources if any
 
-            //Debug.Log(getStamp() + " ... '<b>" + sceneLoad + "</b>' loaded");
+            Debug.Log(getStamp() + " ... '<b>" + sceneLoad + "</b>' loaded");
 
             yield return null;
 
-            if (onComplete != null) onComplete();
+            if (onComplete != null) onComplete(sc);
         }
 
         protected string getStamp()
         {
-            return EngineTools.getStamp(this, "cyan");
+            return fwp.engine.scaffolder.EngineTools.getStamp(this, "cyan");
         }
 
-        static public Coroutine loadScene(string nm, Action onComplete = null)
+
+
+
+        static public SceneLoader loadScene(string nm, Action<Scene> onComplete = null)
         {
-            return loadScenes(new string[] { nm }, onComplete);
+            return loadScenes(new string[] { nm }, (Scene[] scs) =>
+            {
+                onComplete?.Invoke(scs[0]);
+            });
         }
-        static public Coroutine loadScenes(string[] nms, Action onComplete = null)
+        static public SceneLoader loadScenes(string[] nms, Action<Scene[]> onComplete = null)
         {
-            return createLoader().asyncLoadScenes(nms, onComplete);
+            var loader = createLoader();
+            loader.asyncLoadScenes(nms, onComplete);
+            return loader;
         }
 
         static public void unloadScene(Scene sc)
@@ -305,11 +367,14 @@ namespace fwp.engine.scaffolder.engineer
             }
         }
 
-        static public Coroutine queryScene(string sceneName, Action onComplete = null)
+        static public Coroutine queryScene(string sceneName, Action<Scene> onComplete = null)
         {
-            return queryScenes(new string[] { sceneName }, onComplete);
+            return queryScenes(new string[] { sceneName }, (Scene[] scs) =>
+            {
+                onComplete?.Invoke(scs[0]);
+            });
         }
-        static public Coroutine queryScenes(string[] sceneNames, Action onComplete = null)
+        static public Coroutine queryScenes(string[] sceneNames, Action<Scene[]> onComplete = null)
         {
             return createLoader().asyncLoadScenes(sceneNames, onComplete);
         }
@@ -428,7 +493,7 @@ namespace fwp.engine.scaffolder.engineer
         {
             if (Time.frameCount < 2)
             {
-                Debug.LogError("scenes are not flagged as loaded until frame 2");
+                Debug.LogError($"asking for scene {strictSceneName} but scenes are not flagged as loaded until frame 2");
                 return default(Scene);
             }
 

@@ -38,9 +38,9 @@ namespace fwp.engine.screens
 
         IEnumerator processWrapper(string nm)
         {
-            screen = ScreensManager.open(nm, () =>
+            screen = ScreensManager.open(nm, (ScreenObject screen) =>
             {
-                this.screen = ScreensManager.getScreen(nm);
+                this.screen = screen;
             });
 
             // wait for the screen

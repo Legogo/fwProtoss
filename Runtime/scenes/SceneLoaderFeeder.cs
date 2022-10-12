@@ -10,9 +10,9 @@ using UnityEditor;
 /// USed to declare specific additionnal scene to load on startup
 /// </summary>
 
-namespace fwp.engine.scaffolder.engineer
+namespace fwp.engine.scenes
 {
-    public class EngineLoaderFeeder : EngineLoaderFeederBase
+    public class SceneLoaderFeeder : SceneLoaderFeederBase
     {
         public bool add_camera;
 

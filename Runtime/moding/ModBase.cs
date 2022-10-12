@@ -57,20 +57,12 @@ namespace fwp.engine.mod
         }
         
         /// <summary>
-        /// starts !
+        /// something must call this to launch the round
         /// </summary>
-        public void launch()
+        virtual public void modLaunch()
         {
-            Debug.Log(getStamp() + " launch()");
-
-            modLaunch();
-
             if (coActive != null) return;
             coActive = StartCoroutine(processActive());
-        }
-
-        virtual protected void modLaunch()
-        {
         }
 
         IEnumerator processActive()

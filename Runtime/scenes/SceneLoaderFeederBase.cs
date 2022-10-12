@@ -4,12 +4,12 @@ using UnityEngine;
 using System;
 using UnityEngine.SceneManagement;
 
-namespace fwp.engine.scaffolder.engineer
+namespace fwp.engine.scenes
 {
-    public class EngineLoaderFeederBase : MonoBehaviour
+    public class SceneLoaderFeederBase : MonoBehaviour
     {
         protected List<string> scene_names;
-        protected Coroutine feeding;
+        protected SceneLoader feeding;
 
         /// <summary>
         /// starts feed process
@@ -24,10 +24,10 @@ namespace fwp.engine.scaffolder.engineer
             //Debug.Log(EngineObject.getStamp(this) + " now feeding "+nms.Length+" names", transform);
             //for (int i = 0; i < nms.Length; i++) { Debug.Log("  L " + nms[i]);}
 
-            feeding = EngineLoader.loadScenes(nms, delegate ()
+            feeding = SceneLoader.loadScenes(nms, delegate (Scene[] scs)
             {
-        //Debug.Log("feed destroy");
-        GameObject.Destroy(this);
+                //Debug.Log("feed destroy");
+                GameObject.Destroy(this);
             });
         }
 
