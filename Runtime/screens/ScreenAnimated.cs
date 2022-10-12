@@ -67,7 +67,7 @@ namespace fwp.engine.screens
             openedAnimatedScreens.Remove(this);
         }
 
-        virtual public void openAnimated()
+        public void openAnimated()
         {
             if (verbose) Debug.Log(getStamp() + " open animating TAB : " + name, transform);
 
@@ -138,6 +138,8 @@ namespace fwp.engine.screens
 
         virtual public void closeAnimated()
         {
+            Debug.Log(getStamp() + " close animated ?");
+
             if (isClosing())
             {
                 Debug.LogWarning(" ... already closing");

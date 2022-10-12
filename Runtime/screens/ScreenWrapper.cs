@@ -31,6 +31,8 @@ namespace fwp.engine.screens
             this.onLoaded = onLoaded;
             this.onEnded = onEnded;
 
+            //Debug.Log(name + " setup");
+
             StartCoroutine(processWrapper(nm));
 
             return this;
@@ -38,18 +40,24 @@ namespace fwp.engine.screens
 
         IEnumerator processWrapper(string nm)
         {
+            Debug.Log("wrapper process : loading screen " + nm);
+
             screen = ScreensManager.open(nm, (ScreenObject screen) =>
             {
                 this.screen = screen;
             });
+
+            Debug.Log("wrapper process : waiting for screen ("+nm+")");
 
             // wait for the screen
             while (screen == null) yield return null;
 
             this.onLoaded?.Invoke();
 
+            Debug.Log("wrapper process : wait for screen to close");
+
             // wait for screen to close
-            while(this.screen != null) yield return null;
+            while (this.screen != null) yield return null;
 
             this.onEnded?.Invoke();
 

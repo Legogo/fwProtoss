@@ -39,10 +39,10 @@ namespace fwp.engine.screens
         {
             if (nav == null) nav = new ScreenNav();
 
-            if (down != null)   nav.onPressedDown += down;
-            if (up != null)     nav.onPressedUp += up;
-            if (left != null)   nav.onPressedLeft += left;
-            if (right != null)  nav.onPressedRight += right;
+            if (down != null) nav.onPressedDown += down;
+            if (up != null) nav.onPressedUp += up;
+            if (left != null) nav.onPressedLeft += left;
+            if (right != null) nav.onPressedRight += right;
         }
 
         public void subSkip(Action skip)
@@ -149,18 +149,13 @@ namespace fwp.engine.screens
         {
             if (!force && sticky)
             {
-                Debug.LogWarning("can't unload sticky scenes : " + name);
+                Debug.LogWarning("can't unload sticky scenes : " + gameObject.scene.name);
                 return;
             }
 
-            string nm = name;
+            Debug.Log(getStamp()+ " unloading <b>" + gameObject.scene.name + "</b>");
 
-            if (nm.StartsWith("|")) nm = nm.Substring(1, nm.Length - 1); // remove starting | symbol
-            if (!nm.StartsWith("screen-")) nm = "screen-" + nm;
-
-            Debug.Log("unloading <b>" + nm + "</b>");
-
-            SceneManager.UnloadSceneAsync(nm);
+            SceneManager.UnloadSceneAsync(gameObject.scene.name);
         }
 
         public bool isInteractive() => nav != null;
@@ -198,6 +193,8 @@ namespace fwp.engine.screens
 
         private void OnDestroy()
         {
+            if (!Application.isPlaying) return;
+
             onScreenDestruction();
             ScreensManager.unsubScreen(this);
         }

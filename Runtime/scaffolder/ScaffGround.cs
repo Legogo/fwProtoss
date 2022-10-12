@@ -68,6 +68,7 @@ namespace fwp.engine.scaffolder
 
         /// <summary>
         /// if generated at runtime, called during build()
+        /// use this to setup more stuff right away after loading
         /// </summary>
         virtual protected void setupEarly()
         {

@@ -6,28 +6,31 @@ namespace fwp.engine.mod
 {
     using fwp.engine.scaffolder;
 
+    public interface iModObject
+    {
+        void modRestart();
+        void modUpdate();
+        void modEnd();
+    }
+
     /// <summary>
     /// state owner
     /// this auto update after launch() is called
     /// </summary>
     public class ModBase : ScaffGround
     {
-        public interface ModObject : iListCandidate
-        {
-            void modRestarted();
-            void modEnded();
-        }
-
         Coroutine coActive = null;
 
-        public ListUpdater<ModObject> updater;
+        public List<iModObject> candidates;
 
         protected override void build()
         {
             base.build();
+            
+            instance = this;
 
-            updater = new ListUpdater<ModObject>();
-
+            candidates = new List<iModObject>();
+            
             modCreate();
         }
 
@@ -40,18 +43,16 @@ namespace fwp.engine.mod
         }
 
         /// <summary>
+        /// when the mod is finished loading
         /// setup the mod
         /// </summary>
-        virtual public void modRestart()
+        virtual protected void modRestart()
         {
-            Debug.Log(getStamp() + " restart()");
+            Debug.Log(getStamp() + " restart() x"+candidates.Count);
             
-            if(updater != null)
+            for (int i = 0; i < candidates.Count; i++)
             {
-                for (int i = 0; i < updater.candidates.Count; i++)
-                {
-                    updater.candidates[i].modRestarted();
-                }
+                candidates[i].modRestart();
             }
             
         }
@@ -61,31 +62,34 @@ namespace fwp.engine.mod
         /// </summary>
         virtual public void modLaunch()
         {
-            if (coActive != null) return;
+            Debug.Log(getStamp() + " launch()");
+
+            Debug.Assert(coActive == null, "already running ?");
+
             coActive = StartCoroutine(processActive());
         }
 
         IEnumerator processActive()
         {
-            while (isModDone())
+            Debug.Log(getStamp() + " update active");
+
+            while (!isModDone())
             {
                 modUpdate();
                 yield return null;
             }
+
+            Debug.Log(getStamp() + " update ended");
 
             modEnded();
         }
 
         virtual protected void modUpdate()
         {
-            if(updater != null)
+            for (int i = 0; i < candidates.Count; i++)
             {
-                for (int i = 0; i < updater.candidates.Count; i++)
-                {
-                    updater.candidates[i].update();
-                }
+                candidates[i].modUpdate();
             }
-            
         }
 
         virtual public bool isModDone()
@@ -95,14 +99,17 @@ namespace fwp.engine.mod
 
         virtual protected void modEnded()
         {
+            if(coActive != null)
+            {
+                StopCoroutine(coActive);
+                coActive = null;
+            }
+
             Debug.Log(getStamp() + " ended()");
 
-            if(updater != null)
+            for (int i = 0; i < candidates.Count; i++)
             {
-                for (int i = 0; i < updater.candidates.Count; i++)
-                {
-                    updater.candidates[i].modEnded();
-                }
+                candidates[i].modEnd();
             }
             
         }
@@ -114,6 +121,11 @@ namespace fwp.engine.mod
 
         protected override string solveStampColor()  => "orange";
 
+        static ModBase instance;
+        static public ModBase getMod()
+        {
+            return instance;
+        }
     }
 
 }

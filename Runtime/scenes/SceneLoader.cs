@@ -222,7 +222,7 @@ namespace fwp.engine.scenes
                 {
                     output.Add(sc);
 
-                    Debug.Log("   ... " + sc.name + " is done (" + output.Count + "/" + filtered.Count + ")");
+                    Debug.Log("   ... loader : " + sc.name + " is done (" + output.Count + "/" + filtered.Count + ")");
                 }));
 
             }

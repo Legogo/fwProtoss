@@ -175,6 +175,30 @@ abstract public class BrainBase : ScaffGroundUpdate
 
     virtual public bool isSelected() => false;
 
+    public T fetchInHierarchy<T>(string gameObjectName) where T : Component
+    {
+        T[] cmps = transform.GetComponentsInChildren<T>();
+        if (cmps.Length <= 0)
+        {
+            Debug.LogError("searching for " + typeof(T) + " on " + gameObjectName + ", but context " + name + " has no component of that type");
+            return null;
+        }
+
+        //Debug.Log("?" + cmps.Length);
+
+        for (int i = 0; i < cmps.Length; i++)
+        {
+            //Debug.Log(cmps[i].name + " ? " + gameObjectName);
+
+            if (cmps[i].name == gameObjectName)
+            {
+                return cmps[i];
+            }
+        }
+        return null;
+    }
+
+
     static public Transform toggleChangeling(MonoBehaviour parent, string changelingName)
     {
         //toggle transforms

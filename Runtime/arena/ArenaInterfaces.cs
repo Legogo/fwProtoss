@@ -15,6 +15,5 @@ namespace fwp.arena
 
         // récup les box de collisions
         BoxCollider2D[] getColliders();
-
     }
 }

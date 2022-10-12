@@ -11,7 +11,7 @@ namespace fwp.engine.screens
     public class ScreensManager
     {
 
-        static protected List<ScreenObject> screens;
+        static protected List<ScreenObject> screens = new List<ScreenObject>();
 
         public enum ScreenType
         {
@@ -40,24 +40,18 @@ namespace fwp.engine.screens
 
         static public void subScreen(ScreenObject so)
         {
-            if (screens == null) screens = new List<ScreenObject>();
+            if (screens.Contains(so)) return;
 
-            if (screens.IndexOf(so) < 0)
-            {
-                //Debug.Log(so.name + " is now subscribed to screens");
-                screens.Add(so);
-            }
+            screens.Add(so);
+            Debug.Log(so.name + "       is now subscribed to screens");
         }
 
         static public void unsubScreen(ScreenObject so)
         {
-            if (screens.IndexOf(so) > -1)
-            {
-                //Debug.Log(so.name + " is now removed from screens (screen destroy)");
-                screens.Remove(so);
+            if (!screens.Contains(so)) return;
 
-                //UiSelectableBrain.brain.eventResetSelection(true); // screen unsub-ed
-            }
+            screens.Remove(so);
+            Debug.Log(so.name + "       is now removed from screens (screen destroy)");
         }
 
         static protected void fetchScreens()
@@ -131,23 +125,25 @@ namespace fwp.engine.screens
         }
         static public ScreenObject getScreen(string nm)
         {
-            fetchScreens();
-
-            ScreenObject so = screens.Select(x => x).Where(x => x.name.EndsWith(nm)).FirstOrDefault();
-
-            if (so != null) return so;
-
-            //no warning because it's called before loading to check if screen already exists
-
-            /*
-            Debug.LogWarning("~Screens~ getScreen("+nm+") <color=red>no screen that ENDWITH that name</color> (screens count : "+screens.Count+")");
-            for (int i = 0; i < screens.Count; i++)
+            if(screens.Count <= 0)
             {
-              Debug.Log("  L " + screens[i].name);
+                Debug.LogWarning("asking for a screen " + nm + " but no screens are register in mgr");
+                return null;
             }
-            */
 
-            return null;
+            ScreenObject so = screens.Select(x => x).Where(x => x.isScreenOfSceneName(nm)).FirstOrDefault();
+
+            if (so == null)
+            {
+                Debug.LogWarning($"{getStamp()} getScreen({nm}) <color=red>no screen that END WITH that name</color> (screens count : {screens.Count})");
+
+                for (int i = 0; i < screens.Count; i++)
+                {
+                    Debug.Log(screens[i]);
+                }
+            }
+
+            return so;
         }
 
         static public void unloadScreen(string nm)
@@ -182,7 +178,7 @@ namespace fwp.engine.screens
         /// </summary>
         static public ScreenObject open(string nm, string filterName = "", Action<ScreenObject> onComplete = null)
         {
-            Debug.Log("ScreensManager | opening screen of name : <b>" + nm + "</b> , filter ? " + filterName);
+            Debug.Log($"{getStamp()} | opening screen of name : <b>{nm}</b> , filter ? {filterName}");
 
             if(!checkCompatibility(nm))
             {
@@ -326,6 +322,11 @@ namespace fwp.engine.screens
             if (state) ScreensManager.open(ScreensManager.ScreenNameGenerics.pause, filter);
             else ScreensManager.close(ScreensManager.ScreenNameGenerics.pause, filter);
 
+        }
+
+        static string getStamp()
+        {
+            return "~~ScreensManager~~";
         }
 
     }

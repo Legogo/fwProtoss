@@ -11,9 +11,9 @@ namespace fwp.arena
     {
         public BoxCollider2D[] _colliders;
 
-        public override void modRestarted()
+        public override void arenaRestart()
         {
-            base.modRestarted();
+            base.arenaRestart();
 
             _colliders = transform.Find("collision").GetComponents<BoxCollider2D>();
         }

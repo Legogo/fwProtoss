@@ -27,8 +27,8 @@ namespace fwp.engine.camera
         Vector3 midTarget = Vector3.zero;
         public float targetOrtho = 6f;
 
-        public float speed = 0f;
-        public Vector2 diff; // vec WxH
+        [ReadOnly]
+        public Vector2 diff; // to help solving middle of the screen, vec WxH
 
         public iCameraTarget[] targets;
 
@@ -41,9 +41,9 @@ namespace fwp.engine.camera
             if (cam == null) Debug.LogError("no cam");
         }
 
-        public override void modRestarted()
+        public override void arenaRestart()
         {
-            base.modRestarted();
+            base.arenaRestart();
 
             event_recountTargets();
         }
@@ -61,7 +61,7 @@ namespace fwp.engine.camera
             //for (int i = 0; i < targets.Length; i++) Debug.Log("  " + targets[i].transform.name, targets[i].transform);
         }
 
-        protected override void arenaUpdate()
+        public override void arenaUpdate()
         {
             base.arenaUpdate();
 

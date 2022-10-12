@@ -8,8 +8,8 @@ using UnityEngine;
 abstract public class FactoryBase
 {
     //List<FactoryObject> pool = new List<FactoryObject>();
-    protected List<IFactoryObject> actives = new List<IFactoryObject>();
-    List<IFactoryObject> inactives = new List<IFactoryObject>();
+    protected List<iFactoryObject> actives = new List<iFactoryObject>();
+    List<iFactoryObject> inactives = new List<iFactoryObject>();
 
     System.Type _factoryTargetType;
 
@@ -33,7 +33,7 @@ abstract public class FactoryBase
         Object[] presents = (Object[])GameObject.FindObjectsOfType(_factoryTargetType);
         for (int i = 0; i < presents.Length; i++)
         {
-            inject(presents[i] as IFactoryObject);
+            inject(presents[i] as iFactoryObject);
         }
 
         if (!Application.isPlaying)
@@ -47,12 +47,12 @@ abstract public class FactoryBase
     public bool hasCandidates() => actives.Count > 0 || inactives.Count > 0;
     public bool hasCandidates(int countCheck) => (actives.Count + inactives.Count) >= countCheck;
 
-    public List<IFactoryObject> getActives()
+    public List<iFactoryObject> getActives()
     {
         return actives;
     }
 
-    public List<T> getActives<T>() where T : IFactoryObject
+    public List<T> getActives<T>() where T : iFactoryObject
     {
         List<T> tmp = new List<T>();
         for (int i = 0; i < actives.Count; i++)
@@ -62,18 +62,18 @@ abstract public class FactoryBase
             tmp.Add(candid);
         }
 		
-        Debug.Log(typeof(T)+" ? candid = "+tmp.Count + " / active count = " + actives.Count);
+        //Debug.Log(typeof(T)+" ? candid = "+tmp.Count + " / active count = " + actives.Count);
 
 		return tmp;
     }
 
-    public IFactoryObject getRandomActive()
+    public iFactoryObject getRandomActive()
     {
         Debug.Assert(actives.Count > 0, GetType() + " can't return random one if active list is empty :: " + actives.Count + "/" + inactives.Count);
 
         return actives[Random.Range(0, actives.Count)];
     }
-    public IFactoryObject getNextActive(IFactoryObject curr)
+    public iFactoryObject getNextActive(iFactoryObject curr)
     {
         int idx = actives.IndexOf(curr);
         if (idx > -1)
@@ -90,7 +90,7 @@ abstract public class FactoryBase
     /// <summary>
     /// générer un nouveau element dans le pool
     /// </summary>
-    protected IFactoryObject create(string subType)
+    protected iFactoryObject create(string subType)
     {
         string path = System.IO.Path.Combine(getObjectPath(), subType);
         Object obj = Resources.Load(path);
@@ -102,7 +102,7 @@ abstract public class FactoryBase
         
         //Debug.Log("newly created object " + go.name, go);
 
-        IFactoryObject candidate = go.GetComponent<IFactoryObject>();
+        iFactoryObject candidate = go.GetComponent<iFactoryObject>();
         Debug.Assert(candidate != null, $"no candidate on {go} ?? generated object is not factory compatible", go);
 
         inactives.Add(candidate);
@@ -119,7 +119,7 @@ abstract public class FactoryBase
     /// demander a la factory de filer un element dispo
     /// subType est le nom du prefab dans le dossier correspondant
     /// </summary>
-    public IFactoryObject extract(string subType)
+    public iFactoryObject extract(string subType)
     {
         //will add an item in inactive
         //and go on
@@ -129,7 +129,7 @@ abstract public class FactoryBase
             create(subType);
         }
 
-        IFactoryObject obj = null;
+        iFactoryObject obj = null;
 
         for (int i = 0; i < inactives.Count; i++)
         {
@@ -154,7 +154,7 @@ abstract public class FactoryBase
 
     public T extract<T>(string subType)
     {
-        IFactoryObject icand = extract(subType);
+        iFactoryObject icand = extract(subType);
         Component com = icand as Component;
         return com.GetComponent<T>();
     }
@@ -162,7 +162,7 @@ abstract public class FactoryBase
     /// <summary>
     /// indiquer a la factory qu'un objet a changé d'état de recyclage
     /// </summary>
-    public void recycle(IFactoryObject candid)
+    public void recycle(iFactoryObject candid)
     {
         Debug.Assert(actives.IndexOf(candid) > -1);
         actives.Remove(candid);
@@ -191,7 +191,7 @@ abstract public class FactoryBase
     /// quand un objet est déclaré comme utilisé par le systeme
     /// généralement cette méthode est appellé a la création d'un objet lié a la facto
     /// </summary>
-    public void inject(IFactoryObject candid)
+    public void inject(iFactoryObject candid)
     {
         inactives.Remove(candid);
 
@@ -205,7 +205,7 @@ abstract public class FactoryBase
     /// <summary>
     /// called by a destroyed object
     /// </summary>
-    public void destroy(IFactoryObject candid)
+    public void destroy(iFactoryObject candid)
     {
         if (actives.IndexOf(candid) > -1) actives.Remove(candid);
         if (inactives.IndexOf(candid) > -1) inactives.Remove(candid);
@@ -215,7 +215,7 @@ abstract public class FactoryBase
 	{
         Debug.Log(getStamp() + " recycleAll");
 
-        List<IFactoryObject> cands = new List<IFactoryObject>();
+        List<iFactoryObject> cands = new List<iFactoryObject>();
         cands.AddRange(actives);
 
 		for (int i = 0; i < cands.Count; i++)
@@ -232,7 +232,7 @@ abstract public class FactoryBase
 
 //public interface IFactory{}
 
-public interface IFactoryObject : IIndusReference, ISaveSerializable
+public interface iFactoryObject : IIndusReference, ISaveSerializable
 {
 
     string factoGetCandidateName();

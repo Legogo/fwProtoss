@@ -10,9 +10,8 @@ namespace fwp.arena
 {
     using fwp.engine.scaffolder;
     using fwp.engine.camera;
-    using fwp.engine.mod;
-
-    abstract public class ArenaObject : ScaffGround, ModBase.ModObject, iCameraTarget
+    
+    abstract public class ArenaObject : ScaffGround, iCameraTarget
     {
         public bool isCameraTarget() => false;
 
@@ -21,20 +20,13 @@ namespace fwp.arena
             return transform.position;
         }
 
-        virtual public void modRestarted()
-        {
-        }
+        virtual public void arenaRestart()
+        { }
 
-        virtual public void modEnded()
-        {
-        }
+        virtual public void arenaUpdate()
+        { }
 
-        public void update()
-        {
-            arenaUpdate();
-        }
-
-        virtual protected void arenaUpdate()
+        virtual public void arenaEnd()
         { }
     }
 }

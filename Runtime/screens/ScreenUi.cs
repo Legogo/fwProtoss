@@ -14,12 +14,19 @@ namespace fwp.engine.screens
         public bool useUiCamera = false;
 
         protected Canvas[] _canvas;
+        protected Canvas _mainCanvas;
+
         protected RectTransform _rt;
 
         protected override void build()
         {
             base.build();
 
+            _canvas = gameObject.GetComponentsInChildren<Canvas>();
+            Debug.Assert(_canvas.Length > 0, "no canvas for screen ui ?");
+
+            _mainCanvas = _canvas[0];
+            
             _rt = GetComponent<RectTransform>();
         }
 
@@ -30,11 +37,10 @@ namespace fwp.engine.screens
             if (useUiCamera)
             {
                 Camera uiCam = qh.gc<Camera>("camera-ui");
-                Canvas canvas = getDefaultCanvas();
-                if (canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+                if (_mainCanvas.renderMode == RenderMode.ScreenSpaceOverlay)
                 {
-                    canvas.renderMode = RenderMode.ScreenSpaceCamera;
-                    canvas.worldCamera = uiCam;
+                    _mainCanvas.renderMode = RenderMode.ScreenSpaceCamera;
+                    _mainCanvas.worldCamera = uiCam;
                 }
             }
 
@@ -42,17 +48,7 @@ namespace fwp.engine.screens
 
         public Canvas getDefaultCanvas()
         {
-            if (_canvas == null)
-            {
-                _canvas = gameObject.GetComponentsInChildren<Canvas>();
-            }
-
-            if (_canvas != null)
-            {
-                return _canvas[0];
-            }
-
-            return null;
+            return _mainCanvas;
         }
         public Canvas getCanvas(string nm)
         {
@@ -79,9 +75,6 @@ namespace fwp.engine.screens
         protected override void toggleVisible(bool flag)
         {
             //base.toggleVisible(flag);
-
-            //si le scriptorder fait que le ScreenObject arrive après le Screenmanager ...
-            if (_canvas == null) setup();
 
             if (_canvas == null) Debug.LogError("no canvas ? for " + name, gameObject);
 

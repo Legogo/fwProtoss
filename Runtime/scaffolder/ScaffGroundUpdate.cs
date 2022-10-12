@@ -22,7 +22,7 @@ namespace fwp.engine.scaffolder
 
         protected void subUpdate(bool sub)
         {
-            if (_scaffUpdater == null) _scaffUpdater = new ListUpdater<iScaffUpdate>();
+            if (_scaffUpdater == null) _scaffUpdater = new ListUpdater<iScaffUpdate>("scaff");
 
             if (sub) _scaffUpdater.sub(this);
             else _scaffUpdater.unsub(this);

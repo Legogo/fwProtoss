@@ -16,9 +16,9 @@ namespace fwp.engine
         MonoBehaviour mono;
         Coroutine coActive;
 
-        public ListUpdater()
+        public ListUpdater(string updateName)
         {
-            var carry = new GameObject("[ListUpdater]~" + Random.Range(0, 10000));
+            var carry = new GameObject("[ListUpdater]~" + updateName + "~" + Random.Range(0, 10000));
             mono = carry.AddComponent<ListUpdaterComponent>();
         }
         public ListUpdater(MonoBehaviour carry)
@@ -28,22 +28,21 @@ namespace fwp.engine
 
         public void sub(T candid)
         {
-            int cnt = candidates.Count;
-
             if (candidates.IndexOf(candid) < 0) candidates.Add(candid);
-
-            if (cnt == 0 && candidates.Count > 0)
-            {
-                coActive = mono.StartCoroutine(processActive());
-            }
         }
 
         public void unsub(T candid)
         {
-            int cnt = candidates.Count;
             candidates.Remove(candid);
+        }
 
-            if (cnt > 0 && candidates.Count <= 0)
+        public void setActive(bool active)
+        {
+            if(active)
+            {
+                coActive = mono.StartCoroutine(processActive());
+            }
+            else
             {
                 mono.StopCoroutine(coActive);
                 coActive = null;
@@ -52,7 +51,7 @@ namespace fwp.engine
 
         IEnumerator processActive()
         {
-            Debug.Log(GetType() + " started on "+mono, mono);
+            Debug.Log(GetType() + " <b>updater started</b> on "+mono, mono);
 
             while (true)
             {
