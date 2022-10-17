@@ -114,6 +114,17 @@ namespace fwp.engine.mod
             
         }
 
+        public override string stringify()
+        {
+            string output = base.stringify();
+
+            if (coActive == null) output += "\n NOT ACTIVE";
+
+            output += "\n candidates x" + candidates.Count;
+
+            return output;
+        }
+
         static public T getMod<T>() where T : ModBase
         {
             return GameObject.FindObjectOfType<T>();

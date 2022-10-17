@@ -124,7 +124,7 @@ namespace fwp.engine.scaffolder
 
         virtual public string stringify()
         {
-            return getStamp();
+            return getStamp()+" (ready?"+_ready+")";
         }
 
         public bool isReady() => _ready;

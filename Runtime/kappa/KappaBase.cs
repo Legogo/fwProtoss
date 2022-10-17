@@ -72,11 +72,12 @@ abstract public class KappaBase : ScaffGround
     /// </summary>
     virtual protected void checkSub()
     {
-        //pas besoin de refaire
+        // pas besoin de refaire
         if (_brain != null) return;
 
         _brain = transform.GetComponentInParent<BrainBase>();
         Debug.Assert(_brain != null, this.name+" is brainless ? (prefab might not have assigned brain)", this);
+
         _brain.subKappa(this);
 
     }
@@ -148,6 +149,11 @@ abstract public class KappaBase : ScaffGround
             output += "\n  ready ? " + isReady();
             output += "\n  freeze ? " + isFreezed();
         }
+        else
+        {
+            output += "\n " + Time.frameCount;
+        }
+
         return output;
     }
 }

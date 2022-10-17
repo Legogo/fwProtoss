@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace fwp.engine.scaffolder
 {
+    /// <summary>
+    /// candidate for debug log display
+    /// </summary>
     public interface iScaffLog
     {
         string getStamp();

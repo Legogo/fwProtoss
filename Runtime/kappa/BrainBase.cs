@@ -131,24 +131,36 @@ abstract public class BrainBase : ScaffGroundUpdate
     }
 
     /// <summary>
-    /// force refresh kappas array if not found
-    /// less opti, fine for boot
+    /// fetch + assert
     /// </summary>
     public T getCapacitySafe<T>() where T : KappaBase
     {
-        T tar = getCapacity<T>();
-
-        //force subscribe
-        if(tar == null)
-        {
-            tar = GetComponentInChildren<T>();
-            if (tar != null) tar.brainReady(this);
-        }
+        T tar = getCapacityFetch<T>();
 
         //safe
         if (tar == null)
         {
             Debug.LogError(name + " has no capac " + typeof(T) + " (dont ask for capa in build())", transform);
+        }
+
+        return tar;
+    }
+
+    /// <summary>
+    /// search for it
+    /// if none, fetch for it in hierarchy
+    /// force refresh kappas array if not found
+    /// less opti, fine for boot
+    /// </summary>
+    public T getCapacityFetch<T>() where T : KappaBase
+    {
+        T tar = getCapacity<T>();
+
+        //force subscribe
+        if (tar == null)
+        {
+            tar = GetComponentInChildren<T>();
+            if (tar != null) tar.brainReady(this);
         }
 
         return tar;
@@ -241,6 +253,20 @@ abstract public class BrainBase : ScaffGroundUpdate
     public Vector2 Position
     {
         get { return transform.position; }
+    }
+
+    public override string stringify()
+    {
+        string output = base.stringify();
+
+        output += "\n[KAPPAS x" + kappas.Count + "]";
+
+        for (int i = 0; i < kappas.Count; i++)
+        {
+            output += "\n " + kappas[i].stringify();
+        }
+
+        return output;
     }
 
 }

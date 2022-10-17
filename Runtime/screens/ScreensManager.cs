@@ -127,7 +127,7 @@ namespace fwp.engine.screens
         {
             if(screens.Count <= 0)
             {
-                Debug.LogWarning("asking for a screen " + nm + " but no screens are register in mgr");
+                Debug.LogWarning("asking for a screen " + nm + " but screen count is 0");
                 return null;
             }
 
@@ -139,7 +139,7 @@ namespace fwp.engine.screens
 
                 for (int i = 0; i < screens.Count; i++)
                 {
-                    Debug.Log(screens[i]);
+                    Debug.Log("  #"+i+","+screens[i]);
                 }
             }
 
@@ -305,7 +305,7 @@ namespace fwp.engine.screens
                 so = getScreen(screenName);
                 if (so == null)
                 {
-                    Debug.LogError("ScreensManager | end of screen loading (name given : " + screenName + ") but no <ScreenObject> returned");
+                    Debug.LogError(getStamp() + " | end of screen loading (name given : " + screenName + ") but no <ScreenObject> returned");
                 }
                 onComplete(so);
             });

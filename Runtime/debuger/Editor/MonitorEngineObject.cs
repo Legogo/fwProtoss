@@ -17,9 +17,10 @@ namespace fwp.engine
 
         string[] options;
         int dropdownIndex = 0;
-
-        GameObject last;
-        GUIStyle style;
+        
+        iScaffLog[] candidateList;
+        GameObject currentSelection;
+        GUIStyle style = new GUIStyle();
 
         void OnGUI()
         {
@@ -30,51 +31,94 @@ namespace fwp.engine
                 return;
             }
 
-            if (style == null)
+            //display droplist & select index
+            guiSelection();
+
+            if(currentSelection == null)
             {
-                style = new GUIStyle();
-                style.richText = true;
+                GUILayout.Label("no selection");
+                return;
             }
-            /*
-            if (!UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode || !Application.isPlaying)
-            {
-              GUILayout.Label("only at runtime");
-              return;
-            }
-            */
+
+            guiDrawSelection();
+        }
+
+        void guiDrawSelection()
+        {
+            if (candidateList == null) return;
+            if (candidateList.Length <= 0) return;
+
+            style.richText = true;
+            style.normal.textColor = Color.white;
+            
+            string output = candidateList[dropdownIndex].stringify();
+
+            GUILayout.Space(10f);
+            GUILayout.Label(output, style);
+        }
+
+        void guiSelection()
+        {
 
             GameObject obj = Selection.activeGameObject;
-            if (obj == null) return;
-
-            if (obj != last)
+            
+            if (obj != currentSelection)
             {
                 dropdownIndex = 0;
-                last = obj;
+                currentSelection = obj;
+
+                // update candidates
+                candidateList = getCandidates();
+
+                guiUpdateOption();
+
+                return;
             }
 
-            iScaffLog[] list = getCandidates();
-            if (list.Length <= 0) return;
-
-            List<string> newOptions = new List<string>();
-            for (int i = 0; i < list.Length; i++)
+            // clear for force update
+            if (obj == null)
             {
-                newOptions.Add(list[i].GetType().ToString());
+                currentSelection = null;
             }
-            options = newOptions.ToArray();
+
+            if (options == null) return;
+
+            if (options.Length <= 0)
+            {
+                GUILayout.Label("no options");
+                return;
+            }
 
             GUILayout.BeginHorizontal();
             dropdownIndex = EditorGUILayout.Popup("Objects", dropdownIndex, options, EditorStyles.popup);
             GUILayout.EndHorizontal();
+        }
 
-            if (dropdownIndex >= 0 && dropdownIndex < list.Length)
+        void guiUpdateOption()
+        {
+            if (candidateList == null) return;
+
+            if (candidateList.Length <= 0)
             {
-                GUILayout.Label(list[dropdownIndex].stringify(), style);
+                GUILayout.Label("no candidates on "+currentSelection.name);
+                return;
             }
+
+            List<string> newOptions = new List<string>();
+            for (int i = 0; i < candidateList.Length; i++)
+            {
+                newOptions.Add(candidateList[i].GetType().ToString());
+            }
+            options = newOptions.ToArray();
+
         }
 
         iScaffLog[] getCandidates()
         {
-            MonoBehaviour[] tmp = GameObject.FindObjectsOfType<MonoBehaviour>();
+            if (currentSelection == null) return new iScaffLog[0];
+
+            //MonoBehaviour[] tmp = GameObject.FindObjectsOfType<MonoBehaviour>();
+            MonoBehaviour[] tmp = currentSelection.GetComponentsInChildren<MonoBehaviour>();
             List<iScaffLog> output = new List<iScaffLog>();
             for (int i = 0; i < tmp.Length; i++)
             {
@@ -86,10 +130,10 @@ namespace fwp.engine
 
         void Update()
         {
-            if (EditorApplication.isPlaying && !EditorApplication.isPaused)
-            {
-                Repaint();
-            }
+            if (!EditorApplication.isPlaying) return;
+            if (EditorApplication.isPaused) return;
+
+            Repaint();
         }
 
     }

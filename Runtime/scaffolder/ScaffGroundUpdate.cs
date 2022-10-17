@@ -13,6 +13,8 @@ namespace fwp.engine.scaffolder
         //generic update for all scaff updatables
         static ListUpdater<iScaffUpdate> _scaffUpdater;
 
+        int debug_lastFrameUpdate = -1;
+
         protected override void setupLate()
         {
             base.setupLate();
@@ -37,11 +39,19 @@ namespace fwp.engine.scaffolder
             //Debug.Log(getStamp() + " update()");
 
             if (!canUpdate()) return;
+
+            debug_lastFrameUpdate = Time.frameCount;
+
             scaffUpdate(Time.deltaTime);
         }
 
         abstract protected void scaffUpdate(float dt);
         
         virtual public bool canUpdate() => enabled;
+
+        public override string stringify()
+        {
+            return base.stringify() + " ("+ debug_lastFrameUpdate + ") (update?" + canUpdate() + ")";
+        }
     }
 }
