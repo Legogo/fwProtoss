@@ -22,12 +22,12 @@ namespace fwp.engine.camera
         protected Vector2 min = Vector3.zero;
         protected Vector2 max = Vector3.zero;
 
-        protected float camOrthoSizeMinimum = 6f;
+        const float camOrthoSizeMinimum = 10f;
 
         [ReadOnly]
         public Vector3 midTarget = Vector3.zero;
 
-        public float targetOrtho = 6f;
+        public float targetOrtho = camOrthoSizeMinimum;
 
         [ReadOnly]
         public Vector2 diff; // to help solving middle of the screen, vec WxH

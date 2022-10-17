@@ -28,7 +28,7 @@ abstract public class BrainBase : ScaffGroundUpdate
     {
         base.setup();
 
-        Debug.Log($"#{getStamp()} setuping x{kappas.Count} kappas");
+        //Debug.Log($"#{getStamp()} setuping x{kappas.Count} kappas");
 
         for (int i = 0; i < kappas.Count; i++)
         {
@@ -65,6 +65,7 @@ abstract public class BrainBase : ScaffGroundUpdate
     /// </summary>
     public void doMaterialize()
     {
+        //Debug.Log("mat");
         gameObject.SetActive(true);
     }
 
@@ -73,6 +74,7 @@ abstract public class BrainBase : ScaffGroundUpdate
     /// </summary>
     public void doDematerialize()
     {
+        //Debug.Log("demat");
         gameObject.SetActive(false);
     }
 
@@ -99,7 +101,7 @@ abstract public class BrainBase : ScaffGroundUpdate
         if (kappas.IndexOf(capa) > 0) return;
         kappas.Add(capa);
 
-        Debug.Log(getStamp() + " subbed capa : " + capa, capa);
+        //Debug.Log(getStamp() + " subbed capa : " + capa, capa);
     }
 
     public void unsubKappa(KappaBase capa)
@@ -107,8 +109,7 @@ abstract public class BrainBase : ScaffGroundUpdate
         if (kappas.IndexOf(capa) < 0) return;
         kappas.Remove(capa);
 
-
-        Debug.Log(getStamp() + " un-subbed capa : " + capa, capa);
+        //Debug.Log(getStamp() + " un-subbed capa : " + capa, capa);
     }
 
     /// <summary>
@@ -224,6 +225,8 @@ abstract public class BrainBase : ScaffGroundUpdate
             //Debug.LogWarning($"changeling for {parent.name}, state <b>{changelingName}</b> doesn't have matching child");
             return null;
         }
+
+        Debug.Log("changeling !");
 
         foreach (Transform child in parent.transform)
         {

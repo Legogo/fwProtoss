@@ -59,7 +59,6 @@ namespace fwp.engine
 
         void guiSelection()
         {
-
             GameObject obj = Selection.activeGameObject;
             
             if (obj != currentSelection)
@@ -67,11 +66,14 @@ namespace fwp.engine
                 dropdownIndex = 0;
                 currentSelection = obj;
 
-                // update candidates
-                candidateList = getCandidates();
+                if(currentSelection != null)
+                {
+                    // update candidates
+                    candidateList = getCandidates();
 
-                guiUpdateOption();
-
+                    guiUpdateOption();
+                }
+                
                 return;
             }
 

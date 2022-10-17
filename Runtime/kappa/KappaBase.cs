@@ -25,9 +25,12 @@ abstract public class KappaBase : ScaffGround
     /// </summary>
     virtual public void reset()
     {
-
+        //Debug.Log(getStamp() + " RESET");
     }
 
+    /// <summary>
+    /// this can be called during build() of a getcapa fetch is called
+    /// </summary>
     public void brainReady(BrainBase brain)
     {
         //dans le cas d'un objet généré au runtime y a besoin
@@ -110,13 +113,16 @@ abstract public class KappaBase : ScaffGround
 
     public void setActive(bool active)
     {
-        gameObject.SetActive(active);
+        //Debug.Log("active ? " + active);
+        //gameObject.SetActive(active);
+        enabled = active;
     }
 
     public bool isActive() => gameObject.activeSelf;
 
     virtual public bool canBeUpdated()
     {
+        if (!enabled) return false;
         if (!gameObject.activeSelf) return false;
 
         if (!isReady()) return false;

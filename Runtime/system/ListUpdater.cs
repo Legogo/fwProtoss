@@ -36,6 +36,8 @@ namespace fwp.engine
         {
             candidates.Remove(candid);
             setActive(false);
+
+            //Debug.Log("unsub "+candid);
         }
 
         public void setActive(bool active)
@@ -53,7 +55,7 @@ namespace fwp.engine
 
         IEnumerator processActive()
         {
-            Debug.Log(GetType() + " <b>updater started</b> on "+mono, mono);
+            Debug.Log(GetType() + " <b>updater started</b> on " + mono, mono);
 
             while (true)
             {
