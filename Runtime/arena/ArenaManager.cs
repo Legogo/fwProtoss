@@ -22,8 +22,6 @@ namespace fwp.arena
         {
             bnd = solveBounds();
 
-            spawns = GameObject.FindObjectsOfType<ArenaSpawn>();
-
             build();
         }
 
@@ -41,6 +39,11 @@ namespace fwp.arena
         void OnDestroy()
         {
             mod.candidates.Remove(this);
+        }
+
+        public void fetchSpawns()
+        {
+            spawns = GameObject.FindObjectsOfType<ArenaSpawn>();
         }
 
         public Transform getSpawn(int playerIndex)

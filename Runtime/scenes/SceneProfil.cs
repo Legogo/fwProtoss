@@ -2,9 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using fwp.engine.scaffolder.engineer;
 
-namespace fwp.engine
+namespace fwp.engine.scenes
 {
     /// <summary>
     /// associer autour d'une UID un ensemble de scene
@@ -12,18 +11,10 @@ namespace fwp.engine
     /// </summary>
     public class SceneProfil
     {
-        const string scene_camera = "resource-camera-procamera2D";
-        const string scene_dayCycle = "day-cycle";
-        const string scene_debug = "debug";
-
         public string uid;
 
         public List<string> layers = new List<string>();
         public List<string> deps = new List<string>();
-
-        public bool loadCamera;
-        public bool loadDayCycle;
-        public bool loadDebug;
 
         Scene[] _buffScenes;
 
@@ -37,16 +28,6 @@ namespace fwp.engine
 
             this.uid = uid;
 
-            // common to all
-            loadCamera = true;
-            loadDayCycle = true;
-
-            // specs deps
-            if (this.uid.Contains("sim-"))
-            {
-                //...
-            }
-
             reload();
         }
 
@@ -59,10 +40,6 @@ namespace fwp.engine
             else layers.Clear();
 
             layers.Add(uid);
-
-            if (loadCamera) deps.Add(scene_camera);
-            if (loadDayCycle) deps.Add(scene_dayCycle);
-            if (loadDebug) deps.Add(scene_debug);
         }
 
 #if UNITY_EDITOR
@@ -88,6 +65,13 @@ namespace fwp.engine
 
             //lock by editor toggle
             //HalperEditor.upfoldNodeHierarchy();
+        }
+
+        public void editorUnload()
+        {
+            //SceneManager.UnloadSceneAsync(layers[0]);
+            var sc = UnityEditor.SceneManagement.EditorSceneManager.GetSceneByName(layers[0]);
+            UnityEditor.SceneManagement.EditorSceneManager.CloseScene(sc, true);
         }
 #endif
 

@@ -178,6 +178,8 @@ namespace fwp.engine.scenes
 
             List<string> filtered = new List<string>();
 
+            List<Scene> output = new List<Scene>();
+
             for (int i = 0; i < sceneNames.Length; i++)
             {
                 string sceneName = sceneNames[i];
@@ -190,20 +192,21 @@ namespace fwp.engine.scenes
                 }
 
                 //don't double load same scene
-                bool alreadyLoaded = getLoadedScene(sceneName).isLoaded;
+                var scene = getLoadedScene(sceneName);
+                bool alreadyLoaded = scene.isLoaded;
 
                 //Debug.Log(getStamp() + Time.frameCount + "  is " + sceneName + " <b>already loaded ?</b> "+ alreadyLoaded);
 
                 if (alreadyLoaded)
                 {
                     Debug.LogWarning("  <b>" + sceneName + "</b> is considered as already loaded, skipping loading of that scene");
+                    output.Add(scene);
                     continue;
                 }
 
                 filtered.Add(sceneName);
             }
 
-            List<Scene> output = new List<Scene>();
             for (int i = 0; i < filtered.Count; i++)
             {
                 string sceneName = filtered[i];
@@ -222,28 +225,17 @@ namespace fwp.engine.scenes
                 {
                     output.Add(sc);
 
+                    filtered.Remove(sc.name);
+
                     Debug.Log("   ... loader : " + sc.name + " is done (" + output.Count + "/" + filtered.Count + ")");
                 }));
 
             }
 
-            if (output.Count != filtered.Count)
+            //int cnt = filtered.Count;
+            while(filtered.Count > 0)
             {
-                Debug.Log(getStamp() + " still waiting for scenes to be loaded ... (" + output.Count + "/" + filtered.Count + ")");
-
-                while (output.Count != filtered.Count)
-                {
-                    int diff = filtered.Count - output.Count;
-                    Debug.Log(getStamp() + " ... remaining x" + diff);
-
-                    int count = output.Count;
-                    while (count == output.Count)
-                    {
-                        yield return null;
-                    }
-
-                    yield return null;
-                }
+                yield return null;
             }
 
             Debug.Log(getStamp() + " is <b>done loading</b>", this);
@@ -322,6 +314,7 @@ namespace fwp.engine.scenes
         {
             return loadScenes(new string[] { nm }, (Scene[] scs) =>
             {
+                Debug.Assert(scs.Length > 0, "scenes array is empty ? "+nm);
                 onComplete?.Invoke(scs[0]);
             });
         }

@@ -60,7 +60,7 @@ namespace fwp.engine.mod
         /// <summary>
         /// something must call this to launch the round
         /// </summary>
-        virtual public void modLaunch()
+        virtual protected void modLaunch()
         {
             Debug.Log(getStamp() + " launch()");
 
