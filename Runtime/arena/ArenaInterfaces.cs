@@ -14,6 +14,6 @@ namespace fwp.arena
         void hit(ArenaObject obstacle);
 
         // récup les box de collisions
-        BoxCollider2D[] getColliders();
+        Collider2D[] getColliders();
     }
 }
