@@ -1,6 +1,6 @@
 {
   "name": "com.ab.fwp.engine",
-  "version": "0.5.7",
+  "version": "0.5.8",
   "displayName": "ab:engine",
   "description": "framework of basic tools to make a game prototype",
   "keywords": [

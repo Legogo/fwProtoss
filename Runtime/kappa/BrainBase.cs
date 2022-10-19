@@ -78,6 +78,11 @@ abstract public class BrainBase : ScaffGroundUpdate
         gameObject.SetActive(false);
     }
 
+    public override bool canUpdate()
+    {
+        return base.canUpdate();
+    }
+
     sealed override protected void scaffUpdate(float dt)
     {
         brainUpdate();

@@ -106,6 +106,7 @@ abstract public class FactoryBase
         Debug.Assert(candidate != null, $"no candidate on {go} ?? generated object is not factory compatible", go);
 
         inactives.Add(candidate);
+        //recycle(candidate);
 
         //for refs list
         //IndusReferenceMgr.refreshGroupByType(factoryTargetType);
@@ -131,6 +132,7 @@ abstract public class FactoryBase
 
         iFactoryObject obj = null;
 
+        // search in available pool
         for (int i = 0; i < inactives.Count; i++)
         {
             if(inactives[i].factoGetCandidateName() == subType)
@@ -139,11 +141,13 @@ abstract public class FactoryBase
             }
         }
 
+        // none available, create a new one
         if(obj == null)
         {
             obj = create(subType);
         }
 
+        // make it active
         inject(obj);
 
         //va se faire tout seul au setup()
@@ -164,17 +168,30 @@ abstract public class FactoryBase
     /// </summary>
     public void recycle(iFactoryObject candid)
     {
-        Debug.Assert(actives.IndexOf(candid) > -1);
-        actives.Remove(candid);
+        bool present = actives.IndexOf(candid) >= 0;
+        Debug.Assert(present, candid+" is not in actives array ?");
+        if(present)
+        {
+            actives.Remove(candid);
+        }
+        
+        present = inactives.IndexOf(candid) >= 0;
+        Debug.Assert(!present, candid + " must not be already in inactives");
+        if (!present)
+        {
+            inactives.Add(candid);
 
-        Debug.Assert(inactives.IndexOf(candid) < 0);
-        inactives.Add(candid);
-
+            //candid.factoRecycle();
+        }
+        
         // move recycled object into facto scene
         MonoBehaviour comp = candid as MonoBehaviour;
         if (comp != null)
         {
             comp.transform.SetParent(null);
+            //comp.gameObject.SetActive(false);
+            
+            comp.enabled = false;
 
             /*
             //https://docs.unity3d.com/ScriptReference/SceneManagement.SceneManager.MoveGameObjectToScene.html
@@ -199,6 +216,10 @@ abstract public class FactoryBase
         {
             actives.Add(candid);
             Debug.Log(getStamp() + " :: inject :: " + candid + " :: ↑" + actives.Count + "/ ↓" + inactives.Count);
+
+            //candid.factoMaterialize();
+            MonoBehaviour cmp = candid as MonoBehaviour;
+            if (cmp != null) cmp.enabled = true;
         }
     }
 
@@ -220,7 +241,7 @@ abstract public class FactoryBase
 
 		for (int i = 0; i < cands.Count; i++)
 		{
-            cands[i].factoRecycle();
+            recycle(cands[i]);
 		}
 
         Debug.Assert(actives.Count <= 0);
@@ -241,13 +262,13 @@ public interface iFactoryObject : IIndusReference, ISaveSerializable
     /// describe recycling process
     /// +must tell factory
     /// </summary>
-    void factoRecycle();
+    //void factoRecycle();
 
     /// <summary>
     /// describe activation
-    /// +must tell factory
+    /// called when added to actives
     /// </summary>
-    void factoMaterialize();
+    //void factoMaterialize();
 
     //string serialize();
 }
