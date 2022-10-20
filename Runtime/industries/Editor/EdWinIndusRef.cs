@@ -8,7 +8,7 @@ using fwp.halpers;
 
 public class EdWinIndusRef : EditorWindow
 {
-    [MenuItem("Tiny/(window) indus ref")]
+    [MenuItem("Monitoring/(window) indus ref")]
     static void init()
     {
         EditorWindow.GetWindow(typeof(EdWinIndusRef));
@@ -49,6 +49,11 @@ public class EdWinIndusRef : EditorWindow
 
     void OnGUI()
     {
+        if(!Application.isPlaying)
+        {
+            refTypes = null;
+        }
+
         GUILayout.BeginHorizontal();
 
         GUILayout.Label(cursorPosition.ToString());
@@ -83,13 +88,14 @@ public class EdWinIndusRef : EditorWindow
 
         scroll = GUILayout.BeginScrollView(scroll);
 
+        GUILayout.Label("x" + refTypes.Length + " in facebook");
         foreach (var typ in refTypes)
         {
             EditorGUILayout.Separator();
 
             GUILayout.BeginHorizontal();
 
-            List<IIndusReference> refs = IndusReferenceMgr.getGroupByType(typ);
+            List<iIndusReference> refs = IndusReferenceMgr.getGroupByType(typ);
 
             GUILayout.Label(typ.ToString(), HalperGuiStyle.getCategoryBold());
             GUILayout.Label("x" + refs.Count + " elmt(s)");

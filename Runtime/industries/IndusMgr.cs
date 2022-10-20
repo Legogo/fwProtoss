@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 
 /// <summary>
-/// manager of all factories
+/// manager of all FACTORIES
 /// </summary>
 static public class IndusMgr
 {

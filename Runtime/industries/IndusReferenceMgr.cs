@@ -2,9 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq;
 
 /// <summary>
-/// facebook wrapper
+/// FACEBOOK wrapper
 /// need to specify compatible types
 /// </summary>
 static public class IndusReferenceMgr
@@ -12,43 +13,29 @@ static public class IndusReferenceMgr
     /// <summary>
     /// it knows EVERYBODY
     /// </summary>
-    static private Dictionary<Type, List<IIndusReference>> facebook = new Dictionary<Type, List<IIndusReference>>();
-
-    static private Type[] possibleTypes = null;
-
-    static public void injectTypes(Type[] types)
-    {
-        if (possibleTypes == null) possibleTypes = new Type[0];
-
-        List<Type> output = new List<Type>();
-        for (int i = 0; i < types.Length; i++)
-        {
-            bool found = false;
-            for (int j = 0; j < possibleTypes.Length; j++)
-            {
-                if (found) continue;
-                if (types[i] == possibleTypes[j]) found = true;
-            }
-            if (!found) output.Add(types[i]);
-        }
-
-        possibleTypes = output.ToArray();
-    }
-
-    /// <summary>
-    /// called by tiny booter
-    /// </summary>
-    static public void boot()
-    {
-        facebook.Clear();
-
-        refreshAll(possibleTypes);
-    }
+    static private Dictionary<Type, List<iIndusReference>> facebook = new Dictionary<Type, List<iIndusReference>>();
 
     static public void edRefresh()
     {
         Debug.LogWarning("editor refresh of facebook");
-        boot(); // ed refresh
+
+        refreshAll();
+    }
+
+    /// <summary>
+    /// refresh all existing
+    /// </summary>
+    static public void refreshAll()
+    {
+        MonoBehaviour[] monos = GameObject.FindObjectsOfType<MonoBehaviour>();
+
+        Debug.Log(getStamp() + " checking x"+facebook.Count+" types against x" + monos.Length + " monos");
+
+        foreach (var kp in facebook)
+        {
+            kp.Value.Clear();
+            kp.Value.AddRange(fetchByType(kp.Key, monos));
+        }
     }
 
     static private Type getTypeByDicoIndex(int idx)
@@ -94,142 +81,125 @@ static public class IndusReferenceMgr
         return false;
     }
 
-    /// <summary>
-    /// get all mono and inject all object of given type into facebook
-    /// </summary>
-    /// <param name="tar"></param>
-    static public void refreshGroupByType(Type tar)
+    static public List<iIndusReference> fetchByType(Type tar, MonoBehaviour[] monos = null)
     {
-        //Debug.Log($"~facto: called refreshing of indus refs <{tar}>");
+        List<iIndusReference> output = new List<iIndusReference>();
 
-        List<IIndusReference> output = new List<IIndusReference>();
+        //gather group data
+        if (monos == null) monos = GameObject.FindObjectsOfType<MonoBehaviour>();
 
-        MonoBehaviour[] monos = GameObject.FindObjectsOfType<MonoBehaviour>();
         for (int i = 0; i < monos.Length; i++)
         {
-            if (tar.IsAssignableFrom(monos[i].GetType()))
+            //Debug.Log(typ + " vs " + monos[i].GetType());
+
+            iIndusReference iref = monos[i] as iIndusReference;
+            if (iref == null) continue;
+
+            //if (monos[i].GetType().IsAssignableFrom(tar))
+            if (tar.IsAssignableFrom(iref.GetType()))
             {
-                IIndusReference iref = monos[i] as IIndusReference;
                 output.Add(iref);
             }
         }
 
-        injectType(tar, output);
+        return output;
     }
 
     /// <summary>
-    /// force refersh all of given types
+    /// get all mono and inject all object of given type into facebook
     /// </summary>
-    static public void refreshAll(Type[] tars)
+    static public List<iIndusReference> refreshGroupByType(Type tar, MonoBehaviour[] monos = null)
     {
-        if (tars == null) return;
+        var output = fetchByType(tar, monos);
+        facebook[tar] = output;
 
-        for (int i = 0; i < tars.Length; i++)
-        {
-            refreshGroupByType(tars[i]);
-        }
-    }
+        Debug.Log($"{getStamp()} group refresh <{tar}> x"+output.Count);
 
-    /// <summary>
-    /// refresh all existing
-    /// </summary>
-    static public void refreshAll()
-    {
-        Type[] typs = getAllTypes();
-        for (int i = 0; i < typs.Length; i++)
-        {
-            //refreshGroupByType(getTypeByDicoIndex(i));
-            refreshGroupByType(typs[i]);
-        }
+        return output;
     }
 
     /// <summary>
     /// faaat at runtime
     /// </summary>
-    static public void refreshGroup<T>() where T : MonoBehaviour
+    static public List<T> refreshGroup<T>(MonoBehaviour[] monos = null) where T : iIndusReference
     {
-        List<IIndusReference> output = new List<IIndusReference>();
+        List<iIndusReference> iir = refreshGroupByType(typeof(T), monos);
 
-        MonoBehaviour[] monos = GameObject.FindObjectsOfType<MonoBehaviour>(false);
-        for (int i = 0; i < monos.Length; i++)
-        {
-            T elmt = monos[i] as T;
-            if (elmt == null) continue;
-            IIndusReference iref = elmt as IIndusReference;
-            if (iref == null) continue;
-            output.Add(iref);
-        }
+        List<T> output = iir as List<T>;
+        Debug.Assert(output != null);
 
-        if (!hasGroupType<T>())
-        {
-            facebook.Add(typeof(T), output);
-        }
-        else
-        {
-            facebook[typeof(T)] = output;
-        }
-
-        Debug.Log("~facto: refreshed x" + output.Count + " elmts of type " + typeof(T));
+        return output;
     }
 
-    static public void injectObject(IIndusReference target)
+    static public void injectObject(iIndusReference target)
     {
         Debug.Assert(target != null);
 
-        if (possibleTypes == null)
-        {
-            Debug.LogWarning("can't inject " + target);
-            return;
-        }
+        Type tar = getAssocType(target);
 
-        /*
-        for (int i = 0; i < possibleTypes.Length; i++)
+        if(tar == null)
         {
-            //if(target.GetType().IsAssignableFrom(possibleTypes[i]))
-            if (possibleTypes[i].IsAssignableFrom(target.GetType()))
+            Debug.LogWarning(getStamp() + " no assoc type for target " + target+" , can't inject");
+        }
+        else if (facebook[tar].IndexOf(target) < 0) // already subbed ?
+        {
+            facebook[tar].Add(target);
+        }
+        
+    }
+
+    static public void removeObject(iIndusReference target)
+    {
+        var assoc = getAssocType(target);
+        facebook[assoc].Remove(target);
+    }
+
+    /// <summary>
+    /// assignable definition : https://www.geeksforgeeks.org/c-sharp-type-isassignablefromtype-method/
+    /// </summary>
+    static Type getAssocType(iIndusReference target)
+    {
+        Type tar = target.GetType();
+        return getAssocType(tar);
+    }
+
+    static Type getAssocType(Type tar)
+    {
+        // must search for compatible type, NOT the type of target
+        // some targets are from diff types BUT have a parent common type for indus
+        foreach (var kp in facebook)
+        {
+            //bool ass = tar.IsAssignableFrom(kp.Key);
+            //Debug.Log(tar + " assignable " + kp.Key + " ? " + ass);
+            bool ass = kp.Key.IsAssignableFrom(tar);
+            //Debug.Log(kp.Key + " assignable " + tar + " ? " + ass);
+
+            //if (kp.Key.GetType().IsAssignableFrom(tar)) return true;
+            if (ass)
             {
-                refreshGroupByType(possibleTypes[i]);
+                return kp.Key;
             }
         }
-        */
 
-        Type typ = target.GetType();
-
-        if (!facebook.ContainsKey(typ))
-        {
-            Debug.LogWarning("can't add " + target + " to facebook, type is not declared");
-            return;
-        }
-
-        if (facebook[typ].IndexOf(target) < 0)
-        {
-            facebook[typ].Add(target);
-            Debug.Log($"facebook[{typ}] x{facebook[typ].Count}");
-        }
+        return null;
     }
 
     /// <summary>
     /// add a specific type and its solved list to facebook
     /// </summary>
-    static private void injectType(Type tar, List<IIndusReference> list)
+    static public void injectType(Type tar)
     {
-
-        if (!hasGroupOfType(tar))
+        var assoc = getAssocType(tar);
+        if (assoc == null)
         {
-            Debug.Log($"indus:adding new group to facebook : <b>{tar}</b> (new type list count x{list.Count})");
-            facebook.Add(tar, list);
+            Debug.Log($"{getStamp()} adding new group to facebook : <b>{tar}</b>");
+            facebook.Add(tar, new List<iIndusReference>());
         }
-        else
-        {
-            Debug.Log("indus:override content for typ " + tar + " (x" + list.Count + ")");
-            facebook[tar] = list;
-        }
-
     }
 
-    static public List<IIndusReference> getGroupByType(Type tar)
+    static public List<iIndusReference> getGroupByType(Type tar)
     {
-        List<IIndusReference> output = new List<IIndusReference>();
+        List<iIndusReference> output = new List<iIndusReference>();
         foreach (var kp in facebook)
         {
             if (tar == kp.Key) return kp.Value;
@@ -237,54 +207,29 @@ static public class IndusReferenceMgr
         return output;
     }
 
-    static public List<T> getGroup<T>() where T : IIndusReference
+    static public List<T> getGroup<T>() where T : iIndusReference
     {
-        List<T> output = new List<T>();
-
-        //output.AddRange(getGroupByType(typeof(T)));
-
-        bool _checkFoundType = false;
-
-        foreach (var kp in facebook)
+        if(!hasGroupType<T>())
         {
-            //Debug.Log(kp.Key + " VS " + typeof(T));
-
-            //if (typeof(T).IsAssignableFrom(kp.Key.GetType()))
-            //if(kp.Key.GetType().IsAssignableFrom(typeof(T)))
-            if (kp.Key == typeof(T))
-            {
-                _checkFoundType = true;
-
-                for (int i = 0; i < kp.Value.Count; i++)
-                {
-                    //output.AddRange(kp.Value[i]);
-                    if (kp.Value[i] != null)
-                    {
-                        // filter disabled gameobjects
-                        MonoBehaviour mono = kp.Value[i] as MonoBehaviour;
-                        if (mono != null)
-                        {
-                            if (!mono.gameObject.activeSelf) continue;
-                        }
-
-                        output.Add((T)kp.Value[i]);
-                    }
-                }
-            }
+            Debug.LogWarning("no group " + typeof(T) + " ?");
+            return null;
         }
 
-        if (!_checkFoundType)
-        {
-            Debug.LogWarning($"didn't find type:{typeof(T)} in facebook (out of x{facebook.Count})");
-        }
+        //Type assoc = getAssocType(typeof(T));
+        Type assoc = typeof(T);
+        List<iIndusReference> elmts = facebook[assoc];
+        Debug.Assert(elmts != null, "facebook list not init for type " + assoc);
+
+        List<T> output = elmts.Cast<T>().ToList();
+        Debug.Assert(output != null, "can't cast " + elmts + " to " + assoc);
 
         return output;
     }
 
     static public MonoBehaviour getClosestToPosition(Type tar, Vector2 position)
     {
-        List<IIndusReference> refs = getGroupByType(tar);
-        IIndusReference closest = null;
+        List<iIndusReference> refs = getGroupByType(tar);
+        iIndusReference closest = null;
         float min = Mathf.Infinity;
         float dst;
 
@@ -298,15 +243,17 @@ static public class IndusReferenceMgr
             if (dst < min)
             {
                 min = dst;
-                closest = mono as IIndusReference;
+                closest = mono as iIndusReference;
             }
         }
 
         return closest as MonoBehaviour;
     }
+
+    static string getStamp() => "~indus:";
 }
 
-public interface IIndusReference
+public interface iIndusReference
 {
 
 }

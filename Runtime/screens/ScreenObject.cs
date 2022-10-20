@@ -17,9 +17,7 @@ namespace fwp.engine.screens
     public class ScreenObject : ScaffGround, iScaffLog
     {
         public ScreensManager.ScreenType type;
-
-        public bool verbose = false;
-        public ScreensManager.ScreenTags[] tags;
+        public ScreensManager.ScreenTags tags;
 
         [Tooltip("won't be hidden for specific ingame situations")]
         public bool sticky = false; // can't be hidden

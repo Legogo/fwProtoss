@@ -15,12 +15,17 @@ abstract public class FactoryBase
 
 	public FactoryBase()
 	{
-		_factoryTargetType = GetType();
+		_factoryTargetType = getFactoryTargetType();
 
-        IndusReferenceMgr.injectTypes(new System.Type[] { _factoryTargetType });
+        IndusReferenceMgr.injectType(_factoryTargetType);
 
 		if (!Application.isPlaying) refresh();
 	}
+
+    /// <summary>
+    /// what kind of object will be created by this factory
+    /// </summary>
+    abstract protected System.Type getFactoryTargetType();
 
     public void refresh()
 	{
@@ -181,7 +186,7 @@ abstract public class FactoryBase
         {
             inactives.Add(candid);
 
-            //candid.factoRecycle();
+            IndusReferenceMgr.removeObject(candid);
         }
         
         // move recycled object into facto scene
@@ -220,6 +225,8 @@ abstract public class FactoryBase
             //candid.factoMaterialize();
             MonoBehaviour cmp = candid as MonoBehaviour;
             if (cmp != null) cmp.enabled = true;
+
+            IndusReferenceMgr.injectObject(candid);
         }
     }
 
@@ -253,7 +260,7 @@ abstract public class FactoryBase
 
 //public interface IFactory{}
 
-public interface iFactoryObject : IIndusReference, ISaveSerializable
+public interface iFactoryObject : iIndusReference, ISaveSerializable
 {
 
     string factoGetCandidateName();

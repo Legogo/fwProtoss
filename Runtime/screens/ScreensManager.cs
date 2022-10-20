@@ -22,10 +22,12 @@ namespace fwp.engine.screens
         /// <summary>
         /// cumulative states for screens
         /// </summary>
+        [System.Flags]
         public enum ScreenTags
         {
-            pauseIngameUpdate, // screen that pauses gameplay
-            blockIngameInput // screen that lock inputs
+            none = 0,
+            pauseIngameUpdate = 1, // screen that pauses gameplay
+            blockIngameInput = 2 // screen that lock inputs
         };
 
         //usual screen names

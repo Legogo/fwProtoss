@@ -19,6 +19,9 @@ namespace fwp.engine.scaffolder
         bool _early;
         bool _ready;
 
+        [SerializeField]
+        protected bool verbose = false;
+
         protected void Awake()
         {
             _stampColor = solveStampColor();
