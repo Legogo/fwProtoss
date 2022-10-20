@@ -206,7 +206,7 @@ abstract public class FactoryBase
             */
         }
 
-        Debug.Log(getStamp() + " :: recycle :: " + candid + " :: ↑" + actives.Count + "/ ↓" + inactives.Count);
+        VerboseToggles.Log(VerbosityLevel.Factory, getStamp() + " :: recycle :: " + candid + " :: ↑" + actives.Count + "/ ↓" + inactives.Count);
     }
 
     /// <summary>
@@ -220,7 +220,8 @@ abstract public class FactoryBase
         if (actives.IndexOf(candid) < 0)
         {
             actives.Add(candid);
-            Debug.Log(getStamp() + " :: inject :: " + candid + " :: ↑" + actives.Count + "/ ↓" + inactives.Count);
+
+            VerboseToggles.Log(VerbosityLevel.Factory, getStamp() + " :: inject :: " + candid + " :: ↑" + actives.Count + "/ ↓" + inactives.Count);
 
             //candid.factoMaterialize();
             MonoBehaviour cmp = candid as MonoBehaviour;
