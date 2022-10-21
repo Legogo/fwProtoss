@@ -151,7 +151,10 @@ static public class IndusReferenceMgr
     static public void removeObject(iIndusReference target)
     {
         var assoc = getAssocType(target);
+
         facebook[assoc].Remove(target);
+
+        VerboseToggles.Log(VerbosityLevel.Factory, "removed " + target+" from "+assoc+" x"+facebook[assoc].Count);
     }
 
     /// <summary>

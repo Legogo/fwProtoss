@@ -131,7 +131,7 @@ abstract public class FactoryBase
         //and go on
         if (inactives.Count <= 0)
         {
-            Debug.LogWarning(getStamp()+" extract:: recycling possible ? <b>nope</b> , creating a new one");
+            VerboseToggles.Log(VerbosityLevel.Factory, getStamp()+" extract:: recycling possible ? <b>nope</b> , creating a new one");
             create(subType);
         }
 
