@@ -59,6 +59,8 @@ namespace fwp.engine.screens
             // wait for screen to close
             while (this.screen != null) yield return null;
 
+            Debug.Log("wrapper process : screen is null");
+
             this.onEnded?.Invoke();
 
             GameObject.Destroy(gameObject);
