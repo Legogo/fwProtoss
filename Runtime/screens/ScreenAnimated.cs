@@ -138,7 +138,7 @@ namespace fwp.engine.screens
 
         virtual public void closeAnimated()
         {
-            Debug.Log(getStamp() + " close animated ?");
+            //Debug.Log(getStamp() + " close animated ?");
 
             if (isClosing())
             {

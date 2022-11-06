@@ -8,9 +8,35 @@ using UnityEngine;
 
 namespace fwp.arena
 {
+    public interface iArenaSpawnable
+    {
+    }
+
     public class ArenaSpawn : MonoBehaviour
     {
-        public Vector3 getSpawnPosition() { return transform.position; }
-        public Transform getSpawn() { return transform; }
+        private void Awake()
+        {
+
+            // remove guides
+            while(transform.childCount > 0)
+            {
+                GameObject.DestroyImmediate(transform.GetChild(0).gameObject);
+            }
+
+        }
+
+        public void spawnOn(iArenaSpawnable spawnable)
+        {
+            //_spawnable = spawnable;
+
+            MonoBehaviour mono = spawnable as MonoBehaviour;
+            Debug.Assert(mono != null);
+
+            Vector3 pos = transform.position;
+            //pos.z = 0f;
+
+            mono.transform.position = pos;
+        }
     }
+
 }

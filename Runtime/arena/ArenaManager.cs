@@ -11,12 +11,13 @@ namespace fwp.arena
     /// </summary>
     abstract public class ArenaManager : MonoBehaviour, iModObject
     {
-        ArenaObject[] candidates;
+        protected ArenaObject[] candidates;
 
-        ArenaSpawn[] spawns;
-        Bounds bnd;
+        protected ArenaSpawn[] spawns;
 
-        ModBase mod;
+        Bounds bnd; // arena space
+
+        ModBase mod; // active mod, mod will update arena
 
         private void Awake()
         {
@@ -30,27 +31,62 @@ namespace fwp.arena
 
         void Start()
         {
+
             mod = ModBase.getMod();
             Debug.Assert(mod != null);
 
             mod.candidates.Add(this);
+
         }
 
         void OnDestroy()
         {
             mod.candidates.Remove(this);
+            mod = null;
         }
 
-        public void fetchSpawns()
+        virtual public void modRestart()
+        {
+            candidates = GameObject.FindObjectsOfType<ArenaObject>();
+            for (int i = 0; i < candidates.Length; i++)
+            {
+                candidates[i].arenaRestart();
+            }
+
+            //Debug.Log(GetType() + " mod restart x" + candidates.Length, this);
+        }
+
+        void fetchSpawns()
         {
             spawns = GameObject.FindObjectsOfType<ArenaSpawn>();
+            
+            if(!hasSpawns())
+            {
+                Debug.LogWarning(name + " has no spawns ??");
+            }
+
         }
 
-        public Transform getSpawn(int playerIndex)
+        public ArenaSpawn getSpawn(int playerIndex)
         {
-            if (!hasSpawns()) return null;
-            if (spawns.Length > playerIndex) return spawns[playerIndex].transform;
-            return null;
+            if(!hasSpawns())
+            {
+                fetchSpawns();
+
+                if(!hasSpawns())
+                {
+                    Debug.LogError("no spawns ?");
+                    return null;
+                }
+            }
+
+            if (spawns.Length <= playerIndex)
+            {
+                Debug.LogWarning("not enough spawn for index " + playerIndex);
+                return null;
+            }
+
+            return spawns[playerIndex];
         }
 
         public bool hasSpawns()
@@ -80,17 +116,6 @@ namespace fwp.arena
 
         public Bounds getBounds() => bnd;
 
-        virtual public void modRestart()
-        {
-            candidates = GameObject.FindObjectsOfType<ArenaObject>();
-            for (int i = 0; i < candidates.Length; i++)
-            {
-                candidates[i].arenaRestart();
-            }
-
-            Debug.Log(GetType() + " mod restart x" + candidates.Length, this);
-        }
-
         virtual public void modUpdate()
         {
             //Debug.Log(GetType() + " mod update x"+candidates.Length, this);
@@ -110,6 +135,7 @@ namespace fwp.arena
 
             candidates = null;
         }
+
     }
 
 

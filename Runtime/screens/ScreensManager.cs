@@ -129,7 +129,7 @@ namespace fwp.engine.screens
         {
             if(screens.Count <= 0)
             {
-                Debug.LogWarning("asking for a screen " + nm + " but screen count is 0");
+                //Debug.LogWarning("asking for a screen " + nm + " but screen count is 0");
                 return null;
             }
 
@@ -199,7 +199,7 @@ namespace fwp.engine.screens
             //si le screen existe pas on essaye de le load
             loadMissingScreen(nm, delegate (ScreenObject loadedScreen)
             {
-                Debug.Log("  ... missing screen '" + nm + "' is now loaded, opening");
+                //Debug.Log("  ... missing screen '" + nm + "' is now loaded, opening");
 
                 loadedScreen.onScreenLoaded();
                 //changeScreenVisibleState(nm, true, filterName);

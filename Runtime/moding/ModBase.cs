@@ -48,7 +48,7 @@ namespace fwp.engine.mod
         /// </summary>
         virtual protected void modRestart()
         {
-            Debug.Log(getStamp() + " restart() x"+candidates.Count);
+            Debug.Log(getStamp() + " restart() , candidates x"+candidates.Count);
             
             for (int i = 0; i < candidates.Count; i++)
             {
