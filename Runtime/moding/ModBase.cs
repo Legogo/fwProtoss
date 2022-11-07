@@ -8,16 +8,17 @@ namespace fwp.engine.mod
 
     public interface iModObject
     {
-        void modRestart();
-        void modUpdate();
-        void modEnd();
+        void modRestart(); // creation, loop
+        void modLaunch(); // loop engaged
+        void modUpdate(); // frame
+        void modEnd(); // loop ended
     }
 
     /// <summary>
     /// state owner
     /// this auto update after launch() is called
     /// </summary>
-    public class ModBase : ScaffGround
+    abstract public class ModBase : ScaffGround
     {
         Coroutine coActive = null;
 
@@ -64,6 +65,11 @@ namespace fwp.engine.mod
         {
             Debug.Log(getStamp() + " launch()");
 
+            for (int i = 0; i < candidates.Count; i++)
+            {
+                candidates[i].modLaunch();
+            }
+
             Debug.Assert(coActive == null, "already running ?");
 
             coActive = StartCoroutine(processActive());
@@ -71,7 +77,11 @@ namespace fwp.engine.mod
 
         IEnumerator processActive()
         {
-            Debug.Log(getStamp() + " update active");
+            yield return null;
+
+            Debug.Log(getStamp() + " update activating");
+
+            yield return null;
 
             while (!isModDone())
             {
@@ -79,7 +89,7 @@ namespace fwp.engine.mod
                 yield return null;
             }
 
-            Debug.Log(getStamp() + " update ended");
+            Debug.Log(getStamp() + " <b>MOD IS DONE</b> | update ended");
 
             modEnded();
         }
@@ -92,10 +102,7 @@ namespace fwp.engine.mod
             }
         }
 
-        virtual public bool isModDone()
-        {
-            return true;
-        }
+        abstract public bool isModDone();
 
         virtual protected void modEnded()
         {
@@ -114,6 +121,31 @@ namespace fwp.engine.mod
             
         }
 
+        protected void callRestartDelayed(float delay)
+        {
+            if(delay <= 0f)
+            {
+                modRestart();
+                return;
+            }
+
+            StartCoroutine(processDelay(delay, () =>
+            {
+                modRestart();
+            }));
+        }
+
+        IEnumerator processDelay(float delay, System.Action onCompletion)
+        {
+            while(delay > 0f)
+            {
+                delay -= Time.deltaTime;
+                yield return null;
+            }
+
+            onCompletion?.Invoke();
+        }
+
         public override string stringify()
         {
             string output = base.stringify();
@@ -128,6 +160,11 @@ namespace fwp.engine.mod
         static public T getMod<T>() where T : ModBase
         {
             return GameObject.FindObjectOfType<T>();
+        }
+
+        public bool isLive()
+        {
+            return coActive != null;
         }
 
         protected override string solveStampColor()  => "orange";

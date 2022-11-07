@@ -56,6 +56,9 @@ namespace fwp.arena
             //Debug.Log(GetType() + " mod restart x" + candidates.Length, this);
         }
 
+        virtual public void modLaunch()
+        { }
+
         void fetchSpawns()
         {
             spawns = GameObject.FindObjectsOfType<ArenaSpawn>();
@@ -91,7 +94,11 @@ namespace fwp.arena
 
         public bool hasSpawns()
         {
-            if (spawns == null) return false;
+            if (spawns == null)
+            {
+                fetchSpawns();
+            }
+
             return spawns.Length > 0;
         }
 

@@ -26,11 +26,19 @@ namespace fwp.engine.screens
 
         ScreenNav nav;
 
+        ScreenModCanvas canvas; // use getter
+
         protected override void build()
         {
             base.build();
 
             ScreensManager.subScreen(this);
+        }
+
+        public ScreenModCanvas getModCanvas()
+        {
+            if (canvas == null) canvas = new ScreenModCanvas(this);
+            return canvas;
         }
 
         public void subNavDirection(Action down, Action up, Action left, Action right)
@@ -69,10 +77,24 @@ namespace fwp.engine.screens
 
         virtual protected void action_back() { }
 
-        virtual protected void toggleVisible(bool flag)
+        virtual protected bool toggleVisible(bool flag)
         {
+            if (canvas != null)
+            {
+                return canvas.toggleVisible(flag);
+            }
+
             transform.GetChild(0).gameObject.SetActive(flag);
+
+            return flag;
         }
+
+        virtual public bool isVisible()
+        {
+            if (canvas != null) return canvas.isVisible();
+            return transform.GetChild(0).gameObject.activeSelf;
+        }
+
 
         [ContextMenu("show instant")]
         protected void ctxm_show() { showInstant(); }
@@ -158,11 +180,6 @@ namespace fwp.engine.screens
 
         public bool isInteractive() => nav != null;
 
-        virtual public bool isVisible()
-        {
-            return transform.GetChild(0).gameObject.activeSelf;
-        }
-
         public void act_button(Button clickedButton)
         {
             process_button_press(clickedButton.name);
@@ -195,6 +212,16 @@ namespace fwp.engine.screens
 
             onScreenDestruction();
             ScreensManager.unsubScreen(this);
+        }
+
+        public void setStandby(ScreenObject leader)
+        {
+            bool visi = leader == null;
+            
+            if(leader != null)
+                visi = leader == this;
+
+            toggleVisible(visi);
         }
 
         virtual protected void onScreenDestruction()

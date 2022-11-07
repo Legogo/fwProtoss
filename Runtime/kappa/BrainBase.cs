@@ -45,6 +45,14 @@ abstract public class BrainBase : ScaffGroundUpdate
         resetKappas();
     }
 
+    /// <summary>
+    /// contextual call to reset all kappas
+    /// </summary>
+    virtual public void reset()
+    {
+        resetKappas();
+    }
+
     virtual protected void resetKappas()
     {
         for (int i = 0; i < kappas.Count; i++)
@@ -76,11 +84,6 @@ abstract public class BrainBase : ScaffGroundUpdate
     {
         //Debug.Log("demat");
         gameObject.SetActive(false);
-    }
-
-    public override bool canUpdate()
-    {
-        return base.canUpdate();
     }
 
     sealed override protected void scaffUpdate(float dt)

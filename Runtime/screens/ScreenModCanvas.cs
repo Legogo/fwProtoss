@@ -1,56 +1,48 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace fwp.engine.screens
 {
-    /// <summary>
-    /// a screen using canvases
-    /// </summary>
-    public class ScreenUi : ScreenAnimated
+    public class ScreenModCanvas : ScreenMod
     {
-
-        [Tooltip("a camera somewhere need to be named 'camera-ui' to be used as canvas context")]
-        public bool useUiCamera = false;
 
         protected Canvas[] _canvas;
         protected Canvas _mainCanvas;
 
         protected RectTransform _rt;
 
-        protected override void build()
+        public ScreenModCanvas(ScreenObject screen) : base(screen)
         {
-            base.build();
-
-            _canvas = gameObject.GetComponentsInChildren<Canvas>();
+            _canvas = screen.GetComponentsInChildren<Canvas>();
             Debug.Assert(_canvas.Length > 0, "no canvas for screen ui ?");
 
             _mainCanvas = _canvas[0];
-            
-            _rt = GetComponent<RectTransform>();
+
+            _rt = screen.GetComponent<RectTransform>();
+
         }
 
-        protected override void setupEarly()
+        /// <summary>
+        /// force canvas to use a specific camera
+        /// </summary>
+        public void setupForUiCamera()
         {
-            base.setupEarly();
-
-            if (useUiCamera)
+            Camera uiCam = qh.gc<Camera>("camera-ui");
+            if (_mainCanvas.renderMode == RenderMode.ScreenSpaceOverlay)
             {
-                Camera uiCam = qh.gc<Camera>("camera-ui");
-                if (_mainCanvas.renderMode == RenderMode.ScreenSpaceOverlay)
-                {
-                    _mainCanvas.renderMode = RenderMode.ScreenSpaceCamera;
-                    _mainCanvas.worldCamera = uiCam;
-                }
+                _mainCanvas.renderMode = RenderMode.ScreenSpaceCamera;
+                _mainCanvas.worldCamera = uiCam;
             }
-
+            
         }
+
 
         public Canvas getDefaultCanvas()
         {
             return _mainCanvas;
         }
-        public Canvas getCanvas(string nm)
+        public Canvas getCanvasByName(string nm)
         {
             for (int i = 0; i < _canvas.Length; i++)
             {
@@ -72,11 +64,9 @@ namespace fwp.engine.screens
             }
         }
 
-        protected override void toggleVisible(bool flag)
+        public bool toggleVisible(bool flag)
         {
-            //base.toggleVisible(flag);
-
-            if (_canvas == null) Debug.LogError("no canvas ? for " + name, gameObject);
+            if (_canvas == null) Debug.LogError("no canvas ? for " + owner.name, owner.gameObject);
 
             //Debug.Log("toggle screen " + name + " visibility to " + flag + " | " + _canvas.Length + " canvas");
 
@@ -94,12 +84,12 @@ namespace fwp.engine.screens
             }
 
             //Debug.Log(name+" , "+flag, gameObject);
+
+            return flag;
         }
 
-        public override bool isVisible()
+        public bool isVisible()
         {
-            //base.isVisible();
-
             for (int i = 0; i < _canvas.Length; i++)
             {
                 if (_canvas[i].enabled) return true;
@@ -107,20 +97,14 @@ namespace fwp.engine.screens
             return false;
         }
 
-        public override string stringify()
-        {
-            return base.stringify() + "\n  canvas count ? " + _canvas.Length;
-        }
-
         static public Canvas getCanvas(string screenName, string canvasName)
         {
-            ScreenUi screen = (ScreenUi)ScreensManager.getScreen(screenName);
-            
+            ScreenObject screen = (ScreenObject)ScreensManager.getScreen(screenName);
+
             Debug.Assert(screen != null, screenName + " is not ui related");
 
-            return screen.getCanvas(canvasName);
+            return screen.getModCanvas().getCanvasByName(canvasName);
         }
 
     }
-
 }

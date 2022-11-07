@@ -15,10 +15,15 @@ namespace fwp.engine.screens
     /// </summary>
     public class ScreenWrapper : MonoBehaviour
     {
-        static public ScreenWrapper call(string screenName)
+        static public ScreenWrapper call(System.Enum enu, Action onLoaded = null, Action onEnded = null)
+        {
+            return call(enu.ToString(), onLoaded, onEnded);
+        }
+
+        static public ScreenWrapper call(string screenName, Action onLoaded = null, Action onEnded = null)
         {
             GameObject obj = new GameObject("~sw-" + screenName);
-            return obj.AddComponent<ScreenWrapper>().setup(screenName);
+            return obj.AddComponent<ScreenWrapper>().setup(screenName, onLoaded, onEnded);
         }
 
         ScreenObject screen;

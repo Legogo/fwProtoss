@@ -15,8 +15,9 @@ namespace fwp.engine.screens
 
         public enum ScreenType
         {
+            undefined,
             menu,
-            overlay // ingame overlays
+            overlay, // ingame overlays
         }
 
         /// <summary>
@@ -121,10 +122,15 @@ namespace fwp.engine.screens
             return false;
         }
 
+        /// <summary>
+        /// to return the screen if already open
+        /// to call the screen use open() flow instead
+        /// </summary>
         static public ScreenObject getScreen(ScreenNameGenerics nm)
         {
             return getScreen(nm.ToString());
         }
+        static public ScreenObject getScreen(System.Enum enu) => getScreen(enu.ToString());
         static public ScreenObject getScreen(string nm)
         {
             if(screens.Count <= 0)
@@ -171,7 +177,7 @@ namespace fwp.engine.screens
             return false;
         }
 
-        static public ScreenObject open(ScreenNameGenerics nm, string filter = "") { return open(nm.ToString(), filter); }
+        static public ScreenObject open(System.Enum enu, Action<ScreenObject> onComplete = null) => open(enu.ToString(), onComplete);
         static public ScreenObject open(string nm, Action<ScreenObject> onComplete) { return open(nm, string.Empty, onComplete); }
 
         /// <summary>
@@ -282,6 +288,17 @@ namespace fwp.engine.screens
             }
         }
 
+        static public void setStandby(ScreenObject leader)
+        {
+            for (int i = 0; i < screens.Count; i++)
+            {
+                if(screens[i].type == ScreenType.overlay)
+                {
+                    screens[i].setStandby(leader);
+                }
+            }
+        }
+
         static protected void loadMissingScreen(string screenName, Action<ScreenObject> onComplete)
         {
             ScreenLoading.showLoadingScreen();
@@ -318,11 +335,11 @@ namespace fwp.engine.screens
         /// just display, no state change
         /// </summary>
         /// <param name="state"></param>
-        static public void callPauseScreen(bool state, string filter = "")
+        static public void callPauseScreen(bool state)
         {
 
-            if (state) ScreensManager.open(ScreensManager.ScreenNameGenerics.pause, filter);
-            else ScreensManager.close(ScreensManager.ScreenNameGenerics.pause, filter);
+            if (state) ScreensManager.open(ScreensManager.ScreenNameGenerics.pause);
+            else ScreensManager.close(ScreensManager.ScreenNameGenerics.pause);
 
         }
 
