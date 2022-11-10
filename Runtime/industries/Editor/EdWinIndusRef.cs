@@ -9,8 +9,7 @@ using fwp.halpers.editor;
 
 public class EdWinIndusRef : EditorWindow
 {
-
-    [MenuItem("Monitoring/(window) indus ref")]
+    [MenuItem("Tools/Monitoring/(window) indus ref")]
     static void init()
     {
         EditorWindow.GetWindow(typeof(EdWinIndusRef));

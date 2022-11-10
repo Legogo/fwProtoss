@@ -9,7 +9,7 @@ namespace fwp.engine
     public class EngineObjectMonitoring : EditorWindow
     {
 
-        [MenuItem("Monitoring/object inspector")]
+        [MenuItem("Tools/Monitoring/object inspector")]
         static void init()
         {
             EditorWindow.GetWindow(typeof(EngineObjectMonitoring));
