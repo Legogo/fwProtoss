@@ -3,8 +3,7 @@ using System.Collections.Generic;
 
 namespace fwp.engine.camera
 {
-    using fwp.arena;
-    using fwp.engine.mod;
+    using fwp.halpers.editor;
 
     public interface iCameraTarget
     {

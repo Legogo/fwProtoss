@@ -5,9 +5,11 @@ using UnityEditor;
 using System;
 
 using fwp.halpers;
+using fwp.halpers.editor;
 
 public class EdWinIndusRef : EditorWindow
 {
+
     [MenuItem("Monitoring/(window) indus ref")]
     static void init()
     {

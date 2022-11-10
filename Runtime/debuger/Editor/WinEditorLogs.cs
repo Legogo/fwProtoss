@@ -7,6 +7,7 @@ using UnityEditor;
 namespace fwp.logs
 {
 	using fwp.halpers;
+	using fwp.halpers.editor;
 
 	public class WinEditorLogs : EditorWindow
 	{

@@ -4,6 +4,8 @@ using UnityEngine;
 using System;
 using UnityEngine.Networking;
 
+using fwp.halpers;
+
 /// <summary>
 /// https://docs.unity3d.com/ScriptReference/WWW.html
 /// https://docs.unity3d.com/ScriptReference/WWWForm.html
