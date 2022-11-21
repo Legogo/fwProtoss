@@ -15,7 +15,7 @@ using UnityEngine.SceneManagement;
 
 namespace fwp.engine.scaffolder.engineer
 {
-    using fwp.engine.scenes;
+    using fwp.scenes;
 
     public class EngineStartup : MonoBehaviour
     {
