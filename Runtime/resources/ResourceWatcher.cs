@@ -11,6 +11,8 @@ namespace fwp.engine.scaffolder.engineer
     /// </summary>
     abstract public class ResourceWatcher : MonoBehaviour
     {
+        public bool verbose = false;
+
         protected string resourceName;
 
         protected Action onOpened;
@@ -41,23 +43,27 @@ namespace fwp.engine.scaffolder.engineer
 
             Coroutine co = null;
 
-            Debug.Log(" ... waiting for creation ...");
+            if(verbose)
+                Debug.Log(" ... waiting for creation ...");
 
             co = StartCoroutine(resourceCreate());
             while (co != null) yield return null;
 
-            Debug.Log(" ... waiting for opening ...");
+            if (verbose)
+                Debug.Log(" ... waiting for opening ...");
 
             co = StartCoroutine(resourceOpen());
             while (co != null) yield return null;
             onOpened?.Invoke();
-
-            Debug.Log(" ... waiting for closing ...");
+            
+            if (verbose)
+                Debug.Log(" ... waiting for closing ...");
 
             co = StartCoroutine(resourceClose());
             while (co != null) yield return null;
 
-            Debug.Log(" ... waiting for removal ...");
+            if (verbose)
+                Debug.Log(" ... waiting for removal ...");
 
             co = StartCoroutine(resourceDestroy());
             while (co != null) yield return null;
