@@ -29,7 +29,7 @@ public class DataBuildSettingProfile : ScriptableObject
   [Header("SDK")]
   public iOSTargetDevice target_device;
   public string iOSVersion = "9.0";
-  public AndroidSdkVersions minSdk = AndroidSdkVersions.AndroidApiLevel21; // android 5.0
+  public AndroidSdkVersions minSdk = AndroidSdkVersions.AndroidApiLevel22;
 #endif
 
   [Header("misc")]
