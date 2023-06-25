@@ -11,7 +11,7 @@ namespace fwp.engine.camera
         Vector3 getPosition();
     }
 
-    abstract public class CameraDynamicZoom : scaffolder.ScaffGroundUpdate
+    abstract public class CameraDynamicZoom : fwp.scaffold.ScaffMono
     {
         protected Camera cam;
 
@@ -47,7 +47,7 @@ namespace fwp.engine.camera
             if (targets.Contains(tar)) return;
             targets.Add(tar);
 
-            Debug.Log(getStamp() + " has now x" + targets.Count + " targets", this);
+            Debug.Log(stamp() + " has now x" + targets.Count + " targets", this);
         }
 
         public void remTarget(iCameraTarget tar)
@@ -56,8 +56,10 @@ namespace fwp.engine.camera
             targets.Remove(tar);
         }
 
-        protected override void scaffUpdate(float dt)
+        protected override void update(float dt)
         {
+            base.update(dt);
+
             if (targets.Count <= 0) return;
 
             //Debug.Log("update x" + targets.Count);

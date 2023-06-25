@@ -27,9 +27,8 @@ using System;
 namespace fwp.engine.ui
 {
     using fwp.halpers.visibility;
-    using fwp.engine.scaffolder;
-
-    abstract public class UiAnimation : UiObject, iScaffLog
+    
+    abstract public class UiAnimation : UiObject, fwp.scaffold.iScaffLog
     {
         protected float animTimer = 0f;
         public Action onAnimationDone;
@@ -141,7 +140,7 @@ namespace fwp.engine.ui
             }
         }
 
-        public string getStamp() => GetType().ToString();
+        public string stamp() => GetType().ToString();
         public string stringify()
         {
             string ct = string.Empty;

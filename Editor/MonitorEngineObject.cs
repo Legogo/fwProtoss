@@ -4,7 +4,7 @@ using UnityEditor;
 
 namespace fwp.engine
 {
-    using fwp.engine.scaffolder;
+    using fwp.scaffold;
 
     public class EngineObjectMonitoring : EditorWindow
     {
@@ -17,7 +17,7 @@ namespace fwp.engine
 
         string[] options;
         int dropdownIndex = 0;
-        
+
         iScaffLog[] candidateList;
         GameObject currentSelection;
         GUIStyle style = new GUIStyle();
@@ -34,7 +34,7 @@ namespace fwp.engine
             //display droplist & select index
             guiSelection();
 
-            if(currentSelection == null)
+            if (currentSelection == null)
             {
                 GUILayout.Label("no selection");
                 return;
@@ -50,7 +50,7 @@ namespace fwp.engine
 
             style.richText = true;
             style.normal.textColor = Color.white;
-            
+
             string output = candidateList[dropdownIndex].stringify();
 
             GUILayout.Space(10f);
@@ -60,20 +60,20 @@ namespace fwp.engine
         void guiSelection()
         {
             GameObject obj = Selection.activeGameObject;
-            
+
             if (obj != currentSelection)
             {
                 dropdownIndex = 0;
                 currentSelection = obj;
 
-                if(currentSelection != null)
+                if (currentSelection != null)
                 {
                     // update candidates
                     candidateList = getCandidates();
 
                     guiUpdateOption();
                 }
-                
+
                 return;
             }
 
@@ -102,7 +102,7 @@ namespace fwp.engine
 
             if (candidateList.Length <= 0)
             {
-                GUILayout.Label("no candidates on "+currentSelection.name);
+                GUILayout.Label("no candidates on " + currentSelection.name);
                 return;
             }
 

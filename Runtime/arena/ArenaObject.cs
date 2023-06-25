@@ -8,10 +8,10 @@ using UnityEngine;
 
 namespace fwp.arena
 {
-    using fwp.engine.scaffolder;
+    using fwp.scaffold;
     using fwp.engine.camera;
     
-    abstract public class ArenaObject : ScaffGround, iCameraTarget
+    abstract public class ArenaObject : ScaffMono, iCameraTarget
     {
         public bool isCameraTarget() => false;
 

@@ -4,12 +4,12 @@ using UnityEngine;
 
 namespace fwp.state
 {
-    using fwp.engine.scaffolder;
+    using fwp.scaffold;
 
     /// <summary>
     /// state owner
     /// </summary>
-    public class StateMachine : ScaffGroundUpdate
+    public class StateMachine : ScaffMono
     {
         State currState = null;
         State nextState = null;
@@ -29,8 +29,10 @@ namespace fwp.state
         virtual protected void modStateChange()
         { }
 
-        protected override void scaffUpdate(float dt)
+        protected override void update(float dt)
         {
+            base.update(dt);
+
             // need to swap state
             if(nextState != null && currState.isDone())
             {

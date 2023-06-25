@@ -18,7 +18,7 @@ namespace fwp.engine.mod
     /// state owner
     /// this auto update after launch() is called
     /// </summary>
-    abstract public class ModBase : ScaffGround
+    abstract public class ModBase : scaffold.ScaffMono
     {
         Coroutine coActive = null;
 
@@ -40,7 +40,7 @@ namespace fwp.engine.mod
         /// </summary>
         virtual protected void modCreate()
         {
-            Debug.Log(getStamp() + " create()");
+            Debug.Log(stamp() + " create()");
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace fwp.engine.mod
         /// </summary>
         virtual protected void modRestart()
         {
-            Debug.Log(getStamp() + " restart() , candidates x"+candidates.Count);
+            Debug.Log(stamp() + " restart() , candidates x"+candidates.Count);
             
             for (int i = 0; i < candidates.Count; i++)
             {
@@ -63,7 +63,7 @@ namespace fwp.engine.mod
         /// </summary>
         virtual protected void modLaunch()
         {
-            Debug.Log(getStamp() + " launch()");
+            Debug.Log(stamp() + " launch()");
 
             for (int i = 0; i < candidates.Count; i++)
             {
@@ -79,7 +79,7 @@ namespace fwp.engine.mod
         {
             yield return null;
 
-            Debug.Log(getStamp() + " update activating");
+            Debug.Log(stamp() + " update activating");
 
             yield return null;
 
@@ -89,7 +89,7 @@ namespace fwp.engine.mod
                 yield return null;
             }
 
-            Debug.Log(getStamp() + " <b>MOD IS DONE</b> | update ended");
+            Debug.Log(stamp() + " <b>MOD IS DONE</b> | update ended");
 
             modEnded();
         }
@@ -112,7 +112,7 @@ namespace fwp.engine.mod
                 coActive = null;
             }
 
-            Debug.Log(getStamp() + " ended()");
+            Debug.Log(stamp() + " ended()");
 
             for (int i = 0; i < candidates.Count; i++)
             {
